@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Services\{
+    AdministratorService,
+};
+
 class AdministratorController extends Controller
 {
     public function login( Request $request ) {
@@ -37,5 +41,10 @@ class AdministratorController extends Controller
 
     public function logout( Request $request ) {
 
+    }
+
+    public function allAdmins( Request $request ) {
+
+        return AdministratorService::allAdmins( $request );
     }
 }

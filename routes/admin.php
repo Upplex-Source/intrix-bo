@@ -28,6 +28,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add administrators|view administrators|edit administrators|delete administrators' ] ], function() {
                     Route::get( '/', [ AdministratorController::class, 'index' ] )->name( 'admin.administrator.index' );
                 } );
+
+                Route::post( 'all-admins', [ AdministratorController::class, 'allAdmins' ] )->name( 'admin.administrator.allAdmins' );
             } );
 
             Route::prefix( 'roles' )->group( function() {

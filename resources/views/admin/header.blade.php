@@ -15,4 +15,5 @@
 
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="{{ asset( 'admin/css/dashlite.min.css' ) }}">
+    <link rel="stylesheet" href="{{ asset( 'admin/css/extended.css' ) }}">
 </head>

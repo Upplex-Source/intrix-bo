@@ -35,8 +35,8 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-s1">
                                             <ul class="language-list">
-@foreach( Config::get( 'languages' ) as $lang => $language )
-@if( $lang != App::getLocale() )
+@foreach ( Config::get( 'languages' ) as $lang => $language )
+@if ( $lang != App::getLocale() )
                                                 <li>
                                                     <a href="{{ route( 'admin.switchLanguage', [ 'lang' => $lang ] ) }}" class="language-item">
                                                         <img src="{{ asset( 'admin/images/flags/' . $lang . '.svg' ) }}" alt="" class="language-flag">
@@ -124,7 +124,7 @@
                                         <a href="#" class="dropdown-toggle me-n1" data-bs-toggle="dropdown">
                                             <div class="user-toggle">
                                                 <div class="user-avatar sm">
-                                                    <img src="https://ui-avatars.com/api/?background=9d72ff&color=fff&name={{ auth()->user()->name }}" alt="" />
+                                                    <img src="https://ui-avatars.com/api/?background=9d72ff&color=fff&name={{ auth()->user()->fullname }}" alt="" />
                                                 </div>
                                                 <div class="user-info d-none d-xl-block">
                                                     <div class="user-status">Super Admin</div>
@@ -136,7 +136,7 @@
                                             <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                                 <div class="user-card">
                                                     <div class="user-avatar">
-                                                        <img src="https://ui-avatars.com/api/?background=9d72ff&color=fff&name={{ auth()->user()->name }}" alt="" />
+                                                        <img src="https://ui-avatars.com/api/?background=9d72ff&color=fff&name={{ auth()->user()->fullname }}" alt="" />
                                                     </div>
                                                     <div class="user-info">
                                                         <span class="lead-text">{{ auth()->user()->fullname }}</span>

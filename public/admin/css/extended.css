@@ -1,0 +1,20 @@
+ul.pagination {
+    overflow: auto;
+}
+
+table.table.dataTable tr td {
+    vertical-align: middle;
+}
+
+.listing-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+@media only screen and (max-width: 600px) {
+    .listing-filter {
+        grid-template-columns: 1fr;
+    }
+}
