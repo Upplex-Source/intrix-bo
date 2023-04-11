@@ -7,9 +7,9 @@ return [
     | Template Language Lines
     |--------------------------------------------------------------------------
     |
-    | The following language lines are used by the paginator library to build
-    | the simple pagination links. You are free to change them to anything
-    | you want to customize your views to better match your application.
+    | The following language lines are used during Administrator Module for various
+    | messages that we need to display to the user. You are free to modify
+    | these language lines according to your application's requirements.
     |
     */
 
@@ -20,4 +20,19 @@ return [
     'operations' => '运营管理',
     'users' => '用户',
     'orders' => '订单',
+
+    'loading' => '载入中...',
+    'new' => '新增',
+    'new_x' => '新增:title',
+    'edit' => '编辑',
+    'edit_x' => '编辑:title',
+    'view' => '查看',
+    'view_x' => '查看:title',
+    'save_changes' => '保存',
+    'cancel' => '取消',
+
+    'leave_blank' => '留空保持不变',
+
+    'success' => '成功',
+    'error' => '错误',
 ];

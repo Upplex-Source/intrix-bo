@@ -2,7 +2,20 @@
     <script src="{{ asset( 'admin/js/scripts.js' ) }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+    <script src="{{ asset( 'admin/js/jquery.loading.min.js' ) . Helper::assetVersion() }}"></script>
+
     <script>
+        let modalSuccess = new bootstrap.Modal( document.getElementById( 'modal_success' ) ),
+            modalDanger = new bootstrap.Modal( document.getElementById( 'modal_danger' ) );
+
+        function resetInputValidation() {
+            $( '.form-control' ).each( function( i, v ) {
+                if ( $( this ).hasClass( 'is-invalid' ) ) {
+                    $( this ).removeClass( 'is-invalid' ).next().html( '' );
+                }
+            } );
+        }
+
         document.addEventListener( 'DOMContentLoaded', function() {
 
             $( '#_logout' ).click( function( e ) {
@@ -17,6 +30,64 @@
                         document.getElementById( 'logoutForm' ).submit();
                     }
                 } );
+            } );
+
+            $( document ).on( 'focus', '.form-control', function() {
+                if ( $( this ).hasClass( 'is-invalid' ) ) {
+                    $( this ).removeClass( 'is-invalid' ).next().text( '' );
+                }
+            } );
+
+            $( document ).on( 'focus', '.form-select', function() {
+                if ( $( this ).hasClass( 'is-invalid' ) ) {
+                    $( this ).removeClass( 'is-invalid' ).next().text( '' );
+                }
+            } );
+
+            let parents = [];
+            let menus = [];
+
+            // and when you show it, move it to the body
+            $( '.datatable-wrap' ).on( 'show.bs.dropdown', function( e ) {
+
+                let target = $( e.target );
+
+                // save the parent
+                parents.push( target.parent() );
+
+                // grab the menu
+                let dropdownMenu = target.next();
+
+                // save the menu
+                menus.push( dropdownMenu );
+
+                // detach it and append it to the body
+                $( 'body' ).append( dropdownMenu.detach() );
+
+                // grab the new offset position
+                let eOffset = target.offset();
+
+                // make sure to place it where it would normally go (this could be improved)
+                dropdownMenu.css( {
+                    'display': 'block',
+                    'top': eOffset.top + target.outerHeight(),
+                    'left': eOffset.left
+                } );
+            } );
+
+            // and when you hide it, reattach the drop down, and hide it normally
+            $( '.datatable-wrap' ).on( 'hide.bs.dropdown', function( e ) {
+
+                menus.forEach( function( element, index ) {
+                    let parent = parents[index];
+                    let dropdownMenu = element;
+
+                    parent.append( dropdownMenu.detach() );
+                    dropdownMenu.hide();
+
+                    menus.splice( index, 1 );
+                    parents.splice( index, 1 );
+                } )
             } );
         } );
     </script>

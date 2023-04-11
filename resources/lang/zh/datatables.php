@@ -31,6 +31,11 @@ return [
     'registered_date' => '注册日期',
     'action' => '操作',
 
+    'activate' => '启用',
+    'activated' => '已启用',
+    'suspend' => '停用',
+    'suspended' => '已停用',
+
     'sub_total' => '小计',
     'grand_total' => '累计',
 ];

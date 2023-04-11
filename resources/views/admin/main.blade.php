@@ -199,6 +199,10 @@
         </div>
         <!-- main @e -->
     </div>
+
+    <x-modal-success />
+    <x-modal-danger />
+
     <!-- app-root @e -->
     <?php echo view( 'admin/script' );?>
 </body>

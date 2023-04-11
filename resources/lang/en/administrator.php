@@ -17,4 +17,8 @@ return [
     'email' => 'Email',
     'fullname' => 'Fullname',
     'role' => 'Role',
+    'password' => 'Password',
+
+    'administrator_created' => 'New administrator created.',
+    'administrator_updated' => 'Administrator updated.',
 ];

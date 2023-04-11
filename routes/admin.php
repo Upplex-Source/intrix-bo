@@ -26,33 +26,41 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 
             Route::prefix( 'administrators' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add administrators|view administrators|edit administrators|delete administrators' ] ], function() {
-                    Route::get( '/', [ AdministratorController::class, 'index' ] )->name( 'admin.administrator.index' );
+                    Route::get( '/', [ AdministratorController::class, 'index' ] )->name( 'admin.module_parent.administrator.index' );
+
+                    Route::get( 'new', [ AdministratorController::class, 'new' ] )->name( 'admin.administrator.new' );
+                    Route::get( 'edit', [ AdministratorController::class, 'edit' ] )->name( 'admin.administrator.edit' );
                 } );
 
-                Route::post( 'all-admins', [ AdministratorController::class, 'allAdmins' ] )->name( 'admin.administrator.allAdmins' );
+                Route::post( 'all-administrators', [ AdministratorController::class, 'allAdministrators' ] )->name( 'admin.administrator.allAdministrators' );
+                Route::post( 'one-administrator', [ AdministratorController::class, 'oneAdministrator' ] )->name( 'admin.administrator.oneAdministrator' );
+                Route::post( 'create-administrator', [ AdministratorController::class, 'createAdministrator' ] )->name( 'admin.administrator.createAdministrator' );
+                Route::post( 'update-administrator', [ AdministratorController::class, 'updateAdministrator' ] )->name( 'admin.administrator.updateAdministrator' );
             } );
 
             Route::prefix( 'roles' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add roles|view roles|edit roles|delete roles' ] ], function() {
-                    Route::get( '/', [ RoleController::class, 'index' ] )->name( 'admin.role.index' );
+                    Route::get( '/', [ RoleController::class, 'index' ] )->name( 'admin.module_parent.role.index' );
                 } );
             } );
 
             Route::prefix( 'modules' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add modules|view modules|edit modules|delete modules' ] ], function() {
-                    Route::get( '/', [ ModuleController::class, 'index' ] )->name( 'admin.module.index' );
+                    Route::get( '/', [ ModuleController::class, 'index' ] )->name( 'admin.module_parent.module.index' );
                 } );
+
+                Route::post( 'all-modules', [ ModuleController::class, 'allModules' ] )->name( 'admin.module.allModules' );
             } );
 
             Route::prefix( 'users' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add users|view users|edit users|delete users' ] ], function() {
-                    Route::get( '/', [ UserController::class, 'index' ] )->name( 'admin.user.index' );
+                    Route::get( '/', [ UserController::class, 'index' ] )->name( 'admin.module_parent.user.index' );
                 } );
             } );
 
             Route::prefix( 'orders' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add orders|view orders|edit orders|delete orders' ] ], function() {
-                    Route::get( '/', [ OrderController::class, 'index' ] )->name( 'admin.order.index' );
+                    Route::get( '/', [ OrderController::class, 'index' ] )->name( 'admin.module_parent.order.index' );
                 } );
             } );
         } );

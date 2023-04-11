@@ -11,6 +11,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Permission\Traits\HasRoles;
 
+use Helper;
+
 class Administrator extends Authenticatable
 {
     use HasFactory, LogsActivity, HasRoles;
@@ -23,6 +25,10 @@ class Administrator extends Authenticatable
         'role',
         'status',
     ];
+
+    public function getEncryptedIdAttribute() {
+        return Helper::encode( $this->attributes['id'] );
+    }
 
     protected function serializeDate( DateTimeInterface $date ) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );

@@ -26,4 +26,8 @@ class RoleController extends Controller
 
         return view( 'admin.main' )->with( $this->data );
     }
+
+    public function allRoles() {
+
+    }
 }

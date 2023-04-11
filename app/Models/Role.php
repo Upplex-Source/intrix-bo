@@ -10,9 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-class Module extends Model
+class Role extends Model
 {
     use HasFactory, LogsActivity;
+
+    public function permission() {
+        return $this->hasOne( Permission::class, 'permission_id', 'id' );
+    }
 
     protected $fillable = [
         'name',
@@ -28,7 +32,7 @@ class Module extends Model
         'guard_name',
     ];
 
-    protected static $logName = 'modules';
+    protected static $logName = 'roles';
 
     protected static $logOnlyDirty = true;
 
@@ -37,6 +41,6 @@ class Module extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} module";
+        return "{$eventName} role";
     }
 }

@@ -39,5 +39,13 @@ class AdministratorSeeder extends Seeder
             'model_type' => 'App\Models\Administrator',
             'model_id' => $superAdmin,
         ] );
+
+        // Admin
+        $adminRole = DB::table( 'roles' )->insertGetId( [
+            'name' => 'admin',
+            'guard_name' => 'admin',
+            'created_at' => date( 'Y-m-d H:i:s' ),
+            'updated_at' => date( 'Y-m-d H:i:s' ),
+        ] );
     }
 }

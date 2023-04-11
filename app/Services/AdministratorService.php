@@ -2,13 +2,26 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\{
+    DB,
+    Hash,
+    Validator,
+};
+
+use Illuminate\Validation\Rules\Password;
+
 use App\Models\{
     Administrator,
+    Role as RoleModel
 };
+
+use App\Rules\CheckASCIICharacter;
+
+use Helper;
 
 class AdministratorService
 {
-    public static function allAdmins( $request ) {
+    public static function allAdministrators( $request ) {
 
         $administrator = Administrator::select( 'administrators.*' );
 
@@ -41,6 +54,12 @@ class AdministratorService
 
         $administrators = $administrator->skip( $offset )->take( $limit )->get();
 
+        if ( $administrators ) {
+            $administrators->append( [
+                'encrypted_id',
+            ] );
+        }
+
         $totalRecord = Administrator::count();
 
         $data = [
@@ -53,7 +72,7 @@ class AdministratorService
         return response()->json( $data );
     }
 
-    private function filter( $request, $model ) {
+    private static function filter( $request, $model ) {
 
         $filter = false;
 
@@ -99,5 +118,124 @@ class AdministratorService
             'filter' => $filter,
             'model' => $model,
         ];
+    }
+
+    public static function oneAdministrator( $request ) {
+
+        $administrator = Administrator::find( Helper::decode( $request->id ) );
+
+        return response()->json( $administrator );
+    }
+
+    public static function createAdministrator( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'username' => [ 'required', 'alpha_dash', new CheckASCIICharacter ],
+            'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'required' ],
+            'password' => [ 'required', Password::min( 8 ) ],
+            'role' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'username' => __( 'administrator.username' ),
+            'email' => __( 'administrator.email' ),
+            'fullname' => __( 'administrator.fullname' ),
+            'password' => __( 'administrator.password' ),
+            'role' => __( 'administrator.role' ),
+        ];
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createAdmin = Administrator::creat1e( [
+                'name' => strtolower( $request->username ),
+                'email' => strtolower( $request->email ),
+                'fullname' => $request->fullname,
+                'password' => Hash::make( $request->password ),
+                'role' => $request->role,
+                'status' => 10,
+            ] );
+    
+            $roleModel = RoleModel::find( $request->role );
+    
+            $createAdmin->syncRoles( [ $roleModel->name ] );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'administrator.administrator_created' ),
+        ] );
+    }
+
+    public static function updateAdministrator( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'username' => [ 'required', 'alpha_dash', 'unique:administrators,name,' . $request->id, new CheckASCIICharacter ],
+            'email' => [ 'required', 'bail', 'unique:administrators,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'required' ],
+            'password' => [ 'nullable', Password::min( 8 ) ],
+            'role' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'username' => __( 'administrator.username' ),
+            'email' => __( 'administrator.email' ),
+            'fullname' => __( 'administrator.fullname' ),
+            'password' => __( 'administrator.password' ),
+            'role' => __( 'administrator.role' ),
+        ];
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateAdministrator = Administrator::find( $request->id );
+            $updateAdministrator->name = strtolower( $request->username );
+            $updateAdministrator->email = strtolower( $request->email );
+            $updateAdministrator->fullname = $request->fullname;
+            $updateAdministrator->role = $request->role;
+
+            if ( !empty( $request->password ) ) {
+                $updateAdministrator->password = Hash::make( $request->password );
+            }
+
+            $roleModel = RoleModel::find( $request->role );
+            $updateAdministrator->syncRoles( [ $roleModel->name ] );
+
+            $updateAdministrator->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'administrator.administrator_updated' ),
+        ] );
     }
 }

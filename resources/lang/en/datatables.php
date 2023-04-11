@@ -31,6 +31,11 @@ return [
     'registered_date' => 'Registered Date',
     'action' => 'Action',
 
+    'activate' => 'Activate',
+    'activated' => 'Activated',
+    'suspend' => 'Suspend',
+    'suspended' => 'Suspended',
+
     'sub_total' => 'Sub Total',
     'grand_total' => 'Grand Total',
 ];

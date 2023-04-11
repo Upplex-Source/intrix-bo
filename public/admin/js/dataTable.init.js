@@ -24,9 +24,8 @@ document.addEventListener( 'DOMContentLoaded', function() {
         columnDefs: dt_table_config.columnDefs,
         dom: `<"row justify-between g-2"
         <"col-7 col-sm-4 text-start"f>
-        <"col-5 col-sm-8 text-end"l>
+        <"col-5 col-sm-8 text-end"l>>
         <"datatable-wrap my-3"t>
-        >
         <"row align-items-center"
         <"col-sm-12 col-md-7"p>
         <"col-sm-12 col-md-5 text-start text-md-end"i>

@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use Hashids\Hashids;
+use Carbon\Carbon;
+
 class Helper {
 
     public static function websiteName() {

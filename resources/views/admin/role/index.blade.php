@@ -9,7 +9,7 @@
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <button class="btn btn-primary">Create</button>
+                            <button class="btn btn-primary">{{ __( 'template.new' ) }}</button>
                         </li>
                     </ul>
                 </div>

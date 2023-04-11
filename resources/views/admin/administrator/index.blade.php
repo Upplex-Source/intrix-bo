@@ -9,7 +9,7 @@
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <button class="btn btn-primary">Create</button>
+                            <a href="{{ route( 'admin.administrator.new' ) }}" class="btn btn-primary">{{ __( 'template.new' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -55,79 +55,105 @@ $columns = [
 
 <script>
 
-window['columns'] = @json( $columns );
-    
-@foreach ( $columns as $column )
-@if ( $column['type'] != 'default' )
-window['{{ $column['id'] }}'] = '';
-@endif
-@endforeach
+    window['columns'] = @json( $columns );
+        
+    @foreach ( $columns as $column )
+    @if ( $column['type'] != 'default' )
+    window['{{ $column['id'] }}'] = '';
+    @endif
+    @endforeach
 
-var dt_table,
-    dt_table_name = '#administrator_table',
-    dt_table_config = {
-        language: {
-            'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
-            'zeroRecords': '{{ __( "datatables.zeroRecords" ) }}',
-            'info': '{{ __( "datatables.info" ) }}',
-            'infoEmpty': '{{ __( "datatables.infoEmpty" ) }}',
-            'infoFiltered': '{{ __( "datatables.infoFiltered" ) }}',
-            'paginate': {
-                'previous': '{{ __( "datatables.previous" ) }}',
-                'next': '{{ __( "datatables.next" ) }}',
-            }
-        },
-        ajax: {
-            url: '{{ route( 'admin.administrator.allAdmins' ) }}',
-            data: {
-                '_token': '{{ csrf_token() }}',
+    var dt_table,
+        dt_table_name = '#administrator_table',
+        dt_table_config = {
+            language: {
+                'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
+                'zeroRecords': '{{ __( "datatables.zeroRecords" ) }}',
+                'info': '{{ __( "datatables.info" ) }}',
+                'infoEmpty': '{{ __( "datatables.infoEmpty" ) }}',
+                'infoFiltered': '{{ __( "datatables.infoFiltered" ) }}',
+                'paginate': {
+                    'previous': '{{ __( "datatables.previous" ) }}',
+                    'next': '{{ __( "datatables.next" ) }}',
+                }
             },
-            dataSrc: 'administrators',
-        },
-        lengthMenu: [[10, 25],[10, 25]],
-        order: [[ 1, 'desc' ]],
-        columns: [
-            { data: null },
-            { data: 'created_at' },
-            { data: 'name' },
-            { data: 'email' },
-            { data: 'id' },
-        ],
-        columnDefs: [
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
-                orderable: false,
-                render: function( data, type, row, meta ) {
-                    return table_no += 1;
+            ajax: {
+                url: '{{ route( 'admin.administrator.allAdministrators' ) }}',
+                data: {
+                    '_token': '{{ csrf_token() }}',
                 },
+                dataSrc: 'administrators',
             },
-            {
-                targets: parseInt( '{{ count( $columns ) - 1 }}' ),
-                orderable: false,
-                width: '10%',
-                className: 'text-center',
-                render: function( data, type, row, meta ) {
+            lengthMenu: [[10, 25],[10, 25]],
+            order: [[ 1, 'desc' ]],
+            columns: [
+                { data: null },
+                { data: 'created_at' },
+                { data: 'name' },
+                { data: 'email' },
+                { data: 'id' },
+            ],
+            columnDefs: [
+                {
+                    targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
+                    orderable: false,
+                    render: function( data, type, row, meta ) {
+                        return table_no += 1;
+                    },
+                },
+                {
+                    targets: parseInt( '{{ count( $columns ) - 1 }}' ),
+                    orderable: false,
+                    width: '10%',
+                    className: 'text-center',
+                    render: function( data, type, row, meta ) {
 
-                    let html = 
-                    `
-                    <div class="dropdown">
-                        <a class="dropdown-toggle btn btn-icon btn-trigger" href="#" type="button" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                        <div class="dropdown-menu">
-                            <ul class="link-list-opt">
-                                <li><a href="#"><em class="icon ni ni-edit"></em><span>Edit</span></a></li>
-                                <li><a href="#"><em class="icon ni ni-eye"></em><span>View</span></a></li>
-                                <li><a href="#"><em class="icon ni ni-na"></em><span>Suspend</span></a></li>
-                            </ul>
+                        @canany( [ 'edit administrator', 'delete administrator' ] )
+                        let edit, status = '';
+
+                        @can( 'edit administrator' )
+                        edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                        @endcan
+
+                        @can( 'delete administrator' )
+                        status = row['status'] == 10 ? 
+                        '<li class="dt-status" data-status="' + row['status'] + '"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
+                        '<li class="dt-status" data-status="' + row['status'] + '"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
+                        @endcan
+
+                        let html = 
+                        `
+                        <div class="dropdown">
+                            <a class="dropdown-toggle btn btn-icon btn-trigger" href="#" type="button" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                            <div class="dropdown-menu">
+                                <ul class="link-list-opt">
+                                    `+edit+`
+                                    `+status+`
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    `;
-                    return html;
+                        `;
+                        return html;
+                        @else
+                        return '-';
+                        @endcanany
+                    },
                 },
-            },
-        ],
-    },
-    table_no = 0,
-    timeout = null;
+            ],
+        },
+        table_no = 0,
+        timeout = null;
+
+    document.addEventListener( 'DOMContentLoaded', function() {
+
+        $( document ).on( 'click', '.dt-edit', function() {
+            window.location.href = '{{ route( 'admin.administrator.edit' ) }}?id=' + $( this ).data( 'id' );
+        } );
+
+        $( document ).on( 'click', '.dt-status', function() {
+            console.log( 'aaa' );
+        } );
+    } );
 </script>
 
 <script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>

@@ -43,19 +43,19 @@
                                 </li><!-- .nk-menu-item -->
                                 @endif
                                 <li class="nk-menu-item">
-                                    <a href="{{ route( 'admin.administrator.index' ) }}" class="nk-menu-link">
+                                    <a href="{{ route( 'admin.module_parent.administrator.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-user-list-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.administrators' ) }}</span>
                                     </a>
                                 </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item">
-                                    <a href="{{ route( 'admin.role.index' ) }}" class="nk-menu-link">
+                                    <a href="{{ route( 'admin.module_parent.role.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-swap-alt-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.roles' ) }}</span>
                                     </a>
                                 </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item">
-                                    <a href="{{ route( 'admin.module.index' ) }}" class="nk-menu-link">
+                                    <a href="{{ route( 'admin.module_parent.module.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-puzzle-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.modules' ) }}</span>
                                     </a>
@@ -64,13 +64,13 @@
                                     <h6 class="overline-title text-primary-alt">{{ __( 'template.operations' ) }}</h6>
                                 </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item">
-                                    <a href="{{ route( 'admin.user.index' ) }}" class="nk-menu-link">
+                                    <a href="{{ route( 'admin.module_parent.user.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-user-list-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.users' ) }}</span>
                                     </a>
                                 </li><!-- .nk-menu-item -->
                                 <li class="nk-menu-item">
-                                    <a href="{{ route( 'admin.order.index' ) }}" class="nk-menu-link">
+                                    <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-cc-alt2-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.orders' ) }}</span>
                                     </a>
