@@ -16,6 +16,7 @@ use Spatie\Permission\Models\{
 
 use App\Models\{
     Module,
+    PresetPermission,
 };
 
 use Helper;
@@ -55,18 +56,10 @@ class ModuleController extends Controller
                 if ( $module ) {
 
                     foreach ( Helper::moduleActions() as $action ) {
-                        Permission::where( 'name', $action . ' ' . $module->name )->where( 'guard_name', $module->guard_name )->firstOr( function() use ( $action, $module ) {
-                            $createPermission = Permission::create( [
-                                'name' => $action . ' ' . $module->name,
-                                'guard_name' => $module->guard_name,
-                            ] );
-
-                            $updatePermission = Permission::find( $createPermission->id );
-                            $updatePermission->module_id = $module->id;
-                            $updatePermission->save();
-
-                            return $createPermission;
-                        } );
+                        PresetPermission::firstOrCreate( [
+                            'module_id' => $module->id,
+                            'action' => $action,
+                        ] );
                     }
                 }
             }

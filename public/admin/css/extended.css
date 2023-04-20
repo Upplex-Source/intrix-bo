@@ -13,6 +13,14 @@ table.table.dataTable tr td {
     margin-bottom: 1rem;
 }
 
+.hidden {
+    display: none !important;
+}
+
+.dataTables_filter {
+    display: none;
+}
+
 @media only screen and (max-width: 600px) {
     .listing-filter {
         grid-template-columns: 1fr;

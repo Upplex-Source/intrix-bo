@@ -28,7 +28,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add administrators|view administrators|edit administrators|delete administrators' ] ], function() {
                     Route::get( '/', [ AdministratorController::class, 'index' ] )->name( 'admin.module_parent.administrator.index' );
 
-                    Route::get( 'new', [ AdministratorController::class, 'new' ] )->name( 'admin.administrator.new' );
+                    Route::get( 'add', [ AdministratorController::class, 'add' ] )->name( 'admin.administrator.add' );
                     Route::get( 'edit', [ AdministratorController::class, 'edit' ] )->name( 'admin.administrator.edit' );
                 } );
 
@@ -41,7 +41,14 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
             Route::prefix( 'roles' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:add roles|view roles|edit roles|delete roles' ] ], function() {
                     Route::get( '/', [ RoleController::class, 'index' ] )->name( 'admin.module_parent.role.index' );
+                    Route::get( 'add', [ RoleController::class, 'add' ] )->name( 'admin.role.add' );
+                    Route::get( 'edit', [ RoleController::class, 'edit' ] )->name( 'admin.role.edit' );
                 } );
+
+                Route::post( 'all-roles', [ RoleController::class, 'allRoles' ] )->name( 'admin.role.allRoles' );
+                Route::post( 'one-role', [ RoleController::class, 'oneRole' ] )->name( 'admin.role.oneRole' );
+                Route::post( 'create-role', [ RoleController::class, 'createRole' ] )->name( 'admin.role.createRole' );
+                Route::post( 'update-role', [ RoleController::class, 'updateRole' ] )->name( 'admin.role.updateRole' );
             } );
 
             Route::prefix( 'modules' )->group( function() {

@@ -19,6 +19,8 @@ use App\Rules\CheckASCIICharacter;
 
 use Helper;
 
+use Carbon\Carbon;
+
 class AdministratorService
 {
     public static function allAdministrators( $request ) {
@@ -86,7 +88,7 @@ class AdministratorService
                 $endDate = explode( '-', $dates[1] );
                 $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'admins.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'administrators.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             } else {
 
                 $dates = explode( '-', $request->registered_date );
@@ -94,7 +96,7 @@ class AdministratorService
                 $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'admins.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'administrators.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             }
             $filter = true;
         }
@@ -110,7 +112,7 @@ class AdministratorService
         }
 
         if ( !empty( $request->role ) ) {
-            $model->where( 'roles.id', $request->role );
+            $model->where( 'role', $request->role );
             $filter = true;
         }
 
@@ -130,8 +132,8 @@ class AdministratorService
     public static function createAdministrator( $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'username' => [ 'required', 'alpha_dash', new CheckASCIICharacter ],
-            'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'username' => [ 'required', 'alpha_dash', 'unique:administrators,name', new CheckASCIICharacter ],
+            'email' => [ 'required', 'bail', 'unique:administrators,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'fullname' => [ 'required' ],
             'password' => [ 'required', Password::min( 8 ) ],
             'role' => [ 'required' ],
@@ -151,7 +153,7 @@ class AdministratorService
 
         try {
 
-            $createAdmin = Administrator::creat1e( [
+            $createAdmin = Administrator::create( [
                 'name' => strtolower( $request->username ),
                 'email' => strtolower( $request->email ),
                 'fullname' => $request->fullname,

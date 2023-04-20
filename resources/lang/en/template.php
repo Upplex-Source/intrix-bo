@@ -22,14 +22,17 @@ return [
     'orders' => 'Orders',
 
     'loading' => 'Loading...',
-    'new' => 'New',
-    'new_x' => 'New :title',
+    'add' => 'Add',
+    'add_x' => 'Add :title',
     'edit' => 'Edit',
     'edit_x' => 'Edit :title',
     'view' => 'View',
     'view_x' => 'View :title',
     'save_changes' => 'Save Changes',
     'cancel' => 'Cancel',
+
+    'new_x_created' => 'New :title Created.',
+    'x_updated' => ':title Updated.',
 
     'leave_blank' => 'Leave blank to leave unchanged',
 

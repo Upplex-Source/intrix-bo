@@ -15,4 +15,11 @@ return [
 
     'module_name' => 'Module Name',
     'guard_name' => 'Guard Name',
+
+    'administrators' => 'Administrators',
+    'roles' => 'Roles',
+    'modules' => 'Modules',
+    'audits' => 'Audits',
+    'users' => 'Users',
+    'orders' => 'Orders',
 ];

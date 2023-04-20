@@ -22,14 +22,17 @@ return [
     'orders' => '订单',
 
     'loading' => '载入中...',
-    'new' => '新增',
-    'new_x' => '新增:title',
+    'add' => '新增',
+    'add_x' => '新增:title',
     'edit' => '编辑',
     'edit_x' => '编辑:title',
     'view' => '查看',
     'view_x' => '查看:title',
     'save_changes' => '保存',
     'cancel' => '取消',
+
+    'new_x_created' => '已创建新:title。',
+    'x_updated' => '已更新:title。',
 
     'leave_blank' => '留空保持不变',
 

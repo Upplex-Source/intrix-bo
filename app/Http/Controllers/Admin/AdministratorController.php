@@ -39,10 +39,10 @@ class AdministratorController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function new( Request $request ) {
+    public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.new_x', [ 'title' => \Str::singular( __( 'template.administrators' ) ) ] );
-        $this->data['content'] = 'admin.administrator.new';
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.administrators' ) ) ] );
+        $this->data['content'] = 'admin.administrator.add';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -56,7 +56,7 @@ class AdministratorController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.new' ),
+                'text' => __( 'template.add' ),
                 'class' => 'active',
             ],
         ];

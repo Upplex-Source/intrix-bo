@@ -104,6 +104,18 @@ var dt_table,
     },
     table_no = 0,
     timeout = null;
+
+    document.addEventListener( 'DOMContentLoaded', function() {
+
+        $( '#created_date' ).flatpickr( {
+            mode: 'range',
+            disableMobile: true,
+            onClose: function( selected, dateStr, instance ) {
+                window[$( instance.element ).data('id')] = $( instance.element ).val();
+                dt_table.draw();
+            }
+        } );
+    } );
 </script>
 
 <script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>

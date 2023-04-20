@@ -61,6 +61,16 @@ function renderFilter( $type, $column = [] ) {
         case 'input':
             $html = '<input type="text" class="form-control form-control-sm" placeholder="' . $column->placeholder . '" id="' . $column->id . '" data-id="' . $column->id . '" />';
             break;
+        case 'date':
+            $html = '<input type="text" class="form-control form-control-sm" placeholder="' . $column->placeholder . '" id="' . $column->id . '" data-id="' . $column->id . '" style="background-color: #fff;" />';
+            break;
+        case 'select':
+            $html = '<select class="form-control form-control-sm" id="' . $column->id . '" data-id="' . $column->id . '">';
+            foreach( $column->options as $option ) {
+                $html .= '<option value="' . $option->value . '">' . $option->title . '</option>';
+            }
+            $html .= '</select>';
+            break;
         default:
             $html = '';    
     }

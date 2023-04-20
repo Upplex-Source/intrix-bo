@@ -3,6 +3,7 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
     <script src="{{ asset( 'admin/js/jquery.loading.min.js' ) . Helper::assetVersion() }}"></script>
+    <script src="{{ asset( 'admin/js/flatpickr-4.6.9.js' ) . Helper::assetVersion() }}"></script>
 
     <script>
         let modalSuccess = new bootstrap.Modal( document.getElementById( 'modal_success' ) ),
@@ -10,6 +11,12 @@
 
         function resetInputValidation() {
             $( '.form-control' ).each( function( i, v ) {
+                if ( $( this ).hasClass( 'is-invalid' ) ) {
+                    $( this ).removeClass( 'is-invalid' ).next().html( '' );
+                }
+            } );
+
+            $( '.form-select' ).each( function( i, v ) {
                 if ( $( this ).hasClass( 'is-invalid' ) ) {
                     $( this ).removeClass( 'is-invalid' ).next().html( '' );
                 }

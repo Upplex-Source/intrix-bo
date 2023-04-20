@@ -9,7 +9,7 @@
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.administrator.new' ) }}" class="btn btn-primary">{{ __( 'template.new' ) }}</a>
+                            <a href="{{ route( 'admin.administrator.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -152,6 +152,15 @@ $columns = [
 
         $( document ).on( 'click', '.dt-status', function() {
             console.log( 'aaa' );
+        } );
+
+        $( '#registered_date' ).flatpickr( {
+            mode: 'range',
+            disableMobile: true,
+            onClose: function( selected, dateStr, instance ) {
+                window[$( instance.element ).data('id')] = $( instance.element ).val();
+                dt_table.draw();
+            }
         } );
     } );
 </script>
