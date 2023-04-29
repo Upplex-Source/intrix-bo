@@ -20,7 +20,7 @@ return [
     'operations' => '运营管理',
     'users' => '用户',
     'orders' => '订单',
-    'vendors' => 'Vendors',
+    'vendors' => '供应商',
 
     'loading' => '载入中...',
     'add' => '新增',
@@ -36,7 +36,12 @@ return [
     'x_updated' => '已更新:title。',
 
     'leave_blank' => '留空保持不变',
+    'general_info' => '基本信息',
+    'optional' => '选填',
 
     'success' => '成功',
     'error' => '错误',
+
+    'drop_file_or_click_to_upload' => '拖拽文件或点击上传。',
+    'drop_files_or_click_to_upload' => '拖拽文件或点击上传。',
 ];

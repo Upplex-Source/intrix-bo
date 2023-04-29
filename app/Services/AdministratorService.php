@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
     DB,
     Hash,
@@ -146,6 +147,10 @@ class AdministratorService
             'password' => __( 'administrator.password' ),
             'role' => __( 'administrator.role' ),
         ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
         
         $validator->setAttributeNames( $attributeName )->validate();
 
@@ -203,6 +208,10 @@ class AdministratorService
             'password' => __( 'administrator.password' ),
             'role' => __( 'administrator.role' ),
         ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
         
         $validator->setAttributeNames( $attributeName )->validate();
 

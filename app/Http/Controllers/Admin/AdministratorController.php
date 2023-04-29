@@ -56,7 +56,7 @@ class AdministratorController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add' ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.administrators' ) ) ] ),
                 'class' => 'active',
             ],
         ];
@@ -81,7 +81,7 @@ class AdministratorController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit' ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.administrators' ) ) ] ),
                 'class' => 'active',
             ],
         ];

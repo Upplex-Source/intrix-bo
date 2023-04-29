@@ -129,10 +129,21 @@ class RoleService
 
     public static function createRole( $request ) {
 
-        $request->validate( [
+        $validator = Validator::make( $request->all(), [
             'role_name' => 'required|unique:roles,name',
             'guard_name' => 'required',
         ] );
+
+        $attributeName = [
+            'role_name' => __( 'role.role_name' ),
+            'guard_name' => __( 'role.guard_name' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
 
         $createRole = Role::create( [ 
             'name' => $request->role_name,

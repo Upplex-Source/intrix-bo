@@ -51,7 +51,7 @@ class VendorController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add' ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.vendors' ) ) ] ),
                 'class' => 'active',
             ],
         ];
@@ -76,7 +76,7 @@ class VendorController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit' ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.vendors' ) ) ] ),
                 'class' => 'active',
             ],
         ];

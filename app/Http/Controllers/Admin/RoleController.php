@@ -33,7 +33,7 @@ class RoleController extends Controller
 
     public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.roles' );
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.roles' ) ) ] );
         $this->data['content'] = 'admin.role.add';
         $this->data['breadcrumb'] = [
             [
@@ -48,7 +48,7 @@ class RoleController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add_x', [ 'title' => __( 'template.roles' ) ] ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.roles' ) ) ] ),
                 'class' => 'active',
             ],
         ];
@@ -58,7 +58,7 @@ class RoleController extends Controller
 
     public function edit( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.roles' );
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.roles' ) ) ] );
         $this->data['content'] = 'admin.role.edit';
         $this->data['breadcrumb'] = [
             [
@@ -73,7 +73,7 @@ class RoleController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit_x', [ 'title' => __( 'template.roles' ) ] ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.roles' ) ) ] ),
                 'class' => 'active',
             ],
         ];
