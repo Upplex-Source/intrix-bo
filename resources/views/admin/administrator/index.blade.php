@@ -146,14 +146,6 @@ $columns = [
 
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.administrator.edit' ) }}?id=' + $( this ).data( 'id' );
-        } );
-
-        $( document ).on( 'click', '.dt-status', function() {
-            console.log( 'aaa' );
-        } );
-
         $( '#registered_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
@@ -162,6 +154,14 @@ $columns = [
                 dt_table.draw();
             }
         } );
+
+        $( document ).on( 'click', '.dt-edit', function() {
+            window.location.href = '{{ route( 'admin.administrator.edit' ) }}?id=' + $( this ).data( 'id' );
+        } );
+
+        $( document ).on( 'click', '.dt-status', function() {
+            console.log( 'aaa' );
+        } ); 
     } );
 </script>
 

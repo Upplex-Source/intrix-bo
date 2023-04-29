@@ -10,15 +10,22 @@
             modalDanger = new bootstrap.Modal( document.getElementById( 'modal_danger' ) );
 
         function resetInputValidation() {
+
+            $( '.dropzone' ).each( function( i, v ) {
+                if ( $( this ).hasClass( 'is-invalid' ) ) {
+                    $( this ).removeClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).html( '' );
+                }
+            } );
+
             $( '.form-control' ).each( function( i, v ) {
                 if ( $( this ).hasClass( 'is-invalid' ) ) {
-                    $( this ).removeClass( 'is-invalid' ).next().html( '' );
+                    $( this ).removeClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).html( '' );
                 }
             } );
 
             $( '.form-select' ).each( function( i, v ) {
                 if ( $( this ).hasClass( 'is-invalid' ) ) {
-                    $( this ).removeClass( 'is-invalid' ).next().html( '' );
+                    $( this ).removeClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).html( '' );
                 }
             } );
         }

@@ -20,6 +20,7 @@ return [
     'operations' => 'Operations',
     'users' => 'Users',
     'orders' => 'Orders',
+    'vendors' => 'Vendors',
 
     'loading' => 'Loading...',
     'add' => 'Add',
@@ -35,7 +36,12 @@ return [
     'x_updated' => ':title Updated.',
 
     'leave_blank' => 'Leave blank to leave unchanged',
+    'general_info' => 'General Info',
+    'optional' => 'Optional',
 
     'success' => 'Success',
     'error' => 'Error',
+
+    'drop_file_or_click_to_upload' => 'Drop file here or click to upload.',
+    'drop_files_or_click_to_upload' => 'Drop files here or click to upload.',
 ];

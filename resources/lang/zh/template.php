@@ -20,6 +20,7 @@ return [
     'operations' => '运营管理',
     'users' => '用户',
     'orders' => '订单',
+    'vendors' => 'Vendors',
 
     'loading' => '载入中...',
     'add' => '新增',

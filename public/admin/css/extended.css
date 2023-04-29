@@ -21,6 +21,10 @@ table.table.dataTable tr td {
     display: none;
 }
 
+.dropzone.is-invalid {
+    border-color: #e85347;
+}
+
 @media only screen and (max-width: 600px) {
     .listing-filter {
         grid-template-columns: 1fr;

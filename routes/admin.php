@@ -3,12 +3,14 @@
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 use App\Http\Controllers\Admin\{
+    FileController,
     DashboardController,
     AdministratorController,
     RoleController,
     ModuleController,
     UserController,
     OrderController,
+    VendorController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -17,6 +19,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
     Route::group( [ 'middleware' => [ 'auth:admin' ] ], function() {
 
         Route::group( [ 'middleware' => [ 'checkAdminIsMFA', 'checkMFA' ] ], function() {
+
+            Route::post( 'file/upload', [ FileController::class, 'upload' ] )->withoutMiddleware( [\App\Http\Middleware\VerifyCsrfToken::class] )->name( 'admin.file.upload' );
 
             Route::post( 'signout', [ AdministratorController::class, 'logout' ] )->name( 'admin.signout' );
 
@@ -59,16 +63,30 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'all-modules', [ ModuleController::class, 'allModules' ] )->name( 'admin.module.allModules' );
             } );
 
-            Route::prefix( 'users' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:add users|view users|edit users|delete users' ] ], function() {
-                    Route::get( '/', [ UserController::class, 'index' ] )->name( 'admin.module_parent.user.index' );
-                } );
-            } );
+            // Route::prefix( 'users' )->group( function() {
+            //     Route::group( [ 'middleware' => [ 'permission:add users|view users|edit users|delete users' ] ], function() {
+            //         Route::get( '/', [ UserController::class, 'index' ] )->name( 'admin.module_parent.user.index' );
+            //     } );
+            // } );
 
-            Route::prefix( 'orders' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:add orders|view orders|edit orders|delete orders' ] ], function() {
-                    Route::get( '/', [ OrderController::class, 'index' ] )->name( 'admin.module_parent.order.index' );
+            // Route::prefix( 'orders' )->group( function() {
+            //     Route::group( [ 'middleware' => [ 'permission:add orders|view orders|edit orders|delete orders' ] ], function() {
+            //         Route::get( '/', [ OrderController::class, 'index' ] )->name( 'admin.module_parent.order.index' );
+            //     } );
+            // } );
+            
+            Route::prefix( 'vendors' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:add vendors|view vendors|edit vendors|delete vendors' ] ], function() {
+                    Route::get( '/', [ VendorController::class, 'index' ] )->name( 'admin.module_parent.vendor.index' );
+
+                    Route::get( 'add', [ VendorController::class, 'add' ] )->name( 'admin.vendor.add' );
+                    Route::get( 'edit', [ VendorController::class, 'edit' ] )->name( 'admin.vendor.edit' );
                 } );
+
+                Route::post( 'all-vendors', [ VendorController::class, 'allVendors' ] )->name( 'admin.vendor.allVendors' );
+                Route::post( 'one-vendor', [ VendorController::class, 'oneVendor' ] )->name( 'admin.vendor.oneVendor' );
+                Route::post( 'create-vendor', [ VendorController::class, 'createVendor' ] )->name( 'admin.vendor.createVendor' );
+                Route::post( 'update-vendor', [ VendorController::class, 'updateVendor' ] )->name( 'admin.vendor.updateVendor' );
             } );
         } );
     } );
