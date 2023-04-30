@@ -17,6 +17,7 @@ return [
     'administrators' => '管理员',
     'roles' => '角色',
     'modules' => '模块',
+    'audit_logs' => '审计日志',
     'operations' => '运营管理',
     'users' => '用户',
     'orders' => '订单',

@@ -42,24 +42,38 @@
                                     </ul><!-- .nk-menu-sub -->
                                 </li>
                                 @endif
+                                @can( 'view administrators' )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.administrator.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-user-list-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.administrators' ) }}</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can( 'view roles' )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.role.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-swap-alt-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.roles' ) }}</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can( 'view modules' )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.module.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-puzzle-fill"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.modules' ) }}</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can( 'view audits' )
+                                <li class="nk-menu-item">
+                                    <a href="{{ route( 'admin.module_parent.audit.index' ) }}" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-db-fill"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.audit_logs' ) }}</span>
+                                    </a>
+                                </li>
+                                @endcan
                                 <li class="nk-menu-heading">
                                     <h6 class="overline-title text-primary-alt">{{ __( 'template.operations' ) }}</h6>
                                 </li>
@@ -77,12 +91,14 @@
                                     </a>
                                 </li>
                                 @endif
+                                @can( 'view vendors' )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.vendor.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-briefcase"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.vendors' ) }}</span>
                                     </a>
                                 </li>
+                                @endcan
                             </ul><!-- .nk-menu -->
                         </div><!-- .nk-sidebar-menu -->
                     </div><!-- .nk-sidebar-content -->

@@ -13,7 +13,12 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
+    'failed' => '此登入凭证不符合我们的记录。',
     'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 
+    'sign_in_to' => '登入您的帐号',
+    'email' => '电子邮件',
+    'password' => '密码',
+    'enter_your_x' => '输入您的:type',
+    'continue' => '继续',
 ];

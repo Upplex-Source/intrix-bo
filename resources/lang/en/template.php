@@ -17,6 +17,7 @@ return [
     'administrators' => 'Administrators',
     'roles' => 'Roles',
     'modules' => 'Modules',
+    'audit_logs' => 'Audit Logs',
     'operations' => 'Operations',
     'users' => 'Users',
     'orders' => 'Orders',
@@ -34,7 +35,6 @@ return [
     'print' => 'Print',
     'confirm' => 'Confirm',
     'submit' => 'Submit',
-
 
     'new_x_created' => 'New :title Created.',
     'x_updated' => ':title Updated.',

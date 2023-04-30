@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\{
     AdministratorController,
     RoleController,
     ModuleController,
+    AuditController,
     UserController,
     OrderController,
     VendorController,
@@ -78,6 +79,15 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 } );
 
                 Route::post( 'all-modules', [ ModuleController::class, 'allModules' ] )->name( 'admin.module.allModules' );
+            } );
+
+            Route::prefix( 'audits' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view audits' ] ], function() {
+                    Route::get( '/', [ AuditController::class, 'index' ] )->name( 'admin.module_parent.audit.index' );
+                } );
+
+                Route::post( 'all-audits', [ AuditController::class, 'allAudits' ] )->name( 'admin.audit.allAudits' );
+                Route::post( 'one-audit', [ AuditController::class, 'oneAudit' ] )->name( 'admin.audit.oneAudit' );
             } );
 
             // Route::prefix( 'users' )->group( function() {
