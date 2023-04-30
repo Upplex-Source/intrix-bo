@@ -15,8 +15,8 @@
                                 <a href="#" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
                             </div>
                             <div class="nk-header-brand d-xl-none">
-                                <a href="html/index.html" class="logo-link">
-                                    <img class="logo-dark logo-img" src="{{ asset( 'admin/images/default.png' ) }}" srcset="{{ asset( 'admin/images/default.png' ) }}" alt="logo-dark">
+                                <a href="{{ route( 'admin.home' ) }}" class="logo-link">
+                                    <img class="logo-dark logo-img" src="{{ asset( 'admin/images/settlelaah.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah.png' ) }}" alt="logo-dark">
                                 </a>
                             </div><!-- .nk-header-brand -->
                             @if ( 1 == 2 )
@@ -48,6 +48,7 @@
                                             </ul>
                                         </div>
                                     </li><!-- .dropdown -->
+                                    @if ( 1 == 2 )
                                     <li class="dropdown notification-dropdown">
                                         <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-bs-toggle="dropdown">
                                             <div class="icon-status icon-status-info"><em class="icon ni ni-bell"></em></div>
@@ -120,6 +121,7 @@
                                             </div>
                                         </div>
                                     </li>
+                                    @endif
                                     <li class="dropdown user-dropdown">
                                         <a href="#" class="dropdown-toggle me-n1" data-bs-toggle="dropdown">
                                             <div class="user-toggle">
@@ -144,15 +146,17 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @if ( 1 == 2 )
                                             <div class="dropdown-inner">
                                                 <ul class="link-list">
                                                     <li><a href="html/user-profile-regular.html"><em class="icon ni ni-user-alt"></em><span>View Profile</span></a></li>
                                                     <li><a href="html/user-profile-setting.html"><em class="icon ni ni-setting-alt"></em><span>Account Setting</span></a></li>
                                                 </ul>
                                             </div>
+                                            @endif
                                             <div class="dropdown-inner">
                                                 <ul class="link-list">
-                                                    <li><a href="#" id="_logout"><em class="icon ni ni-signout"></em><span>Sign out</span></a></li>
+                                                    <li><a href="#" id="_logout"><em class="icon ni ni-signout"></em><span>{{ __( 'template.sign_out' ) }}</span></a></li>
                                                 </ul>
                                             </div>
                                         </div>

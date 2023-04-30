@@ -31,6 +31,10 @@ return [
     'view_x' => 'View :title',
     'save_changes' => 'Save Changes',
     'cancel' => 'Cancel',
+    'print' => 'Print',
+    'confirm' => 'Confirm',
+    'submit' => 'Submit',
+
 
     'new_x_created' => 'New :title Created.',
     'x_updated' => ':title Updated.',
@@ -41,6 +45,8 @@ return [
 
     'success' => 'Success',
     'error' => 'Error',
+
+    'sign_out' => 'Sign out',
 
     'drop_file_or_click_to_upload' => 'Drop file here or click to upload.',
     'drop_files_or_click_to_upload' => 'Drop files here or click to upload.',

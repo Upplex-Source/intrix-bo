@@ -3,6 +3,7 @@
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 use App\Http\Controllers\Admin\{
+    SettingController,
     FileController,
     DashboardController,
     AdministratorController,
@@ -18,21 +19,33 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
     // Protected Route
     Route::group( [ 'middleware' => [ 'auth:admin' ] ], function() {
 
+        Route::get( 'setup', [ SettingController::class, 'firstSetup' ] )->name( 'admin.first_setup' );
+        Route::post( 'settings/setup-mfa', [ SettingController::class, 'setupMFA' ] )->name( 'admin.setupMFA' );
+        Route::get( 'verify', [ AdministratorController::class, 'verify' ] )->name( 'admin.verify' );
+        Route::post( 'verify-code', [ AdministratorController::class, 'verifyCode' ] )->name( 'admin.verifyCode' );
+
+        Route::post( 'signout', [ AdministratorController::class, 'logout' ] )->name( 'admin.signout' );
+
         Route::group( [ 'middleware' => [ 'checkAdminIsMFA', 'checkMFA' ] ], function() {
 
-            Route::post( 'file/upload', [ FileController::class, 'upload' ] )->withoutMiddleware( [\App\Http\Middleware\VerifyCsrfToken::class] )->name( 'admin.file.upload' );
+            Route::get( '/', function() {
+                return redirect()->route( 'admin.dashboard' );
+            } )->name( 'admin.home' );
 
-            Route::post( 'signout', [ AdministratorController::class, 'logout' ] )->name( 'admin.signout' );
+            Route::post( 'file/upload', [ FileController::class, 'upload' ] )->withoutMiddleware( [\App\Http\Middleware\VerifyCsrfToken::class] )->name( 'admin.file.upload' );
 
             Route::prefix( 'dashboard' )->group( function() {
                 Route::get( '/', [ DashboardController::class, 'index' ] )->name( 'admin.dashboard' );
             } );
 
             Route::prefix( 'administrators' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:add administrators|view administrators|edit administrators|delete administrators' ] ], function() {
-                    Route::get( '/', [ AdministratorController::class, 'index' ] )->name( 'admin.module_parent.administrator.index' );
-
+                Route::group( [ 'middleware' => [ 'permission:add administrators' ] ], function() {
                     Route::get( 'add', [ AdministratorController::class, 'add' ] )->name( 'admin.administrator.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:view administrators' ] ], function() {
+                    Route::get( '/', [ AdministratorController::class, 'index' ] )->name( 'admin.module_parent.administrator.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit administrators' ] ], function() {
                     Route::get( 'edit', [ AdministratorController::class, 'edit' ] )->name( 'admin.administrator.edit' );
                 } );
 
@@ -43,9 +56,13 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
             } );
 
             Route::prefix( 'roles' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:add roles|view roles|edit roles|delete roles' ] ], function() {
-                    Route::get( '/', [ RoleController::class, 'index' ] )->name( 'admin.module_parent.role.index' );
+                Route::group( [ 'middleware' => [ 'permission:add roles' ] ], function() {
                     Route::get( 'add', [ RoleController::class, 'add' ] )->name( 'admin.role.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:view roles' ] ], function() {
+                    Route::get( '/', [ RoleController::class, 'index' ] )->name( 'admin.module_parent.role.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit roles' ] ], function() {
                     Route::get( 'edit', [ RoleController::class, 'edit' ] )->name( 'admin.role.edit' );
                 } );
 
@@ -56,7 +73,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
             } );
 
             Route::prefix( 'modules' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:add modules|view modules|edit modules|delete modules' ] ], function() {
+                Route::group( [ 'middleware' => [ 'permission:view modules' ] ], function() {
                     Route::get( '/', [ ModuleController::class, 'index' ] )->name( 'admin.module_parent.module.index' );
                 } );
 

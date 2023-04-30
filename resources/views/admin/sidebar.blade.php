@@ -2,9 +2,9 @@
             <div class="nk-sidebar nk-sidebar-fixed is-light " data-content="sidebarMenu">
                 <div class="nk-sidebar-element nk-sidebar-head">
                     <div class="nk-sidebar-brand">
-                        <a href="html/index.html" class="logo-link nk-sidebar-logo">
-                            <img class="logo-dark logo-img" src="{{ asset( 'admin/images/default.png' ) }}" srcset="{{ asset( 'admin/images/default.png' ) }}" alt="logo-dark">
-                            <img class="logo-small logo-img logo-img-small" src="{{ asset( 'admin/images/default-small.png' ) }}" srcset="{{ asset( 'admin/images/default-small2x.png' ) }} 2x" alt="logo-small">
+                        <a href="{{ route( 'admin.home' ) }}" class="logo-link nk-sidebar-logo">
+                            <img class="logo-dark logo-img" src="{{ asset( 'admin/images/settlelaah.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah.png' ) }}" alt="logo-dark">
+                            <img class="logo-small logo-img logo-img-small" src="{{ asset( 'admin/images/settlelaah-small.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah-small2x.png' ) }} 2x" alt="logo-small">
                         </a>
                     </div>
                     <div class="nk-menu-trigger me-n2">

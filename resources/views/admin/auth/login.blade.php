@@ -5,8 +5,8 @@
                 <div class="nk-content ">
                     <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
                         <div class="brand-logo pb-4 text-center">
-                            <a href="html/index.html" class="logo-link">
-                                <img class="logo-light logo-img logo-img-lg" src="./images/logo.png" srcset="./images/logo2x.png 2x" alt="logo">
+                            <a href="{{ route( 'admin.home' ) }}" class="logo-link">
+                                <img class="logo-dark logo-img logo-img-lg" src="{{ asset( 'admin/images/settlelaah.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah.png' ) }} 2x" alt="logo">
                             </a>
                         </div>
                         <div class="card" style="border-radius: 10px;">
@@ -59,21 +59,21 @@
                                 <div class="col-lg-6 order-lg-last">
                                     <ul class="nav nav-sm justify-content-center justify-content-lg-end">
                                         <li class="nav-item dropup">
-                                            <a class="dropdown-toggle dropdown-indicator has-indicator nav-link" data-bs-toggle="dropdown" data-offset="0,10"><span>English</span></a>
+                                            <a class="dropdown-toggle dropdown-indicator has-indicator nav-link" data-bs-toggle="dropdown" data-offset="0,10">
+                                                <span>{{ Config::get( 'languages' )[App::getLocale()] }}</span>
+                                            </a>
                                             <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
                                                 <ul class="language-list">
+@foreach ( Config::get( 'languages' ) as $lang => $language )
+@if ( $lang != App::getLocale() )
                                                     <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/english.png" alt="" class="language-flag">
-                                                            <span class="language-name">English</span>
+                                                        <a href="{{ route( 'admin.switchLanguage', [ 'lang' => $lang ] ) }}" class="language-item">
+                                                            <img src="{{ asset( 'admin/images/flags/' . $lang . '.svg' ) }}" alt="" class="language-flag">
+                                                            <span class="language-name">{{ $language }}</span>
                                                         </a>
                                                     </li>
-                                                    <li>
-                                                        <a href="#" class="language-item">
-                                                            <img src="./images/flags/spanish.png" alt="" class="language-flag">
-                                                            <span class="language-name">Español</span>
-                                                        </a>
-                                                    </li>
+@endif
+@endforeach
                                                 </ul>
                                             </div>
                                         </li>
@@ -81,7 +81,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="nk-block-content text-center text-lg-left">
-                                        <p class="text-soft">&copy; 2023 Dashlite. All Rights Reserved.</p>
+                                        <p class="text-soft">&copy; {{ date( 'Y' ) }} Settlelaah. All Rights Reserved.</p>
                                     </div>
                                 </div>
                             </div>
@@ -91,4 +91,6 @@
             </div>
         </div>
     </div>
+    <script src="{{ asset( 'admin/js/bundle.js' ) }}"></script>
+    <script src="{{ asset( 'admin/js/scripts.js' ) }}"></script>
 </body>

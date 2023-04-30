@@ -22,6 +22,8 @@ use Helper;
 
 use Carbon\Carbon;
 
+use PragmaRX\Google2FAQRCode\Google2FA;
+
 class AdministratorService
 {
     public static function allAdministrators( $request ) {
@@ -247,6 +249,51 @@ class AdministratorService
 
         return response()->json( [
             'message' => __( 'administrator.administrator_updated' ),
+        ] );
+    }
+
+    public static function logout() {
+
+        activity()
+            ->useLog( 'administrators' )
+            ->withProperties( [
+                'attributes' => [
+                    'logout' => date( 'Y-m-d H:i:s' ),
+                ]
+            ] )
+            ->log( 'admin logout' );
+    }
+
+    public static function verifyCode( $request ) {
+
+        $request->validate( [
+            'authentication_code' => [ 'bail', 'required', 'numeric', 'digits:6', function( $attribute, $value, $fail ) {
+
+                $google2fa = new Google2FA();
+
+                $secret = \Crypt::decryptString( auth()->user()->mfa_secret );
+                $valid = $google2fa->verifyKey( $secret, $value );
+                if ( !$valid ) {
+                    $fail( __( 'setting.invalid_code' ) );
+                }
+            } ],
+        ] );
+
+        session( [
+            'mfa-ed' => true
+        ] );
+
+        activity()
+            ->useLog( 'administrators' )
+            ->withProperties( [
+                'attributes' => [
+                    'new_login' => date( 'Y-m-d H:i:s' ),
+                ]
+            ] )
+            ->log( 'admin login' );
+
+        return response()->json( [
+            'status' => true,
         ] );
     }
 }
