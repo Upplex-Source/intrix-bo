@@ -206,9 +206,9 @@ class VendorService
 
             $file = FileManager::find( $request->photo );
             if ( $file ) {
-                $fileName = explode( '/', $file->path );
-                $target = 'vendors/' . $createVendor->id . '/' . $fileName[1];
-                Storage::disk( 'public' )->move( $file->path, $target );
+                $fileName = explode( '/', $file->file );
+                $target = 'raffles/' . $createRaffle->id . '/' . $fileName[1];
+                Storage::disk( 'public' )->move( $file->file, $target );
 
                 $createVendor->photo = $target;
                 $createVendor->save();

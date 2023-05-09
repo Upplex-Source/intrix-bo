@@ -25,8 +25,12 @@ class Helper {
         ];
     }
 
-    public static function numberFormat( $number, $decimal ) {
-        return number_format( $number, $decimal );
+    public static function numberFormat( $number, $decimal, $isRound = false ) {
+        if ( $isRound ) {
+            return number_format( $number, $decimal );    
+        } else {
+            return number_format( bcdiv( $number, 1, $decimal ), $decimal );
+        }
     }
 
     public static function curlGet( $endpoint, $header = array(

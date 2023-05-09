@@ -20,7 +20,7 @@ class FileService
     public static function upload( $request ) {
 
         $createFile = FileManager::create( [
-            'path' => $request->file( 'file' )->store( 'file-managers', [ 'disk' => 'public' ] ),
+            'file' => $request->file( 'file' )->store( 'file-managers', [ 'disk' => 'public' ] ),
         ] );
 
         return response()->json( [

@@ -15,7 +15,8 @@ class CreateFileManagersTable extends Migration
     {
         Schema::create('file_managers', function (Blueprint $table) {
             $table->id();
-            $table->string('path');
+            $table->string('file');
+            $table->tinyInteger('type')->default(1);
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });

@@ -12,7 +12,8 @@ class FileManager extends Model
     use HasFactory;
 
     protected $fillable = [
-        'path',
+        'file',
+        'type',
         'status',
     ];
 
