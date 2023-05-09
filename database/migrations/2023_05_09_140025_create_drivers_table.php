@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVendorsTable extends Migration
+class CreateDriversTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,12 @@ class CreateVendorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendors', function (Blueprint $table) {
+        Schema::create('drivers', function (Blueprint $table) {
             $table->id();
             $table->string('photo',150)->nullable();
             $table->string('name',100);
             $table->string('email',50);
             $table->string('phone_number',15);
-            $table->string('address')->nullable();
-            $table->string('website',100)->nullable();
-            $table->string('note')->nullable();
-            $table->tinyInteger('type')->default(1);
             $table->tinyInteger('status')->default(10);
             $table->timestamps();
         });
@@ -35,6 +31,6 @@ class CreateVendorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vendors');
+        Schema::dropIfExists('drivers');
     }
 }

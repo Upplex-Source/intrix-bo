@@ -29,8 +29,12 @@ return [
     'all_x' => '全部 (:title)',
     'created_date' => '创建日期',
     'registered_date' => '注册日期',
+    'photo' => '照片',
+    'yes' => '是',
+    'no' => '否',
     'action' => '操作',
 
+    'status' => '状态',
     'activate' => '启用',
     'activated' => '已启用',
     'suspend' => '停用',

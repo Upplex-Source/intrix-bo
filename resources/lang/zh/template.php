@@ -22,6 +22,7 @@ return [
     'users' => '用户',
     'orders' => '订单',
     'vendors' => '供应商',
+    'vehicles' => '载具',
 
     'loading' => '载入中...',
     'add' => '新增',

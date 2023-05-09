@@ -16,7 +16,7 @@ $vendor_edit = 'vendor_edit';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3">
-                    <label>{{ __( 'vendor.photo' ) }}</label>
+                    <label>{{ __( 'datatables.photo' ) }}</label>
                     <div class="dropzone mb-3" id="{{ $vendor_edit }}_photo" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
@@ -158,7 +158,7 @@ $vendor_edit = 'vendor_edit';
             fileID = '';
 
         $( ve + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.administrator.index' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.vendor.index' ) }}';
         } );
 
         $( ve + '_submit' ).click( function() {
@@ -170,7 +170,10 @@ $vendor_edit = 'vendor_edit';
             } );
 
             let formData = new FormData();
-            formData.append( 'photo', fileID );
+            formData.append( 'id', '{{ Helper::decode( request( 'id' ) ) }}' );
+            if ( fileID ) {
+                formData.append( 'photo', fileID );
+            }
             formData.append( 'name', $( ve + '_name' ).val() );
             formData.append( 'email', $( ve + '_email' ).val() );
             formData.append( 'phone_number', $( ve + '_phone_number' ).val() );
@@ -205,7 +208,7 @@ $vendor_edit = 'vendor_edit';
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
-                            $( ve + '_' + key ).addClass( 'is-invalid' ).next().text( value );
+                            $( ve + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
@@ -264,7 +267,7 @@ $vendor_edit = 'vendor_edit';
                             }
                         },
                         removedfile: function( file ) {
-                            console.log( file );
+                            fileID = null;
                             file.previewElement.remove();
                         },
                         success: function( file, response ) {

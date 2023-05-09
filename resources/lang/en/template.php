@@ -22,6 +22,7 @@ return [
     'users' => 'Users',
     'orders' => 'Orders',
     'vendors' => 'Vendors',
+    'vehicles' => 'Vehicles',
 
     'loading' => 'Loading...',
     'add' => 'Add',

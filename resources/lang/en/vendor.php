@@ -13,7 +13,6 @@ return [
     |
     */
 
-    'photo' => 'Photo',
     'name' => 'Name',
     'email' => 'Email',
     'phone_number' => 'Phone Number',

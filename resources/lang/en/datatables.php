@@ -29,8 +29,12 @@ return [
     'all_x' => 'All (:title)',
     'created_date' => 'Created Date',
     'registered_date' => 'Registered Date',
+    'photo' => 'Photo',
+    'yes' => 'Yes',
+    'no' => 'No',
     'action' => 'Action',
 
+    'status' => 'Status',
     'activate' => 'Activate',
     'activated' => 'Activated',
     'suspend' => 'Suspend',

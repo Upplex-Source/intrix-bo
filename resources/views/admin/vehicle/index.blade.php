@@ -1,7 +1,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.vendors' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.vehicles' ) }}</h3>
         </div><!-- .nk-block-head-content -->
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
@@ -9,7 +9,7 @@
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.vendor.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.vehicle.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -38,26 +38,45 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vendor.name' ) ] ),
-        'id' => 'name',
-        'title' => __( 'vendor.name' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.maker' ) ] ),
+        'id' => 'maker',
+        'title' => __( 'vehicle.maker' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vendor.email' ) ] ),
-        'id' => 'email',
-        'title' => __( 'vendor.email' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.model' ) ] ),
+        'id' => 'model',
+        'title' => __( 'vehicle.model' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vendor.phone_number' ) ] ),
-        'id' => 'phone_number',
-        'title' => __( 'vendor.phone_number' ),
-    ],
-    [
-        'type' => 'default',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.type' ) ] ),
         'id' => 'type',
-        'title' => __( 'vendor.type' ),
+        'title' => __( 'vehicle.type' ),
+    ],
+    [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.color' ) ] ),
+        'id' => 'color',
+        'title' => __( 'vehicle.color' ),
+    ],
+    [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.license_plate' ) ] ),
+        'id' => 'license_plate',
+        'title' => __( 'vehicle.license_plate' ),
+    ],
+    [
+        'type' => 'select',
+        'options' => $data['in_service'],
+        'id' => 'in_service',
+        'title' => __( 'vehicle.in_service' ),
+    ],
+    [
+        'type' => 'select',
+        'options' => $data['status'],
+        'id' => 'status',
+        'title' => __( 'datatables.status' ),
     ],
     [
         'type' => 'default',
@@ -67,7 +86,7 @@ $columns = [
 ]
 ?>
 
-<x-data-tables id="vendor_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="vehicle_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -79,9 +98,11 @@ window['{{ $column['id'] }}'] = '';
 @endif
 @endforeach
 
-var typeMapper = @json( $data['type_mapper'] ),
+var typeMapper = @json( $data['type'] ),
+    inServiceMapper = @json( $data['in_service'] ),
+    statusMapper = @json( $data['status'] ),
     dt_table,
-    dt_table_name = '#vendor_table',
+    dt_table_name = '#vehicle_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -95,11 +116,11 @@ var typeMapper = @json( $data['type_mapper'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.vendor.allVendors' ) }}',
+            url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'vendors',
+            dataSrc: 'vehicles',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
@@ -107,10 +128,13 @@ var typeMapper = @json( $data['type_mapper'] ),
             { data: null },
             { data: 'path' },
             { data: 'created_at' },
-            { data: 'name' },
-            { data: 'email' },
-            { data: 'phone_number' },
+            { data: 'maker' },
+            { data: 'model' },
             { data: 'type' },
+            { data: 'color' },
+            { data: 'license_plate' },
+            { data: 'in_service' },
+            { data: 'status' },
             { data: 'id' },
         ],
         columnDefs: [
@@ -141,6 +165,18 @@ var typeMapper = @json( $data['type_mapper'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "type" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return typeMapper[data];
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "in_service" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return inServiceMapper[data];
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return statusMapper[data];
                 },
             },
             {
@@ -192,7 +228,7 @@ var typeMapper = @json( $data['type_mapper'] ),
         } );
 
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.vendor.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.vehicle.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
     } );
 </script>

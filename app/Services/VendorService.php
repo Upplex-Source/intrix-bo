@@ -164,7 +164,7 @@ class VendorService
         ] );
 
         $attributeName = [
-            'photo' => __( 'vendor.photo' ),
+            'photo' => __( 'datatables.photo' ),
             'name' => __( 'vendor.name' ),
             'email' => __( 'vendor.email' ),
             'phone_number' => __( 'vendor.phone_number' ),
@@ -207,7 +207,7 @@ class VendorService
             $file = FileManager::find( $request->photo );
             if ( $file ) {
                 $fileName = explode( '/', $file->file );
-                $target = 'raffles/' . $createRaffle->id . '/' . $fileName[1];
+                $target = 'vendors/' . $createVendor->id . '/' . $fileName[1];
                 Storage::disk( 'public' )->move( $file->file, $target );
 
                 $createVendor->photo = $target;
@@ -248,7 +248,7 @@ class VendorService
         ] );
 
         $attributeName = [
-            'photo' => __( 'vendor.photo' ),
+            'photo' => __( 'datatables.photo' ),
             'name' => __( 'vendor.name' ),
             'email' => __( 'vendor.email' ),
             'phone_number' => __( 'vendor.phone_number' ),
@@ -271,6 +271,40 @@ class VendorService
         DB::beginTransaction();
 
         try {
+
+            $updateVendor = Vendor::find( $request->id );
+            $updateVendor->name = $request->name;
+            $updateVendor->email = $request->email;
+            $updateVendor->phone_number = $request->phone_number;
+            $updateVendor->website = $request->website;
+            $updateVendor->type = $request->type;
+            $updateVendor->address = json_encode( [
+                'address_1' => $request->address_1,
+                'address_2' => $request->address_2,
+                'city' => $request->city,
+                'postcode' => $request->postcode,
+                'state' => $request->state,
+            ] );
+            $updateVendor->note = $request->note;
+            $updateVendor->save();
+
+            if ( $request->photo ) {
+                $file = FileManager::find( $request->photo );
+                if ( $file ) {
+
+                    Storage::disk( 'public' )->delete( $updateVendor->photo );
+
+                    $fileName = explode( '/', $file->file );
+                    $target = 'vendors/' . $updateVendor->id . '/' . $fileName[1];
+                    Storage::disk( 'public' )->move( $file->file, $target );
+    
+                    $updateVendor->photo = $target;
+                    $updateVendor->save();
+    
+                    $file->status = 10;
+                    $file->save();
+                }
+            }
 
             DB::commit();
 

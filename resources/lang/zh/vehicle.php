@@ -13,17 +13,10 @@ return [
     |
     */
 
-    'name' => '名字',
-    'email' => '电子邮件',
-    'phone_number' => '电话号码',
-    'website' => '网站',
+    'maker' => '制造商',
+    'model' => '型号',
     'type' => '类型',
-    'parts' => '零件',
-    'address_detail' => '地址详情',
-    'address_1' => '地址1',
-    'address_2' => '地址2',
-    'city' => '城市',
-    'postcode' => '邮政编码',
-    'state' => '州属',
-    'note' => '注释',
+    'color' => '颜色',
+    'license_plate' => '车牌号码',
+    'in_service' => '正在保养',
 ];
