@@ -20,7 +20,7 @@ class CreateCountriesTable extends Migration
             $table->string('currency_symbol',10)->nullable();
             $table->string('iso_alpha2_code',2)->nullable();
             $table->string('iso_alpha3_code',3)->nullable();
-            $table->string('call_code',5);
+            $table->string('calling_code',5);
             $table->tinyInteger('status')->default(20);
             $table->timestamps();
         });
