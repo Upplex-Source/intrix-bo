@@ -1,11 +1,11 @@
 <?php
-$vehicle_edit = 'vehicle_edit';
+$driver_edit = 'driver_edit';
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.vehicles' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.drivers' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -14,9 +14,10 @@ $vehicle_edit = 'vehicle_edit';
     <div class="card-inner">
         <div class="row">
             <div class="col-md-12 col-lg-6">
+                <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3">
                     <label>{{ __( 'datatables.photo' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $vehicle_edit }}_photo" style="min-height: 0px;">
+                    <div class="dropzone mb-3" id="{{ $driver_edit }}_photo" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
@@ -24,58 +25,48 @@ $vehicle_edit = 'vehicle_edit';
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_maker" class="col-sm-5 col-form-label">{{ __( 'vehicle.maker' ) }}</label>
+                    <label for="{{ $driver_edit }}_name" class="col-sm-5 col-form-label">{{ __( 'driver.name' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_maker">
+                        <input type="text" class="form-control" id="{{ $driver_edit }}_name">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_model" class="col-sm-5 col-form-label">{{ __( 'vehicle.model' ) }}</label>
+                    <label for="{{ $driver_edit }}_email" class="col-sm-5 col-form-label">{{ __( 'driver.email' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_model">
+                        <input type="text" class="form-control" id="{{ $driver_edit }}_email">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_color" class="col-sm-5 col-form-label">{{ __( 'vehicle.color' ) }}</label>
+                    <label for="{{ $driver_edit }}_phone_number" class="col-sm-5 col-form-label">{{ __( 'driver.phone_number' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_color">
+                        <input type="text" class="form-control" id="{{ $driver_edit }}_phone_number">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_license_plate" class="col-sm-5 col-form-label">{{ __( 'vehicle.license_plate' ) }}</label>
+                    <label for="{{ $driver_edit }}_license_expiry_date" class="col-sm-5 col-form-label">{{ __( 'driver.license_expiry_date' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_license_plate">
+                        <input type="text" class="form-control" id="{{ $driver_edit }}_license_expiry_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_type" class="col-sm-5 col-form-label">{{ __( 'vehicle.type' ) }}</label>
+                    <label for="{{ $driver_edit }}_employment_type" class="col-sm-5 col-form-label">{{ __( 'driver.employment_type' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $vehicle_edit }}_type">
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.type' ) ] ) }}</option>
-                            <option value="1">{{ __( 'vehicle.parts' ) }}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_in_service" class="col-sm-5 col-form-label">{{ __( 'vehicle.in_service' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $vehicle_edit }}_in_service">
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.in_service' ) ] ) }}</option>
-                            <option value="0">{{ __( 'datatables.no' ) }}</option>
-                            <option value="1">{{ __( 'datatables.yes' ) }}</option>
+                        <select class="form-select" id="{{ $driver_edit }}_employment_type">
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'driver.employment_type' ) ] ) }}</option>
+                            <option value="1">{{ __( 'driver.full_time' ) }}</option>
+                            <option value="2">{{ __( 'driver.part_time' ) }}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="text-end">
-                    <button id="{{ $vehicle_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $driver_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $vehicle_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $driver_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -84,26 +75,19 @@ $vehicle_edit = 'vehicle_edit';
 
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
-        
-        getVehicle();
 
-        let ve = '#{{ $vehicle_edit }}',
+        getDriver();
+
+        let de = '#{{ $driver_edit }}',
             fileID = '';
 
-        $( ve + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.vendor.index' ) }}';
+        $( de + '_license_expiry_date' ).flatpickr();
+
+        $( de + '_cancel' ).click( function() {
+            window.location.href = '{{ route( 'admin.module_parent.driver.index' ) }}';
         } );
 
-        $( ve + '_submit' ).click( function() {
-
-            resetInputValidation();
-
-            $( 'body' ).loading( {
-                message: '{{ __( 'template.loading' ) }}'
-            } );
-        } );
-
-        $( ve + '_submit' ).click( function() {
+        $( de + '_submit' ).click( function() {
 
             resetInputValidation();
 
@@ -116,16 +100,15 @@ $vehicle_edit = 'vehicle_edit';
             if ( fileID ) {
                 formData.append( 'photo', fileID );
             }
-            formData.append( 'maker', $( ve + '_maker' ).val() );
-            formData.append( 'model', $( ve + '_model' ).val() );
-            formData.append( 'color', $( ve + '_color' ).val() );
-            formData.append( 'license_plate', $( ve + '_license_plate' ).val() );
-            formData.append( 'type', $( ve + '_type' ).val() );
-            formData.append( 'in_service', $( ve + '_in_service' ).val() );
+            formData.append( 'name', $( de + '_name' ).val() );
+            formData.append( 'email', $( de + '_email' ).val() );
+            formData.append( 'phone_number', $( de + '_phone_number' ).val() );
+            formData.append( 'license_expiry_date', $( de + '_license_expiry_date' ).val() );
+            formData.append( 'employment_type', $( de + '_employment_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.vehicle.updateVehicle' ) }}',
+                url: '{{ route( 'admin.driver.updateDriver' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -136,7 +119,7 @@ $vehicle_edit = 'vehicle_edit';
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.vehicle.index' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.driver.index' ) }}';
                     } );
                 },
                 error: function( error ) {
@@ -145,7 +128,7 @@ $vehicle_edit = 'vehicle_edit';
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
-                            $( ve + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            $( de + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
@@ -155,16 +138,16 @@ $vehicle_edit = 'vehicle_edit';
             } );
         } );
 
-        function getVehicle() {
-            
+        function getDriver() {
+
             Dropzone.autoDiscover = false;
 
             $( 'body' ).loading( {
                 message: '{{ __( 'template.loading' ) }}'
             } );
-
+            
             $.ajax( {
-                url: '{{ route( 'admin.vehicle.oneVehicle' ) }}',
+                url: '{{ route( 'admin.driver.oneDriver' ) }}',
                 type: 'POST',
                 data: {
                     'id': '{{ request( 'id' ) }}',
@@ -172,18 +155,17 @@ $vehicle_edit = 'vehicle_edit';
                 },
                 success: function( response ) {
 
-                    $( ve + '_maker' ).val( response.maker );
-                    $( ve + '_model' ).val( response.model );
-                    $( ve + '_color' ).val( response.color );
-                    $( ve + '_license_plate' ).val( response.license_plate );
-                    $( ve + '_type' ).val( response.type );
-                    $( ve + '_in_service' ).val( response.in_service );
+                    $( de + '_name' ).val( response.name );
+                    $( de + '_email' ).val( response.email );
+                    $( de + '_phone_number' ).val( response.phone_number );
+                    $( de + '_license_expiry_date' ).val( response.display_license_expiry_date );
+                    $( de + '_employment_type' ).val( response.employment_type );
 
                     fileID = response.photo;
 
                     let imagePath = response.path;
 
-                    const dropzone = new Dropzone( ve + '_photo', {
+                    const dropzone = new Dropzone( de + '_photo', {
                         url: '{{ route( 'admin.file.upload' ) }}',
                         maxFiles: 1,
                         acceptedFiles: 'image/jpg,image/jpeg,image/png',
@@ -201,6 +183,8 @@ $vehicle_edit = 'vehicle_edit';
                             file.previewElement.remove();
                         },
                         success: function( file, response ) {
+                            console.log( file );
+                            console.log( response );
                             if ( response.status == 200 )  {
                                 fileID = response.data.id;
                             }

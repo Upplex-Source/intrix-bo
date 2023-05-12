@@ -20,6 +20,9 @@ class CreateDriversTable extends Migration
             $table->string('email',50);
             $table->string('phone_number',15);
             $table->tinyInteger('status')->default(10);
+            $table->tinyInteger('employment_type')->default(1)->comment('1:fulltime 2:parttime');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('license_expiry_date')->nullable();
             $table->timestamps();
         });
     }

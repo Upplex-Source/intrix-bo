@@ -1,7 +1,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.vehicles' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.drivers' ) }}</h3>
         </div><!-- .nk-block-head-content -->
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
@@ -9,7 +9,7 @@
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.vehicle.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.driver.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -38,39 +38,27 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.maker' ) ] ),
-        'id' => 'maker',
-        'title' => __( 'vehicle.maker' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'driver.name' ) ] ),
+        'id' => 'name',
+        'title' => __( 'driver.name' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.model' ) ] ),
-        'id' => 'model',
-        'title' => __( 'vehicle.model' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'driver.phone_number' ) ] ),
+        'id' => 'phone_number',
+        'title' => __( 'driver.phone_number' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.type' ) ] ),
-        'id' => 'type',
-        'title' => __( 'vehicle.type' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.color' ) ] ),
-        'id' => 'color',
-        'title' => __( 'vehicle.color' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.license_plate' ) ] ),
-        'id' => 'license_plate',
-        'title' => __( 'vehicle.license_plate' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'driver.license_expiry_date' ) ] ),
+        'id' => 'license_expiry_date',
+        'title' => __( 'driver.license_expiry_date' ),
     ],
     [
         'type' => 'select',
-        'options' => $data['in_service'],
-        'id' => 'in_service',
-        'title' => __( 'vehicle.in_service' ),
+        'options' => $data['employment_type'],
+        'id' => 'employment_type',
+        'title' => __( 'driver.employment_type' ),
     ],
     [
         'type' => 'select',
@@ -86,7 +74,7 @@ $columns = [
 ];
 ?>
 
-<x-data-tables id="vehicle_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="driver_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -98,11 +86,10 @@ window['{{ $column['id'] }}'] = '';
 @endif
 @endforeach
 
-var typeMapper = @json( $data['type'] ),
-    inServiceMapper = @json( $data['in_service'] ),
+var employmentTypeMapper = @json( $data['employment_type'] ),
     statusMapper = @json( $data['status'] ),
     dt_table,
-    dt_table_name = '#vehicle_table',
+    dt_table_name = '#driver_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -116,11 +103,11 @@ var typeMapper = @json( $data['type'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
+            url: '{{ route( 'admin.driver.allDrivers' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'vehicles',
+            dataSrc: 'drivers',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
@@ -128,12 +115,10 @@ var typeMapper = @json( $data['type'] ),
             { data: null },
             { data: 'path' },
             { data: 'created_at' },
-            { data: 'maker' },
-            { data: 'model' },
-            { data: 'type' },
-            { data: 'color' },
-            { data: 'license_plate' },
-            { data: 'in_service' },
+            { data: 'name' },
+            { data: 'phone_number' },
+            { data: 'display_license_expiry_date' },
+            { data: 'employment_type' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -162,15 +147,16 @@ var typeMapper = @json( $data['type'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "type" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "license_expiry_date" ) }}' ),
+                width: '10%',
                 render: function( data, type, row, meta ) {
-                    return typeMapper[data];
+                    return data;
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "in_service" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "employment_type" ) }}' ),
                 render: function( data, type, row, meta ) {
-                    return inServiceMapper[data];
+                    return employmentTypeMapper[data];
                 },
             },
             {
@@ -186,14 +172,14 @@ var typeMapper = @json( $data['type'] ),
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit vehicles', 'delete vehicles' ] )
+                    @canany( [ 'edit drivers', 'delete drivers' ] )
                     let edit, status = '';
 
-                    @can( 'edit vehicles' )
+                    @can( 'edit drivers' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'delete vehicles' )
+                    @can( 'delete drivers' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
@@ -233,14 +219,22 @@ var typeMapper = @json( $data['type'] ),
             }
         } );
 
+        $( '#license_expiry_date' ).flatpickr( {
+            disableMobile: true,
+            onClose: function( selected, dateStr, instance ) {
+                window[$( instance.element ).data('id')] = $( instance.element ).val();
+                dt_table.draw();
+            }
+        } );
+
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.vehicle.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.driver.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
 
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.vehicle.updateVehicleStatus' ) }}',
+                url: '{{ route( 'admin.driver.updateDriverStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),

@@ -21,8 +21,11 @@ return [
     'operations' => '运营管理',
     'users' => '用户',
     'orders' => '订单',
+    'drivers' => '司机',
     'vendors' => '供应商',
     'vehicles' => '载具',
+    'vehicle_list' => '载具列表',
+    'vehicle_inspections' => '载具检查',
 
     'loading' => '载入中...',
     'add' => '新增',

@@ -1,7 +1,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.vehicles' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.vehicle_inspections' ) }}</h3>
         </div><!-- .nk-block-head-content -->
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
@@ -9,7 +9,7 @@
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.vehicle.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.vehicle_inspection.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -26,57 +26,15 @@ $columns = [
         'title' => 'No.',
     ],
     [
-        'type' => 'default',
-        'id' => 'photo',
-        'title' => __( 'datatables.photo' ),
-    ],
-    [
         'type' => 'date',
         'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
         'id' => 'created_date',
         'title' => __( 'datatables.created_date' ),
     ],
     [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.maker' ) ] ),
-        'id' => 'maker',
-        'title' => __( 'vehicle.maker' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.model' ) ] ),
-        'id' => 'model',
-        'title' => __( 'vehicle.model' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.type' ) ] ),
-        'id' => 'type',
-        'title' => __( 'vehicle.type' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.color' ) ] ),
-        'id' => 'color',
-        'title' => __( 'vehicle.color' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.license_plate' ) ] ),
-        'id' => 'license_plate',
-        'title' => __( 'vehicle.license_plate' ),
-    ],
-    [
-        'type' => 'select',
-        'options' => $data['in_service'],
-        'id' => 'in_service',
-        'title' => __( 'vehicle.in_service' ),
-    ],
-    [
-        'type' => 'select',
-        'options' => $data['status'],
-        'id' => 'status',
-        'title' => __( 'datatables.status' ),
+        'type' => 'default',
+        'id' => 'vehicle',
+        'title' => __( 'inspection.vehicle' ),
     ],
     [
         'type' => 'default',
@@ -86,7 +44,7 @@ $columns = [
 ];
 ?>
 
-<x-data-tables id="vehicle_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="inspection_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -98,11 +56,8 @@ window['{{ $column['id'] }}'] = '';
 @endif
 @endforeach
 
-var typeMapper = @json( $data['type'] ),
-    inServiceMapper = @json( $data['in_service'] ),
-    statusMapper = @json( $data['status'] ),
-    dt_table,
-    dt_table_name = '#vehicle_table',
+var dt_table,
+    dt_table_name = '#inspection_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -116,25 +71,17 @@ var typeMapper = @json( $data['type'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
+            url: '{{ route( 'admin.vehicle_inspection.allInspections' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'vehicles',
+            dataSrc: 'inspections',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
         columns: [
             { data: null },
-            { data: 'path' },
             { data: 'created_at' },
-            { data: 'maker' },
-            { data: 'model' },
-            { data: 'type' },
-            { data: 'color' },
-            { data: 'license_plate' },
-            { data: 'in_service' },
-            { data: 'status' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [
@@ -147,36 +94,10 @@ var typeMapper = @json( $data['type'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "photo" ) }}' ),
-                orderable: false,
-                width: '75px',
-                render: function( data, type, row, meta ) {
-                    return '<img src="' + ( data ? data : '{{ asset( 'admin/images/default-small.png' ) }}' ) + '" width="75px" />';
-                },
-            },
-            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "created_date" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "type" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return typeMapper[data];
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "in_service" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return inServiceMapper[data];
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return statusMapper[data];
                 },
             },
             {
@@ -186,17 +107,11 @@ var typeMapper = @json( $data['type'] ),
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit vehicles', 'delete vehicles' ] )
+                    @canany( [ 'edit vehicle_inspections', 'delete vehicle_inspections' ] )
                     let edit, status = '';
 
-                    @can( 'edit vehicles' )
+                    @can( 'edit vehicle_inspections' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
-                    @endcan
-
-                    @can( 'delete vehicles' )
-                    status = row['status'] == 10 ? 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
                     @endcan
                     
                     let html = 
@@ -235,24 +150,6 @@ var typeMapper = @json( $data['type'] ),
 
         $( document ).on( 'click', '.dt-edit', function() {
             window.location.href = '{{ route( 'admin.vehicle.edit' ) }}?id=' + $( this ).data( 'id' );
-        } );
-
-        $( document ).on( 'click', '.dt-status', function() {
-
-            $.ajax( {
-                url: '{{ route( 'admin.vehicle.updateVehicleStatus' ) }}',
-                type: 'POST',
-                data: {
-                    'id': $( this ).data( 'id' ),
-                    'status': $( this ).data( 'status' ),
-                    '_token': '{{ csrf_token() }}'
-                },
-                success: function( response ) {
-                    dt_table.draw( false );
-                    $( '#modal_success .caption-text' ).html( response.message );
-                    modalSuccess.toggle();
-                },
-            } );
         } );
     } );
 </script>

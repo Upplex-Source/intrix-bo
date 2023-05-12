@@ -64,25 +64,25 @@ $columns = [
                         <div class="mb-3 row">
                             <label for="{{ $audit_view }}_ip_address" class="col-sm-4 col-form-label">{{ __( 'audit.ip_address' ) }}</label>
                             <div class="col-sm-8">
-                                <input type="text" onfocus="this.blur()" class="form-control form-control-sm form-control-plaintext" id="{{ $audit_view }}_ip_address">
+                                <input type="text" class="form-control-plaintext" id="{{ $audit_view }}_ip_address">
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label for="{{ $audit_view }}_ip_address" class="col-sm-4 col-form-label">{{ __( 'audit.browser' ) }}</label>
                             <div class="col-sm-8">
-                                <input type="text" onfocus="this.blur()" class="form-control form-control-sm form-control-plaintext" id="{{ $audit_view }}_browser">
+                                <input type="text" class="form-control-plaintext" id="{{ $audit_view }}_browser">
                             </div>
                         </div>
                         <div class="row">
                             <label for="{{ $audit_view }}_ip_address" class="col-sm-4 col-form-label">{{ __( 'audit.operating_system' ) }}</label>
                             <div class="col-sm-8">
-                                <input type="text" onfocus="this.blur()" class="form-control form-control-sm form-control-plaintext" id="{{ $audit_view }}_operating_system">
+                                <input type="text" class="form-control-plaintext" id="{{ $audit_view }}_operating_system">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-    </div>
+        </div>
         <div class="card">
             <div class="card-body">
                 <div class="row">
@@ -102,7 +102,7 @@ $columns = [
             </div>
         </div>
         
-        <div class="offcanvas-button-group">
+        <div class="mt-3">
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas" aria-label="Close" id="offcanvas_close">{{ __( 'template.cancel' ) }}</button>
         </div>
     </div>

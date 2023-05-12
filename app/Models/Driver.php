@@ -22,7 +22,18 @@ class Driver extends Model
         'email',
         'phone_number',
         'status',
+        'employment_type',
+        'start_date',
+        'license_expiry_date',
     ];
+
+    public function getPathAttribute() {
+        return $this->attributes['photo'] ? asset( 'storage/' . $this->attributes['photo'] ) : null;
+    }
+
+    public function getDisplayLicenseExpiryDateAttribute() {
+        return date( 'Y-m-d', strtotime( $this->attributes['license_expiry_date'] ) );
+    }
 
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
@@ -38,6 +49,9 @@ class Driver extends Model
         'email',
         'phone_number',
         'status',
+        'employment_type',
+        'start_date',
+        'license_expiry_date',
     ];
 
     protected static $logName = 'drivers';

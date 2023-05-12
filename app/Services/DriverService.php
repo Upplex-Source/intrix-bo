@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\{
 
 use App\Models\{
     FileManager,
-    Vendor,
+    Driver,
 };
 
 use App\Rules\CheckASCIICharacter;
@@ -20,33 +20,33 @@ use Helper;
 
 use Carbon\Carbon;
 
-class VendorService
+class DriverService
 {
-    public static function allVendors( $request ) {
+    public static function allDrivers( $request ) {
 
-        $vendor = Vendor::select( 'vendors.*' );
+        $driver = Driver::select( 'drivers.*' );
 
-        $filterObject = self::filter( $request, $vendor );
-        $vendor = $filterObject['model'];
+        $filterObject = self::filter( $request, $driver );
+        $driver = $filterObject['model'];
         $filter = $filterObject['filter'];
 
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 2:
-                    $vendor->orderBy( 'created_at', $dir );
+                    $driver->orderBy( 'created_at', $dir );
                     break;
                 case 3:
-                    $vendor->orderBy( 'name', $dir );
+                    $driver->orderBy( 'name', $dir );
                     break;
                 case 4:
-                    $vendor->orderBy( 'email', $dir );
+                    $driver->orderBy( 'phone_number', $dir );
                     break;
                 case 5:
-                    $vendor->orderBy( 'phone_number', $dir );
+                    $driver->orderBy( 'license_expiry_date', $dir );
                     break;
                 case 6:
-                    $vendor->orderBy( 'type', $dir );
+                    $driver->orderBy( 'employment_type', $dir );
                     break;
                 case 7:
                     $vendor->orderBy( 'status', $dir );
@@ -54,31 +54,32 @@ class VendorService
             }
         }
 
-        $vendorCount = $vendor->count();
+        $driverCount = $driver->count();
 
         $limit = $request->length;
         $offset = $request->start;
 
-        $vendors = $vendor->skip( $offset )->take( $limit )->get();
+        $drivers = $driver->skip( $offset )->take( $limit )->get();
 
-        foreach ( $vendors as $vendor ) {
-            $vendor->append( [
+        foreach ( $drivers as $driver ) {
+            $driver->append( [
                 'path',
             ] );
         }
 
-        if ( $vendors ) {
-            $vendors->append( [
+        if ( $drivers ) {
+            $drivers->append( [
+                'display_license_expiry_date',
                 'encrypted_id',
             ] );
         }
 
-        $totalRecord = Vendor::count();
+        $totalRecord = Driver::count();
 
         $data = [
-            'vendors' => $vendors,
+            'drivers' => $drivers,
             'draw' => $request->draw,
-            'recordsFiltered' => $filter ? $vendorCount : $totalRecord,
+            'recordsFiltered' => $filter ? $driverCount : $totalRecord,
             'recordsTotal' => $totalRecord,
         ];
 
@@ -99,7 +100,7 @@ class VendorService
                 $endDate = explode( '-', $dates[1] );
                 $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'vendors.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'drivers.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             } else {
 
                 $dates = explode( '-', $request->registered_date );
@@ -107,7 +108,7 @@ class VendorService
                 $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'vendors.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'drivers.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             }
             $filter = true;
         }
@@ -117,13 +118,18 @@ class VendorService
             $filter = true;
         }
 
-        if ( !empty( $request->email ) ) {
-            $model->where( 'email', $request->email );
+        if ( !empty( $request->phone_number ) ) {
+            $model->where( 'phone_number', $request->phone_number );
             $filter = true;
         }
 
-        if ( !empty( $request->phone_number ) ) {
-            $model->where( 'phone_number', $request->phone_number );
+        if ( !empty( $request->license_expiry_date ) ) {
+            $model->where( 'license_expiry_date', $request->license_expiry_date );
+            $filter = true;
+        }
+
+        if ( !empty( $request->employment_type ) ) {
+            $model->where( 'employment_type', $request->employment_type );
             $filter = true;
         }
 
@@ -138,52 +144,43 @@ class VendorService
         ];
     }
 
-    public static function oneVendor( $request ) {
+    public static function oneDriver( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $vendor = Vendor::find( $request->id );
+        $driver = Driver::find( $request->id );
 
-        if( $vendor ) {
-            $vendor->append( [
-                'address_object',
+        if( $driver ) {
+            $driver->append( [
                 'path',
+                'display_license_expiry_date',
                 'encrypted_id',
             ] );
         }
 
-        return response()->json( $vendor );
+        return response()->json( $driver );
     }
 
-    public static function createVendor( $request ) {
+    public static function createDriver( $request ) {
 
         $validator = Validator::make( $request->all(), [
             'photo' => [ 'required' ],
             'name' => [ 'required' ],
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
-            'type' => [ 'required' ],
-            'address_1' => [ 'required' ],
-            'city' => [ 'required' ],
-            'postcode' => [ 'required' ],
-            'state' => [ 'required' ],
+            'license_expiry_date' => [ 'required' ],
+            'employment_type' => [ 'required', 'in:1,2' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'vendor.name' ),
-            'email' => __( 'vendor.email' ),
-            'phone_number' => __( 'vendor.phone_number' ),
-            'website' => __( 'vendor.website' ),
-            'type' => __( 'vendor.type' ),
-            'address_1' => __( 'vendor.address_1' ),
-            'address_2' => __( 'vendor.address_2' ),
-            'city' => __( 'vendor.city' ),
-            'postcode' => __( 'vendor.postcode' ),
-            'state' => __( 'vendor.state' ),
-            'note' => __( 'vendor.note' ),
+            'name' => __( 'driver.name' ),
+            'email' => __( 'driver.email' ),
+            'phone_number' => __( 'driver.phone_number' ),
+            'license_expiry_date' => __( 'driver.license_expiry_date' ),
+            'employment_type' => __( 'driver.employment_type' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -195,32 +192,23 @@ class VendorService
         DB::beginTransaction();
 
         try {
-            
-            $createVendor = Vendor::create( [
+
+            $createDriver = Driver::create( [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
-                'website' => $request->website,
-                'type' => $request->type,
-                'address' => json_encode( [
-                    'address_1' => $request->address_1,
-                    'address_2' => $request->address_2,
-                    'city' => $request->city,
-                    'postcode' => $request->postcode,
-                    'state' => $request->state,
-                ] ),
-                'note' => $request->note,
-                'status' => 10,
+                'license_expiry_date' => $request->license_expiry_date,
+                'employment_type' => $request->employment_type,
             ] );
 
             $file = FileManager::find( $request->photo );
             if ( $file ) {
                 $fileName = explode( '/', $file->file );
-                $target = 'vendors/' . $createVendor->id . '/' . $fileName[1];
+                $target = 'drivers/' . $createDriver->id . '/' . $fileName[1];
                 Storage::disk( 'public' )->move( $file->file, $target );
 
-                $createVendor->photo = $target;
-                $createVendor->save();
+                $createDriver->photo = $target;
+                $createDriver->save();
 
                 $file->status = 10;
                 $file->save();
@@ -238,11 +226,11 @@ class VendorService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.vendors' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.drivers' ) ) ] ),
         ] );
     }
 
-    public static function updateVendor( $request ) {
+    public static function updateDriver( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -253,26 +241,17 @@ class VendorService
             'name' => [ 'required' ],
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
-            'type' => [ 'required' ],
-            'address_1' => [ 'required' ],
-            'city' => [ 'required' ],
-            'postcode' => [ 'required' ],
-            'state' => [ 'required' ],
+            'license_expiry_date' => [ 'required' ],
+            'employment_type' => [ 'required', 'in:1,2' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'vendor.name' ),
-            'email' => __( 'vendor.email' ),
-            'phone_number' => __( 'vendor.phone_number' ),
-            'website' => __( 'vendor.website' ),
-            'type' => __( 'vendor.type' ),
-            'address_1' => __( 'vendor.address_1' ),
-            'address_2' => __( 'vendor.address_2' ),
-            'city' => __( 'vendor.city' ),
-            'postcode' => __( 'vendor.postcode' ),
-            'state' => __( 'vendor.state' ),
-            'note' => __( 'vendor.note' ),
+            'name' => __( 'driver.name' ),
+            'email' => __( 'driver.email' ),
+            'phone_number' => __( 'driver.phone_number' ),
+            'license_expiry_date' => __( 'driver.license_expiry_date' ),
+            'employment_type' => __( 'driver.employment_type' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -285,34 +264,26 @@ class VendorService
 
         try {
 
-            $updateVendor = Vendor::find( $request->id );
-            $updateVendor->name = $request->name;
-            $updateVendor->email = $request->email;
-            $updateVendor->phone_number = $request->phone_number;
-            $updateVendor->website = $request->website;
-            $updateVendor->type = $request->type;
-            $updateVendor->address = json_encode( [
-                'address_1' => $request->address_1,
-                'address_2' => $request->address_2,
-                'city' => $request->city,
-                'postcode' => $request->postcode,
-                'state' => $request->state,
-            ] );
-            $updateVendor->note = $request->note;
-            $updateVendor->save();
+            $updateDriver = Driver::find( $request->id );
+            $updateDriver->name = $request->name;
+            $updateDriver->email = $request->email;
+            $updateDriver->phone_number = $request->phone_number;
+            $updateDriver->license_expiry_date = $request->license_expiry_date;
+            $updateDriver->employment_type = $request->employment_type;
+            $updateDriver->save();
 
             if ( $request->photo ) {
                 $file = FileManager::find( $request->photo );
                 if ( $file ) {
 
-                    Storage::disk( 'public' )->delete( $updateVendor->photo );
+                    Storage::disk( 'public' )->delete( $updateDriver->photo );
 
                     $fileName = explode( '/', $file->file );
-                    $target = 'vendors/' . $updateVendor->id . '/' . $fileName[1];
+                    $target = 'drivers/' . $updateDriver->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $file->file, $target );
     
-                    $updateVendor->photo = $target;
-                    $updateVendor->save();
+                    $updateDriver->photo = $target;
+                    $updateDriver->save();
     
                     $file->status = 10;
                     $file->save();
@@ -331,22 +302,22 @@ class VendorService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.vendors' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.drivers' ) ) ] ),
         ] );
     }
 
-    public static function updateVendorStatus( $request ) {
+    public static function updateDriverStatus( $request ) {
         
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $updateVendor = Vendor::find( $request->id );
-        $updateVendor->status = $request->status;
-        $updateVendor->save();
+        $updateDriver = Driver::find( $request->id );
+        $updateDriver->status = $request->status;
+        $updateDriver->save();
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.vendors' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.drivers' ) ) ] ),
         ] );
     }
 }

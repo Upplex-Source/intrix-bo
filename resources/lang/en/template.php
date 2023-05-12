@@ -21,8 +21,11 @@ return [
     'operations' => 'Operations',
     'users' => 'Users',
     'orders' => 'Orders',
+    'drivers' => 'Drivers',
     'vendors' => 'Vendors',
     'vehicles' => 'Vehicles',
+    'vehicle_list' => 'Vehicle List',
+    'vehicle_inspections' => 'Vehicle Inspections',
 
     'loading' => 'Loading...',
     'add' => 'Add',

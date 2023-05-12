@@ -3,6 +3,7 @@
         <div class="nk-block-head-content">
             <h3 class="nk-block-title page-title">{{ __( 'template.roles' ) }}</h3>
         </div><!-- .nk-block-head-content -->
+        @can( 'add roles' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
                 <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
@@ -15,6 +16,7 @@
                 </div>
             </div>
         </div><!-- .nk-block-head-content -->
+        @endcan
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
@@ -147,10 +149,6 @@ $columns = [
 
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.role.edit' ) }}?id=' + $( this ).data( 'id' );
-        } );
-
         $( '#created_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
@@ -158,6 +156,10 @@ $columns = [
                 window[$( instance.element ).data('id')] = $( instance.element ).val();
                 dt_table.draw();
             }
+        } );
+
+        $( document ).on( 'click', '.dt-edit', function() {
+            window.location.href = '{{ route( 'admin.role.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
     } );
 </script>

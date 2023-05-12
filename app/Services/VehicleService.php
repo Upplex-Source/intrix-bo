@@ -249,6 +249,10 @@ class VehicleService
 
     public static function updateVehicle( $request ) {
 
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
         $validator = Validator::make( $request->all(), [
             'photo' => [ 'required' ],
             'maker' => [ 'required' ],
@@ -316,6 +320,21 @@ class VehicleService
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
             ], 500 );
         }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.vehicles' ) ) ] ),
+        ] );
+    }
+
+    public static function updateVehicleStatus( $request ) {
+        
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $updateVehicle = Vehicle::find( $request->id );
+        $updateVehicle->status = $request->status;
+        $updateVehicle->save();
 
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.vehicles' ) ) ] ),

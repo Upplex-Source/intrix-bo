@@ -111,4 +111,9 @@ class VehicleController extends Controller
 
         return VehicleService::updateVehicle( $request );
     }
+
+    public function updateVehicleStatus( Request $request ) {
+
+        return VehicleService::updateVehicleStatus( $request );
+    }
 }

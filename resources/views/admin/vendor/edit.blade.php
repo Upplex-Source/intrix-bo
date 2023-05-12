@@ -170,7 +170,7 @@ $vendor_edit = 'vendor_edit';
             } );
 
             let formData = new FormData();
-            formData.append( 'id', '{{ Helper::decode( request( 'id' ) ) }}' );
+            formData.append( 'id', '{{ request( 'id' ) }}' );
             if ( fileID ) {
                 formData.append( 'photo', fileID );
             }

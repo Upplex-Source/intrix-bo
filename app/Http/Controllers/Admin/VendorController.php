@@ -30,6 +30,10 @@ class VendorController extends Controller
         $this->data['data']['type_mapper'] = [
             '1' => __( 'vendor.parts' ),
         ];
+        $this->data['data']['status'] = [
+            '10' => __( 'datatables.activated' ),
+            '20' => __( 'datatables.suspended' ),
+        ];
 
         return view( 'admin.main' )->with( $this->data );
     }
@@ -102,5 +106,10 @@ class VendorController extends Controller
     public function updateVendor( Request $request ) {
 
         return VendorService::updateVendor( $request );
+    }
+
+    public function updateVendorStatus( Request $request ) {
+
+        return VendorService::updateVendorStatus( $request );
     }
 }

@@ -91,6 +91,14 @@
                                     </a>
                                 </li>
                                 @endif
+                                @can( 'view drivers' )
+                                <li class="nk-menu-item">
+                                    <a href="{{ route( 'admin.module_parent.driver.index' ) }}" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-user"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.drivers' ) }}</span>
+                                    </a>
+                                </li>
+                                @endcan
                                 @can( 'view vendors' )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.vendor.index' ) }}" class="nk-menu-link">
@@ -100,11 +108,27 @@
                                 </li>
                                 @endcan
                                 @can( 'view vehicles' )
+                                @if ( 1 == 2 )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.vehicle.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-truck"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.vehicles' ) }}</span>
                                     </a>
+                                </li>
+                                @endif
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-truck"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.vehicles' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.vehicle.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.vehicle_list' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.vehicle_inspection.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.vehicle_inspections' ) }}</span></a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 @endcan
                             </ul><!-- .nk-menu -->

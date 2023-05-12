@@ -60,11 +60,17 @@ $columns = [
         'title' => __( 'vendor.type' ),
     ],
     [
+        'type' => 'select',
+        'options' => $data['status'],
+        'id' => 'status',
+        'title' => __( 'datatables.status' ),
+    ],
+    [
         'type' => 'default',
         'id' => 'dt_action',
         'title' => __( 'datatables.action' ),
     ],
-]
+];
 ?>
 
 <x-data-tables id="vendor_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
@@ -80,6 +86,7 @@ window['{{ $column['id'] }}'] = '';
 @endforeach
 
 var typeMapper = @json( $data['type_mapper'] ),
+    statusMapper = @json( $data['status'] ),
     dt_table,
     dt_table_name = '#vendor_table',
     dt_table_config = {
@@ -111,7 +118,8 @@ var typeMapper = @json( $data['type_mapper'] ),
             { data: 'email' },
             { data: 'phone_number' },
             { data: 'type' },
-            { data: 'id' },
+            { data: 'status' },
+            { data: 'encrypted_id' },
         ],
         columnDefs: [
             {
@@ -144,17 +152,29 @@ var typeMapper = @json( $data['type_mapper'] ),
                 },
             },
             {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return statusMapper[data];
+                },
+            },
+            {
                 targets: parseInt( '{{ count( $columns ) - 1 }}' ),
                 orderable: false,
                 width: '1%',
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit administrator', 'delete administrator' ] )
+                    @canany( [ 'edit vendors', 'delete vendors' ] )
                     let edit, status = '';
 
-                    @can( 'edit administrator' )
+                    @can( 'edit vendors' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    @endcan
+
+                    @can( 'delete vendors' )
+                    status = row['status'] == 10 ? 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
                     @endcan
                     
                     let html = 
@@ -193,6 +213,24 @@ var typeMapper = @json( $data['type_mapper'] ),
 
         $( document ).on( 'click', '.dt-edit', function() {
             window.location.href = '{{ route( 'admin.vendor.edit' ) }}?id=' + $( this ).data( 'id' );
+        } );
+
+        $( document ).on( 'click', '.dt-status', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.vendor.updateVendorStatus' ) }}',
+                type: 'POST',
+                data: {
+                    'id': $( this ).data( 'id' ),
+                    'status': $( this ).data( 'status' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function( response ) {
+                    dt_table.draw( false );
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.toggle();
+                },
+            } );
         } );
     } );
 </script>
