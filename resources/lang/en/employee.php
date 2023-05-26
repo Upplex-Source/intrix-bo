@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Vendor Module Language Lines
+    | Employee Module Language Lines
     |--------------------------------------------------------------------------
     |
-    | The following language lines are used during Vendor Module for various
+    | The following language lines are used during Employee Module for various
     | messages that we need to display to the user. You are free to modify
     | these language lines according to your application's requirements.
     |
@@ -16,6 +16,11 @@ return [
     'name' => 'Name',
     'email' => 'Email',
     'phone_number' => 'Phone Number',
+    'identification_number' => 'Identification Number',
+    'designation' => 'Designation',
+    'driver' => 'Driver',
+    'remarks' => 'Remarks',
+    
     'license_expiry_date' => 'License Expiry Date',
     'employment_type' => 'Employment Type',
     'full_time' => 'Full Time',

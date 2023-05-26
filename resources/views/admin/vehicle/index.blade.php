@@ -3,6 +3,7 @@
         <div class="nk-block-head-content">
             <h3 class="nk-block-title page-title">{{ __( 'template.vehicles' ) }}</h3>
         </div><!-- .nk-block-head-content -->
+        @can( 'add vehicles' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
                 <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
@@ -15,6 +16,7 @@
                 </div>
             </div>
         </div><!-- .nk-block-head-content -->
+        @endcan
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
@@ -38,15 +40,15 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.maker' ) ] ),
-        'id' => 'maker',
-        'title' => __( 'vehicle.maker' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.driver' ) ] ),
+        'id' => 'driver',
+        'title' => __( 'vehicle.driver' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.model' ) ] ),
-        'id' => 'model',
-        'title' => __( 'vehicle.model' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.name' ) ] ),
+        'id' => 'name',
+        'title' => __( 'vehicle.name' ),
     ],
     [
         'type' => 'input',
@@ -56,21 +58,9 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.color' ) ] ),
-        'id' => 'color',
-        'title' => __( 'vehicle.color' ),
-    ],
-    [
-        'type' => 'input',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.license_plate' ) ] ),
         'id' => 'license_plate',
         'title' => __( 'vehicle.license_plate' ),
-    ],
-    [
-        'type' => 'select',
-        'options' => $data['in_service'],
-        'id' => 'in_service',
-        'title' => __( 'vehicle.in_service' ),
     ],
     [
         'type' => 'select',
@@ -128,12 +118,10 @@ var typeMapper = @json( $data['type'] ),
             { data: null },
             { data: 'path' },
             { data: 'created_at' },
-            { data: 'maker' },
-            { data: 'model' },
+            { data: 'employee.name' },
+            { data: 'name' },
             { data: 'type' },
-            { data: 'color' },
             { data: 'license_plate' },
-            { data: 'in_service' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -150,8 +138,9 @@ var typeMapper = @json( $data['type'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "photo" ) }}' ),
                 orderable: false,
                 width: '75px',
+                class: "text-center",
                 render: function( data, type, row, meta ) {
-                    return '<img src="' + ( data ? data : '{{ asset( 'admin/images/default-small.png' ) }}' ) + '" width="75px" />';
+                    return data ? ( '<img src="' + data + '" width="75px" />' ) : '-';
                 },
             },
             {
@@ -165,12 +154,6 @@ var typeMapper = @json( $data['type'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "type" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return typeMapper[data];
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "in_service" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return inServiceMapper[data];
                 },
             },
             {

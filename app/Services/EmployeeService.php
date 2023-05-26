@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\{
 
 use App\Models\{
     FileManager,
-    Driver,
+    Employee,
 };
 
 use App\Rules\CheckASCIICharacter;
@@ -20,33 +20,33 @@ use Helper;
 
 use Carbon\Carbon;
 
-class DriverService
+class EmployeeService
 {
-    public static function allDrivers( $request ) {
+    public static function allEmployees( $request ) {
 
-        $driver = Driver::select( 'drivers.*' );
+        $employee = Employee::select( 'employees.*' );
 
-        $filterObject = self::filter( $request, $driver );
-        $driver = $filterObject['model'];
+        $filterObject = self::filter( $request, $employee );
+        $employee = $filterObject['model'];
         $filter = $filterObject['filter'];
 
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 2:
-                    $driver->orderBy( 'created_at', $dir );
+                    $employee->orderBy( 'created_at', $dir );
                     break;
                 case 3:
-                    $driver->orderBy( 'name', $dir );
+                    $employee->orderBy( 'name', $dir );
                     break;
                 case 4:
-                    $driver->orderBy( 'phone_number', $dir );
+                    $employee->orderBy( 'phone_number', $dir );
                     break;
                 case 5:
-                    $driver->orderBy( 'license_expiry_date', $dir );
+                    $employee->orderBy( 'identification_number', $dir );
                     break;
                 case 6:
-                    $driver->orderBy( 'employment_type', $dir );
+                    $employee->orderBy( 'designation', $dir );
                     break;
                 case 7:
                     $vendor->orderBy( 'status', $dir );
@@ -54,32 +54,26 @@ class DriverService
             }
         }
 
-        $driverCount = $driver->count();
+        $employeeCount = $employee->count();
 
         $limit = $request->length;
         $offset = $request->start;
 
-        $drivers = $driver->skip( $offset )->take( $limit )->get();
+        $employees = $employee->skip( $offset )->take( $limit )->get();
 
-        foreach ( $drivers as $driver ) {
-            $driver->append( [
+        if ( $employees ) {
+            $employees->append( [
                 'path',
-            ] );
-        }
-
-        if ( $drivers ) {
-            $drivers->append( [
-                'display_license_expiry_date',
                 'encrypted_id',
             ] );
         }
 
-        $totalRecord = Driver::count();
+        $totalRecord = Employee::count();
 
         $data = [
-            'drivers' => $drivers,
+            'employees' => $employees,
             'draw' => $request->draw,
-            'recordsFiltered' => $filter ? $driverCount : $totalRecord,
+            'recordsFiltered' => $filter ? $employeeCount : $totalRecord,
             'recordsTotal' => $totalRecord,
         ];
 
@@ -100,7 +94,7 @@ class DriverService
                 $endDate = explode( '-', $dates[1] );
                 $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'drivers.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'employees.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             } else {
 
                 $dates = explode( '-', $request->registered_date );
@@ -108,7 +102,7 @@ class DriverService
                 $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'drivers.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'employees.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             }
             $filter = true;
         }
@@ -123,13 +117,13 @@ class DriverService
             $filter = true;
         }
 
-        if ( !empty( $request->license_expiry_date ) ) {
-            $model->where( 'license_expiry_date', $request->license_expiry_date );
+        if ( !empty( $request->identification_number ) ) {
+            $model->where( 'identification_number', $request->identification_number );
             $filter = true;
         }
 
-        if ( !empty( $request->employment_type ) ) {
-            $model->where( 'employment_type', $request->employment_type );
+        if ( !empty( $request->designation ) ) {
+            $model->where( 'designation', $request->designation );
             $filter = true;
         }
 
@@ -138,49 +132,54 @@ class DriverService
             $filter = true;
         }
 
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( function( $query ) {
+                $query->where( 'name', 'LIKE', '%' . request( 'custom_search' ) . '%' );
+            } );
+        }
+
         return [
             'filter' => $filter,
             'model' => $model,
         ];
     }
 
-    public static function oneDriver( $request ) {
+    public static function oneEmployee( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $driver = Driver::find( $request->id );
+        $employee = Employee::find( $request->id );
 
-        if( $driver ) {
-            $driver->append( [
+        if( $employee ) {
+            $employee->append( [
                 'path',
-                'display_license_expiry_date',
                 'encrypted_id',
             ] );
         }
 
-        return response()->json( $driver );
+        return response()->json( $employee );
     }
 
-    public static function createDriver( $request ) {
+    public static function createEmployee( $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'photo' => [ 'required' ],
+            // 'photo' => [ 'required' ],
             'name' => [ 'required' ],
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
-            'license_expiry_date' => [ 'required' ],
-            'employment_type' => [ 'required', 'in:1,2' ],
+            'identification_number' => [ 'required' ],
+            'designation' => [ 'required', 'in:1,2' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'driver.name' ),
-            'email' => __( 'driver.email' ),
-            'phone_number' => __( 'driver.phone_number' ),
-            'license_expiry_date' => __( 'driver.license_expiry_date' ),
-            'employment_type' => __( 'driver.employment_type' ),
+            'name' => __( 'employee.name' ),
+            'email' => __( 'employee.email' ),
+            'phone_number' => __( 'employee.phone_number' ),
+            'identification_number' => __( 'employee.identification_number' ),
+            'designation' => __( 'employee.designation' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -193,22 +192,23 @@ class DriverService
 
         try {
 
-            $createDriver = Driver::create( [
+            $createEmployee = Employee::create( [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
-                'license_expiry_date' => $request->license_expiry_date,
-                'employment_type' => $request->employment_type,
+                'identification_number' => $request->identification_number,
+                'designation' => $request->designation,
+                'remarks' => $request->remarks,
             ] );
 
             $file = FileManager::find( $request->photo );
             if ( $file ) {
                 $fileName = explode( '/', $file->file );
-                $target = 'drivers/' . $createDriver->id . '/' . $fileName[1];
+                $target = 'employees/' . $createEmployee->id . '/' . $fileName[1];
                 Storage::disk( 'public' )->move( $file->file, $target );
 
-                $createDriver->photo = $target;
-                $createDriver->save();
+                $createEmployee->photo = $target;
+                $createEmployee->save();
 
                 $file->status = 10;
                 $file->save();
@@ -226,32 +226,32 @@ class DriverService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.drivers' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.employees' ) ) ] ),
         ] );
     }
 
-    public static function updateDriver( $request ) {
+    public static function updateEmployee( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
         $validator = Validator::make( $request->all(), [
-            'photo' => [ 'required' ],
+            // 'photo' => [ 'required' ],
             'name' => [ 'required' ],
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
-            'license_expiry_date' => [ 'required' ],
-            'employment_type' => [ 'required', 'in:1,2' ],
+            'identification_number' => [ 'required' ],
+            'designation' => [ 'required', 'in:1,2' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'driver.name' ),
-            'email' => __( 'driver.email' ),
-            'phone_number' => __( 'driver.phone_number' ),
-            'license_expiry_date' => __( 'driver.license_expiry_date' ),
-            'employment_type' => __( 'driver.employment_type' ),
+            'name' => __( 'employee.name' ),
+            'email' => __( 'employee.email' ),
+            'phone_number' => __( 'employee.phone_number' ),
+            'identification_number' => __( 'employee.identification_number' ),
+            'designation' => __( 'employee.designation' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -264,26 +264,27 @@ class DriverService
 
         try {
 
-            $updateDriver = Driver::find( $request->id );
-            $updateDriver->name = $request->name;
-            $updateDriver->email = $request->email;
-            $updateDriver->phone_number = $request->phone_number;
-            $updateDriver->license_expiry_date = $request->license_expiry_date;
-            $updateDriver->employment_type = $request->employment_type;
-            $updateDriver->save();
+            $updateEmployee = Employee::find( $request->id );
+            $updateEmployee->name = $request->name;
+            $updateEmployee->email = $request->email;
+            $updateEmployee->phone_number = $request->phone_number;
+            $updateEmployee->identification_number = $request->identification_number;
+            $updateEmployee->designation = $request->designation;
+            $updateEmployee->remarks = $request->remarks;
+            $updateEmployee->save();
 
             if ( $request->photo ) {
                 $file = FileManager::find( $request->photo );
                 if ( $file ) {
 
-                    Storage::disk( 'public' )->delete( $updateDriver->photo );
+                    Storage::disk( 'public' )->delete( $updateEmployee->photo );
 
                     $fileName = explode( '/', $file->file );
-                    $target = 'drivers/' . $updateDriver->id . '/' . $fileName[1];
+                    $target = 'employees/' . $updateEmployee->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $file->file, $target );
     
-                    $updateDriver->photo = $target;
-                    $updateDriver->save();
+                    $updateEmployee->photo = $target;
+                    $updateEmployee->save();
     
                     $file->status = 10;
                     $file->save();
@@ -302,22 +303,22 @@ class DriverService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.drivers' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.employees' ) ) ] ),
         ] );
     }
 
-    public static function updateDriverStatus( $request ) {
+    public static function updateEmployeeStatus( $request ) {
         
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $updateDriver = Driver::find( $request->id );
-        $updateDriver->status = $request->status;
-        $updateDriver->save();
+        $updateEmployee = Employee::find( $request->id );
+        $updateEmployee->status = $request->status;
+        $updateEmployee->save();
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.drivers' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.employees' ) ) ] ),
         ] );
     }
 }

@@ -4,6 +4,7 @@
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
     <script src="{{ asset( 'admin/js/jquery.loading.min.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/flatpickr-4.6.9.js' ) . Helper::assetVersion() }}"></script>
+    <script src="{{ asset( 'admin/js/select2.min.js' ) . Helper::assetVersion() }}"></script>
 
     <script>
         let modalSuccess = new bootstrap.Modal( document.getElementById( 'modal_success' ) ),

@@ -45,13 +45,13 @@ $vendor_edit = 'vendor_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="mb-3 row">
+                <!-- <div class="mb-3 row">
                     <label for="{{ $vendor_edit }}_website" class="col-sm-5 col-form-label">{{ __( 'vendor.website' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vendor_edit }}_website">
                         <div class="invalid-feedback"></div>
                     </div>
-                </div>
+                </div> -->
                 <div class="mb-3 row">
                     <label for="{{ $vendor_edit }}_type" class="col-sm-5 col-form-label">{{ __( 'vendor.type' ) }}</label>
                     <div class="col-sm-7">
@@ -133,9 +133,9 @@ $vendor_edit = 'vendor_edit';
                 @endif
                 <hr>
                 <div class="mb-3 row">
-                    <label for="{{ $vendor_edit }}_note" class="col-sm-5 col-form-label">{{ __( 'vendor.note' ) }}</label>
+                    <label for="{{ $vendor_edit }}_remarks" class="col-sm-5 col-form-label">{{ __( 'vendor.remarks' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $vendor_edit }}_note"></textarea>
+                        <textarea class="form-control" id="{{ $vendor_edit }}_remarks"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -182,8 +182,8 @@ $vendor_edit = 'vendor_edit';
             formData.append( 'city', $( ve + '_city' ).val() );
             formData.append( 'postcode', $( ve + '_postcode' ).val() );
             formData.append( 'state', $( ve + '_state' ).val() );
-            formData.append( 'website', $( ve + '_website' ).val() );
-            formData.append( 'note', $( ve + '_note' ).val() );
+            // formData.append( 'website', $( ve + '_website' ).val() );
+            formData.append( 'remarks', $( ve + '_remarks' ).val() );
             formData.append( 'type', $( ve + '_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -238,7 +238,7 @@ $vendor_edit = 'vendor_edit';
                     $( ve + '_name' ).val( response.name );
                     $( ve + '_email' ).val( response.email );
                     $( ve + '_phone_number' ).val( response.phone_number );
-                    $( ve + '_website' ).val( response.website );
+                    // $( ve + '_website' ).val( response.website );
                     $( ve + '_type' ).val( response.type );
 
                     $( ve + '_address_1' ).val( response.address_object.address_1 );
@@ -247,7 +247,7 @@ $vendor_edit = 'vendor_edit';
                     $( ve + '_postcode' ).val( response.address_object.postcode );
                     $( ve + '_state' ).val( response.address_object.state );
 
-                    $( ve + '_note' ).val( response.note );
+                    $( ve + '_remarks' ).val( response.remarks );
 
                     fileID = response.photo;
 

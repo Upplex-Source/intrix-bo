@@ -12,27 +12,24 @@ use Spatie\Activitylog\LogOptions;
 
 use Helper;
 
-class Driver extends Model
+class Employee extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
 
     protected $fillable = [
         'photo',
         'name',
         'email',
         'phone_number',
+        'identification_number',
+        'remarks',
         'status',
+        'designation',
         'employment_type',
-        'start_date',
-        'license_expiry_date',
     ];
 
     public function getPathAttribute() {
         return $this->attributes['photo'] ? asset( 'storage/' . $this->attributes['photo'] ) : null;
-    }
-
-    public function getDisplayLicenseExpiryDateAttribute() {
-        return date( 'Y-m-d', strtotime( $this->attributes['license_expiry_date'] ) );
     }
 
     public function getEncryptedIdAttribute() {
@@ -48,13 +45,14 @@ class Driver extends Model
         'name',
         'email',
         'phone_number',
+        'identification_number',
+        'remarks',
         'status',
+        'designation',
         'employment_type',
-        'start_date',
-        'license_expiry_date',
     ];
 
-    protected static $logName = 'drivers';
+    protected static $logName = 'employees';
 
     protected static $logOnlyDirty = true;
 
@@ -63,6 +61,6 @@ class Driver extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} driver";
+        return "{$eventName} employee";
     }
 }

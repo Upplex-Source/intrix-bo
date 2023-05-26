@@ -14,6 +14,7 @@ $vehicle_edit = 'vehicle_edit';
     <div class="card-inner">
         <div class="row">
             <div class="col-md-12 col-lg-6">
+                <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3">
                     <label>{{ __( 'datatables.photo' ) }}</label>
                     <div class="dropzone mb-3" id="{{ $vehicle_edit }}_photo" style="min-height: 0px;">
@@ -24,23 +25,17 @@ $vehicle_edit = 'vehicle_edit';
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_maker" class="col-sm-5 col-form-label">{{ __( 'vehicle.maker' ) }}</label>
+                    <label for="{{ $vehicle_edit }}_driver" class="col-sm-5 col-form-label">{{ __( 'vehicle.driver' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_maker">
+                        <select class="form-select" id="{{ $vehicle_edit }}_driver" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.driver' ) ] ) }}">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_model" class="col-sm-5 col-form-label">{{ __( 'vehicle.model' ) }}</label>
+                    <label for="{{ $vehicle_edit }}_name" class="col-sm-5 col-form-label">{{ __( 'vehicle.name' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_model">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_color" class="col-sm-5 col-form-label">{{ __( 'vehicle.color' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_color">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_name">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -56,18 +51,9 @@ $vehicle_edit = 'vehicle_edit';
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $vehicle_edit }}_type">
                             <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.type' ) ] ) }}</option>
-                            <option value="1">{{ __( 'vehicle.parts' ) }}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $vehicle_edit }}_in_service" class="col-sm-5 col-form-label">{{ __( 'vehicle.in_service' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $vehicle_edit }}_in_service">
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.in_service' ) ] ) }}</option>
-                            <option value="0">{{ __( 'datatables.no' ) }}</option>
-                            <option value="1">{{ __( 'datatables.yes' ) }}</option>
+                            @foreach( $data['type'] as $key => $type )
+                            <option value="{{ $key }}">{{ $type }}</option>
+                            @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -84,14 +70,12 @@ $vehicle_edit = 'vehicle_edit';
 
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
-        
-        getVehicle();
 
         let ve = '#{{ $vehicle_edit }}',
             fileID = '';
 
         $( ve + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.vendor.index' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.vehicle.index' ) }}';
         } );
 
         $( ve + '_submit' ).click( function() {
@@ -116,12 +100,10 @@ $vehicle_edit = 'vehicle_edit';
             if ( fileID ) {
                 formData.append( 'photo', fileID );
             }
-            formData.append( 'maker', $( ve + '_maker' ).val() );
-            formData.append( 'model', $( ve + '_model' ).val() );
-            formData.append( 'color', $( ve + '_color' ).val() );
+            formData.append( 'driver', $( ve + '_driver' ).val() );
+            formData.append( 'name', $( ve + '_name' ).val() );
             formData.append( 'license_plate', $( ve + '_license_plate' ).val() );
             formData.append( 'type', $( ve + '_type' ).val() );
-            formData.append( 'in_service', $( ve + '_in_service' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -155,6 +137,50 @@ $vehicle_edit = 'vehicle_edit';
             } );
         } );
 
+        let driverSelect2 = $( ve + '_driver' ).select2( {
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.employee.allEmployees' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        designation: 1,
+                        status: 10,
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.employees.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
+        getVehicle();
+
         function getVehicle() {
             
             Dropzone.autoDiscover = false;
@@ -172,12 +198,13 @@ $vehicle_edit = 'vehicle_edit';
                 },
                 success: function( response ) {
 
-                    $( ve + '_maker' ).val( response.maker );
-                    $( ve + '_model' ).val( response.model );
-                    $( ve + '_color' ).val( response.color );
+                    let option = new Option( response.employee.name, response.employee.id, true, true );
+                    driverSelect2.append( option );
+                    driverSelect2.trigger( 'change' );
+
+                    $( ve + '_name' ).val( response.name )
                     $( ve + '_license_plate' ).val( response.license_plate );
                     $( ve + '_type' ).val( response.type );
-                    $( ve + '_in_service' ).val( response.in_service );
 
                     fileID = response.photo;
 

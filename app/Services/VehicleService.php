@@ -24,7 +24,11 @@ class VehicleService
 {
     public static function allVehicles( $request ) {
 
-        $vehicle = Vehicle::select( 'vehicles.*' );
+        $vehicle = Vehicle::with( [
+            'employee'
+        ] )->select( 'vehicles.*' );
+
+        $vehicle->leftJoin( 'employees', 'employees.id', '=', 'vehicles.employee_id' );
 
         $filterObject = self::filter( $request, $vehicle );
         $vehicle = $filterObject['model'];
@@ -34,28 +38,22 @@ class VehicleService
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 2:
-                    $vehicle->orderBy( 'created_at', $dir );
+                    $vehicle->orderBy( 'vehicles.created_at', $dir );
                     break;
                 case 3:
-                    $vehicle->orderBy( 'maker', $dir );
+                    $vehicle->orderBy( 'employees.name', $dir );
                     break;
                 case 4:
-                    $vehicle->orderBy( 'model', $dir );
+                    $vehicle->orderBy( 'vehicles.name', $dir );
                     break;
                 case 5:
-                    $vehicle->orderBy( 'type', $dir );
+                    $vehicle->orderBy( 'vehicles.type', $dir );
                     break;
                 case 6:
-                    $vehicle->orderBy( 'color', $dir );
+                    $vehicle->orderBy( 'vehicles.license_plate', $dir );
                     break;
                 case 7:
-                    $vehicle->orderBy( 'license_plate', $dir );
-                    break;
-                case 8:
-                    $vehicle->orderBy( 'in_service', $dir );
-                    break;
-                case 9:
-                    $vehicle->orderBy( 'status', $dir );
+                    $vehicle->orderBy( 'vehicles.status', $dir );
                     break;
             }
         }
@@ -118,39 +116,36 @@ class VehicleService
             $filter = true;
         }
 
-        if ( !empty( $request->maker ) ) {
-            $model->where( 'maker', $request->maker );
+        if ( !empty( $request->driver ) ) {
+            $model->where( 'employees.name', $request->driver );
             $filter = true;
         }
 
-        if ( !empty( $request->model ) ) {
-            $model->where( 'model', $request->model );
+        if ( !empty( $request->name ) ) {
+            $model->where( 'vehicles.name', $request->name );
             $filter = true;
         }
 
         if ( !empty( $request->type ) ) {
-            $model->where( 'type', $request->type );
-            $filter = true;
-        }
-
-        if ( !empty( $request->color ) ) {
-            $model->where( 'color', $request->color );
+            $model->where( 'vehicles.type', $request->type );
             $filter = true;
         }
 
         if ( !empty( $request->license_plate ) ) {
-            $model->where( 'license_plate', $request->license_plate );
-            $filter = true;
-        }
-
-        if ( !empty( $request->in_service ) ) {
-            $model->where( 'in_service', $request->in_service );
+            $model->where( 'vehicles.license_plate', $request->license_plate );
             $filter = true;
         }
 
         if ( !empty( $request->status ) ) {
-            $model->where( 'status', $request->status );
+            $model->where( 'vehicles.status', $request->status );
             $filter = true;
+        }
+
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( function( $query ) {
+                $query->where( 'vehicles.name', 'LIKE', '%' . request( 'custom_search' ) . '%' );
+                $query->orWhere( 'vehicles.license_plate', 'LIKE', '%' . request( 'custom_search' ) . '%' );
+            } );
         }
 
         return [
@@ -165,7 +160,9 @@ class VehicleService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $vendor = Vehicle::find( $request->id );
+        $vendor = Vehicle::with( [
+            'employee',
+        ] )->find( $request->id );
 
         if( $vendor ) {
             $vendor->append( [
@@ -181,19 +178,16 @@ class VehicleService
 
         $validator = Validator::make( $request->all(), [
             'photo' => [ 'required' ],
-            'maker' => [ 'required' ],
-            'model' => [ 'required' ],
-            'color' => [ 'required' ],
+            'driver' => [ 'required', 'exists:employees,id' ],
+            'name' => [ 'required' ],
             'license_plate' => [ 'required' ],
             'type' => [ 'required' ],
-            'in_service' => [ 'required', 'in:0,1' ],
+            // 'in_service' => [ 'required', 'in:0,1' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'maker' => __( 'vehicle.maker' ),
-            'model' => __( 'vehicle.model' ),
-            'color' => __( 'vehicle.color' ),
+            'name' => __( 'vehicle.name' ),
             'license_plate' => __( 'vehicle.license_plate' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
@@ -210,11 +204,10 @@ class VehicleService
         try {
 
             $createVehicle = Vehicle::create( [
-                'maker' => $request->maker,
-                'model' => $request->model,
-                'color' => $request->color,
+                'employee_id' => $request->driver,
+                'name' => $request->name,
                 'license_plate' => $request->license_plate,
-                'in_service' => $request->in_service,
+                'in_service' => 0,
                 'type' => $request->type,
             ] );
 
@@ -255,19 +248,15 @@ class VehicleService
 
         $validator = Validator::make( $request->all(), [
             'photo' => [ 'required' ],
-            'maker' => [ 'required' ],
-            'model' => [ 'required' ],
-            'color' => [ 'required' ],
+            'name' => [ 'required' ],
             'license_plate' => [ 'required' ],
             'type' => [ 'required' ],
-            'in_service' => [ 'required', 'in:0,1' ],
+            // 'in_service' => [ 'required', 'in:0,1' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'maker' => __( 'vehicle.maker' ),
-            'model' => __( 'vehicle.model' ),
-            'color' => __( 'vehicle.color' ),
+            'name' => __( 'vehicle.name' ),
             'license_plate' => __( 'vehicle.license_plate' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
@@ -284,12 +273,10 @@ class VehicleService
         try {
 
             $updateVehicle = Vehicle::find( $request->id );
-            $updateVehicle->maker = $request->maker;
-            $updateVehicle->model = $request->model;
-            $updateVehicle->color = $request->color;
+            $updateVehicle->employee_id = $request->driver;
+            $updateVehicle->name = $request->name;
             $updateVehicle->license_plate = $request->license_plate;
             $updateVehicle->type = $request->type;
-            $updateVehicle->in_service = $request->in_service;
             $updateVehicle->save();
 
             if ( $request->photo ) {

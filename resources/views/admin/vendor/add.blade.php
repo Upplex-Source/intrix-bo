@@ -45,13 +45,13 @@ $vendor_create = 'vendor_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <div class="mb-3 row">
+                <!-- <div class="mb-3 row">
                     <label for="{{ $vendor_create }}_website" class="col-sm-5 col-form-label">{{ __( 'vendor.website' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vendor_create }}_website">
                         <div class="invalid-feedback"></div>
                     </div>
-                </div>
+                </div> -->
                 <div class="mb-3 row">
                     <label for="{{ $vendor_create }}_type" class="col-sm-5 col-form-label">{{ __( 'vendor.type' ) }}</label>
                     <div class="col-sm-7">
@@ -133,9 +133,9 @@ $vendor_create = 'vendor_create';
                 @endif
                 <hr>
                 <div class="mb-3 row">
-                    <label for="{{ $vendor_create }}_note" class="col-sm-5 col-form-label">{{ __( 'vendor.note' ) }}</label>
+                    <label for="{{ $vendor_create }}_remarks" class="col-sm-5 col-form-label">{{ __( 'vendor.remarks' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $vendor_create }}_note"></textarea>
+                        <textarea class="form-control" id="{{ $vendor_create }}_remarks"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -177,8 +177,8 @@ $vendor_create = 'vendor_create';
             formData.append( 'city', $( vc + '_city' ).val() );
             formData.append( 'postcode', $( vc + '_postcode' ).val() );
             formData.append( 'state', $( vc + '_state' ).val() );
-            formData.append( 'website', $( vc + '_website' ).val() );
-            formData.append( 'note', $( vc + '_note' ).val() );
+            // formData.append( 'website', $( vc + '_website' ).val() );
+            formData.append( 'remarks', $( vc + '_remarks' ).val() );
             formData.append( 'type', $( vc + '_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 

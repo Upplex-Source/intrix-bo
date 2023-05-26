@@ -25,5 +25,5 @@ return [
     'city' => 'City',
     'postcode' => 'Postcode',
     'state' => 'State',
-    'note' => 'Note',
+    'remarks' => 'Remarks',
 ];

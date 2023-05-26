@@ -91,11 +91,11 @@
                                     </a>
                                 </li>
                                 @endif
-                                @can( 'view drivers' )
+                                @can( 'view employees' )
                                 <li class="nk-menu-item">
-                                    <a href="{{ route( 'admin.module_parent.driver.index' ) }}" class="nk-menu-link">
+                                    <a href="{{ route( 'admin.module_parent.employee.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-user"></em></span>
-                                        <span class="nk-menu-text">{{ __( 'template.drivers' ) }}</span>
+                                        <span class="nk-menu-text">{{ __( 'template.employees' ) }}</span>
                                     </a>
                                 </li>
                                 @endcan
@@ -124,9 +124,6 @@
                                     <ul class="nk-menu-sub">
                                         <li class="nk-menu-item">
                                             <a href="{{ route( 'admin.module_parent.vehicle.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.vehicle_list' ) }}</span></a>
-                                        </li>
-                                        <li class="nk-menu-item">
-                                            <a href="{{ route( 'admin.module_parent.vehicle_inspection.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.vehicle_inspections' ) }}</span></a>
                                         </li>
                                     </ul>
                                 </li>

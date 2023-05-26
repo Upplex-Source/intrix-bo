@@ -13,10 +13,11 @@ return [
     |
     */
 
-    'maker' => '制造商',
-    'model' => '型号',
+    'vehicle' => '载具',
+    'driver' => '司机',
+    'name' => '名字',
     'type' => '类型',
-    'color' => '颜色',
+    'truck' => '货车',
     'license_plate' => '车牌号码',
     'in_service' => '正在保养',
 ];

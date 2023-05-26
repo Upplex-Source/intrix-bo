@@ -15,6 +15,8 @@
 
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="{{ asset( 'admin/css/dashlite.min.css' ) }}">
-    <link rel="stylesheet" href="{{ asset( 'admin/css/extended.css' ) }}">
+    <link rel="stylesheet" href="{{ asset( 'admin/css/extended.css' . Helper::assetVersion() ) }}">
     <link href="{{ asset( 'admin/css/flatpickr.min.css' ) . Helper::assetVersion() }}" rel="stylesheet">
+    <link href="{{ asset( 'admin/css/select2.min.css' ) . Helper::assetVersion() }}" rel="stylesheet">
+    <link href="{{ asset( 'admin/css/select2-bootstrap-5-theme.min.css' ) . Helper::assetVersion() }}" rel="stylesheet">
 </head>

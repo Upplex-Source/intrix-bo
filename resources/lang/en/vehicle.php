@@ -13,10 +13,11 @@ return [
     |
     */
 
-    'maker' => 'Maker',
-    'model' => 'Model',
+    'vehicle' => 'Vehicle',
+    'driver' => 'Driver',
+    'name' => 'Name',
     'type' => 'Type',
-    'color' => 'Color',
+    'truck' => 'Truck',
     'license_plate' => 'License Plate',
     'in_service' => 'In Service',
 ];

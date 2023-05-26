@@ -21,7 +21,7 @@ class CreateVendorsTable extends Migration
             $table->string('phone_number',15);
             $table->string('address')->nullable();
             $table->string('website',100)->nullable();
-            $table->string('note')->nullable();
+            $table->string('remarks')->nullable();
             $table->tinyInteger('type')->default(1);
             $table->tinyInteger('status')->default(10);
             $table->timestamps();

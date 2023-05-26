@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\{
     AuditController,
     DashboardController,
     DriverController,
+    EmployeeController,
     FileController,
     InspectionController,
     ModuleController,
@@ -91,22 +92,22 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'one-audit', [ AuditController::class, 'oneAudit' ] )->name( 'admin.audit.oneAudit' );
             } );
 
-            Route::prefix( 'drivers' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view drivers' ] ], function() {
-                    Route::get( '/', [ DriverController::class, 'index' ] )->name( 'admin.module_parent.driver.index' );
+            Route::prefix( 'employees' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view employees' ] ], function() {
+                    Route::get( '/', [ EmployeeController::class, 'index' ] )->name( 'admin.module_parent.employee.index' );
                 } );
-                Route::group( [ 'middleware' => [ 'permission:add drivers' ] ], function() {
-                    Route::get( 'add', [ DriverController::class, 'add' ] )->name( 'admin.driver.add' );
+                Route::group( [ 'middleware' => [ 'permission:add employees' ] ], function() {
+                    Route::get( 'add', [ EmployeeController::class, 'add' ] )->name( 'admin.employee.add' );
                 } );
-                Route::group( [ 'middleware' => [ 'permission:edit drivers' ] ], function() {
-                    Route::get( 'edit', [ DriverController::class, 'edit' ] )->name( 'admin.driver.edit' );
+                Route::group( [ 'middleware' => [ 'permission:edit employees' ] ], function() {
+                    Route::get( 'edit', [ EmployeeController::class, 'edit' ] )->name( 'admin.employee.edit' );
                 } );
 
-                Route::post( 'all-drivers', [ DriverController::class, 'allDrivers' ] )->name( 'admin.driver.allDrivers' );
-                Route::post( 'one-driver', [ DriverController::class, 'oneDriver' ] )->name( 'admin.driver.oneDriver' );
-                Route::post( 'create-driver', [ DriverController::class, 'createDriver' ] )->name( 'admin.driver.createDriver' );
-                Route::post( 'update-driver', [ DriverController::class, 'updateDriver' ] )->name( 'admin.driver.updateDriver' );
-                Route::post( 'update-driver-status', [ DriverController::class, 'updateDriverStatus' ] )->name( 'admin.driver.updateDriverStatus' );
+                Route::post( 'all-employees', [ EmployeeController::class, 'allEmployees' ] )->name( 'admin.employee.allEmployees' );
+                Route::post( 'one-driver', [ EmployeeController::class, 'oneEmployee' ] )->name( 'admin.employee.oneEmployee' );
+                Route::post( 'create-driver', [ EmployeeController::class, 'createEmployee' ] )->name( 'admin.employee.createEmployee' );
+                Route::post( 'update-driver', [ EmployeeController::class, 'updateEmployee' ] )->name( 'admin.employee.updateEmployee' );
+                Route::post( 'update-driver-status', [ EmployeeController::class, 'updateEmployeeStatus' ] )->name( 'admin.employee.updateEmployeeStatus' );
             } );
             
             Route::prefix( 'vendors' )->group( function() {
@@ -143,20 +144,6 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-vehicle', [ VehicleController::class, 'createVehicle' ] )->name( 'admin.vehicle.createVehicle' );
                 Route::post( 'update-vehicle', [ VehicleController::class, 'updateVehicle' ] )->name( 'admin.vehicle.updateVehicle' );
                 Route::post( 'update-vehicle-status', [ VehicleController::class, 'updateVehicleStatus' ] )->name( 'admin.vehicle.updateVehicleStatus' );
-            } );
-
-            Route::prefix( 'vehicle_inspections' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view vehicle_inspections' ] ], function() {
-                    Route::get( '/', [ InspectionController::class, 'index' ] )->name( 'admin.module_parent.vehicle_inspection.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add vehicle_inspections' ] ], function() {
-                    Route::get( 'add', [ InspectionController::class, 'add' ] )->name( 'admin.vehicle_inspection.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit vehicle_inspections' ] ], function() {
-                    Route::get( 'edit', [ InspectionController::class, 'edit' ] )->name( 'admin.vehicle_inspection.edit' );
-                } );
-
-                Route::post( 'all-inspections', [ InspectionController::class, 'allInspections' ] )->name( 'admin.vehicle_inspection.allInspections' );
             } );
         } );
     } );

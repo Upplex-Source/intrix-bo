@@ -23,7 +23,7 @@ class Vendor extends Model
         'phone_number',
         'address',
         'website',
-        'note',
+        'remarks',
         'type',
         'status',
     ];
@@ -51,7 +51,7 @@ class Vendor extends Model
         'phone_number',
         'address',
         'website',
-        'note',
+        'remarks',
         'type',
         'status',
     ];

@@ -14,6 +14,7 @@ $vehicle_create = 'vehicle_create';
     <div class="card-inner">
         <div class="row">
             <div class="col-md-12 col-lg-6">
+                <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3">
                     <label>{{ __( 'datatables.photo' ) }}</label>
                     <div class="dropzone mb-3" id="{{ $vehicle_create }}_photo" style="min-height: 0px;">
@@ -24,23 +25,17 @@ $vehicle_create = 'vehicle_create';
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_create }}_maker" class="col-sm-5 col-form-label">{{ __( 'vehicle.maker' ) }}</label>
+                    <label for="{{ $vehicle_create }}_driver" class="col-sm-5 col-form-label">{{ __( 'vehicle.driver' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_create }}_maker">
+                        <select class="form-select" id="{{ $vehicle_create }}_driver" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.driver' ) ] ) }}">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_create }}_model" class="col-sm-5 col-form-label">{{ __( 'vehicle.model' ) }}</label>
+                    <label for="{{ $vehicle_create }}_name" class="col-sm-5 col-form-label">{{ __( 'vehicle.name' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_create }}_model">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $vehicle_create }}_color" class="col-sm-5 col-form-label">{{ __( 'vehicle.color' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $vehicle_create }}_color">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_name">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -56,18 +51,9 @@ $vehicle_create = 'vehicle_create';
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $vehicle_create }}_type">
                             <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.type' ) ] ) }}</option>
-                            <option value="1">{{ __( 'vehicle.parts' ) }}</option>
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $vehicle_create }}_in_service" class="col-sm-5 col-form-label">{{ __( 'vehicle.in_service' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $vehicle_create }}_in_service">
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.in_service' ) ] ) }}</option>
-                            <option value="0">{{ __( 'datatables.no' ) }}</option>
-                            <option value="1">{{ __( 'datatables.yes' ) }}</option>
+                            @foreach( $data['type'] as $key => $type )
+                            <option value="{{ $key }}">{{ $type }}</option>
+                            @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -102,11 +88,9 @@ $vehicle_create = 'vehicle_create';
 
             let formData = new FormData();
             formData.append( 'photo', fileID );
-            formData.append( 'maker', $( vc + '_maker' ).val() );
-            formData.append( 'model', $( vc + '_model' ).val() );
-            formData.append( 'color', $( vc + '_color' ).val() );
+            formData.append( 'driver', $( vc + '_driver' ).val() );
+            formData.append( 'name', $( vc + '_name' ).val() );
             formData.append( 'license_plate', $( vc + '_license_plate' ).val() );
-            formData.append( 'in_service', $( vc + '_in_service' ).val() );
             formData.append( 'type', $( vc + '_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -139,6 +123,48 @@ $vehicle_create = 'vehicle_create';
                     }
                 }
             } );
+        } );
+
+        $( vc + '_driver' ).select2( {
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.employee.allEmployees' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        designation: 1,
+                        status: 10,
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.employees.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
         } );
 
         Dropzone.autoDiscover = false;

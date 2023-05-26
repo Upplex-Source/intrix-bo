@@ -25,5 +25,5 @@ return [
     'city' => '城市',
     'postcode' => '邮政编码',
     'state' => '州属',
-    'note' => '注释',
+    'remarks' => '备注',
 ];

@@ -183,7 +183,7 @@ class VendorService
             'city' => __( 'vendor.city' ),
             'postcode' => __( 'vendor.postcode' ),
             'state' => __( 'vendor.state' ),
-            'note' => __( 'vendor.note' ),
+            'remarks' => __( 'vendor.remarks' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -200,7 +200,7 @@ class VendorService
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
-                'website' => $request->website,
+                // 'website' => $request->website,
                 'type' => $request->type,
                 'address' => json_encode( [
                     'address_1' => $request->address_1,
@@ -209,7 +209,7 @@ class VendorService
                     'postcode' => $request->postcode,
                     'state' => $request->state,
                 ] ),
-                'note' => $request->note,
+                'remarks' => $request->remarks,
                 'status' => 10,
             ] );
 
@@ -272,7 +272,7 @@ class VendorService
             'city' => __( 'vendor.city' ),
             'postcode' => __( 'vendor.postcode' ),
             'state' => __( 'vendor.state' ),
-            'note' => __( 'vendor.note' ),
+            'remarks' => __( 'vendor.remarks' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -289,7 +289,7 @@ class VendorService
             $updateVendor->name = $request->name;
             $updateVendor->email = $request->email;
             $updateVendor->phone_number = $request->phone_number;
-            $updateVendor->website = $request->website;
+            // $updateVendor->website = $request->website;
             $updateVendor->type = $request->type;
             $updateVendor->address = json_encode( [
                 'address_1' => $request->address_1,
@@ -298,7 +298,7 @@ class VendorService
                 'postcode' => $request->postcode,
                 'state' => $request->state,
             ] );
-            $updateVendor->note = $request->note;
+            $updateVendor->remarks = $request->remarks;
             $updateVendor->save();
 
             if ( $request->photo ) {

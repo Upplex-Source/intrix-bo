@@ -15,11 +15,9 @@ class CreateVehiclesTable extends Migration
     {
         Schema::create('vehicles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('driver_id')->nullable()->constrained('drivers')->onUpdate('restrict')->onDelete('cascade');
+            $table->foreignId('employee_id')->nullable()->constrained('employees')->onUpdate('restrict')->onDelete('cascade');
             $table->string('photo',150)->nullable();
-            $table->string('maker',50);
-            $table->string('model',50);
-            $table->string('color',50);
+            $table->string('name',100);
             $table->string('license_plate',10);
             $table->tinyInteger('in_service')->default(0);
             $table->tinyInteger('type')->default(1);
