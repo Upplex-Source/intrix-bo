@@ -7,6 +7,13 @@
     <script src="{{ asset( 'admin/js/select2.min.js' ) . Helper::assetVersion() }}"></script>
 
     <script>
+
+        Number.prototype.toFixedDown = function(digits) {
+		var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
+			m = this.toString().match(re);
+		return m ? parseFloat(m[1]).toFixed(digits) : this.valueOf().toFixed( 2 ).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+
         let modalSuccess = new bootstrap.Modal( document.getElementById( 'modal_success' ) ),
             modalDanger = new bootstrap.Modal( document.getElementById( 'modal_danger' ) );
 

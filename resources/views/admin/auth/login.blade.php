@@ -6,7 +6,8 @@
                     <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
                         <div class="brand-logo pb-4 text-center">
                             <a href="{{ route( 'admin.home' ) }}" class="logo-link">
-                                <img class="logo-dark logo-img logo-img-lg" src="{{ asset( 'admin/images/settlelaah-dark.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah-dark2x.png' ) }} 2x" alt="logo">
+                                <!-- <img class="logo-dark logo-img logo-img-lg" src="{{ asset( 'admin/images/settlelaah-dark.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah-dark2x.png' ) }} 2x" alt="logo"> -->
+                                <img src="{{ asset( 'admin/images/jjk-small.png' ) }}" width="50%" />
                             </a>
                         </div>
                         <div class="card" style="border-radius: 10px;">

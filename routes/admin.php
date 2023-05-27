@@ -5,6 +5,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\{
     AdministratorController,
     AuditController,
+    BookingController,
     DashboardController,
     DriverController,
     EmployeeController,
@@ -144,6 +145,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-vehicle', [ VehicleController::class, 'createVehicle' ] )->name( 'admin.vehicle.createVehicle' );
                 Route::post( 'update-vehicle', [ VehicleController::class, 'updateVehicle' ] )->name( 'admin.vehicle.updateVehicle' );
                 Route::post( 'update-vehicle-status', [ VehicleController::class, 'updateVehicleStatus' ] )->name( 'admin.vehicle.updateVehicleStatus' );
+            } );
+
+            Route::prefix( 'bookings' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view bookings' ] ], function() {
+                    Route::get( '/', [ BookingController::class, 'index' ] )->name( 'admin.module_parent.booking.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add bookings' ] ], function() {
+                    Route::get( 'add', [ BookingController::class, 'add' ] )->name( 'admin.booking.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit bookings' ] ], function() {
+                    Route::get( 'edit', [ BookingController::class, 'edit' ] )->name( 'admin.booking.edit' );
+                } );
+
+                Route::post( 'all-bookings', [ BookingController::class, 'allBookings' ] )->name( 'admin.booking.allBookings' );
+                Route::post( 'one-booking', [ BookingController::class, 'oneBooking' ] )->name( 'admin.booking.oneBooking' );
+                Route::post( 'create-booking', [ BookingController::class, 'createBooking' ] )->name( 'admin.booking.createBooking' );
+                Route::post( 'update-booking', [ BookingController::class, 'updateVBooking' ] )->name( 'admin.booking.updateVBooking' );
+                Route::post( 'update-booking-status', [ BookingController::class, 'updateBookingStatus' ] )->name( 'admin.booking.updateBookingStatus' );
             } );
         } );
     } );

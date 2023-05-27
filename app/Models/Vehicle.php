@@ -17,7 +17,7 @@ class Vehicle extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'employee_id',
+        'driver_id',
         'photo',
         'name',
         'license_plate',
@@ -27,7 +27,7 @@ class Vehicle extends Model
     ];
 
     public function employee() {
-        return $this->belongsTo( Employee::class, 'employee_id' );
+        return $this->belongsTo( Employee::class, 'driver_id' );
     }
 
     public function getPathAttribute() {
@@ -43,7 +43,7 @@ class Vehicle extends Model
     }
 
     protected static $logAttributes = [
-        'employee_id',
+        'driver_id',
         'photo',
         'name',
         'license_plate',

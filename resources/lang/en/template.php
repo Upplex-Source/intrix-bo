@@ -26,6 +26,7 @@ return [
     'vehicles' => 'Vehicles',
     'vehicle_list' => 'Vehicle List',
     'vehicle_inspections' => 'Vehicle Inspections',
+    'bookings' => 'Bookings',
 
     'loading' => 'Loading...',
     'add' => 'Add',

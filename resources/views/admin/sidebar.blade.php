@@ -3,8 +3,8 @@
                 <div class="nk-sidebar-element nk-sidebar-head">
                     <div class="nk-sidebar-brand">
                         <a href="{{ route( 'admin.home' ) }}" class="logo-link nk-sidebar-logo">
-                            <img class="logo-dark logo-img" src="{{ asset( 'admin/images/settlelaah-dark.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah-dark2x.png' ) }} 2x" alt="logo-dark">
-                            <img class="logo-small logo-img logo-img-small" src="{{ asset( 'admin/images/settlelaah-small-dark.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah-small-dark2x.png' ) }} 2x" alt="logo-small">
+                            <img class="logo-dark logo-img" src="{{ asset( 'admin/images/jjk.png' ) }}" srcset="{{ asset( 'admin/images/jjk.png' ) }} 2x" alt="logo-dark">
+                            <img class="logo-small logo-img logo-img-small" src="{{ asset( 'admin/images/jjk-small.png' ) }}" srcset="{{ asset( 'admin/images/jjk-small.png' ) }} 2x" alt="logo-small">
                         </a>
                     </div>
                     <div class="nk-menu-trigger me-n2">
@@ -126,6 +126,14 @@
                                             <a href="{{ route( 'admin.module_parent.vehicle.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.vehicle_list' ) }}</span></a>
                                         </li>
                                     </ul>
+                                </li>
+                                @endcan
+                                @can( 'view booking' )
+                                <li class="nk-menu-item">
+                                    <a href="{{ route( 'admin.module_parent.booking.index' ) }}" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-check-c"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.bookings' ) }}</span>
+                                    </a>
                                 </li>
                                 @endcan
                             </ul><!-- .nk-menu -->

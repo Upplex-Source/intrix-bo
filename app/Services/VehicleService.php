@@ -28,7 +28,7 @@ class VehicleService
             'employee'
         ] )->select( 'vehicles.*' );
 
-        $vehicle->leftJoin( 'employees', 'employees.id', '=', 'vehicles.employee_id' );
+        $vehicle->leftJoin( 'employees', 'employees.id', '=', 'vehicles.driver_id' );
 
         $filterObject = self::filter( $request, $vehicle );
         $vehicle = $filterObject['model'];
@@ -65,14 +65,9 @@ class VehicleService
 
         $vehicles = $vehicle->skip( $offset )->take( $limit )->get();
 
-        foreach ( $vehicles as $vehicle ) {
-            $vehicle->append( [
-                'path',
-            ] );
-        }
-
         if ( $vehicles ) {
             $vehicles->append( [
+                'path',
                 'encrypted_id',
             ] );
         }
@@ -93,9 +88,9 @@ class VehicleService
 
         $filter = false;
 
-        if ( !empty( $request->registered_date ) ) {
-            if ( str_contains( $request->registered_date, 'to' ) ) {
-                $dates = explode( ' to ', $request->registered_date );
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
 
                 $startDate = explode( '-', $dates[0] );
                 $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
@@ -106,7 +101,7 @@ class VehicleService
                 $model->whereBetween( 'vehicles.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             } else {
 
-                $dates = explode( '-', $request->registered_date );
+                $dates = explode( '-', $request->created_date );
 
                 $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
@@ -160,18 +155,18 @@ class VehicleService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $vendor = Vehicle::with( [
+        $vehicle = Vehicle::with( [
             'employee',
         ] )->find( $request->id );
 
-        if( $vendor ) {
-            $vendor->append( [
+        if( $vehicle ) {
+            $vehicle->append( [
                 'path',
                 'encrypted_id',
             ] );
         }
 
-        return response()->json( $vendor );
+        return response()->json( $vehicle );
     }
 
     public static function createVehicle( $request ) {
@@ -204,7 +199,7 @@ class VehicleService
         try {
 
             $createVehicle = Vehicle::create( [
-                'employee_id' => $request->driver,
+                'driver_id' => $request->driver,
                 'name' => $request->name,
                 'license_plate' => $request->license_plate,
                 'in_service' => 0,
@@ -273,7 +268,7 @@ class VehicleService
         try {
 
             $updateVehicle = Vehicle::find( $request->id );
-            $updateVehicle->employee_id = $request->driver;
+            $updateVehicle->driver_id = $request->driver;
             $updateVehicle->name = $request->name;
             $updateVehicle->license_plate = $request->license_plate;
             $updateVehicle->type = $request->type;
