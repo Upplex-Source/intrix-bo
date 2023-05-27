@@ -40,6 +40,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 
             Route::prefix( 'dashboard' )->group( function() {
                 Route::get( '/', [ DashboardController::class, 'index' ] )->name( 'admin.dashboard' );
+
+                Route::post( '/', [ DashboardController::class, 'getDashboardData' ] )->name( 'admin.dashboard.getDashboardData' );
             } );
 
             Route::prefix( 'administrators' )->group( function() {

@@ -8,6 +8,13 @@
 
     <script>
 
+        $.fn.select2.amd.define('select2/i18n/zh',[],function () {
+            return {
+                searching: () => '查找中…',
+                noResults: () => '未找到结果',
+            }
+        } );
+
         Number.prototype.toFixedDown = function(digits) {
 		var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
 			m = this.toString().match(re);

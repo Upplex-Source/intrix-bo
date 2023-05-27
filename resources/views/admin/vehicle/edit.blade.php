@@ -138,6 +138,7 @@ $vehicle_edit = 'vehicle_edit';
         } );
 
         let driverSelect2 = $( ve + '_driver' ).select2( {
+            language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),

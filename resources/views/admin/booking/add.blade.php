@@ -5,7 +5,7 @@ $booking_create = 'booking_create';
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.vehicles' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.bookings' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -311,7 +311,7 @@ $bookingIncrement = $data['booking_increment'];
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_create }}_driver_percentage" class="col-sm-5 col-form-label">{{ __( 'booking.percentage' ) }}</label>
+                    <label for="{{ $booking_create }}_driver_percentage" class="col-sm-5 col-form-label">{{ __( 'booking.percentage' ) }} (%)</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $booking_create }}_driver_percentage" value="0">
                         <div class="invalid-feedback"></div>
@@ -462,6 +462,7 @@ $bookingIncrement = $data['booking_increment'];
         } );
 
         $( bc + '_vehicle' ).select2( {
+            language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
@@ -503,6 +504,7 @@ $bookingIncrement = $data['booking_increment'];
         } );
 
         $( bc + '_driver' ).select2( {
+            language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),

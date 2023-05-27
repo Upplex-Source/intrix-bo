@@ -26,7 +26,7 @@ return [
     'vehicles' => '载具',
     'vehicle_list' => '载具列表',
     'vehicle_inspections' => '载具检查',
-    'bookings' => 'Bookings',
+    'bookings' => '预订',
 
     'loading' => '载入中...',
     'add' => '新增',
