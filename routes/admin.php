@@ -168,7 +168,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'all-bookings', [ BookingController::class, 'allBookings' ] )->name( 'admin.booking.allBookings' );
                 Route::post( 'one-booking', [ BookingController::class, 'oneBooking' ] )->name( 'admin.booking.oneBooking' );
                 Route::post( 'create-booking', [ BookingController::class, 'createBooking' ] )->name( 'admin.booking.createBooking' );
-                Route::post( 'update-booking', [ BookingController::class, 'updateVBooking' ] )->name( 'admin.booking.updateVBooking' );
+                Route::post( 'update-booking', [ BookingController::class, 'updateBooking' ] )->name( 'admin.booking.updateBooking' );
                 Route::post( 'update-booking-status', [ BookingController::class, 'updateBookingStatus' ] )->name( 'admin.booking.updateBookingStatus' );
             } );
 

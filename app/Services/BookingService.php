@@ -13,6 +13,8 @@ use App\Models\{
     Option,
 };
 
+use Helper;
+
 use Carbon\Carbon;
 
 class BookingService
@@ -152,15 +154,23 @@ class BookingService
         ] );
 
         $booking = Booking::with( [
-            'employee',
+            'driver',
+            'vehicle',
         ] )->find( $request->id );
+
+        if ( $booking ) {
+            $booking->append( [
+                'display_pickup_address',
+                'display_drop_off_address',
+            ] );
+        }
 
         return response()->json( $booking );
     }
 
     public static function getLatestBookingIncrement() {
 
-        $latestBooking = Booking::latest()->first();
+        $latestBooking = Booking::latest( 'id' )->first();
         if ( $latestBooking ) {
             $parts = explode( ' ', $latestBooking->reference );
             return $parts[1];
@@ -199,7 +209,38 @@ class BookingService
         ] );
 
         $attributeName = [
-
+            'reference' => __( 'booking.reference' ),
+            'customer_name' => __( 'booking.customer_name' ),
+            'invoice_number' => __( 'booking.invoice_number' ),
+            'invoice_date' => __( 'booking.invoice_date' ),
+            'vehicle' => __( 'booking.vehicle' ),
+            'delivery_order_number' => __( 'booking.delivery_order_number' ),
+            'delivery_order_date' => __( 'booking.delivery_order_date' ),
+            'pickup_address_address_1' => __( 'booking.address_1' ),
+            'pickup_address_address_2' => __( 'booking.address_2' ),
+            'pickup_address_city' => __( 'booking.city' ),
+            'pickup_address_postcode' => __( 'booking.postcode' ),
+            'pickup_address_state' => __( 'booking.state' ),
+            'dropoff_address_destination' => __( 'booking.destination' ),
+            'dropoff_address_address_1' => __( 'booking.address_1' ),
+            'dropoff_address_address_2' => __( 'booking.address_2' ),
+            'dropoff_address_city' => __( 'booking.city' ),
+            'dropoff_address_postcode' => __( 'booking.postcode' ),
+            'dropoff_address_state' => __( 'booking.state' ),
+            'pickup_date' => __( 'booking.pickup_date' ),
+            'dropoff_date' => __( 'booking.dropoff_date' ),
+            'company' => __( 'booking.company' ),
+            'customer_type' => __( 'booking.customer_type' ),
+            'company' => __( 'booking.company' ),
+            'customer_type' => __( 'booking.customer_type' ),
+            'customer_quantity' => __( 'booking.quantity' ),
+            'customer_uom' => __( 'booking.uom' ),
+            'customer_rate' => __( 'booking.customer_rate' ),
+            'driver' => __( 'booking.driver' ),
+            'driver_quantity' => __( 'booking.quantity' ),
+            'driver_uom' => __( 'booking.uom' ),
+            'driver_rate' => __( 'booking.driver_rate' ),
+            'driver_percentage' => __( 'booking.percentage' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -266,6 +307,141 @@ class BookingService
 
         return response()->json( [
             'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.bookings' ) ) ] ),
+        ] );
+    }
+
+    public static function updateBooking( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'reference' => [ 'required', 'unique:bookings,reference,' . $request->id ],
+            'customer_name' => [ 'required' ],
+            'vehicle' => [ 'required', 'exists:vehicles,id' ],
+            'delivery_order_number' => [ 'required' ],
+            'delivery_order_date' => [ 'required' ],
+            'pickup_address_address_1' => [ 'required' ],
+            'pickup_address_city' => [ 'required' ],
+            'pickup_address_state' => [ 'required' ],
+            'dropoff_address_destination' => [ 'required' ],
+            'dropoff_address_address_1' => [ 'required' ],
+            'dropoff_address_city' => [ 'required' ],
+            'dropoff_address_state' => [ 'required' ],
+            'pickup_date' => [ 'required' ],
+            'dropoff_date' => [ 'required' ],
+            'company' => [ 'required' ],
+            'customer_type' => [ 'required' ],
+            'customer_quantity' => [ 'required' ],
+            'customer_uom' => [ 'required' ],
+            'customer_rate' => [ 'required' ],
+            'driver' => [ 'required', 'exists:employees,id' ],
+            'driver_quantity' => [ 'required' ],
+            'driver_uom' => [ 'required' ],
+            'driver_rate' => [ 'required' ],
+            'driver_percentage' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'reference' => __( 'booking.reference' ),
+            'customer_name' => __( 'booking.customer_name' ),
+            'invoice_number' => __( 'booking.invoice_number' ),
+            'invoice_date' => __( 'booking.invoice_date' ),
+            'vehicle' => __( 'booking.vehicle' ),
+            'delivery_order_number' => __( 'booking.delivery_order_number' ),
+            'delivery_order_date' => __( 'booking.delivery_order_date' ),
+            'pickup_address_address_1' => __( 'booking.address_1' ),
+            'pickup_address_address_2' => __( 'booking.address_2' ),
+            'pickup_address_city' => __( 'booking.city' ),
+            'pickup_address_postcode' => __( 'booking.postcode' ),
+            'pickup_address_state' => __( 'booking.state' ),
+            'dropoff_address_destination' => __( 'booking.destination' ),
+            'dropoff_address_address_1' => __( 'booking.address_1' ),
+            'dropoff_address_address_2' => __( 'booking.address_2' ),
+            'dropoff_address_city' => __( 'booking.city' ),
+            'dropoff_address_postcode' => __( 'booking.postcode' ),
+            'dropoff_address_state' => __( 'booking.state' ),
+            'pickup_date' => __( 'booking.pickup_date' ),
+            'dropoff_date' => __( 'booking.dropoff_date' ),
+            'company' => __( 'booking.company' ),
+            'customer_type' => __( 'booking.customer_type' ),
+            'company' => __( 'booking.company' ),
+            'customer_type' => __( 'booking.customer_type' ),
+            'customer_quantity' => __( 'booking.quantity' ),
+            'customer_uom' => __( 'booking.uom' ),
+            'customer_rate' => __( 'booking.customer_rate' ),
+            'driver' => __( 'booking.driver' ),
+            'driver_quantity' => __( 'booking.quantity' ),
+            'driver_uom' => __( 'booking.uom' ),
+            'driver_rate' => __( 'booking.driver_rate' ),
+            'driver_percentage' => __( 'booking.percentage' ),
+        ];
+
+        foreach( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateBooking = Booking::find( $request->id );
+            $updateBooking->reference = $request->reference;
+            $updateBooking->customer_name = $request->customer_name;
+            $updateBooking->invoice_number = $request->invoice_number;
+            $updateBooking->invoice_date = $request->invoice_date;
+            $updateBooking->vehicle_id = $request->vehicle;
+            $updateBooking->delivery_order_number = $request->delivery_order_number;
+            $updateBooking->delivery_order_date = $request->delivery_order_date;
+            $updateBooking->pickup_address = json_encode( [
+                'a1' => $request->pickup_address_address_1,
+                'a2' => $request->pickup_address_address_2,
+                'c' => $request->pickup_address_city,
+                'p' => $request->pickup_address_postcode,
+                's' => $request->pickup_address_state,
+            ] );
+            $updateBooking->dropoff_address = json_encode( [
+                'd' => $request->dropoff_address_destination,
+                'a1' => $request->pickup_address_address_1,
+                'a2' => $request->pickup_address_address_2,
+                'c' => $request->pickup_address_city,
+                'p' => $request->pickup_address_postcode,
+                's' => $request->pickup_address_state,
+            ] );
+            $updateBooking->pickup_date = Carbon::createFromFormat( 'Y-m-d H:i', $request->pickup_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' );
+            $updateBooking->dropoff_date = Carbon::createFromFormat( 'Y-m-d H:i', $request->dropoff_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' );
+            $updateBooking->company_id = $request->company;
+            $updateBooking->customer_type = $request->customer_type;
+            $updateBooking->customer_quantity = $request->customer_quantity;
+            $updateBooking->customer_unit_of_measurement = $request->customer_uom;
+            $updateBooking->customer_rate = $request->customer_rate;
+            $updateBooking->customer_total_amount = $request->customer_total_amount;
+            $updateBooking->customer_remarks = $request->customer_remarks;
+            $updateBooking->driver_id = $request->driver;
+            $updateBooking->driver_quantity = $request->driver_quantity;
+            $updateBooking->driver_unit_of_measurement = $request->driver_uom;
+            $updateBooking->driver_rate = $request->driver_rate;
+            $updateBooking->driver_total_amount = $request->driver_total_amount;
+            $updateBooking->driver_percentage = $request->driver_percentage;
+            $updateBooking->driver_final_amount = $request->driver_final_amount;
+            $updateBooking->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.bookings' ) ) ] ),
         ] );
     }
 }

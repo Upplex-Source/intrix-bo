@@ -37,6 +37,27 @@ class TollExpenseService
                 case 1:
                     $tollExpense->orderBy( 'toll_expenses.transaction_time', $dir );
                     break;
+                case 2:
+                    $fuelExpense->orderBy( 'toll_expenses.entry_location', $dir );
+                    break;
+                case 3:
+                    $fuelExpense->orderBy( 'toll_expenses.entry_sp', $dir );
+                    break;
+                case 4:
+                    $fuelExpense->orderBy( 'toll_expenses.exit_location', $dir );
+                    break;
+                case 5:
+                    $fuelExpense->orderBy( 'toll_expenses.exit_sp', $dir );
+                    break;
+                case 6:
+                    $fuelExpense->orderBy( 'toll_expenses.reload_location', $dir );
+                    break;
+                case 7:
+                    $fuelExpense->orderBy( 'toll_expenses.type', $dir );
+                    break;
+                case 8:
+                    $fuelExpense->orderBy( 'toll_expenses.amount', $dir );
+                    break;
             }
         }
 
@@ -49,6 +70,7 @@ class TollExpenseService
 
         if ( $tollExpenses ) {
             $tollExpenses->append( [
+                'display_amount',
                 'encrypted_id',
             ] );
         }
@@ -311,6 +333,11 @@ class TollExpenseService
             $updateTollExpense->type = $request->transaction_type;
             $updateTollExpense->transaction_time = $transactionTime->format( 'Y-m-d H:i:s' );
             $updateTollExpense->save();
+
+            $updateExpense = Expense::where( 'toll_expense_id', $request->id )->first();
+            $updateExpense->amount = $request->amount;
+            $updateExpense->transaction_time = $transactionTime->format( 'Y-m-d H:i:s' );
+            $updateExpense->save();
 
             DB::commit();
 

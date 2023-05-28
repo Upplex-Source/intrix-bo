@@ -127,7 +127,7 @@ var typeMapper = @json( $data['transaction_type'] ),
             { data: 'exit_sp' },
             { data: 'reload_location' },
             { data: 'type' },
-            { data: 'amount' },
+            { data: 'display_amount' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [

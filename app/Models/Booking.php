@@ -12,6 +12,8 @@ use Spatie\Activitylog\LogOptions;
 
 use Helper;
 
+use Carbon\Carbon;
+
 class Booking extends Model
 {
     use HasFactory, LogsActivity;
@@ -58,8 +60,20 @@ class Booking extends Model
         return $this->belongsTo( Employee::class, 'driver_id' );
     }
 
+    public function getDisplayPickupAddressAttribute() {
+        return json_decode( $this->attributes['pickup_address'] );
+    }
+
     public function getDisplayDropOffAddressAttribute() {
         return json_decode( $this->attributes['dropoff_address'] );
+    }
+
+    public function getPickupDateAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['pickup_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+    }
+
+    public function getDropoffDateAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['dropoff_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 
     public function getEncryptedIdAttribute() {

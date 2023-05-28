@@ -106,7 +106,7 @@ var stationMapper = @json( $data['station'] ),
             { data: 'station' },
             { data: 'company.name' },
             { data: 'vehicle.license_plate' },
-            { data: 'amount' },
+            { data: 'display_amount' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [

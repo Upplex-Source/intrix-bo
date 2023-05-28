@@ -387,7 +387,7 @@ $bookingIncrement = $data['booking_increment'];
             formData.append( 'customer_name', $( bc + '_customer_name' ).val() );
             formData.append( 'invoice_number', $( bc + '_invoice_number' ).val() );
             formData.append( 'invoice_date', $( bc + '_invoice_date' ).val() );
-            formData.append( 'vehicle', $( bc + '_vehicle' ).val() );
+            formData.append( 'vehicle', null === $( bc + '_vehicle' ).val() ? '' : $( bc + '_vehicle' ).val() );
             formData.append( 'delivery_order_number', $( bc + '_delivery_order_number' ).val() );
             formData.append( 'delivery_order_date', $( bc + '_delivery_order_date' ).val() );
 
@@ -407,7 +407,7 @@ $bookingIncrement = $data['booking_increment'];
             formData.append( 'pickup_date', $( bc + '_pickup_date' ).val() );
             formData.append( 'dropoff_date', $( bc + '_dropoff_date' ).val() );
 
-            formData.append( 'company', null === $( bc + '_company' ).val() ? '' : $( bc + '_company' ).val() );
+            formData.append( 'company', $( bc + '_company' ).val() );
             formData.append( 'customer_type', $( bc + '_customer_type' ).val() );
             formData.append( 'customer_quantity', $( bc + '_customer_quantity' ).val() );
             formData.append( 'customer_uom', $( bc + '_customer_uom' ).val() );

@@ -39,6 +39,18 @@ class FuelExpenseService
                 case 1:
                     $fuelExpense->orderBy( 'fuel_expenses.transaction_time', $dir );
                     break;
+                case 2:
+                    $fuelExpense->orderBy( 'fuel_expenses.station', $dir );
+                    break;
+                case 3:
+                    $fuelExpense->orderBy( 'fuel_expenses.company_id', $dir );
+                    break;
+                case 4:
+                    $fuelExpense->orderBy( 'vehicles.license_plate', $dir );
+                    break;
+                case 5:
+                    $fuelExpense->orderBy( 'fuel_expenses.amount', $dir );
+                    break;
             }
         }
 
@@ -51,6 +63,7 @@ class FuelExpenseService
 
         if ( $fuelExpenses ) {
             $fuelExpenses->append( [
+                'display_amount',
                 'encrypted_id',
             ] );
         }
@@ -244,6 +257,11 @@ class FuelExpenseService
             $updateFuelExpense->station = $request->station;
             $updateFuelExpense->transaction_time = $transactionTime->format( 'Y-m-d H:i:s' );
             $updateFuelExpense->save();
+
+            $updateExpense = Expense::where( 'fuel_expense_id', $request->id )->first();
+            $updateExpense->amount = $request->amount;
+            $updateExpense->transaction_time = $transactionTime->format( 'Y-m-d H:i:s' );
+            $updateExpense->save();
 
             DB::commit();
 

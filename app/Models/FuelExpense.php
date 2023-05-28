@@ -43,6 +43,10 @@ class FuelExpense extends Model
         return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['transaction_time'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 
+    public function getDisplayAmountAttribute() {
+        return Helper::numberFormat( $this->attributes['amount'], 2 );
+    }
+
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }

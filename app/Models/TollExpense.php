@@ -52,6 +52,10 @@ class TollExpense extends Model
         return Carbon::createFromFormat( 'Y-m-d', $this->attributes['posted_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
     }
 
+    public function getDisplayAmountAttribute() {
+        return Helper::numberFormat( $this->attributes['amount'], 2 );
+    }
+
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }
