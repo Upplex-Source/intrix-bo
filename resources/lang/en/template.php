@@ -27,6 +27,10 @@ return [
     'vehicle_list' => 'Vehicle List',
     'vehicle_inspections' => 'Vehicle Inspections',
     'bookings' => 'Bookings',
+    'expenses' => 'Expenses',
+    'expenses_list' => 'Expenses List',
+    'fuel_expenses' => 'Fuel Expenses',
+    'toll_expenses' => 'Toll Expenses',
 
     'loading' => 'Loading...',
     'add' => 'Add',

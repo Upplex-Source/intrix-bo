@@ -9,11 +9,14 @@ use App\Http\Controllers\Admin\{
     DashboardController,
     DriverController,
     EmployeeController,
+    ExpenseController,
     FileController,
+    FuelExpenseController,
     InspectionController,
     ModuleController,
     RoleController,
     SettingController,
+    TollExpenseController,
     VehicleController,
     VendorController,
 };
@@ -42,6 +45,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::get( '/', [ DashboardController::class, 'index' ] )->name( 'admin.dashboard' );
 
                 Route::post( '/', [ DashboardController::class, 'getDashboardData' ] )->name( 'admin.dashboard.getDashboardData' );
+
+                Route::post( 'expenses-statistics', [ DashboardController::class, 'getExpensesStatistics' ] )->name( 'admin.dashboard.getExpensesStatistics' );
             } );
 
             Route::prefix( 'administrators' )->group( function() {
@@ -165,6 +170,46 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-booking', [ BookingController::class, 'createBooking' ] )->name( 'admin.booking.createBooking' );
                 Route::post( 'update-booking', [ BookingController::class, 'updateVBooking' ] )->name( 'admin.booking.updateVBooking' );
                 Route::post( 'update-booking-status', [ BookingController::class, 'updateBookingStatus' ] )->name( 'admin.booking.updateBookingStatus' );
+            } );
+
+            Route::prefix( 'expenses' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view expenses' ] ], function() {
+                    Route::get( '/', [ ExpenseController::class, 'index' ] )->name( 'admin.module_parent.expense.index' );
+                } );
+            } );
+
+            Route::prefix( 'fuel-expenses' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view expenses' ] ], function() {
+                    Route::get( '/', [ FuelExpenseController::class, 'index' ] )->name( 'admin.fuel_expense.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add expenses' ] ], function() {
+                    Route::get( 'add', [ FuelExpenseController::class, 'add' ] )->name( 'admin.fuel_expense.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit expenses' ] ], function() {
+                    Route::get( 'edit', [ FuelExpenseController::class, 'edit' ] )->name( 'admin.fuel_expense.edit' );
+                } );
+
+                Route::post( 'all-fuel-expenses', [ FuelExpenseController::class, 'allFuelExpenses' ] )->name( 'admin.fuel_expense.allFuelExpenses' );
+                Route::post( 'one-fuel-expense', [ FuelExpenseController::class, 'oneFuelExpense' ] )->name( 'admin.fuel_expense.oneFuelExpense' );
+                Route::post( 'create-fuel-expense', [ FuelExpenseController::class, 'createFuelExpense' ] )->name( 'admin.fuel_expense.createFuelExpense' );
+                Route::post( 'update-fuel-expense', [ FuelExpenseController::class, 'updateFuelExpense' ] )->name( 'admin.fuel_expense.updateFuelExpense' );
+            } );
+
+            Route::prefix( 'toll-expenses' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view expenses' ] ], function() {
+                    Route::get( '/', [ TollExpenseController::class, 'index' ] )->name( 'admin.toll_expense.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add expenses' ] ], function() {
+                    Route::get( 'add', [ TollExpenseController::class, 'add' ] )->name( 'admin.toll_expense.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit expenses' ] ], function() {
+                    Route::get( 'edit', [ TollExpenseController::class, 'edit' ] )->name( 'admin.toll_expense.edit' );
+                } );
+
+                Route::post( 'all-toll-expenses', [ TollExpenseController::class, 'allTollExpenses' ] )->name( 'admin.toll_expense.allTollExpenses' );
+                Route::post( 'one-toll-expense', [ TollExpenseController::class, 'oneTollExpense' ] )->name( 'admin.toll_expense.oneTollExpense' );
+                Route::post( 'create-toll-expense', [ TollExpenseController::class, 'createTollExpense' ] )->name( 'admin.toll_expense.createTollExpense' );
+                Route::post( 'update-toll-expense', [ TollExpenseController::class, 'updateTollExpense' ] )->name( 'admin.toll_expense.updateTollExpense' );
             } );
         } );
     } );

@@ -16,12 +16,14 @@ class CreateTollExpensesTable extends Migration
         Schema::create('toll_expenses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vehicle_id')->nullable()->constrained('companies')->onUpdate('restrict')->onDelete('cascade');
+            $table->string('transaction_number',25)->nullable();
             $table->string('entry_location')->nullable();
             $table->string('entry_sp')->nullable();
             $table->string('exit_location')->nullable();
             $table->string('exit_sp')->nullable();
             $table->string('reload_location')->nullable();
             $table->string('tag_number',10)->default('00000000');
+            $table->string('remarks')->nullable();
             $table->string('day',2)->nullable();
             $table->string('month',2)->nullable();
             $table->string('year',4)->nullable();

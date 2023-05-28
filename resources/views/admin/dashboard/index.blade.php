@@ -149,6 +149,7 @@
                                                             <div class="card-title">
                                                                 <h6 class="title">{{ __( 'dashboard.expenses_statistics' ) }}</h6>
                                                             </div>
+                                                            @if ( 1 == 2 )
                                                             <div class="card-tools">
                                                                 <div class="dropdown">
                                                                     <a href="#" class="dropdown-toggle link link-light link-sm dropdown-indicator" data-bs-toggle="dropdown">Weekly</a>
@@ -161,32 +162,18 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            @endif
                                                         </div>
-                                                        <ul class="nk-ecwg8-legends">
-                                                            <li>
-                                                                <div class="title">
-                                                                    <span class="dot dot-lg sq" data-bg="#6576ff"></span>
-                                                                    <span>Total Order</span>
-                                                                </div>
-                                                            </li>
-                                                            <li>
-                                                                <div class="title">
-                                                                    <span class="dot dot-lg sq" data-bg="#eb6459"></span>
-                                                                    <span>Cancelled Order</span>
-                                                                </div>
-                                                            </li>
-                                                        </ul>
                                                         <div class="nk-ecwg8-ck">
-                                                            <canvas class="ecommerce-line-chart-s4" id="salesStatistics"></canvas>
-                                                        </div>
-                                                        <div class="chart-label-group ps-5">
-                                                            <div class="chart-label">01 Jul, 2020</div>
-                                                            <div class="chart-label">30 Jul, 2020</div>
+                                                            <div id="chart3"></div>
                                                         </div>
                                                     </div><!-- .card-inner -->
                                                 </div>
                                             </div><!-- .card -->
                                         </div><!-- .col -->
+                                        <?php
+                                        $upcomingBookings = $data['upcoming_bookings'];
+                                        ?>
                                         <div class="col-xxl-6">
                                             <div class="card card-full">
                                                 <div class="card-inner">
@@ -195,7 +182,13 @@
                                                             <h6 class="title">{{ __( 'dashboard.upcoming_bookings' ) }}</h6>
                                                         </div>
                                                     </div>
+                                                    @if ( count( $upcomingBookings ) == 0 )
+                                                    <div class="nk-ecwg8-ck d-flex justify-content-center align-items-center">
+                                                        <div>No upcoming bookings.</div>
+                                                    </div>
+                                                    @endif
                                                 </div>
+                                                @if ( count( $upcomingBookings ) > 0 )
                                                 <div class="nk-tb-list mt-n2">
                                                     <div class="nk-tb-item nk-tb-head">
                                                         <div class="nk-tb-col"><span>{{ __( 'dashboard.reference' ) }}</span></div>
@@ -203,35 +196,96 @@
                                                         <div class="nk-tb-col tb-col-sm"><span>{{ __( 'dashboard.destination' ) }}</span></div>
                                                         <div class="nk-tb-col tb-col-sm"><span>{{ __( 'dashboard.pickup_date' ) }}</span></div>
                                                     </div>
+                                                    @foreach( $upcomingBookings as $ub )
                                                     <div class="nk-tb-item">
                                                         <div class="nk-tb-col">
-                                                            <span class="tb-lead"><a href="#">#95954</a></span>
+                                                            <span class="tb-lead"><a href="{{ route( 'admin.booking.edit' ) . '?id=' . $ub->encrypted_id }}">{{ $ub->reference }}</a></span>
                                                         </div>
                                                         <div class="nk-tb-col tb-col-sm">
                                                             <div class="user-card">
-                                                                <div class="user-avatar sm bg-purple-dim">
-                                                                    <span>AB</span>
-                                                                </div>
                                                                 <div class="user-name">
-                                                                    <span class="tb-lead">Abu Bin Ishtiyak</span>
+                                                                    <span class="tb-lead">{{ $ub->customer_name }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-sub">02/11/2020</span>
+                                                            <span class="tb-lead">{{ $ub->display_drop_off_address->d }}</span>
                                                         </div>
                                                         <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-sub">02/11/2020</span>
+                                                            <span class="tb-sub">{{ explode( ' ', $ub->pickup_date )[0] }}</span>
                                                         </div>
                                                     </div>
+                                                    @endforeach
                                                 </div>
+                                                @endif
                                             </div><!-- .card -->
                                         </div><!-- .col -->
                                     </div><!-- .row -->
                                 </div><!-- .nk-block -->
+
+<script src="{{ asset( 'admin/js/apexcharts.min.js' ) . Helper::assetVersion() }}"></script>
                                 
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
+
+        let totalOrderOption = {
+            noData: {  
+                text: "Loading...",  
+                style: {  
+                    color: "#000000",  
+                    fontSize: '14px',  
+                    fontFamily: 'DM Sans',
+                } ,
+            },
+            series: [],
+            colors: ['#1ee0ac', '#854fff'],
+            chart: {
+                fontFamily: 'DM Sans, sans-serif',
+                foreColor: '#9ba7b2',
+                height: 200,
+                type: 'area',
+                zoom: {
+                    enabled: false
+                },
+                toolbar: {
+                    show: false
+                },
+            },
+            yaxis: {
+                labels: {
+                    formatter: function( v ) {
+                        return Math.floor( v );
+                    }
+                }
+            }
+        }
+
+        let chart = new ApexCharts( document.querySelector( '#chart3' ), totalOrderOption );
+        chart.render();
+        loadChartSales( 'day' );
+
+        function loadChartSales( type ) {
+
+            $.ajax( {
+                url: '{{ route( 'admin.dashboard.getExpensesStatistics' ) }}',
+                type: 'POST',
+                data: { type, _token: '{{ csrf_token() }}' },
+                success: function( response ) {
+                    chart.updateOptions( {
+                        xaxis: {
+                            categories: response.xAxis
+                        }
+                    } )
+                    chart.updateSeries( [ {
+                        name: '{{ __( 'dashboard.fuel' ) }}',
+                        data: response.fuelData
+                    }, {
+                        name: '{{ __( 'dashboard.toll' ) }}',
+                        data: response.tollData
+                    } ] );
+                }
+            } );
+        }
 
         getDashboardData();
 

@@ -12,6 +12,8 @@ use Spatie\Activitylog\LogOptions;
 
 use Helper;
 
+use Carbon\Carbon;
+
 class FuelExpense extends Model
 {
     use HasFactory, LogsActivity;
@@ -35,6 +37,10 @@ class FuelExpense extends Model
 
     public function vehicle() {
         return $this->belongsTo( Vehicle::class, 'vehicle_id' );
+    }
+
+    public function getTransactionTimeAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['transaction_time'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 
     public function getEncryptedIdAttribute() {

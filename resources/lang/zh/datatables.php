@@ -29,6 +29,7 @@ return [
     'all_x' => '全部 (:title)',
     'created_date' => '创建日期',
     'registered_date' => '注册日期',
+    'transaction_time' => '交易时间',
     'photo' => '照片',
     'yes' => '是',
     'no' => '否',

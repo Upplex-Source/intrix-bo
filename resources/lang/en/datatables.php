@@ -29,6 +29,7 @@ return [
     'all_x' => 'All (:title)',
     'created_date' => 'Created Date',
     'registered_date' => 'Registered Date',
+    'transaction_time' => 'Transaction Time',
     'photo' => 'Photo',
     'yes' => 'Yes',
     'no' => 'No',

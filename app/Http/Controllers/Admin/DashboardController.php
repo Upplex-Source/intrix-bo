@@ -15,6 +15,7 @@ class DashboardController extends Controller
 
         $this->data['header']['title'] = __( 'template.dashboard' );
         $this->data['content'] = 'admin.dashboard.index';
+        $this->data['data']['upcoming_bookings'] = DashboardService::upcomingBooking( $request );
 
         return view( 'admin.main' )->with( $this->data );
     }
@@ -22,5 +23,22 @@ class DashboardController extends Controller
     public function getDashboardData( Request $request ) {
 
         return DashboardService::getDashboardData( $request );
+    }
+
+    public function getExpensesStatistics( Request $request ) {
+
+        return DashboardService::getExpensesStatistics( $request );
+
+        return [
+            'fuelData' => [
+                1,2,3,
+            ],
+            'tollData' => [
+                1,2,3,
+            ],
+            'xAxis' => [
+                'A','B','C',
+            ],
+        ];
     }
 }

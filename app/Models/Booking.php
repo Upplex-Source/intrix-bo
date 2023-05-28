@@ -58,6 +58,10 @@ class Booking extends Model
         return $this->belongsTo( Employee::class, 'driver_id' );
     }
 
+    public function getDisplayDropOffAddressAttribute() {
+        return json_decode( $this->attributes['dropoff_address'] );
+    }
+
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }

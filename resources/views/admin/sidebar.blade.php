@@ -136,6 +136,27 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can( 'view expenses' )
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-sign-usd"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.expenses' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        @if ( 1 == 2 )
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.expense.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.expenses_list' ) }}</span></a>
+                                        </li>
+                                        @endif
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.fuel_expense.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.fuel_expenses' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.toll_expense.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.toll_expenses' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
                             </ul><!-- .nk-menu -->
                         </div><!-- .nk-sidebar-menu -->
                     </div><!-- .nk-sidebar-content -->

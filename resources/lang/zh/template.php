@@ -27,6 +27,10 @@ return [
     'vehicle_list' => '载具列表',
     'vehicle_inspections' => '载具检查',
     'bookings' => '预订',
+    'expenses' => '开销',
+    'expenses_list' => '开销列表',
+    'fuel_expenses' => '燃油开销',
+    'toll_expenses' => '过路费开销',
 
     'loading' => '载入中...',
     'add' => '新增',

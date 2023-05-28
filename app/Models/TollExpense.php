@@ -12,18 +12,22 @@ use Spatie\Activitylog\LogOptions;
 
 use Helper;
 
+use Carbon\Carbon;
+
 class TollExpense extends Model
 {
     use HasFactory, LogsActivity;
 
     protected $fillable = [
         'vehicle_id',
+        'transaction_number',
         'entry_location',
         'entry_sp',
         'exit_location',
         'exit_sp',
         'reload_location',
         'tag_number',
+        'remarks',
         'day',
         'month',
         'year',
@@ -40,6 +44,14 @@ class TollExpense extends Model
         return $this->belongsTo( Vehicle::class, 'vehicle_id' );
     }
 
+    public function getTransactionTimeAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['transaction_time'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+    }
+
+    public function getPostedDateAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d', $this->attributes['posted_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
+    }
+
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }
@@ -50,12 +62,14 @@ class TollExpense extends Model
 
     protected static $logAttributes = [
         'vehicle_id',
+        'transaction_number',
         'entry_location',
         'entry_sp',
         'exit_location',
         'exit_sp',
         'reload_location',
         'tag_number',
+        'remarks',
         'day',
         'month',
         'year',
