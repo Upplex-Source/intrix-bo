@@ -185,7 +185,7 @@ class AdministratorService
         }
 
         return response()->json( [
-            'message' => __( 'administrator.administrator_created' ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.administrators' ) ) ] ),
         ] );
     }
 
@@ -248,7 +248,7 @@ class AdministratorService
         }
 
         return response()->json( [
-            'message' => __( 'administrator.administrator_updated' ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.administrators' ) ) ] ),
         ] );
     }
 
