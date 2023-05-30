@@ -132,4 +132,9 @@ class BookingController extends Controller
 
         return BookingService::updateBookingStatus( $request );
     }
+
+    public function export( Request $request ) {
+
+        return BookingService::exportBookings( $request );
+    }
 }

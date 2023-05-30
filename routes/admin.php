@@ -164,6 +164,9 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:edit bookings' ] ], function() {
                     Route::get( 'edit', [ BookingController::class, 'edit' ] )->name( 'admin.booking.edit' );
                 } );
+                Route::group( [ 'middleware' => [ 'permission:export bookings' ] ], function() {
+                    Route::get( 'export', [ BookingController::class, 'export' ] )->name( 'admin.booking.export' );
+                } );
 
                 Route::post( 'all-bookings', [ BookingController::class, 'allBookings' ] )->name( 'admin.booking.allBookings' );
                 Route::post( 'one-booking', [ BookingController::class, 'oneBooking' ] )->name( 'admin.booking.oneBooking' );

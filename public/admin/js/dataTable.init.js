@@ -84,4 +84,34 @@ document.addEventListener( 'DOMContentLoaded', function() {
         dt_table.draw();
     } );
 
+    $( '.dt-export' ).click( function() {
+        let sort = dt_table.order(),
+            url = 'order[0][column]='+sort[0][0]+'&order[0][dir]='+sort[0][1];
+
+        window['columns'].forEach( function( v, i ) {
+            if ( v.type != 'default' ) {
+                if ( v.type == 'checkbox' ) {
+                    let checkboxValue = [];
+                    $.each( $( '*[data-id="trxtype"]' ), function( i, v ) {
+                        if ( $( v ).is( ':checked' ) ) {
+                            checkboxValue.push( $( v ).val() );
+                        }
+                    } );
+                    url += ( '&' + v.id + '=' + checkboxValue.join( ',' ) );
+                } else {
+                    url += ( '&' + v.id + '=' + $( '#' + v.id ).val() );
+                }
+            }
+        } );
+
+        const urlParams = new URL( exportPath );
+        let newExportPath = urlParams.origin + urlParams.pathname;
+
+        if ( urlParams.search != '' ) {
+            url += urlParams.search.replace( '?', '&' );
+        }
+
+        window.location.href = newExportPath + '?' + url;
+    } );
+
 } );

@@ -44,6 +44,7 @@ return [
     'print' => '打印',
     'confirm' => '确定',
     'submit' => '提交',
+    'export' => '导出',
 
     'new_x_created' => '已创建新:title。',
     'x_updated' => '已更新:title。',

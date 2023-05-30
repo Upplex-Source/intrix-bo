@@ -44,6 +44,7 @@ return [
     'print' => 'Print',
     'confirm' => 'Confirm',
     'submit' => 'Submit',
+    'export' => 'Export',
 
     'new_x_created' => 'New :title Created.',
     'x_updated' => ':title Updated.',

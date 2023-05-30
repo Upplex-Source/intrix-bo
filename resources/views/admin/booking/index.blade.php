@@ -12,6 +12,9 @@
                         <li class="nk-block-tools-opt">
                             <a href="{{ route( 'admin.booking.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
+                        <li class="nk-block-tools-opt">
+                            <button type="button" class="btn btn-secondary dt-export">{{ __( 'template.export' ) }}</button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -180,7 +183,8 @@ var statusMapper = @json( $data['status'] ),
         ],
     },
     table_no = 0,
-    timeout = null;
+    timeout = null,
+    exportPath = '{{ route( 'admin.booking.export' ) }}';
 
     document.addEventListener( 'DOMContentLoaded', function() {
 

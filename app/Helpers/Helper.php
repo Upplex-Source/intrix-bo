@@ -33,6 +33,10 @@ class Helper {
         }
     }
 
+    public static function numberFormatNoComma( $number, $decimal ) {
+        return str_replace( ',', '', number_format( $number, $decimal ) );
+    }
+
     public static function curlGet( $endpoint, $header = array(
 
     ) ) {
@@ -86,6 +90,27 @@ class Helper {
         } else {
             return $response;
         }
+    }
+
+    public static function exportReport( $html, $model ) {
+
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
+        $spreadsheet = $reader->loadFromString( $html );
+
+        foreach( $spreadsheet->getActiveSheet()->getColumnIterator() as $column ) {
+            $spreadsheet->getActiveSheet()->getColumnDimension( $column->getColumnIndex() )->setAutoSize( true );
+        }
+
+        $filename = $model . '_' . date( 'ymd_His' ) . '.xlsx';
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter( $spreadsheet, 'Xlsx' );
+        $writer->save( 'storage/'.$filename );
+
+        $content = file_get_contents( 'storage/'.$filename );
+
+        header( "Content-Disposition: attachment; filename=".$filename );
+        unlink( 'storage/'.$filename );
+        exit( $content );
     }
 
     public static function columnIndex( $object, $search ) {

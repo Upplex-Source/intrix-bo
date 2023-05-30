@@ -444,4 +444,96 @@ class BookingService
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.bookings' ) ) ] ),
         ] );
     }
+
+    public static function exportBookings( $request ) {
+
+        $bookings = self::allBookings( $request, true );
+
+        $html = '<table>';
+        $html .= '
+        <thead>
+            <tr>
+                <th><strong>' .__( 'booking.e_ref_no' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_mth' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_trip_no' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_inv_no' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_inv_date' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_lorry_no' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_do_ref' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_do_date' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_customer' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_pickup_from' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_dropoff_to' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_destination' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_qty' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_uom' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_customer_rate' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_driver_rate' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_amount' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_type' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_company' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_remark_1' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_transporter' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_qty' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_uom' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_driver_rate' ). '</strong></th>
+                <th><strong>' .__( 'booking.e_total' ). '</strong></th>
+                <th><strong>%</strong></th>
+                <th><strong>' .__( 'booking.e_driver_amount' ). '</strong></th>
+            </tr>
+        </thead>
+        ';
+        $html .= '<tbody>';
+
+        $customerType = [
+            '1' => strtoupper( __( 'booking.sewa' ) ),
+            '2' => strtoupper( __( 'booking.logs' ) ),
+            '3' => strtoupper( __( 'booking.others' ) ),
+        ];
+        $uom = [
+            '1' => strtoupper( __( 'booking.ton' ) ),
+            '2' => strtoupper( __( 'booking.trip' ) ),
+            '3' => strtoupper( __( 'booking.pallets' ) ),
+        ];
+
+        foreach ( $bookings as $key => $booking ) {
+            $refNo = explode( ' ', $booking->reference );
+            $html .=
+            '
+            <tr>
+                <td>' . $booking->reference . '</td>
+                <td>' . $refNo[0] . '</td>
+                <td>' . $refNo[1] . '</td>
+                <td>' . $booking->invoice_number . '</td>
+                <td>' . $booking->invoice_date . '</td>
+                <td>' . $booking->vehicle->license_plate . '</td>
+                <td>' . $booking->delivery_order_number . '</td>
+                <td>' . date( 'd/m/Y', strtotime( $booking->delivery_order_date ) ) . '</td>
+                <td>' . $booking->customer_name . '</td>
+                <td>' . $booking->display_pickup_address->a1 . '</td>
+                <td>' . $booking->display_dropoff_address->a1 . '</td>
+                <td>' . $booking->display_dropoff_address->d . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->customer_quantity, 4 ) . '</td>
+                <td>' . $uom[$booking->customer_unit_of_measurement] . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->customer_rate, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->customer_total_amount, 2 ) . '</td>
+                <td>' . $customerType[$booking->customer_type] . '</td>
+                <td>' . $booking->company->name . '</td>
+                <td>' . $booking->customer_remarks . '</td>
+                <td>' . $booking->driver->name . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_quantity, 4 ) . '</td>
+                <td>' . $uom[$booking->driver_unit_of_measurement] . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_total_amount, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_percentage, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_final_amount, 2 ) . '</td>
+            </tr>
+            ';
+        }
+
+        $html .= '</tbody></table>';
+
+        Helper::exportReport( $html, 'Booking' );
+    }
 }
