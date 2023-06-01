@@ -128,6 +128,22 @@
                                     </ul>
                                 </li>
                                 @endcan
+                                @can( 'view services' )
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.services' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.service.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.service_list' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.service_reminder.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.service_reminder_list' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
                                 @can( 'view booking' )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.booking.index' ) }}" class="nk-menu-link">

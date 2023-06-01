@@ -31,6 +31,10 @@ return [
     'expenses_list' => '开销列表',
     'fuel_expenses' => '燃油开销',
     'toll_expenses' => '过路费开销',
+    'services' => '保养',
+    'service_reminders' => '保养提醒',
+    'service_list' => '保养列表',
+    'service_reminder_list' => '保养提醒列表',
 
     'loading' => '载入中...',
     'add' => '新增',

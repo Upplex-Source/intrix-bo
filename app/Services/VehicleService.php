@@ -22,6 +22,13 @@ use Carbon\Carbon;
 
 class VehicleService
 {
+    public static function get() {
+
+        $vehicles = Vehicle::where( 'status', 10 )->get()->toArray();
+
+        return $vehicles;
+    }
+
     public static function allVehicles( $request ) {
 
         $vehicle = Vehicle::with( [

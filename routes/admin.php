@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\{
     InspectionController,
     ModuleController,
     RoleController,
+    ServiceController,
+    ServiceReminderController,
     SettingController,
     TollExpenseController,
     VehicleController,
@@ -152,6 +154,40 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-vehicle', [ VehicleController::class, 'createVehicle' ] )->name( 'admin.vehicle.createVehicle' );
                 Route::post( 'update-vehicle', [ VehicleController::class, 'updateVehicle' ] )->name( 'admin.vehicle.updateVehicle' );
                 Route::post( 'update-vehicle-status', [ VehicleController::class, 'updateVehicleStatus' ] )->name( 'admin.vehicle.updateVehicleStatus' );
+            } );
+
+            Route::prefix( 'services' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view services' ] ], function() {
+                    Route::get( '/', [ ServiceController::class, 'index' ] )->name( 'admin.module_parent.service.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add services' ] ], function() {
+                    Route::get( 'add', [ ServiceController::class, 'add' ] )->name( 'admin.service.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit services' ] ], function() {
+                    Route::get( 'edit', [ ServiceController::class, 'edit' ] )->name( 'admin.service.edit' );
+                } );
+
+                Route::post( 'all-services', [ ServiceController::class, 'allServices' ] )->name( 'admin.service.allServices' );
+                Route::post( 'one-service', [ ServiceController::class, 'oneService' ] )->name( 'admin.service.oneService' );
+                Route::post( 'create-service', [ ServiceController::class, 'createService' ] )->name( 'admin.service.createService' );
+                Route::post( 'update-service', [ ServiceController::class, 'updateService' ] )->name( 'admin.service.updateService' );
+            } );
+
+            Route::prefix( 'service-reminders' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view services' ] ], function() {
+                    Route::get( '/', [ ServiceReminderController::class, 'index' ] )->name( 'admin.service_reminder.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add services' ] ], function() {
+                    Route::get( 'add', [ ServiceReminderController::class, 'add' ] )->name( 'admin.service_reminder.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit services' ] ], function() {
+                    Route::get( 'edit', [ ServiceReminderController::class, 'edit' ] )->name( 'admin.service_reminder.edit' );
+                } );
+
+                Route::post( 'all-service-reminders', [ ServiceReminderController::class, 'allServiceReminders' ] )->name( 'admin.service_reminder.allServiceReminders' );
+                Route::post( 'one-service-reminder', [ ServiceReminderController::class, 'oneServiceReminder' ] )->name( 'admin.service_reminder.oneServiceReminder' );
+                Route::post( 'create-service-reminder', [ ServiceReminderController::class, 'createServiceReminder' ] )->name( 'admin.service_reminder.createServiceReminder' );
+                Route::post( 'update-service-reminder', [ ServiceReminderController::class, 'updateServiceReminder' ] )->name( 'admin.service_reminder.updateServiceReminder' );
             } );
 
             Route::prefix( 'bookings' )->group( function() {

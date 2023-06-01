@@ -31,6 +31,10 @@ return [
     'expenses_list' => 'Expenses List',
     'fuel_expenses' => 'Fuel Expenses',
     'toll_expenses' => 'Toll Expenses',
+    'services' => 'Services',
+    'service_reminders' => 'Service Reminder',
+    'service_list' => 'Service List',
+    'service_reminder_list' => 'Service Reminder List',
 
     'loading' => 'Loading...',
     'add' => 'Add',
