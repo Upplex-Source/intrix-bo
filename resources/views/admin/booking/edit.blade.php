@@ -345,20 +345,45 @@ $booking_edit = 'booking_edit';
         } );
 
         $( be + '_customer_quantity' ).on( 'keyup change', function() {
+
+            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+                return 0;
+            }
+
             $( be + '_driver_quantity' ).val( $( this ).val() );
             calculateCustomerTotalAmount();
         } );
         $( be + '_customer_rate' ).on( 'keyup change', function() {
+
+            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+                return 0;
+            }
+
             $( be + '_driver_rate' ).val( $( this ).val() );
             calculateCustomerTotalAmount();
         } );
         $( be + '_driver_quantity' ).on( 'keyup change', function() {
+
+            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+                return 0;
+            }
+
             calculateDriverTotalAmount();
         } );
         $( be + '_driver_rate' ).on( 'keyup change', function() {
+
+            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+                return 0;
+            }
+
             calculateDriverTotalAmount();
         } );
         $( be + '_driver_percentage' ).on( 'keyup change', function() {
+
+            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+                return 0;
+            }
+
             calculateDriverTotalAmount();
         } );
         

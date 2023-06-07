@@ -179,7 +179,7 @@ class VehicleService
     public static function createVehicle( $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'photo' => [ 'required' ],
+            // 'photo' => [ 'required' ],
             'driver' => [ 'required', 'exists:employees,id' ],
             'name' => [ 'required' ],
             'license_plate' => [ 'required' ],
@@ -249,7 +249,7 @@ class VehicleService
         ] );
 
         $validator = Validator::make( $request->all(), [
-            'photo' => [ 'required' ],
+            // 'photo' => [ 'required' ],
             'name' => [ 'required' ],
             'license_plate' => [ 'required' ],
             'type' => [ 'required' ],

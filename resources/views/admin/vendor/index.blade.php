@@ -136,8 +136,9 @@ var typeMapper = @json( $data['type_mapper'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "photo" ) }}' ),
                 orderable: false,
                 width: '75px',
+                class: "text-center",
                 render: function( data, type, row, meta ) {
-                    return '<img src="' + ( data ? data : '{{ asset( 'admin/images/default-small.png' ) }}' ) + '" width="75px" />';
+                    return data ? ( '<img src="' + data + '" width="75px" />' ) : '<img src="{{ asset( 'admin/images/jjk-small.png' ) }}" width="75px" style="opacity:.5;" />';
                 },
             },
             {

@@ -160,7 +160,7 @@ class VendorService
     public static function createVendor( $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'photo' => [ 'required' ],
+            // 'photo' => [ 'required' ],
             'name' => [ 'required' ],
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
@@ -249,7 +249,7 @@ class VendorService
         ] );
 
         $validator = Validator::make( $request->all(), [
-            'photo' => [ 'required' ],
+            // 'photo' => [ 'required' ],
             'name' => [ 'required' ],
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
