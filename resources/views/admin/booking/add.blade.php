@@ -350,8 +350,12 @@ $bookingIncrement = $data['booking_increment'];
 
         $( bc + '_customer_quantity' ).on( 'keyup change', function() {
 
-            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+            if ( isNaN( $( this ).val() ) ) {
                 return 0;
+            }
+
+            if ( $( this ).val() == '' ) {
+                $( this ).val( 0 );
             }
 
             $( bc + '_driver_quantity' ).val( $( this ).val() );
@@ -359,8 +363,12 @@ $bookingIncrement = $data['booking_increment'];
         } );
         $( bc + '_customer_rate' ).on( 'keyup change', function() {
 
-            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+            if ( isNaN( $( this ).val() ) ) {
                 return 0;
+            }
+
+            if ( $( this ).val() == '' ) {
+                $( this ).val( 0 );
             }
 
             $( bc + '_driver_rate' ).val( $( this ).val() );
@@ -368,24 +376,36 @@ $bookingIncrement = $data['booking_increment'];
         } );
         $( bc + '_driver_quantity' ).on( 'keyup change', function() {
 
-            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+            if ( isNaN( $( this ).val() ) ) {
                 return 0;
+            }
+
+            if ( $( this ).val() == '' ) {
+                $( this ).val( 0 );
             }
 
             calculateDriverTotalAmount();
         } );
         $( bc + '_driver_rate' ).on( 'keyup change', function() {
 
-            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+            if ( isNaN( $( this ).val() ) ) {
                 return 0;
+            }
+
+            if ( $( this ).val() == '' ) {
+                $( this ).val( 0 );
             }
 
             calculateDriverTotalAmount();
         } );
         $( bc + '_driver_percentage' ).on( 'keyup change', function() {
 
-            if ( isNaN( $( this ).val() ) || $( this ).val() == '' ) {
+            if ( isNaN( $( this ).val() ) ) {
                 return 0;
+            }
+
+            if ( $( this ).val() == '' ) {
+                $( this ).val( 0 );
             }
 
             calculateDriverTotalAmount();
