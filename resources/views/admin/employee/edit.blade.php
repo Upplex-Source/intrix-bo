@@ -183,8 +183,9 @@ $employee_edit = 'employee_edit';
                         init: function() {
                             if ( imagePath ) {
                                 let myDropzone = this,
-                                    mockFile = { name: 'Default', size: 1024 };
+                                    mockFile = { name: 'Default', size: 1024, accepted: true };
 
+                                myDropzone.files.push( mockFile );
                                 myDropzone.displayExistingFile( mockFile, imagePath );
                             }
                         },
@@ -193,8 +194,6 @@ $employee_edit = 'employee_edit';
                             file.previewElement.remove();
                         },
                         success: function( file, response ) {
-                            console.log( file );
-                            console.log( response );
                             if ( response.status == 200 )  {
                                 fileID = response.data.id;
                             }
