@@ -191,6 +191,12 @@ class VehicleService
             'photo' => __( 'datatables.photo' ),
             'name' => __( 'vehicle.name' ),
             'license_plate' => __( 'vehicle.license_plate' ),
+            'road_tax_number' => __( 'vehicle.road_tax_number' ),
+            'insurance_number' => __( 'vehicle.insurance_number' ),
+            'permit_number' => __( 'vehicle.permit_number' ),
+            'road_tax_expiry_date' => __( 'vehicle.road_tax_expiry_date' ),
+            'insurance_expiry_date' => __( 'vehicle.insurance_expiry_date' ),
+            'permit_expiry_date' => __( 'vehicle.permit_expiry_date' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
         ];
@@ -209,6 +215,12 @@ class VehicleService
                 'driver_id' => $request->driver,
                 'name' => $request->name,
                 'license_plate' => $request->license_plate,
+                'road_tax_number' => $request->road_tax_number,
+                'insurance_number' => $request->insurance_number,
+                'permit_number' => $request->permit_number,
+                'road_tax_expiry_date' => $request->road_tax_expiry_date,
+                'insurance_expiry_date' => $request->insurance_expiry_date,
+                'permit_expiry_date' => $request->permit_expiry_date,
                 'in_service' => 0,
                 'type' => $request->type,
             ] );
@@ -260,6 +272,12 @@ class VehicleService
             'photo' => __( 'datatables.photo' ),
             'name' => __( 'vehicle.name' ),
             'license_plate' => __( 'vehicle.license_plate' ),
+            'road_tax_number' => __( 'vehicle.road_tax_number' ),
+            'insurance_number' => __( 'vehicle.insurance_number' ),
+            'permit_number' => __( 'vehicle.permit_number' ),
+            'road_tax_expiry_date' => __( 'vehicle.road_tax_expiry_date' ),
+            'insurance_expiry_date' => __( 'vehicle.insurance_expiry_date' ),
+            'permit_expiry_date' => __( 'vehicle.permit_expiry_date' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
         ];
@@ -278,6 +296,12 @@ class VehicleService
             $updateVehicle->driver_id = $request->driver;
             $updateVehicle->name = $request->name;
             $updateVehicle->license_plate = $request->license_plate;
+            $updateVehicle->road_tax_number = $request->road_tax_number;
+            $updateVehicle->insurance_number = $request->insurance_number;
+            $updateVehicle->permit_number = $request->permit_number;
+            $updateVehicle->road_tax_expiry_date = $request->road_tax_expiry_date;
+            $updateVehicle->insurance_expiry_date = $request->insurance_expiry_date;
+            $updateVehicle->permit_expiry_date = $request->permit_expiry_date;
             $updateVehicle->type = $request->type;
             $updateVehicle->save();
 

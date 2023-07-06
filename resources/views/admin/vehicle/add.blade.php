@@ -47,6 +47,48 @@ $vehicle_create = 'vehicle_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_road_tax_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.road_tax_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_road_tax_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_road_tax_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.road_tax_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_road_tax_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_insurance_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_insurance_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_insurance_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_insurance_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_permit_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.permit_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_permit_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_permit_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.permit_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_permit_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $vehicle_create }}_type" class="col-sm-5 col-form-label">{{ __( 'vehicle.type' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $vehicle_create }}_type">
@@ -74,6 +116,18 @@ $vehicle_create = 'vehicle_create';
         let vc = '#{{ $vehicle_create }}',
             fileID = '';
             
+        $( vc + '_road_tax_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
+        $( vc + '_insurance_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
+        $( vc + '_permit_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+        
         $( vc + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.vehicle.index' ) }}';
         } );
@@ -91,6 +145,12 @@ $vehicle_create = 'vehicle_create';
             formData.append( 'driver', $( vc + '_driver' ).val() );
             formData.append( 'name', $( vc + '_name' ).val() );
             formData.append( 'license_plate', $( vc + '_license_plate' ).val() );
+            formData.append( 'road_tax_number', $( vc + '_road_tax_number' ).val() );
+            formData.append( 'road_tax_expiry_date', $( vc + '_road_tax_expiry_date' ).val() );
+            formData.append( 'insurance_number', $( vc + '_insurance_number' ).val() );
+            formData.append( 'insurance_expiry_date', $( vc + '_insurance_expiry_date' ).val() );
+            formData.append( 'permit_number', $( vc + '_permit_number' ).val() );
+            formData.append( 'permit_expiry_date', $( vc + '_permit_expiry_date' ).val() );
             formData.append( 'type', $( vc + '_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 

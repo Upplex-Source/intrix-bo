@@ -19,6 +19,12 @@ class CreateVehiclesTable extends Migration
             $table->string('photo',150)->nullable();
             $table->string('name',100);
             $table->string('license_plate',10);
+            $table->string('road_tax_number',75)->nullable();
+            $table->string('insurance_number',75)->nullable();
+            $table->string('permit_number',75)->nullable();
+            $table->date('road_tax_expired_date')->nullable();
+            $table->date('insurance_expired_date')->nullable();
+            $table->date('permit_expired_date')->nullable();
             $table->tinyInteger('in_service')->default(0);
             $table->tinyInteger('type')->default(1);
             $table->tinyInteger('status')->default(10);

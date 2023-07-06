@@ -29,6 +29,9 @@ class VehicleController extends Controller
         ];
         $this->data['data']['type'] = [
             '1' => __( 'vehicle.truck' ),
+            '2' => __( 'vehicle.timber_jinker' ),
+            '3' => __( 'vehicle.curtain_sider' ),
+            '4' => __( 'vehicle.open_cargo' ),
         ];
         $this->data['data']['in_service'] = [
             '0' => __( 'datatables.no' ),
@@ -65,6 +68,9 @@ class VehicleController extends Controller
         ];
         $this->data['data']['type'] = [
             '1' => __( 'vehicle.truck' ),
+            '2' => __( 'vehicle.timber_jinker' ),
+            '3' => __( 'vehicle.curtain_sider' ),
+            '4' => __( 'vehicle.open_cargo' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -93,6 +99,9 @@ class VehicleController extends Controller
         ];
         $this->data['data']['type'] = [
             '1' => __( 'vehicle.truck' ),
+            '2' => __( 'vehicle.timber_jinker' ),
+            '3' => __( 'vehicle.curtain_sider' ),
+            '4' => __( 'vehicle.open_cargo' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );

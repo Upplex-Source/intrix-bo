@@ -47,6 +47,48 @@ $vehicle_edit = 'vehicle_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_road_tax_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.road_tax_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_road_tax_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_road_tax_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.road_tax_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_road_tax_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_insurance_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_insurance_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_insurance_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_insurance_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_permit_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.permit_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_permit_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_permit_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.permit_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_permit_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $vehicle_edit }}_type" class="col-sm-5 col-form-label">{{ __( 'vehicle.type' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $vehicle_edit }}_type">
@@ -74,6 +116,18 @@ $vehicle_edit = 'vehicle_edit';
         let ve = '#{{ $vehicle_edit }}',
             fileID = '';
 
+        let roadTaxExpiryDate = $( ve + '_road_tax_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
+        let insuranceExpiryDate = $( ve + '_insurance_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
+        let permitExpiryDate = $( ve + '_permit_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+        
         $( ve + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.vehicle.index' ) }}';
         } );
@@ -103,6 +157,12 @@ $vehicle_edit = 'vehicle_edit';
             formData.append( 'driver', $( ve + '_driver' ).val() );
             formData.append( 'name', $( ve + '_name' ).val() );
             formData.append( 'license_plate', $( ve + '_license_plate' ).val() );
+            formData.append( 'road_tax_number', $( ve + '_road_tax_number' ).val() );
+            formData.append( 'road_tax_expiry_date', $( ve  + '_road_tax_expiry_date' ).val() );
+            formData.append( 'insurance_number', $( ve  + '_insurance_number' ).val() );
+            formData.append( 'insurance_expiry_date', $( ve  + '_insurance_expiry_date' ).val() );
+            formData.append( 'permit_number', $( ve  + '_permit_number' ).val() );
+            formData.append( 'permit_expiry_date', $( ve  + '_permit_expiry_date' ).val() );
             formData.append( 'type', $( ve + '_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -205,6 +265,12 @@ $vehicle_edit = 'vehicle_edit';
 
                     $( ve + '_name' ).val( response.name )
                     $( ve + '_license_plate' ).val( response.license_plate );
+                    $( ve + '_road_tax_number' ).val( response.road_tax_number );
+                    roadTaxExpiryDate.setDate( response.road_tax_expiry_date );
+                    $( ve + '_insurance_number' ).val( response.insurance_number );
+                    insuranceExpiryDate.setDate( response.insurance_expiry_date );
+                    $( ve + '_permit_number' ).val( response.permit_number );
+                    permitExpiryDate.setDate( response.permit_expiry_date );
                     $( ve + '_type' ).val( response.type );
 
                     fileID = response.photo;
