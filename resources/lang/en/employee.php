@@ -17,6 +17,8 @@ return [
     'email' => 'Email',
     'phone_number' => 'Phone Number',
     'identification_number' => 'Identification Number',
+    'license_number' => 'License Number',
+    'license_expiry_date' => 'License Expiry Date',
     'designation' => 'Designation',
     'driver' => 'Driver',
     'remarks' => 'Remarks',

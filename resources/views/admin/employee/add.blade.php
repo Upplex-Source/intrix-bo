@@ -53,6 +53,20 @@ $employee_create = 'employee_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $employee_create }}_license_number" class="col-sm-5 col-form-label">{{ __( 'employee.license_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_license_number">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $employee_create }}_license_expiry_date" class="col-sm-5 col-form-label">{{ __( 'employee.license_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_license_expiry_date">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $employee_create }}_designation" class="col-sm-5 col-form-label">{{ __( 'employee.designation' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $employee_create }}_designation">
@@ -87,6 +101,10 @@ $employee_create = 'employee_create';
         let dc = '#{{ $employee_create }}',
             fileID = '';
 
+        $( dc + '_license_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
         $( dc + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.employee.index' ) }}';
         } );
@@ -105,6 +123,8 @@ $employee_create = 'employee_create';
             formData.append( 'email', $( dc + '_email' ).val() );
             formData.append( 'phone_number', $( dc + '_phone_number' ).val() );
             formData.append( 'identification_number', $( dc + '_identification_number' ).val() );
+            formData.append( 'license_number', $( dc + '_license_number' ).val() );
+            formData.append( 'license_expiry_date', $( dc + '_license_expiry_date' ).val() );
             formData.append( 'designation', $( dc + '_designation' ).val() );
             formData.append( 'remarks', $( dc + '_remarks' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );

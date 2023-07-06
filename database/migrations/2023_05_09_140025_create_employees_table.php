@@ -20,7 +20,9 @@ class CreateEmployeesTable extends Migration
             $table->string('email',50);
             $table->string('phone_number',15);
             $table->string('identification_number',20)->nullable();
+            $table->string('license_number',50)->nullable();
             $table->string('remarks')->nullable();
+            $table->date('license_expired_date')->nullable();
             $table->tinyInteger('status')->default(10);
             $table->tinyInteger('designation')->default(1);
             $table->tinyInteger('employment_type')->default(1)->comment('1:fulltime 2:parttime');

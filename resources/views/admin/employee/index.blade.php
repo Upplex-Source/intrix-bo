@@ -57,6 +57,18 @@ $columns = [
         'title' => __( 'employee.identification_number' ),
     ],
     [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'employee.license_number' ) ] ),
+        'id' => 'license_number',
+        'title' => __( 'employee.license_number' ),
+    ],
+    [
+        'type' => 'date',
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'employee.license_expiry_date' ) ] ),
+        'id' => 'license_expiry_date',
+        'title' => __( 'employee.license_expiry_date' ),
+    ],
+    [
         'type' => 'select',
         'options' => $data['designation'],
         'id' => 'designation',
@@ -120,6 +132,8 @@ var designationMapper = @json( $data['designation'] ),
             { data: 'name' },
             { data: 'phone_number' },
             { data: 'identification_number' },
+            { data: 'license_number' },
+            { data: 'license_expiry_date' },
             { data: 'designation' },
             { data: 'status' },
             { data: 'encrypted_id' },
@@ -144,6 +158,20 @@ var designationMapper = @json( $data['designation'] ),
             },
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "created_date" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "identification_number" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "license_number" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;

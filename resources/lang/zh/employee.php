@@ -17,6 +17,8 @@ return [
     'email' => '电子邮件',
     'phone_number' => '电话号码',
     'identification_number' => '身份证号码',
+    'license_number' => '驾照号码',
+    'license_expiry_date' => '驾照逾期日期',
     'designation' => '职位',
     'driver' => '司机',
     'remarks' => '备注',

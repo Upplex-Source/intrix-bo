@@ -46,9 +46,15 @@ class EmployeeService
                     $employee->orderBy( 'identification_number', $dir );
                     break;
                 case 6:
-                    $employee->orderBy( 'designation', $dir );
+                    $employee->orderBy( 'license_number', $dir );
                     break;
                 case 7:
+                    $employee->orderBy( 'license_expiry_date', $dir );
+                    break;
+                case 8:
+                    $employee->orderBy( 'designation', $dir );
+                    break;
+                case 9:
                     $vendor->orderBy( 'status', $dir );
                     break;
             }
@@ -108,17 +114,27 @@ class EmployeeService
         }
 
         if ( !empty( $request->name ) ) {
-            $model->where( 'name', $request->name );
+            $model->where( 'name', 'LIKE', '%' . $request->name . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->phone_number ) ) {
-            $model->where( 'phone_number', $request->phone_number );
+            $model->where( 'phone_number', 'LIKE', '%' . $request->phone_number . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->identification_number ) ) {
-            $model->where( 'identification_number', $request->identification_number );
+            $model->where( 'identification_number', 'LIKE', '%' . $request->identification_number . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->license_number ) ) {
+            $model->where( 'license_number', 'LIKE', '%' . $request->license_number . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->license_expiry_date ) ) {
+            $model->where( 'license_expiry_date', $request->license_expiry_date );
             $filter = true;
         }
 
@@ -170,6 +186,8 @@ class EmployeeService
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
             'identification_number' => [ 'required' ],
+            'license_number' => [ 'required' ],
+            'license_expiry_date' => [ 'required' ],
             'designation' => [ 'required', 'in:1,2' ],
         ] );
 
@@ -179,6 +197,8 @@ class EmployeeService
             'email' => __( 'employee.email' ),
             'phone_number' => __( 'employee.phone_number' ),
             'identification_number' => __( 'employee.identification_number' ),
+            'license_number' => __( 'employee.license_number' ),
+            'license_expiry_date' => __( 'employee.license_expiry_date' ),
             'designation' => __( 'employee.designation' ),
         ];
 
@@ -197,6 +217,8 @@ class EmployeeService
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
                 'identification_number' => $request->identification_number,
+                'license_number' => $request->license_number,
+                'license_expiry_date' => $request->license_expiry_date,
                 'designation' => $request->designation,
                 'remarks' => $request->remarks,
             ] );
@@ -242,6 +264,8 @@ class EmployeeService
             'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
             'identification_number' => [ 'required' ],
+            'license_number' => [ 'required' ],
+            'license_expiry_date' => [ 'required' ],
             'designation' => [ 'required', 'in:1,2' ],
         ] );
 
@@ -251,6 +275,8 @@ class EmployeeService
             'email' => __( 'employee.email' ),
             'phone_number' => __( 'employee.phone_number' ),
             'identification_number' => __( 'employee.identification_number' ),
+            'license_number' => __( 'employee.license_number' ),
+            'license_expiry_date' => __( 'employee.license_expiry_date' ),
             'designation' => __( 'employee.designation' ),
         ];
 
@@ -269,6 +295,8 @@ class EmployeeService
             $updateEmployee->email = $request->email;
             $updateEmployee->phone_number = $request->phone_number;
             $updateEmployee->identification_number = $request->identification_number;
+            $updateEmployee->license_number = $request->license_number;
+            $updateEmployee->license_expiry_date = $request->license_expiry_date;
             $updateEmployee->designation = $request->designation;
             $updateEmployee->remarks = $request->remarks;
             $updateEmployee->save();
