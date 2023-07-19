@@ -35,6 +35,8 @@ return [
     'service_reminders' => '保养提醒',
     'service_list' => '保养列表',
     'service_reminder_list' => '保养提醒列表',
+    'maintenance_records' => '保养记录列表',
+    'service_records' => '保养记录',
 
     'loading' => '载入中...',
     'add' => '新增',

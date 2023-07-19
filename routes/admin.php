@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\{
     FuelExpenseController,
     InspectionController,
     ModuleController,
+    MaintenanceRecordController,
     RoleController,
     ServiceController,
     ServiceReminderController,
@@ -154,6 +155,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-vehicle', [ VehicleController::class, 'createVehicle' ] )->name( 'admin.vehicle.createVehicle' );
                 Route::post( 'update-vehicle', [ VehicleController::class, 'updateVehicle' ] )->name( 'admin.vehicle.updateVehicle' );
                 Route::post( 'update-vehicle-status', [ VehicleController::class, 'updateVehicleStatus' ] )->name( 'admin.vehicle.updateVehicleStatus' );
+            } );
+
+            Route::prefix( 'maintenance-records' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view maintenance_records' ] ], function() {
+                    Route::get( 'service-records', [ MaintenanceRecordController::class, 'serviceRecords' ] )->name( 'admin.module_parent.maintenance_record.serviceRecord' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add maintenance_records' ] ], function() {
+                    Route::get( 'service-records/add', [ MaintenanceRecordController::class, 'addServiceRecord' ] )->name( 'admin.maintenance_record.addServiceRecord' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit maintenance_records' ] ], function() {
+                    Route::get( 'service-records/edit', [ MaintenanceRecordController::class, 'editServiceRecord' ] )->name( 'admin.maintenance_record.editServiceRecord' );
+                } );
+
+                Route::post( 'all-service-records', [ MaintenanceRecordController::class, 'allServiceRecords' ] )->name( 'admin.maintenance_record.allServiceRecords' );
+                Route::post( 'one-service-record', [ MaintenanceRecordController::class, 'oneServiceRecord' ] )->name( 'admin.maintenance_record.oneServiceRecord' );
+                Route::post( 'service-record-validate-item', [ MaintenanceRecordController::class, 'validateItemServiceRecord' ] )->name( 'admin.maintenance_record.validateItemServiceRecord' );
+                Route::post( 'create-service-record', [ MaintenanceRecordController::class, 'createServiceRecord' ] )->name( 'admin.maintenance_record.createServiceRecord' );
+                Route::post( 'update-service-record', [ MaintenanceRecordController::class, 'updateServiceRecord' ] )->name( 'admin.maintenance_record.updateServiceRecord' );
             } );
 
             Route::prefix( 'services' )->group( function() {

@@ -144,6 +144,19 @@
                                     </ul>
                                 </li>
                                 @endcan
+                                @can( 'view maintenance_records' )
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.maintenance_records' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.maintenance_record.serviceRecord' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.service_records' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
                                 @can( 'view booking' )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.booking.index' ) }}" class="nk-menu-link">

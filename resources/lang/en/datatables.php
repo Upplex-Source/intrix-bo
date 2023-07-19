@@ -30,6 +30,7 @@ return [
     'created_date' => 'Created Date',
     'registered_date' => 'Registered Date',
     'transaction_time' => 'Transaction Time',
+    'service_date' => 'Service Date',
     'photo' => 'Photo',
     'yes' => 'Yes',
     'no' => 'No',
