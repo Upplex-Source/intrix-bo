@@ -32,4 +32,11 @@ return [
     'description' => 'Description',
 
     'add_record_to_continue' => 'Add record to continue',
+
+    'purchase_bill_reference' => 'Purchase Bill Reference',
+    'code' => 'Code',
+    'category' => 'Category',
+    'tyre' => 'Tyre',
+    'serial_number' => 'Serial Number',
+    'supplier' => 'Supplier',
 ];

@@ -31,6 +31,7 @@ return [
     'registered_date' => 'Registered Date',
     'transaction_time' => 'Transaction Time',
     'service_date' => 'Service Date',
+    'purchase_date' => 'Purchase Date',
     'photo' => 'Photo',
     'yes' => 'Yes',
     'no' => 'No',

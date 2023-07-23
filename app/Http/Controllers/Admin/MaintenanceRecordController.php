@@ -32,7 +32,7 @@ class MaintenanceRecordController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function addServiceRecord ( Request $request ) {
+    public function addServiceRecord( Request $request ) {
 
         $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.service_records' ) ) ] );
         $this->data['content'] = 'admin.maintenance_record.add_service_record';
@@ -43,7 +43,7 @@ class MaintenanceRecordController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.maintenance_record.serviceRecord' ),
+                'url' => route( 'admin.module_parent.maintenance_record.serviceRecords' ),
                 'text' => __( 'template.service_records' ),
                 'class' => '',
             ],
@@ -74,7 +74,7 @@ class MaintenanceRecordController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.maintenance_record.serviceRecord' ),
+                'url' => route( 'admin.module_parent.maintenance_record.serviceRecords' ),
                 'text' => __( 'template.service_records' ),
                 'class' => '',
             ],
@@ -117,5 +117,60 @@ class MaintenanceRecordController extends Controller
     public function updateServiceRecord( Request $request ) {
 
         return MaintenanceRecordService::updateServiceRecord( $request );
+    }
+
+    public function tyreRecords() {
+
+        $this->data['header']['title'] = __( 'template.tyre_records' );
+        $this->data['content'] = 'admin.maintenance_record.tyre_record';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.tyre_records' ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
+    public function addTyreRecord( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.tyre_records' ) ) ] );
+        $this->data['content'] = 'admin.maintenance_record.add_tyre_record';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => route( 'admin.module_parent.maintenance_record.tyreRecords' ),
+                'text' => __( 'template.tyre_records' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.tyre_records' ) ) ] ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
+    public function validateItemTyreRecord( Request $request ) {
+        
+        return MaintenanceRecordService::validateItemTyreRecord( $request );
+    }
+
+    public function createTyreRecord( Request $request ) {
+
+        return MaintenanceRecordService::createTyreRecord( $request );
     }
 }

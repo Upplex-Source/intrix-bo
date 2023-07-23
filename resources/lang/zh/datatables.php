@@ -31,6 +31,7 @@ return [
     'registered_date' => '注册日期',
     'transaction_time' => '交易时间',
     'service_date' => '保养日期',
+    'purchase_date' => 'Purchase Date',
     'photo' => '照片',
     'yes' => '是',
     'no' => '否',

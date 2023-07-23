@@ -190,7 +190,7 @@ $service_record_create = 'service_record_create';
         $( src + '_service_date' ).flatpickr();
 
         $( src + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.maintenance_record.serviceRecord' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.maintenance_record.serviceRecords' ) }}';
         } );
 
         $( src + '_submit' ).click( function() {
@@ -234,7 +234,7 @@ $service_record_create = 'service_record_create';
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.maintenance_record.serviceRecord' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.maintenance_record.serviceRecords' ) }}';
                     } );
                 },
                 error: function( error ) {

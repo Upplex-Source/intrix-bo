@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\{
     ServiceReminderController,
     SettingController,
     TollExpenseController,
+    TyreController,
     VehicleController,
     VendorController,
 };
@@ -157,12 +158,19 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-vehicle-status', [ VehicleController::class, 'updateVehicleStatus' ] )->name( 'admin.vehicle.updateVehicleStatus' );
             } );
 
+            Route::prefix( 'tyres' )->group( function() {
+
+                Route::post( 'all-tyres', [ TyreController::class, 'allTyres' ] )->name( 'admin.tyre.allTyres' );
+            } );
+
             Route::prefix( 'maintenance-records' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view maintenance_records' ] ], function() {
-                    Route::get( 'service-records', [ MaintenanceRecordController::class, 'serviceRecords' ] )->name( 'admin.module_parent.maintenance_record.serviceRecord' );
+                    Route::get( 'service-records', [ MaintenanceRecordController::class, 'serviceRecords' ] )->name( 'admin.module_parent.maintenance_record.serviceRecords' );
+                    Route::get( 'tyre-records', [ MaintenanceRecordController::class, 'tyreRecords' ] )->name( 'admin.module_parent.maintenance_record.tyreRecords' );
                 } );
                 Route::group( [ 'middleware' => [ 'permission:add maintenance_records' ] ], function() {
                     Route::get( 'service-records/add', [ MaintenanceRecordController::class, 'addServiceRecord' ] )->name( 'admin.maintenance_record.addServiceRecord' );
+                    Route::get( 'tyre-records/add', [ MaintenanceRecordController::class, 'addTyreRecord' ] )->name( 'admin.maintenance_record.addTyreRecord' );
                 } );
                 Route::group( [ 'middleware' => [ 'permission:edit maintenance_records' ] ], function() {
                     Route::get( 'service-records/edit', [ MaintenanceRecordController::class, 'editServiceRecord' ] )->name( 'admin.maintenance_record.editServiceRecord' );
@@ -173,6 +181,9 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'service-record-validate-item', [ MaintenanceRecordController::class, 'validateItemServiceRecord' ] )->name( 'admin.maintenance_record.validateItemServiceRecord' );
                 Route::post( 'create-service-record', [ MaintenanceRecordController::class, 'createServiceRecord' ] )->name( 'admin.maintenance_record.createServiceRecord' );
                 Route::post( 'update-service-record', [ MaintenanceRecordController::class, 'updateServiceRecord' ] )->name( 'admin.maintenance_record.updateServiceRecord' );
+
+                Route::post( 'tyre-record-validate-item', [ MaintenanceRecordController::class, 'validateItemTyreRecord' ] )->name( 'admin.maintenance_record.validateItemTyreRecord' );
+                Route::post( 'create-tyre-record', [ MaintenanceRecordController::class, 'createTyreRecord' ] )->name( 'admin.maintenance_record.createTyreRecord' );
             } );
 
             Route::prefix( 'services' )->group( function() {

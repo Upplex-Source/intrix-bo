@@ -152,7 +152,10 @@
                                     </a>
                                     <ul class="nk-menu-sub">
                                         <li class="nk-menu-item">
-                                            <a href="{{ route( 'admin.module_parent.maintenance_record.serviceRecord' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.service_records' ) }}</span></a>
+                                            <a href="{{ route( 'admin.module_parent.maintenance_record.serviceRecords' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.service_records' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.maintenance_record.tyreRecords' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.tyre_records' ) }}</span></a>
                                         </li>
                                     </ul>
                                 </li>

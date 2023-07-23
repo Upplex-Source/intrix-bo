@@ -32,4 +32,11 @@ return [
     'description' => '描述',
 
     'add_record_to_continue' => '添加记录以继续',
+    
+    'purchase_bill_reference' => 'Purchase Bill Reference',
+    'code' => 'Code',
+    'category' => 'Category',
+    'tyre' => 'Tyre',
+    'serial_number' => 'Serial Number',
+    'supplier' => 'Supplier',
 ];

@@ -37,6 +37,8 @@ return [
     'service_reminder_list' => 'Service Reminder List',
     'maintenance_records' => 'Maintenance Records',
     'service_records' => 'Service Records',
+    'tyre_records' => 'Tyre Records',
+    'item_list' => 'Item List',
 
     'loading' => 'Loading...',
     'add' => 'Add',

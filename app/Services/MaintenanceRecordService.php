@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\{
 use App\Models\{
     ServiceRecord,
     ServiceRecordItem,
+    Tyre,
 };
 
 use Helper;
@@ -309,6 +310,33 @@ class MaintenanceRecordService
 
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.service_records' ) ) ] ),
+        ] );
+    }
+
+    public static function validateItemTyreRecord( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'tyre' => [ 'required', 'exists:tyres,id' ],
+            'serial_number' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'tyre' => __( 'maintenance_record.tyre' ),
+            'serial_number' => __( 'maintenance_record.serial_number' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        $tyre = Tyre::with( [
+            'supplier',
+        ] )->find( $request->tyre );
+
+        return response()->json( [
+            'data' => $tyre,
         ] );
     }
 }
