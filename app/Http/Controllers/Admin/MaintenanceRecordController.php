@@ -164,6 +164,16 @@ class MaintenanceRecordController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
+    public function allTyreRecords( Request $request ) {
+
+        return MaintenanceRecordService::allTyreRecords( $request );
+    }
+
+    public function oneTypreRecord( Request $request ) {
+
+        return MaintenanceRecordService::oneTypreRecord( $request );
+    }
+
     public function validateItemTyreRecord( Request $request ) {
         
         return MaintenanceRecordService::validateItemTyreRecord( $request );

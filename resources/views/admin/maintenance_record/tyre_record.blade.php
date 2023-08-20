@@ -19,3 +19,166 @@
         @endcan
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
+
+<?php
+$columns = [
+    [
+        'type' => 'default',
+        'id' => 'dt_no',
+        'title' => 'No.',
+    ],
+    [
+        'type' => 'date',
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.purchase_date' ) ] ),
+        'id' => 'purchase_date',
+        'title' => __( 'datatables.purchase_date' ),
+    ],
+    [
+        'type' => 'input',
+        'placeholder' => __( 'maintenance_record.purchase_bill_reference' ),
+        'id' => 'purchase_bill_reference',
+        'title' => __( 'maintenance_record.purchase_bill_reference' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'vehicle',
+        'title' => __( 'maintenance_record.vehicle' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'dt_action',
+        'title' => __( 'datatables.action' ),
+    ],
+];
+?>
+
+<x-data-tables id="maintenance_record_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+
+<script>
+
+window['columns'] = @json( $columns );
+
+@foreach ( $columns as $column )
+@if ( $column['type'] != 'default' )
+window['{{ $column['id'] }}'] = '';
+@endif
+@endforeach
+
+var dt_table,
+    dt_table_name = '#maintenance_record_table',
+    dt_table_config = {
+        language: {
+            'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
+            'zeroRecords': '{{ __( "datatables.zeroRecords" ) }}',
+            'info': '{{ __( "datatables.info" ) }}',
+            'infoEmpty': '{{ __( "datatables.infoEmpty" ) }}',
+            'infoFiltered': '{{ __( "datatables.infoFiltered" ) }}',
+            'paginate': {
+                'previous': '{{ __( "datatables.previous" ) }}',
+                'next': '{{ __( "datatables.next" ) }}',
+            }
+        },
+        ajax: {
+            url: '{{ route( 'admin.maintenance_record.allTyreRecords' ) }}',
+            data: {
+                '_token': '{{ csrf_token() }}',
+            },
+            dataSrc: 'records',
+        },
+        lengthMenu: [[10, 25],[10, 25]],
+        order: [[ 1, 'desc' ]],
+        columns: [
+            { data: null },
+            { data: 'purchase_date' },
+            { data: 'purchase_bill_reference' },
+            { data: 'vehicle' },
+            { data: 'encrypted_id' },
+        ],
+        columnDefs: [
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
+                orderable: false,
+                width: '1%',
+                render: function( data, type, row, meta ) {
+                    return table_no += 1;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "service_date" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "vehicle" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data.license_plate : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ count( $columns ) - 1 }}' ),
+                orderable: false,
+                width: '1%',
+                className: 'text-center',
+                render: function( data, type, row, meta ) {
+
+                    return '-';
+
+                    @canany( [ 'edit employees', 'delete employees' ] )
+                    let edit, status = '';
+
+                    @can( 'edit employees' )
+                    edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    @endcan
+
+                    @can( 'delete employees' )
+                    status = row['status'] == 10 ? 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
+                    @endcan
+
+                    status = '';
+                    
+                    let html = 
+                        `
+                        <div class="dropdown">
+                            <a class="dropdown-toggle btn btn-icon btn-trigger" href="#" type="button" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                            <div class="dropdown-menu">
+                                <ul class="link-list-opt">
+                                    `+edit+`
+                                    `+status+`
+                                </ul>
+                            </div>
+                        </div>
+                        `;
+                        return html;
+                    @else
+                    return '-';
+                    @endcanany
+                },
+            },
+        ],
+    },
+    table_no = 0,
+    timeout = null;
+
+    document.addEventListener( 'DOMContentLoaded', function() {
+
+        $( document ).on( 'click', '.dt-edit', function() {
+            window.location.href = '{{ route( 'admin.maintenance_record.editTyreRecord' ) }}?id=' + $( this ).data( 'id' );
+        } );
+
+        $( '#purchase_date' ).flatpickr( {
+            mode: 'range',
+            disableMobile: true,
+            onClose: function( selected, dateStr, instance ) {
+                window[$( instance.element ).data('id')] = $( instance.element ).val();
+                dt_table.draw();
+            }
+        } );
+    } );
+
+</script>
+
+<script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>

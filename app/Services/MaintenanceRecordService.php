@@ -12,6 +12,8 @@ use App\Models\{
     ServiceRecord,
     ServiceRecordItem,
     Tyre,
+    TyreRecord,
+    TyreRecordItem,
 };
 
 use Helper;
@@ -80,9 +82,9 @@ class MaintenanceRecordService
 
         $filter = false;
 
-        if ( !empty( $request->created_date ) ) {
-            if ( str_contains( $request->created_date, 'to' ) ) {
-                $dates = explode( ' to ', $request->created_date );
+        if ( !empty( $request->service_date ) ) {
+            if ( str_contains( $request->service_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->service_date );
 
                 $startDate = explode( '-', $dates[0] );
                 $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
@@ -90,15 +92,15 @@ class MaintenanceRecordService
                 $endDate = explode( '-', $dates[1] );
                 $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'service_records.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'service_records.service_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             } else {
 
-                $dates = explode( '-', $request->created_date );
+                $dates = explode( '-', $request->service_date );
 
                 $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'service_records.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'service_records.service_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             }
             $filter = true;
         }
@@ -313,6 +315,94 @@ class MaintenanceRecordService
         ] );
     }
 
+    public static function allTyreRecords( $request ) {
+
+        $tyreRecord = TyreRecord::with( [
+            'vehicle',
+        ] )->select( 'tyre_records.*' );
+
+        $tyreObject = self::filterTyreRecord( $request, $tyreRecord );
+        $tyreRecord = $tyreObject['model'];
+        $filter = $tyreObject['filter'];
+
+        if ( $request->input( 'order.0.column' ) != 0 ) {
+            $dir = $request->input( 'order.0.dir' );
+            switch ( $request->input( 'order.0.column' ) ) {
+                case 1:
+                    $tyreRecord->orderBy( 'tyre_records.purchase_date', $dir );
+                    break;
+                case 2:
+                    $tyreRecord->orderBy( 'tyre_records.purchase_bill_reference', $dir );
+                    break;
+                case 3:
+                    $tyreRecord->orderBy( 'tyre_records.vehicle_id', $dir );
+                    break;
+            }
+        }
+
+        $tyreRecordCount = $tyreRecord->count();
+
+        $limit = $request->length;
+        $offset = $request->start;
+
+        $tyreRecords = $tyreRecord->skip( $offset )->take( $limit )->get();
+
+        if ( $tyreRecords ) {
+            $tyreRecords->append( [
+                'encrypted_id',
+            ] );
+        }
+
+        $totalRecord = TyreRecord::count();
+
+        $data = [
+            'records' => $tyreRecords,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $tyreRecordCount : $totalRecord,
+            'recordsTotal' => $totalRecord,
+        ];
+
+        return response()->json( $data );
+    }
+
+    private static function filterTyreRecord( $request, $model ) {
+
+        $filter = false;
+
+        if ( !empty( $request->purchase_date ) ) {
+            if ( str_contains( $request->purchase_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->purchase_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'tyre_records.purchase_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->purchase_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'tyre_records.purchase_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->purchase_bill_reference ) ) {
+            $model->where( 'tyre_records.purchase_bill_reference', $request->purchase_bill_reference );
+            $filter = true;
+        }
+
+        return [
+            'filter' => $filter,
+            'model' => $model,
+        ];
+    }
+
     public static function validateItemTyreRecord( $request ) {
 
         $validator = Validator::make( $request->all(), [
@@ -337,6 +427,61 @@ class MaintenanceRecordService
 
         return response()->json( [
             'data' => $tyre,
+        ] );
+    }
+
+    public static function createTyreRecord( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'vehicle' => [ 'nullable', 'exists:vehicles,id' ],
+            'purchase_date' => [ 'required' ],
+            'purchase_bill_reference' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'vehicle' => __( 'maintenance_record.vehicle' ),
+            'purchase_date' => __( 'datatables.purchase_date' ),
+            'purchase_bill_reference' => __( 'maintenance_record.purchase_bill_reference' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createTyreRecord = TyreRecord::create( [
+                'vehicle_id' => $request->vehicle ? $request->vehicle : null,
+                'purchase_date' => $request->purchase_date,
+                'purchase_bill_reference' => $request->purchase_bill_reference,
+            ] );
+
+            $items = json_decode( $request->items );
+            foreach ( $items as $item ) {
+                TyreRecordItem::create( [
+                    'tyre_record_id' => $createTyreRecord->id,
+                    'tyre_id' => $item->tyre,
+                    'serial_number' => $item->serial_number,
+                ] );
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.tyre_records' ) ) ] ),
         ] );
     }
 }

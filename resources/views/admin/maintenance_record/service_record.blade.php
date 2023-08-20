@@ -97,7 +97,7 @@ var dt_table,
             dataSrc: 'records',
         },
         lengthMenu: [[10, 25],[10, 25]],
-        order: [[ 2, 'desc' ]],
+        order: [[ 1, 'desc' ]],
         columns: [
             { data: null },
             { data: 'service_date' },

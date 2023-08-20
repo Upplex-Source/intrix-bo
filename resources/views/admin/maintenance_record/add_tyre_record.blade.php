@@ -115,7 +115,7 @@ $tyre_record_create = 'tyre_record_create';
 </div>
 
 <style>
-    .service_item_row > td {
+    .tyre_item_row > td {
         vertical-align: middle;
     }
 </style>
@@ -126,7 +126,7 @@ $tyre_record_create = 'tyre_record_create';
         let trc = '#{{ $tyre_record_create }}',
             aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) );
 
-        $( trc + '_service_date' ).flatpickr();
+        $( trc + '_purchase_date' ).flatpickr();
 
         $( trc + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.maintenance_record.tyreRecords' ) }}';
@@ -139,25 +139,17 @@ $tyre_record_create = 'tyre_record_create';
             } );
 
             let items = [];
-            $( '.service_item_row' ).each( function( i, v ) {
+            $( '.tyre_item_row' ).each( function( i, v ) {
                 items.push( {
-                    type: $( v ).find( '.service_type' ).data( 'type' ),
-                    description: $( v ).find( '.service_type' ).data( 'type' ) == 1 ? {
-                        'grades': $( v ).find( '.sl_grades' ).data( 'value' ),
-                        'qty': $( v ).find( '.sl_qty' ).data( 'value' ),
-                        'next_service': $( v ).find( '.sl_next_service' ).data( 'value' ),
-                    } : $( v ).find( '.description' ).html()
+                    tyre: $( v ).find( '.service_type' ).data( 'value' ),
+                    serial_number: $( v ).find( '.serial_number' ).html(),
                 } );
             } );
 
             let formData = new FormData();
             formData.append( 'vehicle', null === $( trc + '_vehicle' ).val() ? '' : $( trc + '_vehicle' ).val() );
-            formData.append( 'company', $( trc + '_company' ).val() );
-            formData.append( 'service_date', $( trc + '_service_date' ).val() );
-            formData.append( 'workshop', $( trc + '_workshop' ).val() );
-            formData.append( 'meter_reading', $( trc + '_meter_reading' ).val() );
-            formData.append( 'document_reference', $( trc + '_document_reference' ).val() );
-            formData.append( 'remarks', $( trc + '_remarks' ).val() );
+            formData.append( 'purchase_date', $( trc + '_purchase_date' ).val() );
+            formData.append( 'purchase_bill_reference', $( trc + '_purchase_bill_reference' ).val() );
             formData.append( 'items', JSON.stringify( items ) );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -226,11 +218,11 @@ $tyre_record_create = 'tyre_record_create';
 
                     html +=
                     `
-                    <tr class="service_item_row `+ time +`">
+                    <tr class="tyre_item_row `+ time +`">
                         <td class="text-center">
                             <em class="text-primary fs-4 icon ni ni-minus-round align-middle sir_remove" data-id="` + time + `" role="button"></em>
                         </td>
-                        <td class="service_type" data-type="1">Tyre</td>
+                        <td class="service_type" data-value="` + response.data.id + `">Tyre</td>
                         <td class="description">` + response.data.name + `</td>
                         <td class="serial_number">` + $( trc + '_serial_number' ).val() + `</td>
                         <td class="supplier">` + response.data.supplier.name + `</td>
@@ -265,7 +257,7 @@ $tyre_record_create = 'tyre_record_create';
             
             $( '.' + id ).remove();
 
-            let = iirCount = $( '.service_item_row' ).length;
+            let = iirCount = $( '.tyre_item_row' ).length;
 
             if ( iirCount == 0 ) {
                 let html = 
