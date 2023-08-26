@@ -22,14 +22,14 @@ $bookingIncrement = $data['booking_increment'];
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_reference" class="col-sm-5 col-form-label">{{ __( 'booking.reference' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_reference" value="{{ date('m/Y') . ' ' . ( $bookingIncrement + 1 ) }}">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_reference" value="{{ date( 'Y/m' ) . ' ' . ( $bookingIncrement + 1 ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_customer_name" class="col-sm-5 col-form-label">{{ __( 'booking.customer_name' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_customer_name">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_customer_name" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -58,23 +58,32 @@ $bookingIncrement = $data['booking_increment'];
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_delivery_order_number" class="col-sm-5 col-form-label">{{ __( 'booking.delivery_order_number' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_delivery_order_number">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_delivery_order_number" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_delivery_order_date" class="col-sm-5 col-form-label">{{ __( 'booking.delivery_order_date' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_delivery_order_date">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_delivery_order_date" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label>{{ __( 'booking.delivery_order_image' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $booking_create }}_delivery_order_image" style="min-height: 0px;">
+                        <div class="dz-message needsclick">
+                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
                 </div>
                 <hr>
                 <h5 class="card-title mb-4">{{ __( 'booking.pickup_address' ) }}</h5>
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_pickup_address_address_1" class="col-sm-5 col-form-label">{{ __( 'booking.address_1' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $booking_create }}_pickup_address_address_1"></textarea>
+                        <textarea class="form-control" id="{{ $booking_create }}_pickup_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -82,13 +91,6 @@ $bookingIncrement = $data['booking_increment'];
                     <label for="{{ $booking_create }}_pickup_address_address_2" class="col-sm-5 col-form-label">{{ __( 'booking.address_2' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" id="{{ $booking_create }}_pickup_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_create }}_pickup_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_pickup_address_city">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -124,19 +126,26 @@ $bookingIncrement = $data['booking_increment'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_create }}_pickup_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_pickup_address_city" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 <hr>
                 <h5 class="card-title mb-4">{{ __( 'booking.dropoff_address' ) }}</h5>
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_dropoff_address_destination" class="col-sm-5 col-form-label">{{ __( 'booking.destination' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_address_destination">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_address_destination" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_dropoff_address_address_1" class="col-sm-5 col-form-label">{{ __( 'booking.address_1' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $booking_create }}_dropoff_address_address_1"></textarea>
+                        <textarea class="form-control" id="{{ $booking_create }}_dropoff_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -144,13 +153,6 @@ $bookingIncrement = $data['booking_increment'];
                     <label for="{{ $booking_create }}_dropoff_address_address_2" class="col-sm-5 col-form-label">{{ __( 'booking.address_2' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" id="{{ $booking_create }}_dropoff_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_create }}_dropoff_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_address_city">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -183,6 +185,13 @@ $bookingIncrement = $data['booking_increment'];
                             <option value="Putrajaya">Putrajaya</option>
                             <option value="Perak">Perak</option>
                         </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_create }}_dropoff_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_address_city" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -337,7 +346,8 @@ $bookingIncrement = $data['booking_increment'];
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let bc = '#{{ $booking_create }}';
+        let bc = '#{{ $booking_create }}',
+            fileID = '';
 
         $( bc + '_invoice_date' ).flatpickr();
         $( bc + '_delivery_order_date' ).flatpickr();
@@ -435,6 +445,7 @@ $bookingIncrement = $data['booking_increment'];
             formData.append( 'vehicle', null === $( bc + '_vehicle' ).val() ? '' : $( bc + '_vehicle' ).val() );
             formData.append( 'delivery_order_number', $( bc + '_delivery_order_number' ).val() );
             formData.append( 'delivery_order_date', $( bc + '_delivery_order_date' ).val() );
+            formData.append( 'delivery_order_image', fileID );
 
             formData.append( 'pickup_address_address_1', $( bc + '_pickup_address_address_1' ).val() );
             formData.append( 'pickup_address_address_2', $( bc + '_pickup_address_address_2' ).val() );
@@ -589,6 +600,25 @@ $bookingIncrement = $data['booking_increment'];
                     };
                 }
             },
+        } );
+
+        Dropzone.autoDiscover = false;
+        const dropzone = new Dropzone( bc + '_delivery_order_image', { 
+            url: '{{ route( 'admin.file.upload' ) }}',
+            maxFiles: 1,
+            acceptedFiles: 'image/jpg,image/jpeg,image/png',
+            addRemoveLinks: true,
+            removedfile: function( file ) {
+                fileID = null;
+                file.previewElement.remove();
+            },
+            success: function( file, response ) {
+                console.log( file );
+                console.log( response );
+                if ( response.status == 200 )  {
+                    fileID = response.data.id;
+                }
+            }
         } );
 
         function calculateCustomerTotalAmount() {

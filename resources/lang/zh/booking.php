@@ -21,6 +21,7 @@ return [
     'license_plate' => '车牌',
     'delivery_order_number' => '交货单号',
     'delivery_order_date' => '交货日期',
+    'delivery_order_image' => '交货图片',
     'pickup_address' => '提货地址',
     'address_1' => '地址1',
     'address_2' => '地址2',

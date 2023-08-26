@@ -26,6 +26,7 @@ class Booking extends Model
         'invoice_date',
         'delivery_order_number',
         'delivery_order_date',
+        'delivery_order_image',
         'pickup_address',
         'dropoff_address',
         'pickup_date',
@@ -60,6 +61,10 @@ class Booking extends Model
         return $this->belongsTo( Employee::class, 'driver_id' );
     }
 
+    public function getDeliveryOrderImagePathAttribute() {
+        return $this->attributes['delivery_order_image'] ? asset( 'storage/' . $this->attributes['delivery_order_image'] ) : null;
+    }
+
     public function getDisplayPickupAddressAttribute() {
         return json_decode( $this->attributes['pickup_address'] );
     }
@@ -92,6 +97,7 @@ class Booking extends Model
         'invoice_date',
         'delivery_order_number',
         'delivery_order_date',
+        'delivery_order_image',
         'pickup_address',
         'dropoff_address',
         'pickup_date',

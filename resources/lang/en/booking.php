@@ -21,6 +21,7 @@ return [
     'license_plate' => 'License Plate',
     'delivery_order_number' => 'Delivery Order Number',
     'delivery_order_date' => 'Delivery Order Date',
+    'delivery_order_image' => 'Delivery Order Image',
     'pickup_address' => 'Pickup Address',
     'address_1' => 'Address 1',
     'address_2' => 'Address 2',

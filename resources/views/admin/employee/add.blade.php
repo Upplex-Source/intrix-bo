@@ -101,6 +101,8 @@ $employee_create = 'employee_create';
         let dc = '#{{ $employee_create }}',
             fileID = '';
 
+        $( dc + '_designation' ).val( 1 );
+
         $( dc + '_license_expiry_date' ).flatpickr( {
             disableMobile: true,
         } );

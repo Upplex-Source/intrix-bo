@@ -22,9 +22,9 @@ class CreateVehiclesTable extends Migration
             $table->string('road_tax_number',75)->nullable();
             $table->string('insurance_number',75)->nullable();
             $table->string('permit_number',75)->nullable();
-            $table->date('road_tax_expired_date')->nullable();
-            $table->date('insurance_expired_date')->nullable();
-            $table->date('permit_expired_date')->nullable();
+            $table->date('road_tax_expiry_date')->nullable();
+            $table->date('insurance_expiry_date')->nullable();
+            $table->date('permit_expiry_date')->nullable();
             $table->tinyInteger('in_service')->default(0);
             $table->tinyInteger('type')->default(1);
             $table->tinyInteger('status')->default(10);

@@ -5,11 +5,13 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
     DB,
+    Storage,
     Validator,
 };
 
 use App\Models\{
     Booking,
+    FileManager,
     Option,
 };
 
@@ -160,6 +162,7 @@ class BookingService
 
         if ( $booking ) {
             $booking->append( [
+                'delivery_order_image_path',
                 'display_pickup_address',
                 'display_drop_off_address',
             ] );
@@ -170,7 +173,10 @@ class BookingService
 
     public static function getLatestBookingIncrement() {
 
-        $latestBooking = Booking::latest( 'id' )->first();
+        $latestBooking = Booking::where( 'reference', 'LIKE', '%' . date( 'Y/m' ) . '%' )
+            ->orderBy( 'reference', 'DESC' )
+            ->first();
+
         if ( $latestBooking ) {
             $parts = explode( ' ', $latestBooking->reference );
             return $parts[1];
@@ -183,17 +189,17 @@ class BookingService
 
         $validator = Validator::make( $request->all(), [
             'reference' => [ 'required', 'unique:bookings' ],
-            'customer_name' => [ 'required' ],
+            // 'customer_name' => [ 'required' ],
             'vehicle' => [ 'required', 'exists:vehicles,id' ],
-            'delivery_order_number' => [ 'required' ],
-            'delivery_order_date' => [ 'required' ],
-            'pickup_address_address_1' => [ 'required' ],
-            'pickup_address_city' => [ 'required' ],
-            'pickup_address_state' => [ 'required' ],
-            'dropoff_address_destination' => [ 'required' ],
-            'dropoff_address_address_1' => [ 'required' ],
-            'dropoff_address_city' => [ 'required' ],
-            'dropoff_address_state' => [ 'required' ],
+            // 'delivery_order_number' => [ 'required' ],
+            // 'delivery_order_date' => [ 'required' ],
+            // 'pickup_address_address_1' => [ 'required' ],
+            // 'pickup_address_city' => [ 'required' ],
+            // 'pickup_address_state' => [ 'required' ],
+            // 'dropoff_address_destination' => [ 'required' ],
+            // 'dropoff_address_address_1' => [ 'required' ],
+            // 'dropoff_address_city' => [ 'required' ],
+            // 'dropoff_address_state' => [ 'required' ],
             'pickup_date' => [ 'required' ],
             'dropoff_date' => [ 'required' ],
             'company' => [ 'required' ],
@@ -216,6 +222,7 @@ class BookingService
             'vehicle' => __( 'booking.vehicle' ),
             'delivery_order_number' => __( 'booking.delivery_order_number' ),
             'delivery_order_date' => __( 'booking.delivery_order_date' ),
+            'delivery_order_image' => __( 'booking.delivery_order_image' ),
             'pickup_address_address_1' => __( 'booking.address_1' ),
             'pickup_address_address_2' => __( 'booking.address_2' ),
             'pickup_address_city' => __( 'booking.city' ),
@@ -253,7 +260,7 @@ class BookingService
 
         try {
 
-            Booking::create( [
+            $createBooking = Booking::create( [
                 'reference' => $request->reference,
                 'customer_name' => $request->customer_name,
                 'invoice_number' => $request->invoice_number,
@@ -294,6 +301,19 @@ class BookingService
                 'driver_final_amount' => $request->driver_final_amount,
             ] );
 
+            $file = FileManager::find( $request->delivery_order_image );
+            if ( $file ) {
+                $fileName = explode( '/', $file->file );
+                $target = 'bookings/' . $createBooking->id . '/' . $fileName[1];
+                Storage::disk( 'public' )->move( $file->file, $target );
+
+                $createBooking->delivery_order_image = $target;
+                $createBooking->save();
+
+                $file->status = 10;
+                $file->save();
+            }
+
             DB::commit();
 
         } catch ( \Throwable $th ) {
@@ -318,17 +338,17 @@ class BookingService
 
         $validator = Validator::make( $request->all(), [
             'reference' => [ 'required', 'unique:bookings,reference,' . $request->id ],
-            'customer_name' => [ 'required' ],
+            // 'customer_name' => [ 'required' ],
             'vehicle' => [ 'required', 'exists:vehicles,id' ],
-            'delivery_order_number' => [ 'required' ],
-            'delivery_order_date' => [ 'required' ],
-            'pickup_address_address_1' => [ 'required' ],
-            'pickup_address_city' => [ 'required' ],
-            'pickup_address_state' => [ 'required' ],
-            'dropoff_address_destination' => [ 'required' ],
-            'dropoff_address_address_1' => [ 'required' ],
-            'dropoff_address_city' => [ 'required' ],
-            'dropoff_address_state' => [ 'required' ],
+            // 'delivery_order_number' => [ 'required' ],
+            // 'delivery_order_date' => [ 'required' ],
+            // 'pickup_address_address_1' => [ 'required' ],
+            // 'pickup_address_city' => [ 'required' ],
+            // 'pickup_address_state' => [ 'required' ],
+            // 'dropoff_address_destination' => [ 'required' ],
+            // 'dropoff_address_address_1' => [ 'required' ],
+            // 'dropoff_address_city' => [ 'required' ],
+            // 'dropoff_address_state' => [ 'required' ],
             'pickup_date' => [ 'required' ],
             'dropoff_date' => [ 'required' ],
             'company' => [ 'required' ],
@@ -351,6 +371,7 @@ class BookingService
             'vehicle' => __( 'booking.vehicle' ),
             'delivery_order_number' => __( 'booking.delivery_order_number' ),
             'delivery_order_date' => __( 'booking.delivery_order_date' ),
+            'delivery_order_image' => __( 'booking.delivery_order_image' ),
             'pickup_address_address_1' => __( 'booking.address_1' ),
             'pickup_address_address_2' => __( 'booking.address_2' ),
             'pickup_address_city' => __( 'booking.city' ),
@@ -428,6 +449,24 @@ class BookingService
             $updateBooking->driver_percentage = $request->driver_percentage;
             $updateBooking->driver_final_amount = $request->driver_final_amount;
             $updateBooking->save();
+
+            if ( $request->delivery_order_image ) {
+                $file = FileManager::find( $request->delivery_order_image );
+                if ( $file ) {
+
+                    Storage::disk( 'public' )->delete( $updateBooking->delivery_order_image );
+
+                    $fileName = explode( '/', $file->file );
+                    $target = 'bookings/' . $updateBooking->id . '/' . $fileName[1];
+                    Storage::disk( 'public' )->move( $file->file, $target );
+    
+                    $updateBooking->delivery_order_image = $target;
+                    $updateBooking->save();
+    
+                    $file->status = 10;
+                    $file->save();
+                }
+            }
 
             DB::commit();
 

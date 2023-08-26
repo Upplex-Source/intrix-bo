@@ -25,7 +25,7 @@ $booking_edit = 'booking_edit';
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_customer_name" class="col-sm-5 col-form-label">{{ __( 'booking.customer_name' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_customer_name">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_customer_name" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -54,23 +54,32 @@ $booking_edit = 'booking_edit';
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_delivery_order_number" class="col-sm-5 col-form-label">{{ __( 'booking.delivery_order_number' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_delivery_order_number">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_delivery_order_number" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_delivery_order_date" class="col-sm-5 col-form-label">{{ __( 'booking.delivery_order_date' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_delivery_order_date">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_delivery_order_date" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label>{{ __( 'booking.delivery_order_image' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $booking_edit }}_delivery_order_image" style="min-height: 0px;">
+                        <div class="dz-message needsclick">
+                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
                 </div>
                 <hr>
                 <h5 class="card-title mb-4">{{ __( 'booking.pickup_address' ) }}</h5>
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_pickup_address_address_1" class="col-sm-5 col-form-label">{{ __( 'booking.address_1' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $booking_edit }}_pickup_address_address_1"></textarea>
+                        <textarea class="form-control" id="{{ $booking_edit }}_pickup_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -78,13 +87,6 @@ $booking_edit = 'booking_edit';
                     <label for="{{ $booking_edit }}_pickup_address_address_2" class="col-sm-5 col-form-label">{{ __( 'booking.address_2' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" id="{{ $booking_edit }}_pickup_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_pickup_address_city">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -120,19 +122,26 @@ $booking_edit = 'booking_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_pickup_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_pickup_address_city" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 <hr>
                 <h5 class="card-title mb-4">{{ __( 'booking.dropoff_address' ) }}</h5>
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_dropoff_address_destination" class="col-sm-5 col-form-label">{{ __( 'booking.destination' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_address_destination">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_address_destination" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_dropoff_address_address_1" class="col-sm-5 col-form-label">{{ __( 'booking.address_1' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $booking_edit }}_dropoff_address_address_1"></textarea>
+                        <textarea class="form-control" id="{{ $booking_edit }}_dropoff_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -140,13 +149,6 @@ $booking_edit = 'booking_edit';
                     <label for="{{ $booking_edit }}_dropoff_address_address_2" class="col-sm-5 col-form-label">{{ __( 'booking.address_2' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" id="{{ $booking_edit }}_dropoff_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_address_city">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -179,6 +181,13 @@ $booking_edit = 'booking_edit';
                             <option value="Putrajaya">Putrajaya</option>
                             <option value="Perak">Perak</option>
                         </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_dropoff_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_address_city" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -333,7 +342,8 @@ $booking_edit = 'booking_edit';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let be = '#{{ $booking_edit }}';
+        let be = '#{{ $booking_edit }}',
+            fileID = '';
 
         let invoiceDate = $( be + '_invoice_date' ).flatpickr();
         let deliveryOrderDate = $( be + '_delivery_order_date' ).flatpickr();
@@ -432,6 +442,9 @@ $booking_edit = 'booking_edit';
             formData.append( 'vehicle', $( be + '_vehicle' ).val() );
             formData.append( 'delivery_order_number', $( be + '_delivery_order_number' ).val() );
             formData.append( 'delivery_order_date', $( be + '_delivery_order_date' ).val() );
+            if ( fileID ) {
+                formData.append( 'delivery_order_image', fileID );
+            }
 
             formData.append( 'pickup_address_address_1', $( be + '_pickup_address_address_1' ).val() );
             formData.append( 'pickup_address_address_2', $( be + '_pickup_address_address_2' ).val() );
@@ -616,6 +629,8 @@ $booking_edit = 'booking_edit';
 
         function getBooking() {
 
+            Dropzone.autoDiscover = false;
+
             $( 'body' ).loading( {
                 message: '{{ __( 'template.loading' ) }}'
             } );
@@ -675,6 +690,35 @@ $booking_edit = 'booking_edit';
                     $( be + '_driver_total_amount' ).val( response.driver_total_amount );
                     $( be + '_driver_percentage' ).val( response.driver_percentage );
                     $( be + '_driver_final_amount' ).val( response.driver_final_amount );
+
+                    fileID = response.delivery_order_image;
+
+                    let imagePath = response.delivery_order_image_path;
+
+                    const dropzone = new Dropzone( be + '_delivery_order_image', {
+                        url: '{{ route( 'admin.file.upload' ) }}',
+                        maxFiles: 1,
+                        acceptedFiles: 'image/jpg,image/jpeg,image/png',
+                        addRemoveLinks: true,
+                        init: function() {
+                            if ( imagePath ) {
+                                let myDropzone = this,
+                                    mockFile = { name: 'Default', size: 1024, accepted: true };
+
+                                myDropzone.files.push( mockFile );
+                                myDropzone.displayExistingFile( mockFile, imagePath );
+                            }
+                        },
+                        removedfile: function( file ) {
+                            fileID = null;
+                            file.previewElement.remove();
+                        },
+                        success: function( file, response ) {
+                            if ( response.status == 200 )  {
+                                fileID = response.data.id;
+                            }
+                        }
+                    } );
 
                     $( 'body' ).loading( 'stop' );
                 },
