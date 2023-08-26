@@ -22,6 +22,7 @@ class CreateBookingsTable extends Migration
             $table->date('invoice_date')->nullable();
             $table->string('delivery_order_number')->nullable();
             $table->date('delivery_order_date')->nullable();
+            $table->string('delivery_order_image',150)->nullable();
             $table->text('pickup_address')->nullable();
             $table->text('dropoff_address')->nullable();
             $table->timestamp('pickup_date')->nullable();
