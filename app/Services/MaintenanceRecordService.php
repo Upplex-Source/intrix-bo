@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\{
 };
 
 use App\Models\{
+    PartRecord,
     ServiceRecord,
     ServiceRecordItem,
     Tyre,
@@ -177,7 +178,7 @@ class MaintenanceRecordService
         $validator->setAttributeNames( $attributeName )->validate();
     }
 
-    public function createServiceRecord( $request ) {
+    public static function createServiceRecord( $request ) {
 
         $validator = Validator::make( $request->all(), [
             'vehicle' => [ 'required', 'exists:vehicles,id' ],
@@ -246,7 +247,7 @@ class MaintenanceRecordService
         ] );
     }
 
-    public function updateServiceRecord( $request ) {
+    public static function updateServiceRecord( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -514,7 +515,7 @@ class MaintenanceRecordService
         ] );
     }
 
-    public function updateTyreRecord( $request ) {
+    public static function updateTyreRecord( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -572,6 +573,214 @@ class MaintenanceRecordService
 
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.tyre_records' ) ) ] ),
+        ] );
+    }
+
+    public static function allPartRecords( $request ) {
+
+        $partRecord = PartRecord::with( [
+            'supplier',
+            'part',
+        ] )->select( 'part_records.*' );
+
+        $partObject = self::filterPartRecord( $request, $partRecord );
+        $partRecord = $partObject['model'];
+        $filter = $partObject['filter'];
+
+        if ( $request->input( 'order.0.column' ) != 0 ) {
+            $dir = $request->input( 'order.0.dir' );
+            switch ( $request->input( 'order.0.column' ) ) {
+                case 1:
+                    $partRecord->orderBy( 'part_records.part_date', $dir );
+                    break;
+            }
+        }
+
+        $partRecordCount = $partRecord->count();
+
+        $limit = $request->length;
+        $offset = $request->start;
+
+        $partRecords = $partRecord->skip( $offset )->take( $limit )->get();
+
+        if ( $partRecords ) {
+            $partRecords->append( [
+                'local_part_date',
+                'encrypted_id',
+            ] );
+        }
+
+        $totalRecord = PartRecord::count();
+
+        $data = [
+            'records' => $partRecords,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $partRecordCount : $totalRecord,
+            'recordsTotal' => $totalRecord,
+        ];
+
+        return response()->json( $data );
+    }
+
+    private static function filterPartRecord( $request, $model ) {
+
+        $filter = false;
+
+        if ( !empty( $request->part_date ) ) {
+            if ( str_contains( $request->part_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->part_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'part_records.part_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->part_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'part_records.part_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        return [
+            'filter' => $filter,
+            'model' => $model,
+        ];
+    }
+
+    public static function onePartRecord( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $partRecord = PartRecord::with( [
+            'supplier',
+            'part',
+        ] )->find( $request->id );
+        
+        if ( $partRecord ) {
+
+            $partRecord->append( [
+                'local_part_date',
+            ] );
+        }
+
+        return $partRecord;
+    }
+
+    public static function createPartRecord( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'part_date' => [ 'required' ],
+            'reference' => [ 'required' ],
+            'supplier' => [ 'required', 'exists:suppliers,id' ],
+            'part' => [ 'required', 'exists:parts,id' ],
+            'unit_price' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'part_date' => __( 'datatables.part_date' ),
+            'reference' => __( 'maintenance_record.reference' ),
+            'supplier' => __( 'maintenance_record.supplier' ),
+            'part' => __( 'maintenance_record.part' ),
+            'unit_price' => __( 'maintenance_record.unit_price' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createPartRecord = PartRecord::create( [
+                'part_date' => Carbon::createFromFormat( 'Y-m-d', $request->part_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ),
+                'reference' => $request->reference,
+                'supplier_id' => $request->supplier ? $request->supplier : null,
+                'part_id' => $request->part ? $request->part : null,
+                'unit_price' => $request->unit_price,
+            ] );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.part_records' ) ) ] ),
+        ] );
+    }
+
+    public static function updatePartRecord( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'part_date' => [ 'required' ],
+            'reference' => [ 'required' ],
+            'supplier' => [ 'required', 'exists:suppliers,id' ],
+            'part' => [ 'required', 'exists:parts,id' ],
+            'unit_price' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'part_date' => __( 'datatables.part_date' ),
+            'reference' => __( 'maintenance_record.reference' ),
+            'supplier' => __( 'maintenance_record.supplier' ),
+            'part' => __( 'maintenance_record.part' ),
+            'unit_price' => __( 'maintenance_record.unit_price' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updatePartRecord = PartRecord::find( $request->id );
+            $updatePartRecord->part_date = Carbon::createFromFormat( 'Y-m-d', $request->part_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' );
+            $updatePartRecord->reference = $request->reference;
+            $updatePartRecord->supplier_id = $request->supplier;
+            $updatePartRecord->part_id = $request->part;
+            $updatePartRecord->unit_price = $request->unit_price;
+            $updatePartRecord->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.part_records' ) ) ] ),
         ] );
     }
 }

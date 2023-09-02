@@ -213,4 +213,94 @@ class MaintenanceRecordController extends Controller
 
         return MaintenanceRecordService::updateTyreRecord( $request );
     }
+
+    public function partRecords() {
+
+        $this->data['header']['title'] = __( 'template.part_records' );
+        $this->data['content'] = 'admin.maintenance_record.part_record';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.part_records' ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
+    public function addPartRecord( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.part_records' ) ) ] );
+        $this->data['content'] = 'admin.maintenance_record.add_part_record';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => route( 'admin.module_parent.maintenance_record.partRecords' ),
+                'text' => __( 'template.part_records' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.part_records' ) ) ] ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
+    public function editPartRecord ( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.part_records' ) ) ] );
+        $this->data['content'] = 'admin.maintenance_record.edit_part_record';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => route( 'admin.module_parent.maintenance_record.partRecords' ),
+                'text' => __( 'template.part_records' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.part_records' ) ) ] ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
+    public function allPartRecords( Request $request ) {
+
+        return MaintenanceRecordService::allPartRecords( $request );
+    }
+
+    public function onePartRecord ( Request $request ) {
+
+        return MaintenanceRecordService::onePartRecord ( $request );
+    }
+
+    public function createPartRecord( Request $request ) {
+
+        return MaintenanceRecordService::createPartRecord( $request );
+    }
+
+    public function updatePartRecord( Request $request ) {
+
+        return MaintenanceRecordService::updatePartRecord( $request );
+    }
 }

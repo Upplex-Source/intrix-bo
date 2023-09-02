@@ -15,10 +15,12 @@ use App\Http\Controllers\Admin\{
     InspectionController,
     ModuleController,
     MaintenanceRecordController,
+    PartController,
     RoleController,
     ServiceController,
     ServiceReminderController,
     SettingController,
+    SupplierController,
     TollExpenseController,
     TyreController,
     VehicleController,
@@ -167,14 +169,17 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view maintenance_records' ] ], function() {
                     Route::get( 'service-records', [ MaintenanceRecordController::class, 'serviceRecords' ] )->name( 'admin.module_parent.maintenance_record.serviceRecords' );
                     Route::get( 'tyre-records', [ MaintenanceRecordController::class, 'tyreRecords' ] )->name( 'admin.module_parent.maintenance_record.tyreRecords' );
+                    Route::get( 'part-records', [ MaintenanceRecordController::class, 'partRecords' ] )->name( 'admin.module_parent.maintenance_record.partRecords' );
                 } );
                 Route::group( [ 'middleware' => [ 'permission:add maintenance_records' ] ], function() {
                     Route::get( 'service-records/add', [ MaintenanceRecordController::class, 'addServiceRecord' ] )->name( 'admin.maintenance_record.addServiceRecord' );
                     Route::get( 'tyre-records/add', [ MaintenanceRecordController::class, 'addTyreRecord' ] )->name( 'admin.maintenance_record.addTyreRecord' );
+                    Route::get( 'part-records/add', [ MaintenanceRecordController::class, 'addPartRecord' ] )->name( 'admin.maintenance_record.addPartRecord' );
                 } );
                 Route::group( [ 'middleware' => [ 'permission:edit maintenance_records' ] ], function() {
                     Route::get( 'service-records/edit', [ MaintenanceRecordController::class, 'editServiceRecord' ] )->name( 'admin.maintenance_record.editServiceRecord' );
                     Route::get( 'tyre-records/edit', [ MaintenanceRecordController::class, 'editTyreRecord' ] )->name( 'admin.maintenance_record.editTyreRecord' );
+                    Route::get( 'part-records/edit', [ MaintenanceRecordController::class, 'editPartRecord' ] )->name( 'admin.maintenance_record.editPartRecord' );
                 } );
 
                 Route::post( 'all-service-records', [ MaintenanceRecordController::class, 'allServiceRecords' ] )->name( 'admin.maintenance_record.allServiceRecords' );
@@ -188,6 +193,11 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'tyre-record-validate-item', [ MaintenanceRecordController::class, 'validateItemTyreRecord' ] )->name( 'admin.maintenance_record.validateItemTyreRecord' );
                 Route::post( 'create-tyre-record', [ MaintenanceRecordController::class, 'createTyreRecord' ] )->name( 'admin.maintenance_record.createTyreRecord' );
                 Route::post( 'update-tyre-record', [ MaintenanceRecordController::class, 'updateTyreRecord' ] )->name( 'admin.maintenance_record.updateTyreRecord' );            
+
+                Route::post( 'all-part-records', [ MaintenanceRecordController::class, 'allPartRecords' ] )->name( 'admin.maintenance_record.allPartRecords' );
+                Route::post( 'one-part-record', [ MaintenanceRecordController::class, 'onePartRecord' ] )->name( 'admin.maintenance_record.onePartRecord' );
+                Route::post( 'create-part-record', [ MaintenanceRecordController::class, 'createPartRecord' ] )->name( 'admin.maintenance_record.createPartRecord' );
+                Route::post( 'update-part-record', [ MaintenanceRecordController::class, 'updatePartRecord' ] )->name( 'admin.maintenance_record.updatePartRecord' );            
             } );
 
             Route::prefix( 'services' )->group( function() {
@@ -283,6 +293,16 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'one-toll-expense', [ TollExpenseController::class, 'oneTollExpense' ] )->name( 'admin.toll_expense.oneTollExpense' );
                 Route::post( 'create-toll-expense', [ TollExpenseController::class, 'createTollExpense' ] )->name( 'admin.toll_expense.createTollExpense' );
                 Route::post( 'update-toll-expense', [ TollExpenseController::class, 'updateTollExpense' ] )->name( 'admin.toll_expense.updateTollExpense' );
+            } );
+
+            Route::prefix( 'suppliers' )->group( function() {
+
+                Route::post( 'all-suppliers', [ SupplierController::class, 'allSuppliers' ] )->name( 'admin.supplier.allSuppliers' );
+            } );
+
+            Route::prefix( 'parts' )->group( function() {
+
+                Route::post( 'all-parts', [ PartController::class, 'allParts' ] )->name( 'admin.part.allParts' );
             } );
         } );
     } );

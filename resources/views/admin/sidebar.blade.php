@@ -157,6 +157,9 @@
                                         <li class="nk-menu-item">
                                             <a href="{{ route( 'admin.module_parent.maintenance_record.tyreRecords' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.tyre_records' ) }}</span></a>
                                         </li>
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.maintenance_record.partRecords' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.part_records' ) }}</span></a>
+                                        </li>
                                     </ul>
                                 </li>
                                 @endcan

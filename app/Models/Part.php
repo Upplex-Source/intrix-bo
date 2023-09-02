@@ -14,7 +14,7 @@ use Helper;
 
 use Carbon\Carbon;
 
-class Supplier extends Model
+class Part extends Model
 {
     use HasFactory, LogsActivity;
 
@@ -36,7 +36,7 @@ class Supplier extends Model
         'status',
     ];
 
-    protected static $logName = 'suppliers';
+    protected static $logName = 'parts';
 
     protected static $logOnlyDirty = true;
 
@@ -45,6 +45,6 @@ class Supplier extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} supplier";
+        return "{$eventName} part";
     }
 }

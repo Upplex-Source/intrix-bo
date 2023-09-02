@@ -14,14 +14,34 @@ use Helper;
 
 use Carbon\Carbon;
 
-class Supplier extends Model
+class PartRecord extends Model
 {
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'name',
-        'status',
+        'supplier_id',
+        'vehicle_id',
+        'part_id',
+        'reference',
+        'unit_price',
+        'part_date',
     ];
+
+    public function supplier() {
+        return $this->belongsTo( Supplier::class, 'supplier_id' );
+    }
+
+    public function vehicle() {
+        return $this->belongsTo( Vehicle::class, 'vehicle_id' );
+    }
+
+    public function part() {
+        return $this->belongsTo( Part::class, 'part_id' );
+    }
+
+    public function getLocalPartDateAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['part_date'] )->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
+    }
 
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
@@ -32,11 +52,15 @@ class Supplier extends Model
     }
 
     protected static $logAttributes = [
-        'name',
-        'status',
+        'supplier_id',
+        'vehicle_id',
+        'part_id',
+        'reference',
+        'unit_price',
+        'part_date',
     ];
 
-    protected static $logName = 'suppliers';
+    protected static $logName = 'part_records';
 
     protected static $logOnlyDirty = true;
 
@@ -45,6 +69,6 @@ class Supplier extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} supplier";
+        return "{$eventName} part record";
     }
 }

@@ -38,6 +38,7 @@ return [
     'maintenance_records' => 'Maintenance Records',
     'service_records' => 'Service Records',
     'tyre_records' => 'Tyre Records',
+    'part_records' => 'Part Records',
     'item_list' => 'Item List',
 
     'loading' => 'Loading...',

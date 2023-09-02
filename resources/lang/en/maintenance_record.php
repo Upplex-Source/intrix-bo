@@ -39,4 +39,7 @@ return [
     'tyre' => 'Tyre',
     'serial_number' => 'Serial Number',
     'supplier' => 'Supplier',
+
+    'part' => 'Part',
+    'unit_price' => 'Unit Price',
 ];
