@@ -89,7 +89,7 @@ var dt_table,
         order: [[ 1, 'desc' ]],
         columns: [
             { data: null },
-            { data: 'purchase_date' },
+            { data: 'local_purchase_date' },
             { data: 'purchase_bill_reference' },
             { data: 'vehicle' },
             { data: 'encrypted_id' },
@@ -104,7 +104,7 @@ var dt_table,
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "service_date" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "purchase_date" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;
@@ -123,16 +123,14 @@ var dt_table,
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    return '-';
-
-                    @canany( [ 'edit employees', 'delete employees' ] )
+                    @canany( [ 'edit maintenance_records', 'delete maintenance_records' ] )
                     let edit, status = '';
 
-                    @can( 'edit employees' )
+                    @can( 'edit maintenance_records' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'delete employees' )
+                    @can( 'delete maintenance_records' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';

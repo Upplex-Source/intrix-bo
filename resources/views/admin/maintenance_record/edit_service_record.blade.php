@@ -415,12 +415,14 @@ $service_record_edit = 'service_record_edit';
                 success: function( response ) {
                     $( 'body' ).loading( 'stop' );
 
-                    let option1 = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
-                    vehicleSelect2.append( option1 );
-                    vehicleSelect2.trigger( 'change' );
+                    if ( response.vehicle ) {
+                        let option1 = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                        vehicleSelect2.append( option1 );
+                        vehicleSelect2.trigger( 'change' );
+                    }
 
                     $( sre + '_company' ).val( response.company_id );
-                    serviceDate.setDate( response.service_date );
+                    serviceDate.setDate( response.local_service_date );
                     $( sre + '_workshop' ).val( response.workshop );
                     $( sre + '_meter_reading' ).val( response.meter_reading );
                     $( sre + '_document_reference' ).val( response.document_reference );

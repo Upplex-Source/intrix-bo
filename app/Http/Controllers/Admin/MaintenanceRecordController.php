@@ -164,14 +164,39 @@ class MaintenanceRecordController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
+    public function editTyreRecord ( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.tyre_records' ) ) ] );
+        $this->data['content'] = 'admin.maintenance_record.edit_tyre_record';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => route( 'admin.module_parent.maintenance_record.tyreRecords' ),
+                'text' => __( 'template.tyre_records' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.tyre_records' ) ) ] ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
     public function allTyreRecords( Request $request ) {
 
         return MaintenanceRecordService::allTyreRecords( $request );
     }
 
-    public function oneTypreRecord( Request $request ) {
+    public function oneTyreRecord ( Request $request ) {
 
-        return MaintenanceRecordService::oneTypreRecord( $request );
+        return MaintenanceRecordService::oneTyreRecord ( $request );
     }
 
     public function validateItemTyreRecord( Request $request ) {
@@ -182,5 +207,10 @@ class MaintenanceRecordController extends Controller
     public function createTyreRecord( Request $request ) {
 
         return MaintenanceRecordService::createTyreRecord( $request );
+    }
+
+    public function updateTyreRecord( Request $request ) {
+
+        return MaintenanceRecordService::updateTyreRecord( $request );
     }
 }

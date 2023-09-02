@@ -1,11 +1,11 @@
 <?php
-$tyre_record_create = 'tyre_record_create';
+$tyre_record_edit = 'tyre_record_edit';
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.tyre_records' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.tyre_records' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -16,24 +16,24 @@ $tyre_record_create = 'tyre_record_create';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $tyre_record_create }}_vehicle" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.vehicle' ) }}</label>
+                    <label for="{{ $tyre_record_edit }}_vehicle" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.vehicle' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $tyre_record_create }}_vehicle" data-placeholder="{{ __( 'template.optional' ) }} - {{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.vehicle' ) ] ) }}">
+                        <select class="form-select" id="{{ $tyre_record_edit }}_vehicle" data-placeholder="{{ __( 'template.optional' ) }} - {{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.vehicle' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $tyre_record_create }}_purchase_date" class="col-sm-5 col-form-label">{{ __( 'datatables.purchase_date' ) }}</label>
+                    <label for="{{ $tyre_record_edit }}_purchase_date" class="col-sm-5 col-form-label">{{ __( 'datatables.purchase_date' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $tyre_record_create }}_purchase_date">
+                        <input type="text" class="form-control" id="{{ $tyre_record_edit }}_purchase_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $tyre_record_create }}_purchase_bill_reference" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.purchase_bill_reference' ) }}</label>
+                    <label for="{{ $tyre_record_edit }}_purchase_bill_reference" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.purchase_bill_reference' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $tyre_record_create }}_purchase_bill_reference">
+                        <input type="text" class="form-control" id="{{ $tyre_record_edit }}_purchase_bill_reference">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -49,7 +49,7 @@ $tyre_record_create = 'tyre_record_create';
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">{{ __( 'template.item_list' ) }}</h5>
                     <div>
-                        <em class="text-primary fs-2 icon ni ni-plus-round" id="{{ $tyre_record_create }}_add" role="button"></em>
+                        <em class="text-primary fs-2 icon ni ni-plus-round" id="{{ $tyre_record_edit }}_add" role="button"></em>
                     </div>
                 </div>
                 <hr>
@@ -74,9 +74,9 @@ $tyre_record_create = 'tyre_record_create';
                     </div>
                 </div>
                 <div class="text-end">
-                    <button id="{{ $tyre_record_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $tyre_record_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $tyre_record_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $tyre_record_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -92,30 +92,30 @@ $tyre_record_create = 'tyre_record_create';
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label" for="{{ $tyre_record_create }}_tyre">{{ __( 'maintenance_record.tyre' ) }}</label>
+                    <label class="form-label" for="{{ $tyre_record_edit }}_tyre">{{ __( 'maintenance_record.tyre' ) }}</label>
                     <div class="form-control-wrap">
-                        <select class="form-control" id="{{ $tyre_record_create }}_tyre" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.tyre' ) ] ) }}">
+                        <select class="form-control" id="{{ $tyre_record_edit }}_tyre" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.tyre' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label" for="{{ $tyre_record_create }}_serial_number">{{ __( 'maintenance_record.serial_number', [ 'title' => __( 'maintenance_record.serial_number' ) ] ) }}</label>
+                    <label class="form-label" for="{{ $tyre_record_edit }}_serial_number">{{ __( 'maintenance_record.serial_number', [ 'title' => __( 'maintenance_record.serial_number' ) ] ) }}</label>
                     <div class="form-control-wrap">
-                        <input type="text" class="form-control" id="{{ $tyre_record_create }}_serial_number">
+                        <input type="text" class="form-control" id="{{ $tyre_record_edit }}_serial_number">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <div class="form-group"><button type="button" class="btn btn-lg btn-primary" id="{{ $tyre_record_create }}_m_submit">{{ __( 'template.save_changes' ) }}</button></div>
+                <div class="form-group"><button type="button" class="btn btn-lg btn-primary" id="{{ $tyre_record_edit }}_m_submit">{{ __( 'template.save_changes' ) }}</button></div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .tyre_item_row > td {
+    .service_item_row > td {
         vertical-align: middle;
     }
 </style>
@@ -123,16 +123,18 @@ $tyre_record_create = 'tyre_record_create';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let trc = '#{{ $tyre_record_create }}',
+        getTyreRecord();
+
+        let tre = '#{{ $tyre_record_edit }}',
             aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) );
 
-        $( trc + '_purchase_date' ).flatpickr();
+        let purchaseDate = $( tre + '_purchase_date' ).flatpickr();
 
-        $( trc + '_cancel' ).click( function() {
+        $( tre + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.maintenance_record.tyreRecords' ) }}';
         } );
 
-        $( trc + '_submit' ).click( function() {
+        $( tre + '_submit' ).click( function() {
 
             $( 'body' ).loading( {
                 message: '{{ __( 'template.loading' ) }}'
@@ -147,14 +149,15 @@ $tyre_record_create = 'tyre_record_create';
             } );
 
             let formData = new FormData();
-            formData.append( 'vehicle', null === $( trc + '_vehicle' ).val() ? '' : $( trc + '_vehicle' ).val() );
-            formData.append( 'purchase_date', $( trc + '_purchase_date' ).val() );
-            formData.append( 'purchase_bill_reference', $( trc + '_purchase_bill_reference' ).val() );
+            formData.append( 'id', '{{ request( 'id' ) }}' );
+            formData.append( 'vehicle', null === $( tre + '_vehicle' ).val() ? '' : $( tre + '_vehicle' ).val() );
+            formData.append( 'purchase_date', $( tre + '_purchase_date' ).val() );
+            formData.append( 'purchase_bill_reference', $( tre + '_purchase_bill_reference' ).val() );
             formData.append( 'items', JSON.stringify( items ) );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.maintenance_record.createTyreRecord' ) }}',
+                url: '{{ route( 'admin.maintenance_record.updateTyreRecord' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -174,7 +177,7 @@ $tyre_record_create = 'tyre_record_create';
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
-                            $( trc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            $( tre + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
@@ -184,11 +187,11 @@ $tyre_record_create = 'tyre_record_create';
             } );
         } );
 
-        $( trc + '_add' ).click( function() {
+        $( tre + '_add' ).click( function() {
             aim.toggle();
         } );
 
-        $( trc + '_m_submit' ).click( function() {
+        $( tre + '_m_submit' ).click( function() {
 
             resetInputValidation();
 
@@ -200,8 +203,8 @@ $tyre_record_create = 'tyre_record_create';
                 url: '{{ route( 'admin.maintenance_record.validateItemTyreRecord' ) }}',
                 type: 'POST',
                 data: {
-                    tyre: null === $( trc + '_tyre' ).val() ? '' : $( trc + '_tyre' ).val(),
-                    serial_number: $( trc + '_serial_number' ).val(),
+                    tyre: null === $( tre + '_tyre' ).val() ? '' : $( tre + '_tyre' ).val(),
+                    serial_number: $( tre + '_serial_number' ).val(),
                     _token: '{{ csrf_token() }}',
                 },
                 success: function( response ) {
@@ -214,7 +217,7 @@ $tyre_record_create = 'tyre_record_create';
                         </td>
                         <td class="service_type" data-value="` + response.data.id + `">Tyre</td>
                         <td class="description">` + response.data.name + `</td>
-                        <td class="serial_number">` + $( trc + '_serial_number' ).val() + `</td>
+                        <td class="serial_number">` + $( tre + '_serial_number' ).val() + `</td>
                         <td class="supplier">` + response.data.supplier.name + `</td>
                     </tr>
                     `;
@@ -231,7 +234,7 @@ $tyre_record_create = 'tyre_record_create';
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
-                            $( trc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            $( tre + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
                     } else {
                         aim.toggle();
@@ -258,7 +261,7 @@ $tyre_record_create = 'tyre_record_create';
             }
         } );
 
-        $( trc + '_vehicle' ).select2( {
+        let vehicleSelect2 = $( tre + '_vehicle' ).select2( {
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
@@ -300,7 +303,7 @@ $tyre_record_create = 'tyre_record_create';
             },
         } );
 
-        $( trc + '_tyre' ).select2( {
+        $( tre + '_tyre' ).select2( {
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
@@ -341,6 +344,72 @@ $tyre_record_create = 'tyre_record_create';
                 }
             },
         } );
+
+        function getTyreRecord() {
+
+            $( 'body' ).loading( { 
+                message: '{{ __( 'template.loading' ) }}',
+            } );
+
+            $.ajax( {
+                url: '{{ route( 'admin.maintenance_record.oneTyreRecord' ) }}',
+                type: 'POST',
+                data: {
+                    id: '{{ request( 'id' ) }}',
+                    _token: '{{ csrf_token() }}',
+                },
+                success: function( response ) {
+                    $( 'body' ).loading( 'stop' );
+
+                    if ( response.vehicle ) {
+                        let option1 = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                        vehicleSelect2.append( option1 );
+                        vehicleSelect2.trigger( 'change' );
+                    }
+
+                    purchaseDate.setDate( response.local_purchase_date );
+                    $( tre + '_purchase_bill_reference' ).val( response.purchase_bill_reference );
+
+                    let items = response.items,
+                        html = '',
+                        tbody = $( '#tyre_item_table tbody' );
+
+                    items.map( function( v, i ) {
+
+                        html +=
+                        `
+                        <tr class="tyre_item_row `+ v.id +`">
+                            <td class="text-center">
+                                <em class="text-primary fs-4 icon ni ni-minus-round align-middle sir_remove" data-id="` + v.id + `" role="button"></em>
+                            </td>
+                            <td class="service_type" data-value="` + v.tyre_id + `">Tyre</td>
+                            <td class="description">` + v.tyre.name + `</td>
+                            <td class="serial_number">` + v.serial_number + `</td>
+                            <td class="supplier">` + v.tyre.supplier.name + `</td>
+                        </tr>
+                        `;
+                    } );
+
+                    if ( items.length != 0 ) {
+                        $( '#tyre_item_table tbody' ).removeClass( 'empty' );
+                        tbody.empty().append( html );
+                    }
+                },
+                error: function( error ) {
+                    $( 'body' ).loading( 'stop' );
+
+                    if ( error.status === 422 ) {
+                        let errors = error.responseJSON.errors;
+                        $.each( errors, function( key, value ) {
+                            $( tre + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                        } );
+                    } else {
+                        $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
+                        modalDanger.toggle();
+                    }
+                }
+            } );
+        }
 
         $( '#add_item_modal' ).on( 'hidden.bs.modal', function() {
             $( '#service_type_engine_oil' ).addClass( 'hidden' );

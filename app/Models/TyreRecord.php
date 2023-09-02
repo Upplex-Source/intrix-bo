@@ -27,8 +27,16 @@ class TyreRecord extends Model
         'purchase_date',
     ];
 
+    public function items() {
+        return $this->hasMany( TyreRecordItem::class, 'tyre_record_id' );
+    }
+
     public function vehicle() {
         return $this->belongsTo( Vehicle::class, 'vehicle_id' );
+    }
+
+    public function getLocalPurchaseDateAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['purchase_date'] )->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
     }
 
     public function getEncryptedIdAttribute() {

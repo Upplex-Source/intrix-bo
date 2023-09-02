@@ -62,6 +62,7 @@ class MaintenanceRecordService
 
         if ( $serviceRecords ) {
             $serviceRecords->append( [
+                'local_service_date',
                 'encrypted_id',
             ] );
         }
@@ -133,6 +134,11 @@ class MaintenanceRecordService
         ] )->find( $request->id );
 
         if ( $serviceRecord ) {
+
+            $serviceRecord->append( [
+                'local_service_date',
+            ] );
+
             foreach( $serviceRecord->items as $item ) {
                 $item->append( [
                     'meta_object',
@@ -206,7 +212,7 @@ class MaintenanceRecordService
             $createServiceRecord = ServiceRecord::create( [
                 'vehicle_id' => $request->vehicle,
                 'company_id' => $request->company,
-                'service_date' => $request->service_date,
+                'service_date' => Carbon::createFromFormat( 'Y-m-d', $request->service_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ),
                 'workshop' => $request->workshop,
                 'meter_reading' => $request->meter_reading,
                 'document_reference' => $request->document_reference,
@@ -279,7 +285,7 @@ class MaintenanceRecordService
             $updateServiceRecord = ServiceRecord::find( $request->id );
             $updateServiceRecord->vehicle_id = $request->vehicle;
             $updateServiceRecord->company_id = $request->company;
-            $updateServiceRecord->service_date = $request->service_date;
+            $updateServiceRecord->service_date = Carbon::createFromFormat( 'Y-m-d', $request->service_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' );
             $updateServiceRecord->workshop = $request->workshop;
             $updateServiceRecord->meter_reading = $request->meter_reading;
             $updateServiceRecord->document_reference = $request->document_reference;
@@ -349,6 +355,7 @@ class MaintenanceRecordService
 
         if ( $tyreRecords ) {
             $tyreRecords->append( [
+                'local_purchase_date',
                 'encrypted_id',
             ] );
         }
@@ -430,6 +437,28 @@ class MaintenanceRecordService
         ] );
     }
 
+    public static function oneTyreRecord( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $tyreRecord = TyreRecord::with( [
+            'items',
+            'items.tyre',
+            'items.tyre.supplier',
+            'vehicle',
+        ] )->find( $request->id );
+
+        if ( $tyreRecord ) {
+            $tyreRecord->append( [
+                'local_purchase_date',
+            ] );
+        }
+
+        return $tyreRecord;
+    }
+
     public static function createTyreRecord( $request ) {
 
         $validator = Validator::make( $request->all(), [
@@ -456,7 +485,7 @@ class MaintenanceRecordService
 
             $createTyreRecord = TyreRecord::create( [
                 'vehicle_id' => $request->vehicle ? $request->vehicle : null,
-                'purchase_date' => $request->purchase_date,
+                'purchase_date' => Carbon::createFromFormat( 'Y-m-d', $request->purchase_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ),
                 'purchase_bill_reference' => $request->purchase_bill_reference,
             ] );
 
@@ -482,6 +511,67 @@ class MaintenanceRecordService
 
         return response()->json( [
             'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.tyre_records' ) ) ] ),
+        ] );
+    }
+
+    public function updateTyreRecord( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'vehicle' => [ 'nullable', 'exists:vehicles,id' ],
+            'purchase_date' => [ 'required' ],
+            'purchase_bill_reference' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'vehicle' => __( 'maintenance_record.vehicle' ),
+            'purchase_date' => __( 'datatables.purchase_date' ),
+            'purchase_bill_reference' => __( 'maintenance_record.purchase_bill_reference' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateTyreRecord = TyreRecord::find( $request->id );
+            $updateTyreRecord->vehicle_id = $request->vehicle ? $request->vehicle : null;
+            $updateTyreRecord->purchase_date = Carbon::createFromFormat( 'Y-m-d', $request->purchase_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' );
+            $updateTyreRecord->purchase_bill_reference = $request->purchase_bill_reference;
+            $updateTyreRecord->save();
+
+            TyreRecordItem::where('tyre_record_id', $updateTyreRecord->id )->delete();
+
+            $items = json_decode( $request->items );
+            foreach ( $items as $item ) {
+                TyreRecordItem::create( [
+                    'tyre_record_id' => $updateTyreRecord->id,
+                    'tyre_id' => $item->tyre,
+                    'serial_number' => $item->serial_number,
+                ] );
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.tyre_records' ) ) ] ),
         ] );
     }
 }

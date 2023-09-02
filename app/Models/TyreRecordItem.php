@@ -27,6 +27,10 @@ class TyreRecordItem extends Model
         'bill_to',
     ];
 
+    public function tyre() {
+        return $this->belongsTo( Tyre::class, 'tyre_id' );
+    }
+
     protected function serializeDate( DateTimeInterface $date ) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }

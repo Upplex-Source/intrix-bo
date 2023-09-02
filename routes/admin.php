@@ -184,8 +184,10 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-service-record', [ MaintenanceRecordController::class, 'updateServiceRecord' ] )->name( 'admin.maintenance_record.updateServiceRecord' );
 
                 Route::post( 'all-tyre-records', [ MaintenanceRecordController::class, 'allTyreRecords' ] )->name( 'admin.maintenance_record.allTyreRecords' );
+                Route::post( 'one-tyre-record', [ MaintenanceRecordController::class, 'oneTyreRecord' ] )->name( 'admin.maintenance_record.oneTyreRecord' );
                 Route::post( 'tyre-record-validate-item', [ MaintenanceRecordController::class, 'validateItemTyreRecord' ] )->name( 'admin.maintenance_record.validateItemTyreRecord' );
                 Route::post( 'create-tyre-record', [ MaintenanceRecordController::class, 'createTyreRecord' ] )->name( 'admin.maintenance_record.createTyreRecord' );
+                Route::post( 'update-tyre-record', [ MaintenanceRecordController::class, 'updateTyreRecord' ] )->name( 'admin.maintenance_record.updateTyreRecord' );            
             } );
 
             Route::prefix( 'services' )->group( function() {
