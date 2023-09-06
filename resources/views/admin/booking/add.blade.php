@@ -523,6 +523,7 @@ $bookingIncrement = $data['booking_increment'];
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             closeOnSelect: false,
+            allowClear: true,
             ajax: {
                 method: 'POST',
                 url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
@@ -565,6 +566,7 @@ $bookingIncrement = $data['booking_increment'];
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             closeOnSelect: false,
+            allowClear: true,
             ajax: {
                 method: 'POST',
                 url: '{{ route( 'admin.employee.allEmployees' ) }}',
@@ -600,6 +602,22 @@ $bookingIncrement = $data['booking_increment'];
                     };
                 }
             },
+        } );
+
+        $( bc + '_driver' ).on( 'change', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.employee.oneEmployee' ) }}',
+                type: 'POST',
+                data: {
+                    id: $( this ).val(),
+                    simple_mode: 1,
+                    _token: '{{ csrf_token() }}',
+                },
+                success: function( response ) {
+                    $( bc + '_driver_rate' ).val( response.driver_amount );
+                }
+            } );
         } );
 
         Dropzone.autoDiscover = false;

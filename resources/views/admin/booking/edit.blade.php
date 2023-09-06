@@ -522,6 +522,7 @@ $booking_edit = 'booking_edit';
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             closeOnSelect: false,
+            allowClear: true,
             ajax: {
                 method: 'POST',
                 url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
@@ -564,6 +565,7 @@ $booking_edit = 'booking_edit';
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             closeOnSelect: false,
+            allowClear: true,
             ajax: {
                 method: 'POST',
                 url: '{{ route( 'admin.employee.allEmployees' ) }}',
@@ -599,6 +601,22 @@ $booking_edit = 'booking_edit';
                     };
                 }
             },
+        } );
+
+        $( be + '_driver' ).on( 'change', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.employee.oneEmployee' ) }}',
+                type: 'POST',
+                data: {
+                    id: $( this ).val(),
+                    simple_mode: 1,
+                    _token: '{{ csrf_token() }}',
+                },
+                success: function( response ) {
+                    $( be + '_driver_rate' ).val( response.driver_amount );
+                }
+            } );
         } );
 
         function calculateCustomerTotalAmount() {
@@ -682,7 +700,7 @@ $booking_edit = 'booking_edit';
 
                     let option2 = new Option( response.driver.name, response.driver.id, true, true );
                     driverSelect2.append( option2 );
-                    driverSelect2.trigger( 'change' );
+                    // driverSelect2.trigger( 'change' );
 
                     $( be + '_driver_quantity' ).val( response.driver_quantity );
                     $( be + '_driver_uom' ).val( response.driver_unit_of_measurement );

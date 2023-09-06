@@ -85,6 +85,13 @@ $employee_create = 'employee_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $employee_create }}_driver_amount" class="col-sm-5 col-form-label">{{ __( 'employee.driver_amount' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_driver_amount" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 <div class="text-end">
                     <button id="{{ $employee_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -129,6 +136,7 @@ $employee_create = 'employee_create';
             formData.append( 'license_expiry_date', $( dc + '_license_expiry_date' ).val() );
             formData.append( 'designation', $( dc + '_designation' ).val() );
             formData.append( 'remarks', $( dc + '_remarks' ).val() );
+            formData.append( 'driver_amount', $( dc + '_driver_amount' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {

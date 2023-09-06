@@ -22,6 +22,7 @@ return [
     'designation' => '职位',
     'driver' => '司机',
     'remarks' => '备注',
+    'driver_amount' => '司机金额',
     
     'license_expiry_date' => '驾照到期日',
     'employment_type' => '雇佣类型',

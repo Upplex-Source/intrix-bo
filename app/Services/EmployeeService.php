@@ -162,9 +162,11 @@ class EmployeeService
 
     public static function oneEmployee( $request ) {
 
-        $request->merge( [
-            'id' => Helper::decode( $request->id ),
-        ] );
+        if ( !$request->simple_mode ) {
+            $request->merge( [
+                'id' => Helper::decode( $request->id ),
+            ] );
+        }
 
         $employee = Employee::find( $request->id );
 
@@ -189,6 +191,7 @@ class EmployeeService
             'license_number' => [ 'required' ],
             'license_expiry_date' => [ 'required' ],
             'designation' => [ 'required', 'in:1,2' ],
+            'driver_amount' => [ 'numeric' ],
         ] );
 
         $attributeName = [
@@ -200,6 +203,7 @@ class EmployeeService
             'license_number' => __( 'employee.license_number' ),
             'license_expiry_date' => __( 'employee.license_expiry_date' ),
             'designation' => __( 'employee.designation' ),
+            'driver_amount' => __( 'employee.driver_amount' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -221,6 +225,7 @@ class EmployeeService
                 'license_expiry_date' => $request->license_expiry_date,
                 'designation' => $request->designation,
                 'remarks' => $request->remarks,
+                'driver_amount' => empty( $request->driver_amount ) ? 0 : $request->driver_amount,
             ] );
 
             $file = FileManager::find( $request->photo );
@@ -267,6 +272,7 @@ class EmployeeService
             'license_number' => [ 'required' ],
             'license_expiry_date' => [ 'required' ],
             'designation' => [ 'required', 'in:1,2' ],
+            'driver_amount' => [ 'nullable', 'numeric' ],
         ] );
 
         $attributeName = [
@@ -278,6 +284,7 @@ class EmployeeService
             'license_number' => __( 'employee.license_number' ),
             'license_expiry_date' => __( 'employee.license_expiry_date' ),
             'designation' => __( 'employee.designation' ),
+            'driver_amount' => __( 'employee.driver_amount' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -299,6 +306,7 @@ class EmployeeService
             $updateEmployee->license_expiry_date = $request->license_expiry_date;
             $updateEmployee->designation = $request->designation;
             $updateEmployee->remarks = $request->remarks;
+            $updateEmployee->driver_amount = empty( $request->driver_amount ) ? 0 : $request->driver_amount;
             $updateEmployee->save();
 
             if ( $request->photo ) {

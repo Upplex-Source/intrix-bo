@@ -85,6 +85,13 @@ $employee_edit = 'employee_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $employee_edit }}_driver_amount" class="col-sm-5 col-form-label">{{ __( 'employee.driver_amount' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $employee_edit }}_driver_amount" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 <div class="text-end">
                     <button id="{{ $employee_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -130,6 +137,7 @@ $employee_edit = 'employee_edit';
             formData.append( 'license_expiry_date', $( de + '_license_expiry_date' ).val() );
             formData.append( 'designation', $( de + '_designation' ).val() );
             formData.append( 'remarks', $( de + '_remarks' ).val() );
+            formData.append( 'driver_amount', $( de + '_driver_amount' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -190,6 +198,7 @@ $employee_edit = 'employee_edit';
                     expiryDate.setDate( response.license_expiry_date );
                     $( de + '_designation' ).val( response.designation );
                     $( de + '_remarks' ).val( response.remarks );
+                    $( de + '_driver_amount' ).val( response.driver_amount );
 
                     fileID = response.photo;
 

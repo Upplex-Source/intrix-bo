@@ -22,6 +22,7 @@ return [
     'designation' => 'Designation',
     'driver' => 'Driver',
     'remarks' => 'Remarks',
+    'driver_amount' => 'Driver Amount',
     
     'license_expiry_date' => 'License Expiry Date',
     'employment_type' => 'Employment Type',
