@@ -119,27 +119,27 @@ class BookingService
         }
 
         if ( !empty( $request->reference ) ) {
-            $model->where( 'bookings.reference', $request->reference );
+            $model->where( 'bookings.reference', 'LIKE', '%' . $request->reference . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->invoice_number ) ) {
-            $model->where( 'bookings.invoice_number', $request->invoice_number );
+            $model->where( 'bookings.invoice_number', 'LIKE', '%' . $request->invoice_number . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->delivery_order_number ) ) {
-            $model->where( 'bookings.delivery_order_number', $request->delivery_order_number );
+            $model->where( 'bookings.delivery_order_number', 'LIKE', '%' . $request->delivery_order_number . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->license_plate ) ) {
-            $model->where( 'vehicles.license_plate', $request->license_plate );
+            $model->where( 'vehicles.license_plate', 'LIKE', '%' . $request->license_plate . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->driver ) ) {
-            $model->where( 'employees.name', $request->driver );
+            $model->where( 'employees.name', 'LIKE', '%' . $request->driver . '%' );
             $filter = true;
         }
 

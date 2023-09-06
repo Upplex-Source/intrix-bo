@@ -115,27 +115,27 @@ class TollExpenseService
         }
 
         if ( !empty( $request->entry_location ) ) {
-            $model->where( 'toll_expenses.entry_location', $request->entry_location );
+            $model->where( 'toll_expenses.entry_location', 'LIKE', '%' . $request->entry_location . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->entry_sp ) ) {
-            $model->where( 'toll_expenses.entry_sp', $request->entry_sp );
+            $model->where( 'toll_expenses.entry_sp', 'LIKE', '%' . $request->entry_sp . '%' );
             $filter = true;
         }
         
         if ( !empty( $request->exit_location ) ) {
-            $model->where( 'toll_expenses.exit_location', $request->exit_location );
+            $model->where( 'toll_expenses.exit_location', 'LIKE', '%' . $request->exit_location . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->exit_sp ) ) {
-            $model->where( 'toll_expenses.exit_sp', $request->exit_sp );
+            $model->where( 'toll_expenses.exit_sp', 'LIKE', '%' . $request->exit_sp . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->reload_location ) ) {
-            $model->where( 'toll_expenses.reload_location', $request->reload_location );
+            $model->where( 'toll_expenses.reload_location', 'LIKE', '%' . $request->reload_location . '%' );
             $filter = true;
         }
 

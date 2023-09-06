@@ -89,8 +89,8 @@ class TyreService
 
         if ( !empty( $request->custom_search ) ) {
             $model->where( function( $query ) {
-                $query->where( 'tyres.name', 'LIKE', '%' . request( 'custom_search' ) . '%' );
-                $query->orWhere( 'tyres.code', 'LIKE', '%' . request( 'custom_search' ) . '%' );
+                $query->where( 'tyres.name', 'LIKE', '%' . $request->custom_search . '%' );
+                $query->orWhere( 'tyres.code', 'LIKE', '%' . $request->custom_search . '%' );
             } );
         }
 

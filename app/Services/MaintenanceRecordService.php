@@ -63,6 +63,7 @@ class MaintenanceRecordService
 
         if ( $serviceRecords ) {
             $serviceRecords->append( [
+                'display_meter_reading',
                 'local_service_date',
                 'encrypted_id',
             ] );
@@ -108,12 +109,12 @@ class MaintenanceRecordService
         }
 
         if ( !empty( $request->workshop ) ) {
-            $model->where( 'service_records.workshop', $request->workshop );
+            $model->where( 'service_records.workshop', 'LIKE', '%' . $request->workshop . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->document_reference ) ) {
-            $model->where( 'service_records.document_reference', $request->document_reference );
+            $model->where( 'service_records.document_reference', 'LIKE', '%' . $request->document_reference . '%' );
             $filter = true;
         }
 
@@ -401,7 +402,7 @@ class MaintenanceRecordService
         }
 
         if ( !empty( $request->purchase_bill_reference ) ) {
-            $model->where( 'tyre_records.purchase_bill_reference', $request->purchase_bill_reference );
+            $model->where( 'tyre_records.purchase_bill_reference', 'LIKE', '%' . $request->purchase_bill_reference . '%' );
             $filter = true;
         }
 

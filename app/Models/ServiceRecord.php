@@ -41,6 +41,10 @@ class ServiceRecord extends Model
         return $this->belongsTo( Company::class, 'company_id' );
     }
 
+    public function getDisplayMeterReadingAttribute() {
+        return Helper::numberFormatV2( $this->attributes['meter_reading'], 2, true );
+    }
+
     public function getLocalServiceDateAttribute() {
         return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['service_date'] )->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
     }

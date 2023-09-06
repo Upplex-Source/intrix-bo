@@ -105,12 +105,12 @@ class AdministratorService
         }
 
         if ( !empty( $request->username ) ) {
-            $model->where( 'name', $request->username );
+            $model->where( 'name', 'LIKE', '%' . $request->username . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->email ) ) {
-            $model->where( 'email', $request->email );
+            $model->where( 'email', 'LIKE', '%' . $request->email . '%' );
             $filter = true;
         }
 

@@ -113,17 +113,17 @@ class VendorService
         }
 
         if ( !empty( $request->name ) ) {
-            $model->where( 'name', $request->name );
+            $model->where( 'name', 'LIKE', '%' . $request->name . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->email ) ) {
-            $model->where( 'email', $request->email );
+            $model->where( 'email', 'LIKE', '%' . $request->email . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->phone_number ) ) {
-            $model->where( 'phone_number', $request->phone_number );
+            $model->where( 'phone_number', 'LIKE', '%' . $request->phone_number . '%' );
             $filter = true;
         }
 

@@ -50,7 +50,7 @@ class PartService
         $filter = false;
 
         if ( !empty( $request->custom_search ) ) {
-            $model->where( 'parts.name', 'LIKE', '%' . request( 'custom_search' ) . '%' );
+            $model->where( 'parts.name', 'LIKE', '%' . $request->custom_search . '%' );
         }
 
         return [

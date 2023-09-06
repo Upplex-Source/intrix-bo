@@ -119,22 +119,22 @@ class VehicleService
         }
 
         if ( !empty( $request->driver ) ) {
-            $model->where( 'employees.name', $request->driver );
+            $model->where( 'employees.name', 'LIKE', '%' . $request->driver . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->name ) ) {
-            $model->where( 'vehicles.name', $request->name );
+            $model->where( 'vehicles.name', 'LIKE', '%' . $request->name . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->type ) ) {
-            $model->where( 'vehicles.type', $request->type );
+            $model->where( 'vehicles.type', 'LIKE', '%' . $request->type . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->license_plate ) ) {
-            $model->where( 'vehicles.license_plate', $request->license_plate );
+            $model->where( 'vehicles.license_plate', 'LIKE', '%' . $request->license_plate . '%' );
             $filter = true;
         }
 

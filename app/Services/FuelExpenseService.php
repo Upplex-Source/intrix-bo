@@ -118,7 +118,7 @@ class FuelExpenseService
         }
 
         if ( !empty( $request->license_plate ) ) {
-            $model->where( 'vehicles.license_plate', $request->license_plate );
+            $model->where( 'vehicles.license_plate', 'LIKE', '%' . $request->license_plate . '%' );
             $filter = true;
         }
 

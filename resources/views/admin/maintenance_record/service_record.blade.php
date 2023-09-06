@@ -101,10 +101,10 @@ var dt_table,
         columns: [
             { data: null },
             { data: 'local_service_date' },
-            { data: 'vehicle.license_plate' },
+            { data: 'vehicle' },
             { data: 'workshop' },
             { data: 'document_reference' },
-            { data: 'meter_reading' },
+            { data: 'display_meter_reading' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [
@@ -121,6 +121,12 @@ var dt_table,
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "vehicle" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data.license_plate : '-';
                 },
             },
             {

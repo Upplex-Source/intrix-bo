@@ -33,6 +33,21 @@ class Helper {
         }
     }
 
+    public static function numberFormatV2( $number, $decimal, $displayComma = false, $isRound = false ) {
+        $formatted = '';
+        if ( $isRound ) {
+            $formatted = number_format( $number, $decimal );
+        } else {
+            $formatted = number_format( bcdiv( $number, 1, $decimal ), $decimal );
+        }
+
+        if ( $displayComma ) {
+            return $formatted;
+        } else {
+            return str_replace( ',', '', $formatted );
+        }
+    }
+
     public static function numberFormatNoComma( $number, $decimal ) {
         return str_replace( ',', '', number_format( $number, $decimal ) );
     }

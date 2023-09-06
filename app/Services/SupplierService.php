@@ -50,7 +50,7 @@ class SupplierService
         $filter = false;
 
         if ( !empty( $request->custom_search ) ) {
-            $model->where( 'suppliers.name', 'LIKE', '%' . request( 'custom_search' ) . '%' );
+            $model->where( 'suppliers.name', 'LIKE', '%' . $request->custom_search . '%' );
         }
 
         return [
