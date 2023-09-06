@@ -70,6 +70,15 @@ $service_record_create = 'service_record_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label>{{ __( 'maintenance_record.documents' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $service_record_create }}_documents" style="min-height: 0px;">
+                        <div class="dz-message needsclick">
+                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -399,6 +408,51 @@ $service_record_create = 'service_record_create';
         $( '#add_item_modal' ).on( 'hidden.bs.modal', function() {
             $( '#service_type_engine_oil' ).addClass( 'hidden' );
             $( '#service_type_others' ).addClass( 'hidden' );
+        } );
+
+        const dropzone = new Dropzone( src + '_documents', {
+            url: '{{ route( 'admin.file.upload' ) }}',
+            acceptedFiles: 'image/jpg,image/jpeg,image/png,application/pdf',
+            addRemoveLinks: true,
+            init: function() {
+                this.on( 'addedfile', function( file ) {
+
+                    console.log( file );
+
+                    if ( file.type ) {
+                        if ( !file.type.match(/image.*/) ) {
+                            this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                        }
+                    } else {
+                        if ( file.fileType == 'pdf' ) {
+                            this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                        }
+                    }
+
+                    console.log( file.previewElement );
+
+                    $( file.previewElement ).bind( 'click', function() {
+
+                        if ( file.xhr ) {
+                            console.log( file.xhr.response )
+                            console.log( JSON.parse( file.xhr.response ).data.file );
+
+                            window.open( '{{ asset( 'storage') }}/' + JSON.parse( file.xhr.response ).data.file );
+                        }
+
+                        window.open( file.assetUrl );
+                    } );
+                } );
+            },
+            removedfile: function( file ) {
+                fileID = null;
+                file.previewElement.remove();
+            },
+            success: function( file, response ) {
+                if ( response.status == 200 )  {
+                    fileID = response.data.id;
+                }
+            }
         } );
     } );
 </script>
