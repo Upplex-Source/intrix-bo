@@ -194,7 +194,8 @@ $service_record_create = 'service_record_create';
 
         let serviceTypeMapper = @json( $data['service_types'] ),
             src = '#{{ $service_record_create }}',
-            aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) );
+            aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) ),
+            fileID = [];
 
         $( src + '_service_date' ).flatpickr();
 
@@ -228,6 +229,7 @@ $service_record_create = 'service_record_create';
             formData.append( 'meter_reading', $( src + '_meter_reading' ).val() );
             formData.append( 'document_reference', $( src + '_document_reference' ).val() );
             formData.append( 'remarks', $( src + '_remarks' ).val() );
+            formData.append( 'documents', fileID );
             formData.append( 'items', JSON.stringify( items ) );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -410,14 +412,13 @@ $service_record_create = 'service_record_create';
             $( '#service_type_others' ).addClass( 'hidden' );
         } );
 
+        Dropzone.autoDiscover = false;
         const dropzone = new Dropzone( src + '_documents', {
             url: '{{ route( 'admin.file.upload' ) }}',
             acceptedFiles: 'image/jpg,image/jpeg,image/png,application/pdf',
             addRemoveLinks: true,
             init: function() {
                 this.on( 'addedfile', function( file ) {
-
-                    console.log( file );
 
                     if ( file.type ) {
                         if ( !file.type.match(/image.*/) ) {
@@ -429,14 +430,9 @@ $service_record_create = 'service_record_create';
                         }
                     }
 
-                    console.log( file.previewElement );
-
                     $( file.previewElement ).bind( 'click', function() {
 
                         if ( file.xhr ) {
-                            console.log( file.xhr.response )
-                            console.log( JSON.parse( file.xhr.response ).data.file );
-
                             window.open( '{{ asset( 'storage') }}/' + JSON.parse( file.xhr.response ).data.file );
                         }
 
@@ -445,12 +441,20 @@ $service_record_create = 'service_record_create';
                 } );
             },
             removedfile: function( file ) {
-                fileID = null;
+                let previewID = $( file.previewElement ).data( 'id' );
+
+                let index = fileID.indexOf( previewID );
+
+                if ( index !== -1 ) {
+                    fileID.splice( index, 1 );
+                }
+                
                 file.previewElement.remove();
             },
             success: function( file, response ) {
                 if ( response.status == 200 )  {
-                    fileID = response.data.id;
+                    file.previewElement.setAttribute( 'data-id', response.data.id );
+                    fileID.push( response.data.id );
                 }
             }
         } );

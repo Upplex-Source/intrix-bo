@@ -20,6 +20,7 @@ return [
     'document_reference' => '文件编号',
     'meter_reading' => '载具里程数',
     'remarks' => '备注',
+    'documents' => '文件',
 
     'grades' => '机油分级',
     'qty_x' => '数量 (:title)',

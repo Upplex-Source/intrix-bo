@@ -52,6 +52,15 @@ $part_record_edit = 'part_record_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label>{{ __( 'maintenance_record.documents' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $part_record_edit }}_documents" style="min-height: 0px;">
+                        <div class="dz-message needsclick">
+                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
                 <div class="text-end">
                     <button id="{{ $part_record_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -67,7 +76,9 @@ $part_record_edit = 'part_record_edit';
 
         getPartRecord();
 
-        let pre = '#{{ $part_record_edit }}';
+        let pre = '#{{ $part_record_edit }}',
+            fileID = [],
+            toBeDeleteFileID = [];
 
         let partDate = $( pre + '_part_date' ).flatpickr();
 
@@ -90,6 +101,8 @@ $part_record_edit = 'part_record_edit';
             formData.append( 'supplier', null === $( pre + '_supplier' ).val() ? '' : $( pre + '_supplier' ).val() );
             formData.append( 'part', null === $( pre + '_part' ).val() ? '' : $( pre + '_part' ).val() );
             formData.append( 'unit_price', $( pre + '_unit_price' ).val() );
+            formData.append( 'documents', fileID );
+            formData.append( 'to_be_delete_documents', toBeDeleteFileID );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -209,6 +222,8 @@ $part_record_edit = 'part_record_edit';
 
         function getPartRecord() {
 
+            Dropzone.autoDiscover = false;
+
             $( 'body' ).loading( { 
                 message: '{{ __( 'template.loading' ) }}',
             } );
@@ -238,6 +253,74 @@ $part_record_edit = 'part_record_edit';
                     partDate.setDate( response.local_part_date );
                     $( pre + '_reference' ).val( response.reference );
                     $( pre + '_unit_price' ).val( response.unit_price );
+
+                    const dropzone = new Dropzone( pre + '_documents', {
+                        url: '{{ route( 'admin.file.upload' ) }}',
+                        acceptedFiles: 'image/jpg,image/jpeg,image/png,application/pdf',
+                        addRemoveLinks: true,
+                        init: function() {
+                            this.on( 'addedfile', function( file ) {
+
+                                if ( file.hasOwnProperty( 'existing' ) ) {
+                                    if ( file.existing ) {
+                                        file.previewElement.setAttribute( 'data-id', file.id );
+                                        $( file.previewElement ).addClass( 'existing' );
+                                    }
+                                }
+
+                                if ( file.type ) {
+                                    if ( !file.type.match(/image.*/) ) {
+                                        this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                                    }
+                                } else {
+                                    if ( file.fileType == 'pdf' ) {
+                                        this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                                    }
+                                }
+
+                                $( file.previewElement ).bind( 'click', function() {
+
+                                    if ( file.xhr ) {
+                                        window.open( '{{ asset( 'storage') }}/' + JSON.parse( file.xhr.response ).data.file );
+                                    }
+
+                                    window.open( file.assetUrl );
+                                } );
+                            } );
+
+                            let myDropzone = this;
+
+                            response.documents.map( function( v, i ) {
+                                let mockFile = { name: v.name, size: 1024, accepted: true, assetUrl: v.path, id: v.id, existing: true }
+                                    preview = v.type == 1 ? '{{ asset( 'admin/images/file_pdf.png' ) }}' : v.path;
+
+                                myDropzone.files.push( mockFile );
+                                myDropzone.displayExistingFile( mockFile, preview );
+                            } );
+                        },
+                        removedfile: function( file ) {
+
+                            let existing = $( file.previewElement ).hasClass( 'existing' );
+                            let previewID = $( file.previewElement ).data( 'id' );
+
+                            if ( existing ) {
+                                toBeDeleteFileID.push( previewID );
+                            } else {
+                                let index = fileID.indexOf( previewID );
+                                if ( index !== -1 ) {
+                                    fileID.splice( index, 1 );
+                                }
+                            }
+                            
+                            file.previewElement.remove();
+                        },
+                        success: function( file, response ) {
+                            if ( response.status == 200 )  {
+                                file.previewElement.setAttribute( 'data-id', response.data.id );
+                                fileID.push( response.data.id );
+                            }
+                        }
+                    } );
                 },
                 error: function( error ) {
                     $( 'body' ).loading( 'stop' );

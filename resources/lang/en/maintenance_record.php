@@ -20,6 +20,7 @@ return [
     'document_reference' => 'Document Reference',
     'meter_reading' => 'Meter Reading',
     'remarks' => 'Remarks',
+    'documents' => 'Documents',
 
     'grades' => 'Grades',
     'qty_x' => 'Qty (:title)',

@@ -35,6 +35,10 @@ class TyreRecord extends Model
         return $this->belongsTo( Vehicle::class, 'vehicle_id' );
     }
 
+    public function documents() {
+        return $this->hasMany( Document::class, 'module_id' )->where( 'module', 'App\Models\TyreRecord' );
+    }
+
     public function getLocalPurchaseDateAttribute() {
         return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['purchase_date'] )->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
     }

@@ -5,10 +5,13 @@ namespace App\Services;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
     DB,
+    Storage,
     Validator,
 };
 
 use App\Models\{
+    Document,
+    FileManager,
     PartRecord,
     ServiceRecord,
     ServiceRecordItem,
@@ -133,6 +136,7 @@ class MaintenanceRecordService
         $serviceRecord = ServiceRecord::with( [
             'items',
             'vehicle',
+            'documents',
         ] )->find( $request->id );
 
         if ( $serviceRecord ) {
@@ -144,6 +148,12 @@ class MaintenanceRecordService
             foreach( $serviceRecord->items as $item ) {
                 $item->append( [
                     'meta_object',
+                ] );
+            }
+
+            foreach( $serviceRecord->documents as $document ) {
+                $document->append( [
+                    'path',
                 ] );
             }
         }
@@ -232,6 +242,33 @@ class MaintenanceRecordService
                 ] );
             }
 
+            if ( !empty( $request->documents ) ) {
+
+                $documents = explode( ',', $request->documents );
+
+                foreach ( $documents as $document ) {
+
+                    $file = FileManager::find( $document );
+                    if ( $file ) {
+                        $fileName = explode( '/', $file->file );
+
+                        $target = 'service_records/' . $createServiceRecord->id . '/documents/' . $fileName[1];
+                        Storage::disk( 'public' )->move( $file->file, $target );
+
+                        Document::create( [
+                            'module_id' => $createServiceRecord->id,
+                            'module' => 'App\Models\ServiceRecord',
+                            'name' => $file->name,
+                            'file' => $target,
+                            'type' => $file->type,
+                        ] );
+
+                        $file->status = 10;
+                        $file->save();
+                    }
+                }
+            }
+
             DB::commit();
 
         } catch ( \Throwable $th ) {
@@ -305,6 +342,44 @@ class MaintenanceRecordService
                         'description' => $item->description
                     ] ),
                 ] );
+            }
+
+            if ( !empty( $request->to_be_delete_documents ) ) {
+
+                $tbds = explode( ',', $request->to_be_delete_documents );
+
+                foreach ( $tbds as $tbd ) {
+                    $tbdDocument = Document::where( 'id', $tbd )->first();
+                    Storage::disk( 'public' )->delete( $tbdDocument->file );
+                    $tbdDocument->delete();
+                }
+            }
+
+            if ( !empty( $request->documents ) ) {
+
+                $documents = explode( ',', $request->documents );
+
+                foreach ( $documents as $document ) {
+
+                    $file = FileManager::find( $document );
+                    if ( $file ) {
+                        $fileName = explode( '/', $file->file );
+
+                        $target = 'service_records/' . $updateServiceRecord->id . '/documents/' . $fileName[1];
+                        Storage::disk( 'public' )->move( $file->file, $target );
+
+                        Document::create( [
+                            'module_id' => $updateServiceRecord->id,
+                            'module' => 'App\Models\ServiceRecord',
+                            'name' => $file->name,
+                            'file' => $target,
+                            'type' => $file->type,
+                        ] );
+
+                        $file->status = 10;
+                        $file->save();
+                    }
+                }
             }
 
             DB::commit();
@@ -450,12 +525,19 @@ class MaintenanceRecordService
             'items.tyre',
             'items.tyre.supplier',
             'vehicle',
+            'documents',
         ] )->find( $request->id );
 
         if ( $tyreRecord ) {
             $tyreRecord->append( [
                 'local_purchase_date',
             ] );
+
+            foreach( $tyreRecord->documents as $document ) {
+                $document->append( [
+                    'path',
+                ] );
+            }
         }
 
         return $tyreRecord;
@@ -498,6 +580,33 @@ class MaintenanceRecordService
                     'tyre_id' => $item->tyre,
                     'serial_number' => $item->serial_number,
                 ] );
+            }
+
+            if ( !empty( $request->documents ) ) {
+
+                $documents = explode( ',', $request->documents );
+
+                foreach ( $documents as $document ) {
+
+                    $file = FileManager::find( $document );
+                    if ( $file ) {
+                        $fileName = explode( '/', $file->file );
+
+                        $target = 'tyre_records/' . $createTyreRecord->id . '/documents/' . $fileName[1];
+                        Storage::disk( 'public' )->move( $file->file, $target );
+
+                        Document::create( [
+                            'module_id' => $createTyreRecord->id,
+                            'module' => 'App\Models\TyreRecord',
+                            'name' => $file->name,
+                            'file' => $target,
+                            'type' => $file->type,
+                        ] );
+
+                        $file->status = 10;
+                        $file->save();
+                    }
+                }
             }
 
             DB::commit();
@@ -559,6 +668,44 @@ class MaintenanceRecordService
                     'tyre_id' => $item->tyre,
                     'serial_number' => $item->serial_number,
                 ] );
+            }
+
+            if ( !empty( $request->to_be_delete_documents ) ) {
+
+                $tbds = explode( ',', $request->to_be_delete_documents );
+
+                foreach ( $tbds as $tbd ) {
+                    $tbdDocument = Document::where( 'id', $tbd )->first();
+                    Storage::disk( 'public' )->delete( $tbdDocument->file );
+                    $tbdDocument->delete();
+                }
+            }
+
+            if ( !empty( $request->documents ) ) {
+
+                $documents = explode( ',', $request->documents );
+
+                foreach ( $documents as $document ) {
+
+                    $file = FileManager::find( $document );
+                    if ( $file ) {
+                        $fileName = explode( '/', $file->file );
+
+                        $target = 'tyre_records/' . $updateTyreRecord->id . '/documents/' . $fileName[1];
+                        Storage::disk( 'public' )->move( $file->file, $target );
+
+                        Document::create( [
+                            'module_id' => $updateTyreRecord->id,
+                            'module' => 'App\Models\TyreRecord',
+                            'name' => $file->name,
+                            'file' => $target,
+                            'type' => $file->type,
+                        ] );
+
+                        $file->status = 10;
+                        $file->save();
+                    }
+                }
             }
 
             DB::commit();
@@ -665,6 +812,7 @@ class MaintenanceRecordService
         $partRecord = PartRecord::with( [
             'supplier',
             'part',
+            'documents',
         ] )->find( $request->id );
         
         if ( $partRecord ) {
@@ -672,6 +820,12 @@ class MaintenanceRecordService
             $partRecord->append( [
                 'local_part_date',
             ] );
+
+            foreach( $partRecord->documents as $document ) {
+                $document->append( [
+                    'path',
+                ] );
+            }
         }
 
         return $partRecord;
@@ -712,6 +866,33 @@ class MaintenanceRecordService
                 'part_id' => $request->part ? $request->part : null,
                 'unit_price' => $request->unit_price,
             ] );
+
+            if ( !empty( $request->documents ) ) {
+
+                $documents = explode( ',', $request->documents );
+
+                foreach ( $documents as $document ) {
+
+                    $file = FileManager::find( $document );
+                    if ( $file ) {
+                        $fileName = explode( '/', $file->file );
+
+                        $target = 'part_records/' . $createPartRecord->id . '/documents/' . $fileName[1];
+                        Storage::disk( 'public' )->move( $file->file, $target );
+
+                        Document::create( [
+                            'module_id' => $createPartRecord->id,
+                            'module' => 'App\Models\PartRecord',
+                            'name' => $file->name,
+                            'file' => $target,
+                            'type' => $file->type,
+                        ] );
+
+                        $file->status = 10;
+                        $file->save();
+                    }
+                }
+            }
 
             DB::commit();
 
@@ -768,6 +949,44 @@ class MaintenanceRecordService
             $updatePartRecord->part_id = $request->part;
             $updatePartRecord->unit_price = $request->unit_price;
             $updatePartRecord->save();
+
+            if ( !empty( $request->to_be_delete_documents ) ) {
+
+                $tbds = explode( ',', $request->to_be_delete_documents );
+
+                foreach ( $tbds as $tbd ) {
+                    $tbdDocument = Document::where( 'id', $tbd )->first();
+                    Storage::disk( 'public' )->delete( $tbdDocument->file );
+                    $tbdDocument->delete();
+                }
+            }
+
+            if ( !empty( $request->documents ) ) {
+
+                $documents = explode( ',', $request->documents );
+
+                foreach ( $documents as $document ) {
+
+                    $file = FileManager::find( $document );
+                    if ( $file ) {
+                        $fileName = explode( '/', $file->file );
+
+                        $target = 'part_records/' . $updatePartRecord->id . '/documents/' . $fileName[1];
+                        Storage::disk( 'public' )->move( $file->file, $target );
+
+                        Document::create( [
+                            'module_id' => $updatePartRecord->id,
+                            'module' => 'App\Models\PartRecord',
+                            'name' => $file->name,
+                            'file' => $target,
+                            'type' => $file->type,
+                        ] );
+
+                        $file->status = 10;
+                        $file->save();
+                    }
+                }
+            }
 
             DB::commit();
 

@@ -70,6 +70,15 @@ $service_record_edit = 'service_record_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label>{{ __( 'maintenance_record.documents' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $service_record_edit }}_documents" style="min-height: 0px;">
+                        <div class="dz-message needsclick">
+                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -187,7 +196,9 @@ $service_record_edit = 'service_record_edit';
 
         let serviceTypeMapper = @json( $data['service_types'] ),
             sre = '#{{ $service_record_edit }}',
-            aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) );
+            aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) ),
+            fileID = [],
+            toBeDeleteFileID = [];
 
         let serviceDate = $( sre + '_service_date' ).flatpickr();
 
@@ -222,6 +233,8 @@ $service_record_edit = 'service_record_edit';
             formData.append( 'meter_reading', $( sre + '_meter_reading' ).val() );
             formData.append( 'document_reference', $( sre + '_document_reference' ).val() );
             formData.append( 'remarks', $( sre + '_remarks' ).val() );
+            formData.append( 'documents', fileID );
+            formData.append( 'to_be_delete_documents', toBeDeleteFileID );
             formData.append( 'items', JSON.stringify( items ) );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -401,6 +414,8 @@ $service_record_edit = 'service_record_edit';
 
         function getServiceRecord() {
 
+            Dropzone.autoDiscover = false;
+
             $( 'body' ).loading( { 
                 message: '{{ __( 'template.loading' ) }}',
             } );
@@ -463,6 +478,74 @@ $service_record_edit = 'service_record_edit';
                         $( '#service_item_table tbody' ).removeClass( 'empty' );
                         tbody.empty().append( html );
                     }
+
+                    const dropzone = new Dropzone( sre + '_documents', {
+                        url: '{{ route( 'admin.file.upload' ) }}',
+                        acceptedFiles: 'image/jpg,image/jpeg,image/png,application/pdf',
+                        addRemoveLinks: true,
+                        init: function() {
+                            this.on( 'addedfile', function( file ) {
+
+                                if ( file.hasOwnProperty( 'existing' ) ) {
+                                    if ( file.existing ) {
+                                        file.previewElement.setAttribute( 'data-id', file.id );
+                                        $( file.previewElement ).addClass( 'existing' );
+                                    }
+                                }
+
+                                if ( file.type ) {
+                                    if ( !file.type.match(/image.*/) ) {
+                                        this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                                    }
+                                } else {
+                                    if ( file.fileType == 'pdf' ) {
+                                        this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                                    }
+                                }
+
+                                $( file.previewElement ).bind( 'click', function() {
+
+                                    if ( file.xhr ) {
+                                        window.open( '{{ asset( 'storage') }}/' + JSON.parse( file.xhr.response ).data.file );
+                                    }
+
+                                    window.open( file.assetUrl );
+                                } );
+                            } );
+
+                            let myDropzone = this;
+
+                            response.documents.map( function( v, i ) {
+                                let mockFile = { name: v.name, size: 1024, accepted: true, assetUrl: v.path, id: v.id, existing: true }
+                                    preview = v.type == 1 ? '{{ asset( 'admin/images/file_pdf.png' ) }}' : v.path;
+
+                                myDropzone.files.push( mockFile );
+                                myDropzone.displayExistingFile( mockFile, preview );
+                            } );
+                        },
+                        removedfile: function( file ) {
+
+                            let existing = $( file.previewElement ).hasClass( 'existing' );
+                            let previewID = $( file.previewElement ).data( 'id' );
+
+                            if ( existing ) {
+                                toBeDeleteFileID.push( previewID );
+                            } else {
+                                let index = fileID.indexOf( previewID );
+                                if ( index !== -1 ) {
+                                    fileID.splice( index, 1 );
+                                }
+                            }
+                            
+                            file.previewElement.remove();
+                        },
+                        success: function( file, response ) {
+                            if ( response.status == 200 )  {
+                                file.previewElement.setAttribute( 'data-id', response.data.id );
+                                fileID.push( response.data.id );
+                            }
+                        }
+                    } );  
                 },
                 error: function( error ) {
                     $( 'body' ).loading( 'stop' );

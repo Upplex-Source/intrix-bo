@@ -37,6 +37,15 @@ $tyre_record_create = 'tyre_record_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label>{{ __( 'maintenance_record.documents' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $tyre_record_create }}_documents" style="min-height: 0px;">
+                        <div class="dz-message needsclick">
+                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -124,7 +133,8 @@ $tyre_record_create = 'tyre_record_create';
     document.addEventListener( 'DOMContentLoaded', function() {
 
         let trc = '#{{ $tyre_record_create }}',
-            aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) );
+            aim = new bootstrap.Modal( document.getElementById( 'add_item_modal' ) ),
+            fileID = [];
 
         $( trc + '_purchase_date' ).flatpickr();
 
@@ -150,6 +160,7 @@ $tyre_record_create = 'tyre_record_create';
             formData.append( 'vehicle', null === $( trc + '_vehicle' ).val() ? '' : $( trc + '_vehicle' ).val() );
             formData.append( 'purchase_date', $( trc + '_purchase_date' ).val() );
             formData.append( 'purchase_bill_reference', $( trc + '_purchase_bill_reference' ).val() );
+            formData.append( 'documents', fileID );
             formData.append( 'items', JSON.stringify( items ) );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -345,6 +356,53 @@ $tyre_record_create = 'tyre_record_create';
         $( '#add_item_modal' ).on( 'hidden.bs.modal', function() {
             $( '#service_type_engine_oil' ).addClass( 'hidden' );
             $( '#service_type_others' ).addClass( 'hidden' );
+        } );
+
+        Dropzone.autoDiscover = false;
+        const dropzone = new Dropzone( trc + '_documents', {
+            url: '{{ route( 'admin.file.upload' ) }}',
+            acceptedFiles: 'image/jpg,image/jpeg,image/png,application/pdf',
+            addRemoveLinks: true,
+            init: function() {
+                this.on( 'addedfile', function( file ) {
+
+                    if ( file.type ) {
+                        if ( !file.type.match(/image.*/) ) {
+                            this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                        }
+                    } else {
+                        if ( file.fileType == 'pdf' ) {
+                            this.emit( 'thumbnail', file, '{{ asset( 'admin/images/file_pdf.png' ) }}' );
+                        }
+                    }
+
+                    $( file.previewElement ).bind( 'click', function() {
+
+                        if ( file.xhr ) {
+                            window.open( '{{ asset( 'storage') }}/' + JSON.parse( file.xhr.response ).data.file );
+                        }
+
+                        window.open( file.assetUrl );
+                    } );
+                } );
+            },
+            removedfile: function( file ) {
+                let previewID = $( file.previewElement ).data( 'id' );
+
+                let index = fileID.indexOf( previewID );
+
+                if ( index !== -1 ) {
+                    fileID.splice( index, 1 );
+                }
+                
+                file.previewElement.remove();
+            },
+            success: function( file, response ) {
+                if ( response.status == 200 )  {
+                    file.previewElement.setAttribute( 'data-id', response.data.id );
+                    fileID.push( response.data.id );
+                }
+            }
         } );
     } );
 </script>

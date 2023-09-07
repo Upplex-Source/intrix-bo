@@ -38,6 +38,10 @@ class PartRecord extends Model
     public function part() {
         return $this->belongsTo( Part::class, 'part_id' );
     }
+    
+    public function documents() {
+        return $this->hasMany( Document::class, 'module_id' )->where( 'module', 'App\Models\PartRecord' );
+    }
 
     public function getLocalPartDateAttribute() {
         return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['part_date'] )->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
