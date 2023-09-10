@@ -5,8 +5,18 @@
     <script src="{{ asset( 'admin/js/jquery.loading.min.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/flatpickr-4.6.9.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/select2.min.js' ) . Helper::assetVersion() }}"></script>
+    <script src="{{ asset( 'admin/js/notification-helper.js' ) . Helper::assetVersion() }}"></script>
 
     <script>
+
+        window['core'] = {
+            csrfToken: '{{ csrf_token() }}',
+            getNotificationList: '{{ route( 'admin.core.getNotificationList' ) }}',
+            seenNotification: '{{ route( 'admin.core.seenNotification' ) }}',
+            message: {
+                no_notification: '{{ __( 'notification.no_notification' ) }}',
+            }
+        }
 
         $.fn.select2.amd.define('select2/i18n/zh',[],function () {
             return {

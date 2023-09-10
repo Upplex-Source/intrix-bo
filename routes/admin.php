@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\{
     AdministratorController,
     AuditController,
     BookingController,
+    CoreController,
     DashboardController,
     DriverController,
     EmployeeController,
@@ -40,6 +41,11 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
         Route::post( 'signout', [ AdministratorController::class, 'logout' ] )->name( 'admin.signout' );
 
         Route::group( [ 'middleware' => [ 'checkAdminIsMFA', 'checkMFA' ] ], function() {
+
+            Route::prefix( 'core' )->group( function() {
+                Route::post( 'get-notification-list', [ CoreController::class, 'getNotificationList' ] )->name( 'admin.core.getNotificationList' );
+                Route::post( 'seen-notification', [ CoreController::class, 'seenNotification' ] )->name( 'admin.core.seenNotification' );
+            } );
 
             Route::get( '/', function() {
                 return redirect()->route( 'admin.dashboard' );

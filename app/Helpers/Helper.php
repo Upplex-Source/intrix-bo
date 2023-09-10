@@ -177,26 +177,22 @@ class Helper {
         return $data;
     }
 
-    public function getDisplayTimeUnit( $createdAt ) {
+    public static function getDisplayTimeUnit( $createdAt ) {
 
-        $created = new Carbon( $createdAt );
-        $now = Carbon::now();
+        $created = Carbon::createFromFormat( 'Y-m-d H:i:s', $createdAt, 'UTC' )->timezone( 'Asia/Kuala_Lumpur' );
+        $now = Carbon::now()->timezone( 'Asia/Kuala_Lumpur' );
 
         if ( $created->format( 'd' ) != $now->format( 'd' ) ) {
 
-            $difference = $created->startOfDay()->diff( $now->startOfDay() )->days;
+            $difference = $created->clone()->startOfDay()->diff( $now->startOfDay() )->days;
             if ( $difference == 1 ) {
-                return __( 'template.yesterday' );
+                return __( 'template.yesterday' ) . ' ' . $created->format( 'H:i' );
             } else {
-                if ( $difference <= 7 ) {
-                    return __( 'template.' . strtolower( $created->format( 'l' ) ) );
-                } else {
-                    return $created->format( 'd/m/Y' );
-                }
+                return $created->format( 'd-m-Y H:i' );
             }
 
         } else {
-            return $created->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'H:i' );
+            return $created->format( 'H:i' );
         }
-    }
+    }   
 }

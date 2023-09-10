@@ -48,23 +48,27 @@
                                             </ul>
                                         </div>
                                     </li><!-- .dropdown -->
-                                    @if ( 1 == 2 )
                                     <li class="dropdown notification-dropdown">
                                         <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-bs-toggle="dropdown">
+                                            @if ( 1 == 2 )
                                             <div class="icon-status icon-status-info"><em class="icon ni ni-bell"></em></div>
+                                            @endif
+                                            <em class="icon ni ni-bell"></em>
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end">
                                             <div class="dropdown-head">
-                                                <span class="sub-title nk-dropdown-title">Notifications</span>
-                                                <a href="#">Mark All as Read</a>
+                                                <span class="sub-title nk-dropdown-title">{{ __( 'notification.notifications' ) }}</span>
+                                                <div class="link-primary" role="button" id="readAllNotification">{{ __( 'notification.mark_all_as_read' ) }}</div>
                                             </div>
                                             <div class="dropdown-body">
                                                 <div class="nk-notification">
+                                                    @if ( 1 == 2 )
                                                     <div class="nk-notification-item dropdown-inner">
                                                         <div class="nk-notification-icon">
                                                             <em class="icon icon-circle bg-warning-dim ni ni-curve-down-right"></em>
                                                         </div>
                                                         <div class="nk-notification-content">
+                                                            <strong>Road Expiring</strong>
                                                             <div class="nk-notification-text">You have requested to <span>Widthdrawl</span></div>
                                                             <div class="nk-notification-time">2 hrs ago</div>
                                                         </div>
@@ -114,14 +118,11 @@
                                                             <div class="nk-notification-time">2 hrs ago</div>
                                                         </div>
                                                     </div>
+                                                    @endif
                                                 </div><!-- .nk-notification -->
                                             </div><!-- .nk-dropdown-body -->
-                                            <div class="dropdown-foot center">
-                                                <a href="#">View All</a>
-                                            </div>
                                         </div>
                                     </li>
-                                    @endif
                                     <li class="dropdown user-dropdown">
                                         <a href="#" class="dropdown-toggle me-n1" data-bs-toggle="dropdown">
                                             <div class="user-toggle">

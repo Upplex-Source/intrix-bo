@@ -25,6 +25,24 @@ table.table.dataTable tr td {
     border-color: #e85347;
 }
 
+.icon-status-info:after {
+    animation: pulse-animation 1s infinite;
+}
+
+@keyframes pulse-animation {
+    0% {
+        box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+    }
+}
+  
+
+.nk-notification-item.read {
+    opacity: .5;
+}
+
 @media only screen and (max-width: 600px) {
     .listing-filter {
         grid-template-columns: 1fr;
