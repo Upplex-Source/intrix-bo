@@ -101,7 +101,7 @@
     $(_link).each(function () {
       var self = $(this),
         _self_link = self.attr('href');
-      if (fileName.match(_self_link)) {
+      if ( fileName == _self_link ) {
         self.closest("li").addClass('active current-page').parents().closest("li").addClass("active current-page");
         self.closest("li").children('.nk-menu-sub').css('display', 'block');
         self.parents().closest("li").children('.nk-menu-sub').css('display', 'block');

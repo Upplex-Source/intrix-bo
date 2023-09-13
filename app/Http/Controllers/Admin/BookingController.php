@@ -12,6 +12,26 @@ use App\Services\{
 
 class BookingController extends Controller
 {
+    public function calendar( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.calendar' );
+        $this->data['content'] = 'admin.booking.calendar';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.calendar' ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );        
+    }
+
     public function index( Request $request ) {
 
         $this->data['header']['title'] = __( 'template.bookings' );
@@ -106,6 +126,11 @@ class BookingController extends Controller
         ];
 
         return view( 'admin.main' )->with( $this->data );
+    }
+
+    public function calendarAllBookings( Request $request ) {
+
+        return BookingService::calendarAllBookings( $request );
     }
 
     public function allBookings( Request $request ) {

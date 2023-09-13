@@ -242,6 +242,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 
             Route::prefix( 'bookings' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view bookings' ] ], function() {
+                    Route::get( 'calendar', [ BookingController::class, 'calendar' ] )->name( 'admin.booking.calendar' );
                     Route::get( '/', [ BookingController::class, 'index' ] )->name( 'admin.module_parent.booking.index' );
                 } );
                 Route::group( [ 'middleware' => [ 'permission:add bookings' ] ], function() {
@@ -253,6 +254,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:export bookings' ] ], function() {
                     Route::get( 'export', [ BookingController::class, 'export' ] )->name( 'admin.booking.export' );
                 } );
+
+                Route::post( 'calendar-all-bookings', [ BookingController::class, 'calendarAllBookings' ] )->name( 'admin.booking.calendarAllBookings' );
 
                 Route::post( 'all-bookings', [ BookingController::class, 'allBookings' ] )->name( 'admin.booking.allBookings' );
                 Route::post( 'one-booking', [ BookingController::class, 'oneBooking' ] )->name( 'admin.booking.oneBooking' );

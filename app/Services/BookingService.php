@@ -21,6 +21,28 @@ use Carbon\Carbon;
 
 class BookingService
 {
+    public static function calendarAllBookings( $request ) {
+
+        $bookings = Booking::where( 'invoice_date', '>=', $request->start )
+            ->where( 'invoice_date', '<=', $request->end )
+            ->orderBy( 'invoice_date', 'ASC' )
+            ->get();
+
+        $currentBookings = [];
+        foreach ( $bookings as $booking ) {
+            array_push( $currentBookings, [
+                'id' => Helper::encode( $booking->id ),
+                'allDay' => true,
+                'start' => $booking->invoice_date . ' 00:00:00',
+                'end' => $booking->invoice_date . ' 23:59:59',
+                'title' => $booking->reference,
+                'color' => '#9769ff',
+            ] );
+        }
+
+        return response()->json( $currentBookings );
+    }
+
     public static function allBookings( $request, $export = false ) {
 
         $booking = Booking::with( [
@@ -264,10 +286,10 @@ class BookingService
                 'reference' => $request->reference,
                 'customer_name' => $request->customer_name,
                 'invoice_number' => $request->invoice_number,
-                'invoice_date' => $request->invoice_date,
+                'invoice_date' => $request->invoice_date ? Carbon::createFromFormat( 'Y-m-d', $request->invoice_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'vehicle_id' => $request->vehicle,
                 'delivery_order_number' => $request->delivery_order_number,
-                'delivery_order_date' => $request->delivery_order_date,
+                'delivery_order_date' => $request->delivery_order_date ? Carbon::createFromFormat( 'Y-m-d', $request->delivery_order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'pickup_address' => json_encode( [
                     'a1' => $request->pickup_address_address_1,
                     'a2' => $request->pickup_address_address_2,
@@ -283,8 +305,8 @@ class BookingService
                     'p' => $request->pickup_address_postcode,
                     's' => $request->pickup_address_state,
                 ] ),
-                'pickup_date' => Carbon::createFromFormat( 'Y-m-d H:i', $request->pickup_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ),
-                'dropoff_date' => Carbon::createFromFormat( 'Y-m-d H:i', $request->dropoff_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ),
+                'pickup_date' => $request->pickup_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->pickup_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
+                'dropoff_date' => $request->dropoff_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->dropoff_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'company_id' => $request->company,
                 'customer_type' => $request->customer_type,
                 'customer_quantity' => $request->customer_quantity,
@@ -413,10 +435,10 @@ class BookingService
             $updateBooking->reference = $request->reference;
             $updateBooking->customer_name = $request->customer_name;
             $updateBooking->invoice_number = $request->invoice_number;
-            $updateBooking->invoice_date = $request->invoice_date;
+            $updateBooking->invoice_date = $request->invoice_date ? Carbon::createFromFormat( 'Y-m-d', $request->invoice_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateBooking->vehicle_id = $request->vehicle;
             $updateBooking->delivery_order_number = $request->delivery_order_number;
-            $updateBooking->delivery_order_date = $request->delivery_order_date;
+            $updateBooking->delivery_order_date = $request->delivery_order_date ? Carbon::createFromFormat( 'Y-m-d', $request->delivery_order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateBooking->pickup_address = json_encode( [
                 'a1' => $request->pickup_address_address_1,
                 'a2' => $request->pickup_address_address_2,
@@ -432,8 +454,8 @@ class BookingService
                 'p' => $request->pickup_address_postcode,
                 's' => $request->pickup_address_state,
             ] );
-            $updateBooking->pickup_date = Carbon::createFromFormat( 'Y-m-d H:i', $request->pickup_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' );
-            $updateBooking->dropoff_date = Carbon::createFromFormat( 'Y-m-d H:i', $request->dropoff_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' );
+            $updateBooking->pickup_date = $request->pickup_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->pickup_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
+            $updateBooking->dropoff_date = $request->dropoff_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->dropoff_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateBooking->company_id = $request->company;
             $updateBooking->customer_type = $request->customer_type;
             $updateBooking->customer_quantity = $request->customer_quantity;

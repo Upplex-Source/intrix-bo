@@ -667,9 +667,11 @@ $booking_edit = 'booking_edit';
                     $( be + '_invoice_number' ).val( response.invoice_number );
                     invoiceDate.setDate( response.invoice_date );
 
-                    let option1 = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
-                    vehicleSelect2.append( option1 );
-                    vehicleSelect2.trigger( 'change' );
+                    if ( response.vehicle ) {
+                        let option1 = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                        vehicleSelect2.append( option1 );
+                        vehicleSelect2.trigger( 'change' );
+                    }
 
                     $( be + '_delivery_order_number' ).val( response.delivery_order_number );
                     deliveryOrderDate.setDate( response.delivery_order_date );
@@ -698,9 +700,11 @@ $booking_edit = 'booking_edit';
                     $( be + '_customer_total_amount' ).val( response.customer_total_amount );
                     $( be + '_customer_remarks' ).val( response.customer_remarks );
 
-                    let option2 = new Option( response.driver.name, response.driver.id, true, true );
-                    driverSelect2.append( option2 );
-                    // driverSelect2.trigger( 'change' );
+                    if ( response.driver ) {
+                        let option2 = new Option( response.driver.name, response.driver.id, true, true );
+                        driverSelect2.append( option2 );
+                        // driverSelect2.trigger( 'change' );
+                    }
 
                     $( be + '_driver_quantity' ).val( response.driver_quantity );
                     $( be + '_driver_uom' ).val( response.driver_unit_of_measurement );

@@ -143,6 +143,24 @@ var statusMapper = @json( $data['status'] ),
                 }
             },
             {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "delivery_order_number" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
+                }
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "vehicle" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
+                }
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "driver" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
+                }
+            },
+            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return statusMapper[data];

@@ -164,12 +164,28 @@
                                 </li>
                                 @endcan
                                 @can( 'view booking' )
+                                <li class="nk-menu-item has-sub">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.bookings' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.booking.calendar' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.calendar' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item">
+                                            <a href="{{ route( 'admin.module_parent.booking.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.booking_list' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @if ( 1 == 2 )
                                 <li class="nk-menu-item">
                                     <a href="{{ route( 'admin.module_parent.booking.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-check-c"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.bookings' ) }}</span>
                                     </a>
                                 </li>
+                                @endif
                                 @endcan
                                 @can( 'view expenses' )
                                 <li class="nk-menu-item has-sub">

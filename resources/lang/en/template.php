@@ -27,6 +27,7 @@ return [
     'vehicle_list' => 'Vehicle List',
     'vehicle_inspections' => 'Vehicle Inspections',
     'bookings' => 'Bookings',
+    'booking_list' => 'Booking List',
     'expenses' => 'Expenses',
     'expenses_list' => 'Expenses List',
     'fuel_expenses' => 'Fuel Expenses',
@@ -40,6 +41,7 @@ return [
     'tyre_records' => 'Tyre Records',
     'part_records' => 'Part Records',
     'item_list' => 'Item List',
+    'calendar' => 'Calendar',
 
     'loading' => 'Loading...',
     'add' => 'Add',
