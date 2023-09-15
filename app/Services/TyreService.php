@@ -87,6 +87,16 @@ class TyreService
             $filter = true;
         }
 
+        if ( !empty( $request->code ) ) {
+            $model->where( 'tyres.code', 'LIKE', '%' . $request->code . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->name ) ) {
+            $model->where( 'tyres.name', 'LIKE', '%' . $request->name . '%' );
+            $filter = true;
+        }
+
         if ( !empty( $request->status ) ) {
             $model->where( 'tyres.status', $request->status );
             $filter = true;
