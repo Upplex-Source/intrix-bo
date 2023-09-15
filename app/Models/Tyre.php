@@ -13,6 +13,12 @@ class Tyre extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'supplier_id',
+        'code',
+        'name',
+    ];
+
     public function supplier() {
         return $this->belongsTo( Supplier::class, 'supplier_id' );
     }

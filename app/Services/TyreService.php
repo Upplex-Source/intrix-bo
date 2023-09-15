@@ -87,6 +87,11 @@ class TyreService
             $filter = true;
         }
 
+        if ( !empty( $request->status ) ) {
+            $model->where( 'tyres.status', $request->status );
+            $filter = true;
+        }
+
         if ( !empty( $request->custom_search ) ) {
             $model->where( function( $query ) {
                 $query->where( 'tyres.name', 'LIKE', '%' . $request->custom_search . '%' );
@@ -98,5 +103,128 @@ class TyreService
             'filter' => $filter,
             'model' => $model,
         ];
+    }
+
+    public static function oneTyre( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $vendor = Tyre::find( $request->id );
+
+        if( $vendor ) {
+            $vendor->append( [
+                'encrypted_id',
+            ] );
+        }
+
+        return response()->json( $vendor );
+    }
+
+    public static function createTyre( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'code' => [ 'nullable', 'unique:tyres,code' ],
+            'name' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'code' => __( 'tyre.code' ),
+            'name' => __( 'tyre.name' ),
+        ];
+
+        foreach( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            Tyre::create( [
+                'supplier_id' => 1,
+                'code' => $request->code,
+                'name' => $request->name,
+            ] );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.tyres' ) ) ] ),
+        ] );
+    }
+
+    public static function updateTyre( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'code' => [ 'nullable', 'unique:tyres,code,' . $request->id ],
+            'name' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'code' => __( 'tyre.code' ),
+            'name' => __( 'tyre.name' ),
+        ];
+
+        foreach( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateTyre = Tyre::find( $request->id );
+            $updateTyre->code = $request->code;
+            $updateTyre->name = $request->name;
+            $updateTyre->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.tyres' ) ) ] ),
+        ] );
+    }
+
+    public static function updateTyreStatus( $request ) {
+        
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $updateTyre = Tyre::find( $request->id );
+        $updateTyre->status = $request->status;
+        $updateTyre->save();
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.vendors' ) ) ] ),
+        ] );
     }
 }

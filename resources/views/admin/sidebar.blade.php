@@ -107,6 +107,14 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can( 'view tyres' )
+                                <li class="nk-menu-item">
+                                    <a href="{{ route( 'admin.module_parent.tyre.index' ) }}" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-b-opera"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.tyres' ) }}</span>
+                                    </a>
+                                </li>
+                                @endcan
                                 @can( 'view vehicles' )
                                 @if ( 1 == 2 )
                                 <li class="nk-menu-item">

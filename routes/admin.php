@@ -148,6 +148,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-vendor-status', [ VendorController::class, 'updateVendorStatus' ] )->name( 'admin.vendor.updateVendorStatus' );
             } );
 
+            Route::prefix( 'tyres' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view tyres' ] ], function() {
+                    Route::get( '/', [ TyreController::class, 'index' ] )->name( 'admin.module_parent.tyre.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add tyres' ] ], function() {
+                    Route::get( 'add', [ TyreController::class, 'add' ] )->name( 'admin.tyre.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit tyres' ] ], function() {
+                    Route::get( 'edit', [ TyreController::class, 'edit' ] )->name( 'admin.tyre.edit' );
+                } );
+
+                Route::post( 'all-tyres', [ TyreController::class, 'allTyres' ] )->name( 'admin.tyre.allTyres' );
+                Route::post( 'one-tyre', [ TyreController::class, 'oneTyre' ] )->name( 'admin.tyre.oneTyre' );
+                Route::post( 'create-tyre', [ TyreController::class, 'createTyre' ] )->name( 'admin.tyre.createTyre' );
+                Route::post( 'update-tyre', [ TyreController::class, 'updateTyre' ] )->name( 'admin.tyre.updateTyre' );
+                Route::post( 'update-tyre-status', [ TyreController::class, 'updateTyreStatus' ] )->name( 'admin.tyre.updateTyreStatus' );
+            } );
+
             Route::prefix( 'vehicles' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view vehicles' ] ], function() {
                     Route::get( '/', [ VehicleController::class, 'index' ] )->name( 'admin.module_parent.vehicle.index' );
@@ -164,11 +182,6 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-vehicle', [ VehicleController::class, 'createVehicle' ] )->name( 'admin.vehicle.createVehicle' );
                 Route::post( 'update-vehicle', [ VehicleController::class, 'updateVehicle' ] )->name( 'admin.vehicle.updateVehicle' );
                 Route::post( 'update-vehicle-status', [ VehicleController::class, 'updateVehicleStatus' ] )->name( 'admin.vehicle.updateVehicleStatus' );
-            } );
-
-            Route::prefix( 'tyres' )->group( function() {
-
-                Route::post( 'all-tyres', [ TyreController::class, 'allTyres' ] )->name( 'admin.tyre.allTyres' );
             } );
 
             Route::prefix( 'maintenance-records' )->group( function() {

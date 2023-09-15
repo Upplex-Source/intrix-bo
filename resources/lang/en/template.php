@@ -23,6 +23,7 @@ return [
     'orders' => 'Orders',
     'employees' => 'Employees',
     'vendors' => 'Vendors',
+    'tyres' => 'Tyres',
     'vehicles' => 'Vehicles',
     'vehicle_list' => 'Vehicle List',
     'vehicle_inspections' => 'Vehicle Inspections',
