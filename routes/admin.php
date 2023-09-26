@@ -166,6 +166,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-tyre-status', [ TyreController::class, 'updateTyreStatus' ] )->name( 'admin.tyre.updateTyreStatus' );
             } );
 
+            Route::prefix( 'parts' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view parts' ] ], function() {
+                    Route::get( '/', [ PartController::class, 'index' ] )->name( 'admin.module_parent.part.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add parts' ] ], function() {
+                    Route::get( 'add', [ PartController::class, 'add' ] )->name( 'admin.part.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit parts' ] ], function() {
+                    Route::get( 'edit', [ PartController::class, 'edit' ] )->name( 'admin.part.edit' );
+                } );
+
+                Route::post( 'all-parts', [ PartController::class, 'allParts' ] )->name( 'admin.part.allParts' );
+                Route::post( 'one-part', [ PartController::class, 'onePart' ] )->name( 'admin.part.onePart' );
+                Route::post( 'create-part', [ PartController::class, 'createPart' ] )->name( 'admin.part.createPart' );
+                Route::post( 'update-part', [ PartController::class, 'updatePart' ] )->name( 'admin.part.updatePart' );
+                Route::post( 'update-part-status', [ PartController::class, 'updatePartStatus' ] )->name( 'admin.part.updatePartStatus' );
+            } );
+
             Route::prefix( 'vehicles' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view vehicles' ] ], function() {
                     Route::get( '/', [ VehicleController::class, 'index' ] )->name( 'admin.module_parent.vehicle.index' );
@@ -320,11 +338,6 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
             Route::prefix( 'suppliers' )->group( function() {
 
                 Route::post( 'all-suppliers', [ SupplierController::class, 'allSuppliers' ] )->name( 'admin.supplier.allSuppliers' );
-            } );
-
-            Route::prefix( 'parts' )->group( function() {
-
-                Route::post( 'all-parts', [ PartController::class, 'allParts' ] )->name( 'admin.part.allParts' );
             } );
         } );
     } );

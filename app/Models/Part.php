@@ -19,9 +19,14 @@ class Part extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
+        'vendor_id',
         'name',
         'status',
     ];
+
+    public function vendor() {
+        return $this->belongsTo( Vendor::class, 'vendor_id' );
+    }
 
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );

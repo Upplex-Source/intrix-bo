@@ -17,6 +17,7 @@ class CreateTyreRecordItemsTable extends Migration
             $table->id();
             $table->foreignId('tyre_record_id')->constrained('tyre_records')->onUpdate( 'restrict')->onDelete('cascade');
             $table->foreignId('tyre_id')->nullable()->constrained('tyres')->onUpdate( 'restrict')->onDelete('cascade');
+            $table->foreignId('vendor_id')->constrained('vendors')->onUpdate( 'restrict')->onDelete('cascade');
             $table->tinyInteger('category')->default(1);
             $table->string('serial_number')->nullable();
             $table->decimal('cost_per_pcs',16,2)->nullable();

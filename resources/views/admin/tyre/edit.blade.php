@@ -16,6 +16,14 @@ $tyre_edit = 'tyre_edit';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
+                    <label for="{{ $tyre_edit }}_vendor" class="col-sm-5 col-form-label">{{ __( 'tyre.vendor' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $tyre_edit }}_vendor" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'tyre.vendor' ) ] ) }}">
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $tyre_edit }}_code" class="col-sm-5 col-form-label">{{ __( 'tyre.code' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $tyre_edit }}_code" placeholder="{{ __( 'template.optional' ) }}">
@@ -59,6 +67,7 @@ $tyre_edit = 'tyre_edit';
             } );
 
             let formData = new FormData();
+            formData.append( 'vendor', null === $( te + '_vendor' ).val() ? '' : $( te + '_vendor' ).val() );
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'code', $( te + '_code' ).val() );
             formData.append( 'name', $( te + '_name' ).val() );
@@ -95,6 +104,49 @@ $tyre_edit = 'tyre_edit';
             } );
         } );
 
+        let vendorSelect2 = $( te + '_vendor' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            allowClear: true,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.vendor.allVendors' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.vendors.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
         function getTyre() {
 
             $( 'body' ).loading( {
@@ -110,6 +162,12 @@ $tyre_edit = 'tyre_edit';
                 },
                 success: function( response ) {
                   
+                    if ( response.vendor ) {
+                        let option1 = new Option( response.vendor.name, response.vendor.id, true, true );
+                        vendorSelect2.append( option1 );
+                        vendorSelect2.trigger( 'change' );
+                    }
+
                     $( te + '_code' ).val( response.code );
                     $( te + '_name' ).val( response.name );
 

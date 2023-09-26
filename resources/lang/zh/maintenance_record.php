@@ -39,7 +39,7 @@ return [
     'category' => 'Category',
     'tyre' => 'Tyre',
     'serial_number' => 'Serial Number',
-    'supplier' => 'Supplier',
+    'vendor' => 'Vendor',
 
     'part' => 'Part',
     'unit_price' => 'Unit Price',

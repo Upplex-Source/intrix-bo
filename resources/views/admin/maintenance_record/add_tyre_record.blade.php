@@ -71,7 +71,7 @@ $tyre_record_create = 'tyre_record_create';
                                     <td class="">{{ __( 'maintenance_record.service_type' ) }}</td>
                                     <td class="">{{ __( 'maintenance_record.description' ) }}</td>
                                     <td class="">{{ __( 'maintenance_record.serial_number' ) }}</td>
-                                    <td class="">{{ __( 'maintenance_record.supplier' ) }}</td>
+                                    <td class="">{{ __( 'maintenance_record.vendor' ) }}</td>
                                 </tr>
                             </thead>
                             <tbody class="empty">
@@ -226,7 +226,7 @@ $tyre_record_create = 'tyre_record_create';
                         <td class="service_type" data-value="` + response.data.id + `">Tyre</td>
                         <td class="description">` + response.data.name + `</td>
                         <td class="serial_number">` + $( trc + '_serial_number' ).val() + `</td>
-                        <td class="supplier">` + response.data.supplier.name + `</td>
+                        <td class="vendor">` + response.data.vendor.name + `</td>
                     </tr>
                     `;
 

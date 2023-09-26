@@ -13,6 +13,7 @@ return [
     |
     */
 
+    'vendor' => 'Vendor',
     'code' => 'Code',
     'name' => 'Name',
 ];

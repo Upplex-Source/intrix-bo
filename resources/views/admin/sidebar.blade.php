@@ -115,6 +115,14 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can( 'view parts' )
+                                <li class="nk-menu-item">
+                                    <a href="{{ route( 'admin.module_parent.part.index' ) }}" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-template"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.parts' ) }}</span>
+                                    </a>
+                                </li>
+                                @endcan
                                 @can( 'view vehicles' )
                                 @if ( 1 == 2 )
                                 <li class="nk-menu-item">

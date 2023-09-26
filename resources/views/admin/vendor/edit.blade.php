@@ -241,11 +241,13 @@ $vendor_edit = 'vendor_edit';
                     // $( ve + '_website' ).val( response.website );
                     $( ve + '_type' ).val( response.type );
 
-                    $( ve + '_address_1' ).val( response.address_object.address_1 );
-                    $( ve + '_address_2' ).val( response.address_object.address_2 );
-                    $( ve + '_city' ).val( response.address_object.city );
-                    $( ve + '_postcode' ).val( response.address_object.postcode );
-                    $( ve + '_state' ).val( response.address_object.state );
+                    if ( response.address_object ) {
+                        $( ve + '_address_1' ).val( response.address_object.address_1 );
+                        $( ve + '_address_2' ).val( response.address_object.address_2 );
+                        $( ve + '_city' ).val( response.address_object.city );
+                        $( ve + '_postcode' ).val( response.address_object.postcode );
+                        $( ve + '_state' ).val( response.address_object.state );
+                    }
 
                     $( ve + '_remarks' ).val( response.remarks );
 

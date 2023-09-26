@@ -35,6 +35,12 @@ $columns = [
     ],
     [
         'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'tyre.vendor' ) ] ),
+        'id' => 'vendor',
+        'title' => __( 'tyre.vendor' ),
+    ],
+    [
+        'type' => 'input',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'tyre.code' ) ] ),
         'id' => 'code',
         'title' => __( 'tyre.code' ),
@@ -98,6 +104,7 @@ var statusMapper = @json( $data['status'] ),
         columns: [
             { data: null },
             { data: 'created_at' },
+            { data: 'vendor' },
             { data: 'code' },
             { data: 'name' },
             { data: 'status' },
@@ -117,6 +124,27 @@ var statusMapper = @json( $data['status'] ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "vendor" ) }}' ),
+                orderable: false,
+                render: function( data, type, row, meta ) {
+                    return data ? data.name : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "code" ) }}' ),
+                orderable: false,
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "name" ) }}' ),
+                orderable: false,
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
                 },
             },
             {

@@ -132,6 +132,10 @@ class VendorService
             $filter = true;
         }
 
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( 'vendors.name', 'LIKE', '%' . $request->custom_search . '%' );
+        }
+
         return [
             'filter' => $filter,
             'model' => $model,

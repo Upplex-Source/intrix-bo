@@ -1,16 +1,16 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.part_records' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.parts' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add maintenance_records' )
+        @can( 'add parts' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
                 <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.maintenance_record.addPartRecord' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.part.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -29,32 +29,27 @@ $columns = [
     ],
     [
         'type' => 'date',
-        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.part_date' ) ] ),
-        'id' => 'part_date',
-        'title' => __( 'datatables.part_date' ),
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
+        'id' => 'created_date',
+        'title' => __( 'datatables.created_date' ),
     ],
     [
         'type' => 'input',
-        'placeholder' => __( 'maintenance_record.reference' ),
-        'id' => 'reference',
-        'title' => __( 'maintenance_record.reference' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' => __( 'maintenance_record.vendor' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'part.vendor' ) ] ),
         'id' => 'vendor',
-        'title' => __( 'maintenance_record.vendor' ),
+        'title' => __( 'part.vendor' ),
     ],
     [
         'type' => 'input',
-        'placeholder' => __( 'maintenance_record.part' ),
-        'id' => 'part',
-        'title' => __( 'maintenance_record.part' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'part.name' ) ] ),
+        'id' => 'name',
+        'title' => __( 'part.name' ),
     ],
     [
-        'type' => 'default',
-        'id' => 'unit_price',
-        'title' => __( 'maintenance_record.unit_price' ),
+        'type' => 'select',
+        'options' => $data['status'],
+        'id' => 'status',
+        'title' => __( 'datatables.status' ),
     ],
     [
         'type' => 'default',
@@ -64,20 +59,21 @@ $columns = [
 ];
 ?>
 
-<x-data-tables id="maintenance_record_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="part_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
 window['columns'] = @json( $columns );
-
+    
 @foreach ( $columns as $column )
 @if ( $column['type'] != 'default' )
 window['{{ $column['id'] }}'] = '';
 @endif
 @endforeach
 
-var dt_table,
-    dt_table_name = '#maintenance_record_table',
+var statusMapper = @json( $data['status'] ),
+    dt_table,
+    dt_table_name = '#part_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -91,21 +87,20 @@ var dt_table,
             }
         },
         ajax: {
-            url: '{{ route( 'admin.maintenance_record.allPartRecords' ) }}',
+            url: '{{ route( 'admin.part.allParts' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'records',
+            dataSrc: 'parts',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 1, 'desc' ]],
         columns: [
             { data: null },
-            { data: 'local_part_date' },
-            { data: 'reference' },
-            { data: 'vendor.name' },
-            { data: 'part.name' },
-            { data: 'unit_price' },
+            { data: 'created_at' },
+            { data: 'vendor' },
+            { data: 'name' },
+            { data: 'status' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [
@@ -118,28 +113,30 @@ var dt_table,
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "part_date" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "created_date" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "reference" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-';
-                },
-            },
-            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "vendor" ) }}' ),
+                orderable: false,
+                render: function( data, type, row, meta ) {
+                    return data ? data.name : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "name" ) }}' ),
+                orderable: false,
                 render: function( data, type, row, meta ) {
                     return data ? data : '-';
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "part" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-';
+                    return statusMapper[data];
                 },
             },
             {
@@ -149,20 +146,18 @@ var dt_table,
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit maintenance_records', 'delete maintenance_records' ] )
+                    @canany( [ 'edit parts', 'delete parts' ] )
                     let edit, status = '';
 
-                    @can( 'edit maintenance_records' )
+                    @can( 'edit parts' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'delete maintenance_records' )
+                    @can( 'delete parts' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
                     @endcan
-
-                    status = '';
                     
                     let html = 
                         `
@@ -189,11 +184,7 @@ var dt_table,
 
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.maintenance_record.editPartRecord' ) }}?id=' + $( this ).data( 'id' );
-        } );
-
-        $( '#part_date' ).flatpickr( {
+        $( '#created_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
             onClose: function( selected, dateStr, instance ) {
@@ -201,8 +192,29 @@ var dt_table,
                 dt_table.draw();
             }
         } );
-    } );
 
+        $( document ).on( 'click', '.dt-edit', function() {
+            window.location.href = '{{ route( 'admin.part.edit' ) }}?id=' + $( this ).data( 'id' );
+        } );
+
+        $( document ).on( 'click', '.dt-status', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.part.updatePartStatus' ) }}',
+                type: 'POST',
+                data: {
+                    'id': $( this ).data( 'id' ),
+                    'status': $( this ).data( 'status' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function( response ) {
+                    dt_table.draw( false );
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.toggle();
+                },
+            } );
+        } );
+    } );
 </script>
 
 <script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>

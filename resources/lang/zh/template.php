@@ -24,6 +24,7 @@ return [
     'employees' => '员工',
     'vendors' => '供应商',
     'tyres' => 'Tyres',
+    'parts' => 'Parts',
     'vehicles' => '载具',
     'vehicle_list' => '载具列表',
     'vehicle_inspections' => '载具检查',

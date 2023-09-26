@@ -19,7 +19,7 @@ class PartRecord extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'supplier_id',
+        'vendor_id',
         'vehicle_id',
         'part_id',
         'reference',
@@ -27,8 +27,8 @@ class PartRecord extends Model
         'part_date',
     ];
 
-    public function supplier() {
-        return $this->belongsTo( Supplier::class, 'supplier_id' );
+    public function vendor() {
+        return $this->belongsTo( Vendor::class, 'vendor_id' );
     }
 
     public function vehicle() {
@@ -56,7 +56,7 @@ class PartRecord extends Model
     }
 
     protected static $logAttributes = [
-        'supplier_id',
+        'vendor_id',
         'vehicle_id',
         'part_id',
         'reference',

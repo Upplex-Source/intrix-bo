@@ -71,7 +71,7 @@ $tyre_record_edit = 'tyre_record_edit';
                                     <td class="">{{ __( 'maintenance_record.service_type' ) }}</td>
                                     <td class="">{{ __( 'maintenance_record.description' ) }}</td>
                                     <td class="">{{ __( 'maintenance_record.serial_number' ) }}</td>
-                                    <td class="">{{ __( 'maintenance_record.supplier' ) }}</td>
+                                    <td class="">{{ __( 'maintenance_record.vendor' ) }}</td>
                                 </tr>
                             </thead>
                             <tbody class="empty">
@@ -231,7 +231,7 @@ $tyre_record_edit = 'tyre_record_edit';
                         <td class="service_type" data-value="` + response.data.id + `">Tyre</td>
                         <td class="description">` + response.data.name + `</td>
                         <td class="serial_number">` + $( tre + '_serial_number' ).val() + `</td>
-                        <td class="supplier">` + response.data.supplier.name + `</td>
+                        <td class="vendor">` + response.data.vendor.name + `</td>
                     </tr>
                     `;
 
@@ -400,7 +400,7 @@ $tyre_record_edit = 'tyre_record_edit';
                             <td class="service_type" data-value="` + v.tyre_id + `">Tyre</td>
                             <td class="description">` + v.tyre.name + `</td>
                             <td class="serial_number">` + v.serial_number + `</td>
-                            <td class="supplier">` + v.tyre.supplier.name + `</td>
+                            <td class="vendor">` + v.tyre.vendor.name + `</td>
                         </tr>
                         `;
                     } );

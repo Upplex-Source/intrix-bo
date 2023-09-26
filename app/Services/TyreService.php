@@ -20,7 +20,11 @@ class TyreService
 {
     public static function allTyres( $request ) {
 
-        $tyre = Tyre::select( 'tyres.*' );
+        $tyre = Tyre::with( [
+            'vendor',
+        ] )->select( 'tyres.*' );
+
+        $tyre->leftJoin( 'vendors', 'vendors.id', '=', 'tyres.vendor_id' );
 
         $filterObject = self::filter( $request, $tyre );
         $tyre = $filterObject['model'];
@@ -31,6 +35,9 @@ class TyreService
             switch ( $request->input( 'order.0.column' ) ) {
                 case 1:
                     $tyre->orderBy( 'tyres.created_at', $dir );
+                    break;
+                case 5:
+                    $tyre->orderBy( 'tyres.status', $dir );
                     break;
             }
         }
@@ -87,6 +94,11 @@ class TyreService
             $filter = true;
         }
 
+        if ( !empty( $request->vendor ) ) {
+            $model->where( 'vendors.name', 'LIKE', '%' . $request->vendor . '%' );
+            $filter = true;
+        }
+
         if ( !empty( $request->code ) ) {
             $model->where( 'tyres.code', 'LIKE', '%' . $request->code . '%' );
             $filter = true;
@@ -121,7 +133,9 @@ class TyreService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $vendor = Tyre::find( $request->id );
+        $vendor = Tyre::with( [
+            'vendor',
+        ] )->find( $request->id );
 
         if( $vendor ) {
             $vendor->append( [
@@ -135,11 +149,13 @@ class TyreService
     public static function createTyre( $request ) {
 
         $validator = Validator::make( $request->all(), [
+            'vendor' => [ 'required', 'exists:vendors,id' ],
             'code' => [ 'nullable', 'unique:tyres,code' ],
             'name' => [ 'required' ],
         ] );
 
         $attributeName = [
+            'vendor' => __( 'tyre.vendor' ),
             'code' => __( 'tyre.code' ),
             'name' => __( 'tyre.name' ),
         ];
@@ -155,7 +171,7 @@ class TyreService
         try {
 
             Tyre::create( [
-                'supplier_id' => 1,
+                'vendor_id' => $request->vendor,
                 'code' => $request->code,
                 'name' => $request->name,
             ] );
@@ -183,11 +199,13 @@ class TyreService
         ] );
 
         $validator = Validator::make( $request->all(), [
+            'vendor' => [ 'required', 'exists:vendors,id' ],
             'code' => [ 'nullable', 'unique:tyres,code,' . $request->id ],
             'name' => [ 'required' ],
         ] );
 
         $attributeName = [
+            'vendor' => __( 'tyre.vendor' ),
             'code' => __( 'tyre.code' ),
             'name' => __( 'tyre.name' ),
         ];
@@ -203,6 +221,7 @@ class TyreService
         try {
 
             $updateTyre = Tyre::find( $request->id );
+            $updateTyre->vendor_id = $request->vendor;
             $updateTyre->code = $request->code;
             $updateTyre->name = $request->name;
             $updateTyre->save();

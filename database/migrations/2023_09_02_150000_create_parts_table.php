@@ -15,6 +15,7 @@ class CreatePartsTable extends Migration
     {
         Schema::create('parts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('vendor_id')->constrained('vendors')->onUpdate( 'restrict')->onDelete('cascade');
             $table->string('name');
             $table->tinyInteger('status')->default(10);
             $table->timestamps();

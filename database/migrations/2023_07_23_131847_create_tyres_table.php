@@ -15,8 +15,8 @@ class CreateTyresTable extends Migration
     {
         Schema::create('tyres', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id')->constrained('suppliers')->onUpdate( 'restrict')->onDelete('cascade');
-            $table->string('code', 20);
+            $table->foreignId('vendor_id')->constrained('vendors')->onUpdate( 'restrict')->onDelete('cascade');
+            $table->string('code', 20)->nullable();
             $table->string('name');
             $table->tinyInteger('status')->default(10);
             $table->timestamps();

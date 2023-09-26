@@ -506,7 +506,7 @@ class MaintenanceRecordService
         $validator->setAttributeNames( $attributeName )->validate();
 
         $tyre = Tyre::with( [
-            'supplier',
+            'vendor',
         ] )->find( $request->tyre );
 
         return response()->json( [
@@ -523,7 +523,7 @@ class MaintenanceRecordService
         $tyreRecord = TyreRecord::with( [
             'items',
             'items.tyre',
-            'items.tyre.supplier',
+            'items.tyre.vendor',
             'vehicle',
             'documents',
         ] )->find( $request->id );
@@ -575,9 +575,13 @@ class MaintenanceRecordService
 
             $items = json_decode( $request->items );
             foreach ( $items as $item ) {
+
+                $tyre = Tyre::find( $item->tyre );
+
                 TyreRecordItem::create( [
                     'tyre_record_id' => $createTyreRecord->id,
                     'tyre_id' => $item->tyre,
+                    'vendor_id' => $tyre->vendor_id,
                     'serial_number' => $item->serial_number,
                 ] );
             }
@@ -663,9 +667,13 @@ class MaintenanceRecordService
 
             $items = json_decode( $request->items );
             foreach ( $items as $item ) {
+
+                $tyre = Tyre::find( $item->tyre );
+
                 TyreRecordItem::create( [
                     'tyre_record_id' => $updateTyreRecord->id,
                     'tyre_id' => $item->tyre,
+                    'vendor_id' => $tyre->vendor_id,
                     'serial_number' => $item->serial_number,
                 ] );
             }
@@ -727,7 +735,7 @@ class MaintenanceRecordService
     public static function allPartRecords( $request ) {
 
         $partRecord = PartRecord::with( [
-            'supplier',
+            'vendor',
             'part',
         ] )->select( 'part_records.*' );
 
@@ -810,7 +818,7 @@ class MaintenanceRecordService
         ] );
 
         $partRecord = PartRecord::with( [
-            'supplier',
+            'vendor',
             'part',
             'documents',
         ] )->find( $request->id );
@@ -836,7 +844,7 @@ class MaintenanceRecordService
         $validator = Validator::make( $request->all(), [
             'part_date' => [ 'required' ],
             'reference' => [ 'required' ],
-            'supplier' => [ 'required', 'exists:suppliers,id' ],
+            'vendor' => [ 'required', 'exists:vendors,id' ],
             'part' => [ 'required', 'exists:parts,id' ],
             'unit_price' => [ 'required' ],
         ] );
@@ -844,7 +852,7 @@ class MaintenanceRecordService
         $attributeName = [
             'part_date' => __( 'datatables.part_date' ),
             'reference' => __( 'maintenance_record.reference' ),
-            'supplier' => __( 'maintenance_record.supplier' ),
+            'vendor' => __( 'maintenance_record.vendor' ),
             'part' => __( 'maintenance_record.part' ),
             'unit_price' => __( 'maintenance_record.unit_price' ),
         ];
@@ -862,7 +870,7 @@ class MaintenanceRecordService
             $createPartRecord = PartRecord::create( [
                 'part_date' => Carbon::createFromFormat( 'Y-m-d', $request->part_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ),
                 'reference' => $request->reference,
-                'supplier_id' => $request->supplier ? $request->supplier : null,
+                'vendor_id' => $request->vendor ? $request->vendor : null,
                 'part_id' => $request->part ? $request->part : null,
                 'unit_price' => $request->unit_price,
             ] );
@@ -919,7 +927,7 @@ class MaintenanceRecordService
         $validator = Validator::make( $request->all(), [
             'part_date' => [ 'required' ],
             'reference' => [ 'required' ],
-            'supplier' => [ 'required', 'exists:suppliers,id' ],
+            'vendor' => [ 'required', 'exists:vendors,id' ],
             'part' => [ 'required', 'exists:parts,id' ],
             'unit_price' => [ 'required' ],
         ] );
@@ -927,7 +935,7 @@ class MaintenanceRecordService
         $attributeName = [
             'part_date' => __( 'datatables.part_date' ),
             'reference' => __( 'maintenance_record.reference' ),
-            'supplier' => __( 'maintenance_record.supplier' ),
+            'vendor' => __( 'maintenance_record.vendor' ),
             'part' => __( 'maintenance_record.part' ),
             'unit_price' => __( 'maintenance_record.unit_price' ),
         ];
@@ -945,7 +953,7 @@ class MaintenanceRecordService
             $updatePartRecord = PartRecord::find( $request->id );
             $updatePartRecord->part_date = Carbon::createFromFormat( 'Y-m-d', $request->part_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' );
             $updatePartRecord->reference = $request->reference;
-            $updatePartRecord->supplier_id = $request->supplier;
+            $updatePartRecord->vendor_id = $request->vendor;
             $updatePartRecord->part_id = $request->part;
             $updatePartRecord->unit_price = $request->unit_price;
             $updatePartRecord->save();

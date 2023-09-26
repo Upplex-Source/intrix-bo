@@ -30,9 +30,9 @@ $part_record_edit = 'part_record_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $part_record_edit }}_supplier" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.supplier' ) }}</label>
+                    <label for="{{ $part_record_edit }}_vendor" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.vendor' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $part_record_edit }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.supplier' ) ] ) }}">
+                        <select class="form-select" id="{{ $part_record_edit }}_vendor" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.vendor' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -98,7 +98,7 @@ $part_record_edit = 'part_record_edit';
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'part_date', $( pre + '_part_date' ).val() );
             formData.append( 'reference', $( pre + '_reference' ).val() );
-            formData.append( 'supplier', null === $( pre + '_supplier' ).val() ? '' : $( pre + '_supplier' ).val() );
+            formData.append( 'vendor', null === $( pre + '_vendor' ).val() ? '' : $( pre + '_vendor' ).val() );
             formData.append( 'part', null === $( pre + '_part' ).val() ? '' : $( pre + '_part' ).val() );
             formData.append( 'unit_price', $( pre + '_unit_price' ).val() );
             formData.append( 'documents', fileID );
@@ -136,7 +136,7 @@ $part_record_edit = 'part_record_edit';
             } );
         } );
 
-        let supplierSelect2 = $( pre + '_supplier' ).select2( {
+        let vendorSelect2 = $( pre + '_vendor' ).select2( {
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
@@ -144,7 +144,7 @@ $part_record_edit = 'part_record_edit';
             closeOnSelect: false,
             ajax: {
                 method: 'POST',
-                url: '{{ route( 'admin.supplier.allSuppliers' ) }}',
+                url: '{{ route( 'admin.vendor.allVendors' ) }}',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -161,7 +161,7 @@ $part_record_edit = 'part_record_edit';
 
                     let processedResult = [];
 
-                    data.suppliers.map( function( v, i ) {
+                    data.vendors.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
                             text: v.name,
@@ -238,10 +238,10 @@ $part_record_edit = 'part_record_edit';
                 success: function( response ) {
                     $( 'body' ).loading( 'stop' );
 
-                    if ( response.supplier ) {
-                        let option1 = new Option( response.supplier.name, response.supplier.id, true, true );
-                        supplierSelect2.append( option1 );
-                        supplierSelect2.trigger( 'change' );
+                    if ( response.vendor ) {
+                        let option1 = new Option( response.vendor.name, response.vendor.id, true, true );
+                        vendorSelect2.append( option1 );
+                        vendorSelect2.trigger( 'change' );
                     }
 
                     if ( response.part ) {

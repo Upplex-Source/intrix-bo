@@ -65,7 +65,7 @@ function renderFilter( $type, $column = [] ) {
             $html = '<input type="text" class="form-control form-control-sm" placeholder="' . $column->placeholder . '" id="' . $column->id . '" data-id="' . $column->id . '" style="background-color: #fff;" />';
             break;
         case 'select':
-            $html = '<select class="form-control form-control-sm" id="' . $column->id . '" data-id="' . $column->id . '">';
+            $html = '<select class="form-select" id="' . $column->id . '" data-id="' . $column->id . '">';
             $html .= '<option value="">' . __( 'datatables.all_x', [ 'title' => $column->title ] ) . '</option>';
             foreach( $column->options as $key => $option ) {
                 $html .= '<option value="' . $key . '">' . $option . '</option>';

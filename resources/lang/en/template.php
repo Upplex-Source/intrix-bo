@@ -24,6 +24,7 @@ return [
     'employees' => 'Employees',
     'vendors' => 'Vendors',
     'tyres' => 'Tyres',
+    'parts' => 'Parts',
     'vehicles' => 'Vehicles',
     'vehicle_list' => 'Vehicle List',
     'vehicle_inspections' => 'Vehicle Inspections',

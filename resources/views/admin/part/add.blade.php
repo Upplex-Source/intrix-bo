@@ -1,11 +1,11 @@
 <?php
-$tyre_create = 'tyre_create';
+$part_create = 'part_create';
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.tyres' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.parts' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -16,31 +16,24 @@ $tyre_create = 'tyre_create';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $tyre_create }}_vendor" class="col-sm-5 col-form-label">{{ __( 'tyre.vendor' ) }}</label>
+                    <label for="{{ $part_create }}_vendor" class="col-sm-5 col-form-label">{{ __( 'tyre.vendor' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $tyre_create }}_vendor" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'tyre.vendor' ) ] ) }}">
+                        <select class="form-select" id="{{ $part_create }}_vendor" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'tyre.vendor' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $tyre_create }}_code" class="col-sm-5 col-form-label">{{ __( 'tyre.code' ) }}</label>
+                    <label for="{{ $part_create }}_name" class="col-sm-5 col-form-label">{{ __( 'part.name' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $tyre_create }}_code" placeholder="{{ __( 'template.optional' ) }}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $tyre_create }}_name" class="col-sm-5 col-form-label">{{ __( 'tyre.name' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $tyre_create }}_name">
+                        <input type="text" class="form-control" id="{{ $part_create }}_name">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="text-end">
-                    <button id="{{ $tyre_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $part_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $tyre_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $part_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -50,14 +43,14 @@ $tyre_create = 'tyre_create';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let tc = '#{{ $tyre_create }}',
+        let pc = '#{{ $part_create }}',
             fileID = '';
 
-        $( tc + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.tyre.index' ) }}';
+        $( pc + '_cancel' ).click( function() {
+            window.location.href = '{{ route( 'admin.module_parent.part.index' ) }}';
         } );
 
-        $( tc + '_submit' ).click( function() {
+        $( pc + '_submit' ).click( function() {
 
             resetInputValidation();
 
@@ -66,13 +59,12 @@ $tyre_create = 'tyre_create';
             } );
 
             let formData = new FormData();
-            formData.append( 'vendor', null === $( tc + '_vendor' ).val() ? '' : $( tc + '_vendor' ).val() );
-            formData.append( 'code', $( tc + '_code' ).val() );
-            formData.append( 'name', $( tc + '_name' ).val() );
+            formData.append( 'vendor', null === $( pc + '_vendor' ).val() ? '' : $( pc + '_vendor' ).val() );
+            formData.append( 'name', $( pc + '_name' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.tyre.createTyre' ) }}',
+                url: '{{ route( 'admin.part.createPart' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -83,7 +75,7 @@ $tyre_create = 'tyre_create';
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.tyre.index' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.part.index' ) }}';
                     } );
                 },
                 error: function( error ) {
@@ -92,7 +84,7 @@ $tyre_create = 'tyre_create';
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
-                            $( tc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            $( pc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
@@ -102,7 +94,7 @@ $tyre_create = 'tyre_create';
             } );
         } );
 
-        $( tc + '_vendor' ).select2( {
+        $( pc + '_vendor' ).select2( {
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',

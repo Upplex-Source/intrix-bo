@@ -30,9 +30,9 @@ $part_record_create = 'part_record_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $part_record_create }}_supplier" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.supplier' ) }}</label>
+                    <label for="{{ $part_record_create }}_vendor" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.vendor' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $part_record_create }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.supplier' ) ] ) }}">
+                        <select class="form-select" id="{{ $part_record_create }}_vendor" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.vendor' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -94,7 +94,7 @@ $part_record_create = 'part_record_create';
             let formData = new FormData();
             formData.append( 'part_date', $( prc + '_part_date' ).val() );
             formData.append( 'reference', $( prc + '_reference' ).val() );
-            formData.append( 'supplier', null === $( prc + '_supplier' ).val() ? '' : $( prc + '_supplier' ).val() );
+            formData.append( 'vendor', null === $( prc + '_vendor' ).val() ? '' : $( prc + '_vendor' ).val() );
             formData.append( 'part', null === $( prc + '_part' ).val() ? '' : $( prc + '_part' ).val() );
             formData.append( 'unit_price', $( prc + '_unit_price' ).val() );
             formData.append( 'documents', fileID );
@@ -131,7 +131,7 @@ $part_record_create = 'part_record_create';
             } );
         } );
 
-        $( prc + '_supplier' ).select2( {
+        $( prc + '_vendor' ).select2( {
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
@@ -139,7 +139,7 @@ $part_record_create = 'part_record_create';
             closeOnSelect: false,
             ajax: {
                 method: 'POST',
-                url: '{{ route( 'admin.supplier.allSuppliers' ) }}',
+                url: '{{ route( 'admin.vendor.allVendors' ) }}',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
@@ -156,7 +156,7 @@ $part_record_create = 'part_record_create';
 
                     let processedResult = [];
 
-                    data.suppliers.map( function( v, i ) {
+                    data.vendors.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
                             text: v.name,
