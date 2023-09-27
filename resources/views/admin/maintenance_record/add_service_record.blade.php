@@ -166,6 +166,19 @@ $service_record_create = 'service_record_create';
                         </div>
                     </div>
                 </div>
+                <div id="service_type_axle" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label" for="{{ $service_record_create }}_axle_oil">{{ __( 'maintenance_record.axle_oil' ) }}</label>
+                        <div class="form-control-wrap">
+                            <select class="form-control" id="{{ $service_record_create }}_axle_oil">
+                                <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.axle_oil' ) ] ) }}</option>
+                                <option value="1">{{ __( 'maintenance_record.rear' ) }}</option>
+                                <option value="2">{{ __( 'maintenance_record.front' ) }}</option>
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                </div>
                 <div id="service_type_others" class="hidden">
                     <div class="form-group">
                         <label class="form-label" for="{{ $service_record_create }}_description">{{ __( 'maintenance_record.description' ) }}</label>
@@ -211,14 +224,34 @@ $service_record_create = 'service_record_create';
 
             let items = [];
             $( '.service_item_row' ).each( function( i, v ) {
-                items.push( {
+
+                let itemObject = {
                     type: $( v ).find( '.service_type' ).data( 'type' ),
-                    description: $( v ).find( '.service_type' ).data( 'type' ) == 1 ? {
+                    description: '',
+                };
+
+                if ( $( v ).find( '.service_type' ).data( 'type' ) == 1 ) {
+                    itemObject['description'] = {
                         'grades': $( v ).find( '.sl_grades' ).data( 'value' ),
                         'qty': $( v ).find( '.sl_qty' ).data( 'value' ),
                         'next_service': $( v ).find( '.sl_next_service' ).data( 'value' ),
-                    } : $( v ).find( '.description' ).html()
-                } );
+                    };
+                } else if ( $( v ).find( '.service_type' ).data( 'type' ) == 8 ) {
+                    itemObject['description'] = $( v ).find( '.sl_axle_oil' ).data( 'value' );
+                } else {
+                    itemObject['description'] = $( v ).find( '.description' ).html();
+                }
+
+                items.push( itemObject );
+
+                // items.push( {
+                //     type: $( v ).find( '.service_type' ).data( 'type' ),
+                //     description: $( v ).find( '.service_type' ).data( 'type' ) == 1 ? {
+                //         'grades': $( v ).find( '.sl_grades' ).data( 'value' ),
+                //         'qty': $( v ).find( '.sl_qty' ).data( 'value' ),
+                //         'next_service': $( v ).find( '.sl_next_service' ).data( 'value' ),
+                //     } : $( v ).find( '.description' ).html()
+                // } );
             } );
 
             let formData = new FormData();
@@ -266,9 +299,12 @@ $service_record_create = 'service_record_create';
 
         $( src + '_service_type' ).on( 'change', function() {
             $( '#service_type_engine_oil' ).addClass( 'hidden' );
+            $( '#service_type_axle' ).addClass( 'hidden' );
             $( '#service_type_others' ).addClass( 'hidden' );
             if ( $( this ).val() == 1 ) {
                 $( '#service_type_engine_oil' ).removeClass( 'hidden' );
+            } else if ( $( this ).val() == 8 ) {
+                $( '#service_type_axle' ).removeClass( 'hidden' );
             } else {
                 $( '#service_type_others' ).removeClass( 'hidden' );
             }
@@ -280,13 +316,20 @@ $service_record_create = 'service_record_create';
 
         $( src + '_m_submit' ).click( function() {
 
+            let currentButton = $( this );
+
+            buttonSubmitting( currentButton );
+
             let html = '',
                 type = $( src + '_service_type' ).val(),
                 array = [
                     $( src + '_grades' ).val(),
                     $( src + '_qty' ).val(),
                     $( src + '_next_service' ).val(),
-                ];
+                ],
+                array2 = [
+                    $( src + '_axle_oil' ).val(),
+                ],
                 tbody = $( '#service_item_table tbody' ),
                 time = Date.now();
 
@@ -302,18 +345,32 @@ $service_record_create = 'service_record_create';
                     grades: array[0],
                     qty: array[1],
                     next_service: array[2],
+                    axle_oil: array2[0],
                     description: $( src + '_description' ).val(),
                     _token: '{{ csrf_token() }}',
                 },
                 success: function( response ) {
 
-                    // array = array.filter( n => n );
+                    buttonSubmitted( currentButton );
 
-                    array[0] = '<span class="sl_grades" data-value="' + array[0] + '">' + array[0] + '</span>';
-                    array[1] = '<span class="sl_qty" data-value="' + array[1] + '">' + array[1] + '</span>';
-                    array[2] = '<span class="sl_next_service" data-value="' + array[2] + '">' + array[2] + '</span>';
+                    let moreDescription = '';
 
-                    let moreDescription = array.join( '<br>' );
+                    if ( response.type == 1 ) {
+
+                        array[0] = '<span class="sl_grades" data-value="' + array[0] + '">' + array[0] + '</span>';
+                        array[1] = '<span class="sl_qty" data-value="' + array[1] + '">' + array[1] + '</span>';
+                        array[2] = '<span class="sl_next_service" data-value="' + array[2] + '">' + array[2] + '</span>';
+
+                        moreDescription = array.join( '<br>' );
+
+                    } else if ( response.type == 8 ) {
+
+                        moreDescription = '<span class="sl_axle_oil" data-value="' + array2[0] + '">' + ( array2[0] == 1 ? 'Rear' : 'Front' ) + '</span>';
+
+                    } else {
+
+                        moreDescription = $( src + '_description' ).val();
+                    }
 
                     html +=
                     `
@@ -322,7 +379,7 @@ $service_record_create = 'service_record_create';
                             <em class="text-primary fs-4 icon ni ni-minus-round align-middle sir_remove" data-id="` + time + `" role="button"></em>
                         </td>
                         <td class="service_type" data-type="` + type + `">` + ( serviceTypeMapper[type] ) + `</td>
-                        <td class="description">` + ( type == 1 ? moreDescription : $( src + '_description' ).val() ) + `</td>
+                        <td class="description">` + moreDescription + `</td>
                     </tr>
                     `;
 
@@ -335,6 +392,9 @@ $service_record_create = 'service_record_create';
                     aim.hide();
                 },
                 error: function( error ) {
+
+                    buttonSubmitted( currentButton );
+
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {

@@ -55,6 +55,16 @@
             } );
         }
 
+        function buttonSubmitting( e ) {
+
+            $( e ).addClass( 'disabled' );
+        }
+
+        function buttonSubmitted( e ) {
+
+            $( e ).removeClass( 'disabled' );
+        }
+
         document.addEventListener( 'DOMContentLoaded', function() {
 
             $( '#_logout' ).click( function( e ) {

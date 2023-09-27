@@ -17,6 +17,7 @@ class TyreRecordItem extends Model
     protected $fillable = [
         'tyre_record_id',
         'tyre_id',
+        'vendor_id',
         'category',
         'serial_number',
         'cost_per_pcs',

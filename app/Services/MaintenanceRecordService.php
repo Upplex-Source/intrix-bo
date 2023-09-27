@@ -169,7 +169,11 @@ class MaintenanceRecordService
                 'qty' => [ 'required', 'numeric' ],
                 'next_service' => [ 'required' ],
             ] );
-        } else {
+        } else if ( $request->type == 8 ) {
+            $validator = Validator::make( $request->all(), [
+                'axle_oil' => [ 'required', 'in:1,2' ],
+            ] );
+        }else {
             $validator = Validator::make( $request->all(), [
                 'description' => [ 'required' ],
             ] );
@@ -187,6 +191,10 @@ class MaintenanceRecordService
         }
 
         $validator->setAttributeNames( $attributeName )->validate();
+
+        return response()->json( [
+            'type' => $request->type,
+        ] );
     }
 
     public static function createServiceRecord( $request ) {

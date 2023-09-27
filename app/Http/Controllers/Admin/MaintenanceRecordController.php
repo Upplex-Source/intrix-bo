@@ -58,6 +58,13 @@ class MaintenanceRecordController extends Controller
             '1' => __( 'maintenance_record.engine_oil' ),
             '2' => __( 'maintenance_record.fuel_filter' ),
             '3' => __( 'maintenance_record.water_separator' ),
+            '4' => __( 'maintenance_record.oil_filter' ),
+            '5' => __( 'maintenance_record.air_dryer' ),
+            '6' => __( 'maintenance_record.gear_oil_8090' ),
+            '7' => __( 'maintenance_record.gear_box' ),
+            '8' => __( 'maintenance_record.axle_oil' ),
+            '9' => __( 'maintenance_record.coolant' ),
+            '100' => __( 'maintenance_record.others' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -89,6 +96,13 @@ class MaintenanceRecordController extends Controller
             '1' => __( 'maintenance_record.engine_oil' ),
             '2' => __( 'maintenance_record.fuel_filter' ),
             '3' => __( 'maintenance_record.water_separator' ),
+            '4' => __( 'maintenance_record.oil_filter' ),
+            '5' => __( 'maintenance_record.air_dryer' ),
+            '6' => __( 'maintenance_record.gear_oil_8090' ),
+            '7' => __( 'maintenance_record.gear_box' ),
+            '8' => __( 'maintenance_record.axle_oil' ),
+            '9' => __( 'maintenance_record.coolant' ),
+            '100' => __( 'maintenance_record.others' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
