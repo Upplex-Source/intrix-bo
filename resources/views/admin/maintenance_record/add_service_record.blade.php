@@ -147,21 +147,21 @@ $service_record_create = 'service_record_create';
                     <div class="form-group">
                         <label class="form-label" for="{{ $service_record_create }}_grades">{{ __( 'maintenance_record.grades' ) }}</label>
                         <div class="form-control-wrap">
-                            <input type="text" class="form-control" id="{{ $service_record_create }}_grades">
+                            <input type="text" class="form-control" id="{{ $service_record_create }}_grades" placeholder="{{ __( 'template.optional' ) }}">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="{{ $service_record_create }}_qty">{{ __( 'maintenance_record.qty_x', [ 'title' => __( 'maintenance_record.lt' ) ] ) }}</label>
                         <div class="form-control-wrap">
-                            <input type="text" class="form-control" id="{{ $service_record_create }}_qty">
+                            <input type="text" class="form-control" id="{{ $service_record_create }}_qty" placeholder="{{ __( 'template.optional' ) }}">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="{{ $service_record_create }}_next_service">{{ __( 'maintenance_record.next_service' ) }}</label>
                         <div class="form-control-wrap">
-                            <input type="text" class="form-control" id="{{ $service_record_create }}_next_service">
+                            <input type="text" class="form-control" id="{{ $service_record_create }}_next_service" placeholder="{{ __( 'template.optional' ) }}">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -183,7 +183,7 @@ $service_record_create = 'service_record_create';
                     <div class="form-group">
                         <label class="form-label" for="{{ $service_record_create }}_description">{{ __( 'maintenance_record.description' ) }}</label>
                         <div class="form-control-wrap">
-                            <input type="text" class="form-control" id="{{ $service_record_create }}_description">
+                            <input type="text" class="form-control" id="{{ $service_record_create }}_description" placeholder="{{ __( 'template.optional' ) }}">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -318,8 +318,6 @@ $service_record_create = 'service_record_create';
 
             let currentButton = $( this );
 
-            buttonSubmitting( currentButton );
-
             let html = '',
                 type = $( src + '_service_type' ).val(),
                 array = [
@@ -336,6 +334,8 @@ $service_record_create = 'service_record_create';
             if ( type == '' ) {
                 return false;
             }
+
+            buttonSubmitting( currentButton );
 
             $.ajax( {
                 url: '{{ route( 'admin.maintenance_record.validateItemServiceRecord' ) }}',

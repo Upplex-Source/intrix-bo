@@ -165,17 +165,17 @@ class MaintenanceRecordService
 
         if ( $request->type == 1 ) {
             $validator = Validator::make( $request->all(), [
-                'grades' => [ 'required' ],
-                'qty' => [ 'required', 'numeric' ],
-                'next_service' => [ 'required' ],
+                'grades' => [ 'nullable' ],
+                'qty' => [ 'nullable', 'numeric' ],
+                'next_service' => [ 'nullable', 'numeric' ],
             ] );
         } else if ( $request->type == 8 ) {
             $validator = Validator::make( $request->all(), [
-                'axle_oil' => [ 'required', 'in:1,2' ],
+                'axle_oil' => [ 'nullable', 'in:1,2' ],
             ] );
         }else {
             $validator = Validator::make( $request->all(), [
-                'description' => [ 'required' ],
+                'description' => [ 'nullable' ],
             ] );
         }
 
