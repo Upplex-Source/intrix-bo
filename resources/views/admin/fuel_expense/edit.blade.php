@@ -210,7 +210,7 @@ $fuel_expense_edit = 'fuel_expense_edit';
                     $( fee + '_location' ).val( response.location );
                     $( fee + '_company' ).val( response.company_id );
                     $( fee + '_amount' ).val( response.amount );
-                    transactionTime.setDate( response.transaction_time );
+                    transactionTime.setDate( response.local_transaction_time );
 
                     $( 'body' ).loading( 'stop' );
                 }

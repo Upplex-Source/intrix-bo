@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\{
     Validator,
 };
 
+use App\Imports\{
+    FuelExpenseImport,
+};
+
 use App\Models\{
     Expense,
     FuelExpense,
@@ -16,6 +20,8 @@ use App\Models\{
 use Helper;
 
 use Carbon\Carbon;
+
+use Maatwebsite\Excel\Facades\Excel;
 
 class FuelExpenseService
 {
@@ -63,6 +69,7 @@ class FuelExpenseService
 
         if ( $fuelExpenses ) {
             $fuelExpenses->append( [
+                'local_transaction_time',
                 'display_amount',
                 'encrypted_id',
             ] );
@@ -137,6 +144,12 @@ class FuelExpenseService
         $fuelExpense = FuelExpense::with( [
             'vehicle',
         ] )->find( $request->id );
+
+        if ( $fuelExpense ) {
+            $fuelExpense->append( [
+                'local_transaction_time'
+            ] );
+        }
 
         return response()->json( $fuelExpense );
     }
@@ -277,5 +290,12 @@ class FuelExpenseService
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.fuel_expenses' ) ) ] ),
         ] );
+    }
+
+    public static function importFuelExpense( $request ) {
+
+        Excel::import( new FuelExpenseImport, $request->file );
+
+        return redirect()->route( 'admin.fuel_expense.index' );
     }
 }

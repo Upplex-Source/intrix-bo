@@ -39,7 +39,7 @@ class FuelExpense extends Model
         return $this->belongsTo( Vehicle::class, 'vehicle_id' );
     }
 
-    public function getTransactionTimeAttribute() {
+    public function getLocalTransactionTimeAttribute() {
         return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['transaction_time'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 

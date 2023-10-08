@@ -12,6 +12,9 @@
                         <li class="nk-block-tools-opt">
                             <a href="{{ route( 'admin.fuel_expense.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
+                        <li class="nk-block-tools-opt">
+                            <a href="{{ route( 'admin.fuel_expense.import' ) }}" class="btn btn-dark">{{ __( 'template.import' ) }}</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -102,7 +105,7 @@ var stationMapper = @json( $data['station'] ),
         order: [[ 1, 'desc' ]],
         columns: [
             { data: null },
-            { data: 'transaction_time' },
+            { data: 'local_transaction_time' },
             { data: 'station' },
             { data: 'company.name' },
             { data: 'vehicle.license_plate' },

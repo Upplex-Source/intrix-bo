@@ -307,6 +307,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 } );
                 Route::group( [ 'middleware' => [ 'permission:add expenses' ] ], function() {
                     Route::get( 'add', [ FuelExpenseController::class, 'add' ] )->name( 'admin.fuel_expense.add' );
+                    Route::get( 'import', [ FuelExpenseController::class, 'import' ] )->name( 'admin.fuel_expense.import' );
                 } );
                 Route::group( [ 'middleware' => [ 'permission:edit expenses' ] ], function() {
                     Route::get( 'edit', [ FuelExpenseController::class, 'edit' ] )->name( 'admin.fuel_expense.edit' );
@@ -316,6 +317,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'one-fuel-expense', [ FuelExpenseController::class, 'oneFuelExpense' ] )->name( 'admin.fuel_expense.oneFuelExpense' );
                 Route::post( 'create-fuel-expense', [ FuelExpenseController::class, 'createFuelExpense' ] )->name( 'admin.fuel_expense.createFuelExpense' );
                 Route::post( 'update-fuel-expense', [ FuelExpenseController::class, 'updateFuelExpense' ] )->name( 'admin.fuel_expense.updateFuelExpense' );
+                Route::post( 'import-fuel-expense', [ FuelExpenseController::class, 'importFuelExpense' ] )->name( 'admin.fuel_expense.importFuelExpense' );
             } );
 
             Route::prefix( 'toll-expenses' )->group( function() {

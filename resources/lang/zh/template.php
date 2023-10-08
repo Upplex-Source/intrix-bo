@@ -42,6 +42,7 @@ return [
     'tyre_records' => '轮胎记录',
     'part_records' => '零件记录',
     'item_list' => '项目列表',
+    'calendar' => 'Calendar',
 
     'loading' => '载入中...',
     'add' => '新增',
@@ -50,6 +51,8 @@ return [
     'edit_x' => '编辑:title',
     'view' => '查看',
     'view_x' => '查看:title',
+    'import' => 'Import',
+    'import_x' => 'Import :title',
     'save_changes' => '保存',
     'cancel' => '取消',
     'print' => '打印',

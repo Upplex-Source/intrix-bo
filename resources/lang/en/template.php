@@ -52,6 +52,8 @@ return [
     'edit_x' => 'Edit :title',
     'view' => 'View',
     'view_x' => 'View :title',
+    'import' => 'Import',
+    'import_x' => 'Import :title',
     'save_changes' => 'Save Changes',
     'cancel' => 'Cancel',
     'print' => 'Print',

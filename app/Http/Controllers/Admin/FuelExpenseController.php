@@ -110,6 +110,31 @@ class FuelExpenseController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
+    public function import( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.import_x', [ 'title' => \Str::singular( __( 'template.fuel_expenses' ) ) ] );
+        $this->data['content'] = 'admin.fuel_expense.import';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => route( 'admin.fuel_expense.index' ),
+                'text' => __( 'template.fuel_expenses' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.import_x', [ 'title' => \Str::singular( __( 'template.fuel_expenses' ) ) ] ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
     public function allFuelExpenses( Request $request ) {
 
         return FuelExpenseService::allFuelExpenses( $request );
@@ -128,5 +153,10 @@ class FuelExpenseController extends Controller
     public function updateFuelExpense( Request $request ) {
 
         return FuelExpenseService::updateFuelExpense( $request );
+    }
+
+    public function importFuelExpense( Request $request ) {
+
+        return FuelExpenseService::importFuelExpense( $request );
     }
 }
