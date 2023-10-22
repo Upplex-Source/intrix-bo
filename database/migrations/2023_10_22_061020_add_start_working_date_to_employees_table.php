@@ -16,7 +16,7 @@ class AddStartWorkingDateToEmployeesTable extends Migration
         Schema::table('employees', function (Blueprint $table) {
             $table->timestamp('employment_date')->nullable()->after('employment_type');
             $table->timestamp('date_of_birth')->nullable()->after('employment_date');
-            $table->integer('age')->nullable();
+            $table->integer('age')->nullable()->after('date_of_birth');
         });
     }
 
