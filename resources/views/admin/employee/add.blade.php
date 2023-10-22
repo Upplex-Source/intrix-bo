@@ -34,7 +34,7 @@ $employee_create = 'employee_create';
                 <div class="mb-3 row">
                     <label for="{{ $employee_create }}_email" class="col-sm-5 col-form-label">{{ __( 'employee.email' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $employee_create }}_email">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_email" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -55,14 +55,35 @@ $employee_create = 'employee_create';
                 <div class="mb-3 row">
                     <label for="{{ $employee_create }}_license_number" class="col-sm-5 col-form-label">{{ __( 'employee.license_number' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $employee_create }}_license_number">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_license_number" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $employee_create }}_license_expiry_date" class="col-sm-5 col-form-label">{{ __( 'employee.license_expiry_date' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $employee_create }}_license_expiry_date">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_license_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $employee_create }}_employment_date" class="col-sm-5 col-form-label">{{ __( 'employee.employment_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_employment_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $employee_create }}_date_of_birth" class="col-sm-5 col-form-label">{{ __( 'employee.date_of_birth' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_date_of_birth" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $employee_create }}_age" class="col-sm-5 col-form-label">{{ __( 'employee.age' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $employee_create }}_age" placeholder="{{ __( 'template.optional' ) }}" readonly disabled>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -114,6 +135,20 @@ $employee_create = 'employee_create';
             disableMobile: true,
         } );
 
+        $( dc + '_employment_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
+        $( dc + '_date_of_birth' ).flatpickr( {
+            disableMobile: true,
+            maxDate: '{{ date( 'Y-m-d' ) }}',
+        } );
+
+        $( dc + '_date_of_birth' ).on( 'change', function() {
+
+            calculateAge( $( this ).val() );
+        } );
+
         $( dc + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.employee.index' ) }}';
         } );
@@ -137,6 +172,8 @@ $employee_create = 'employee_create';
             formData.append( 'designation', $( dc + '_designation' ).val() );
             formData.append( 'remarks', $( dc + '_remarks' ).val() );
             formData.append( 'driver_amount', $( dc + '_driver_amount' ).val() );
+            formData.append( 'employment_date', $( dc + '_employment_date' ).val() );
+            formData.append( 'date_of_birth', $( dc + '_date_of_birth' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -188,5 +225,23 @@ $employee_create = 'employee_create';
                 }
             }
         } );
+
+        function calculateAge( dateOfBirth ) {
+
+            let formData = new FormData();
+                formData.append( 'date_of_birth', dateOfBirth );
+                formData.append( '_token', '{{ csrf_token() }}' );
+
+            $.ajax( {
+                url: '{{ route( 'admin.employee.calculateBirthday' ) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function( response ) {
+                    $( dc + '_age' ).val( response.age );
+                },
+            } );
+        }
     } );
 </script>

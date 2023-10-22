@@ -12,6 +12,8 @@ use Spatie\Activitylog\LogOptions;
 
 use Helper;
 
+use Carbon\Carbon;
+
 class Employee extends Model
 {
     use HasFactory;
@@ -29,10 +31,21 @@ class Employee extends Model
         'status',
         'designation',
         'employment_type',
+        'employment_date',
+        'date_of_birth',
+        'age',
     ];
 
     public function getPathAttribute() {
         return $this->attributes['photo'] ? asset( 'storage/' . $this->attributes['photo'] ) : null;
+    }
+
+    public function getLocalEmploymentDateAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['employment_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+    }
+
+    public function getLocalDateOfBirthAttribute() {
+        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['date_of_birth'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 
     public function getEncryptedIdAttribute() {
@@ -56,6 +69,9 @@ class Employee extends Model
         'status',
         'designation',
         'employment_type',
+        'employment_date',
+        'date_of_birth',
+        'age',
     ];
 
     protected static $logName = 'employees';

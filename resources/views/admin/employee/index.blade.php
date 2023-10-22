@@ -167,21 +167,21 @@ var designationMapper = @json( $data['designation'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "identification_number" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data;
+                    return data ? data : '-';
                 },
             },
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "license_number" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data;
+                    return data ? data : '-';
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "identification_number" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "license_expiry_date" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data;
+                    return data ? data : '-';
                 },
             },
             {

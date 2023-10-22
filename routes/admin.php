@@ -128,6 +128,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-driver', [ EmployeeController::class, 'createEmployee' ] )->name( 'admin.employee.createEmployee' );
                 Route::post( 'update-driver', [ EmployeeController::class, 'updateEmployee' ] )->name( 'admin.employee.updateEmployee' );
                 Route::post( 'update-driver-status', [ EmployeeController::class, 'updateEmployeeStatus' ] )->name( 'admin.employee.updateEmployeeStatus' );
+                Route::post( 'calculate-birthday', [ EmployeeController::class, 'calculateBirthday' ] )->name( 'admin.employee.calculateBirthday' );
             } );
             
             Route::prefix( 'vendors' )->group( function() {

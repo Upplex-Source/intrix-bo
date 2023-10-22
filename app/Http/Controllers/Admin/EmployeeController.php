@@ -118,4 +118,9 @@ class EmployeeController extends Controller
 
         return EmployeeService::updateEmployeeStatus( $request );
     }
+
+    public function calculateBirthday( Request $request ) {
+
+        return EmployeeService::calculateBirthday( $request );
+    }
 }

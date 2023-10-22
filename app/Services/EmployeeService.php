@@ -173,6 +173,8 @@ class EmployeeService
         if( $employee ) {
             $employee->append( [
                 'path',
+                'local_employment_date',
+                'local_date_of_birth',
                 'encrypted_id',
             ] );
         }
@@ -185,13 +187,15 @@ class EmployeeService
         $validator = Validator::make( $request->all(), [
             // 'photo' => [ 'required' ],
             'name' => [ 'required' ],
-            'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
             'identification_number' => [ 'required' ],
-            'license_number' => [ 'required' ],
-            'license_expiry_date' => [ 'required' ],
+            'license_number' => [ 'nullable' ],
+            'license_expiry_date' => [ 'nullable' ],
             'designation' => [ 'required', 'in:1,2' ],
             'driver_amount' => [ 'numeric' ],
+            'employment_date' => [ 'nullable', 'date_format:Y-m-d' ],
+            'date_of_birth' => [ 'nullable', 'date_format:Y-m-d' ],
         ] );
 
         $attributeName = [
@@ -204,6 +208,8 @@ class EmployeeService
             'license_expiry_date' => __( 'employee.license_expiry_date' ),
             'designation' => __( 'employee.designation' ),
             'driver_amount' => __( 'employee.driver_amount' ),
+            'employment_date' => __( 'employee.designation' ),
+            'date_of_birth' => __( 'employee.driver_amount' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -226,6 +232,11 @@ class EmployeeService
                 'designation' => $request->designation,
                 'remarks' => $request->remarks,
                 'driver_amount' => empty( $request->driver_amount ) ? 0 : $request->driver_amount,
+                'employment_date' => $request->employment_date,
+                'date_of_birth' => $request->date_of_birth,
+                'employment_date' => Carbon::createFromFormat( 'Y-m-d', $request->employment_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay(),
+                'date_of_birth' => Carbon::createFromFormat( 'Y-m-d', $request->date_of_birth, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay(),
+                'age' => $request->age,
             ] );
 
             $file = FileManager::find( $request->photo );
@@ -266,13 +277,15 @@ class EmployeeService
         $validator = Validator::make( $request->all(), [
             // 'photo' => [ 'required' ],
             'name' => [ 'required' ],
-            'email' => [ 'required', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
             'identification_number' => [ 'required' ],
-            'license_number' => [ 'required' ],
-            'license_expiry_date' => [ 'required' ],
+            'license_number' => [ 'nullable' ],
+            'license_expiry_date' => [ 'nullable' ],
             'designation' => [ 'required', 'in:1,2' ],
             'driver_amount' => [ 'nullable', 'numeric' ],
+            'employment_date' => [ 'nullable', 'date_format:Y-m-d' ],
+            'date_of_birth' => [ 'nullable', 'date_format:Y-m-d' ],
         ] );
 
         $attributeName = [
@@ -285,6 +298,8 @@ class EmployeeService
             'license_expiry_date' => __( 'employee.license_expiry_date' ),
             'designation' => __( 'employee.designation' ),
             'driver_amount' => __( 'employee.driver_amount' ),
+            'employment_date' => __( 'employee.designation' ),
+            'date_of_birth' => __( 'employee.driver_amount' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -307,6 +322,9 @@ class EmployeeService
             $updateEmployee->designation = $request->designation;
             $updateEmployee->remarks = $request->remarks;
             $updateEmployee->driver_amount = empty( $request->driver_amount ) ? 0 : $request->driver_amount;
+            $updateEmployee->employment_date = Carbon::createFromFormat( 'Y-m-d', $request->employment_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay();
+            $updateEmployee->date_of_birth = Carbon::createFromFormat( 'Y-m-d', $request->date_of_birth, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay();
+            $updateEmployee->age = $request->age;
             $updateEmployee->save();
 
             if ( $request->photo ) {
@@ -355,6 +373,13 @@ class EmployeeService
 
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.employees' ) ) ] ),
+        ] );
+    }
+
+    public static function calculateBirthday( $request ) {
+
+        return response()->json( [
+            'age' => Carbon::parse( $request->date_of_birth )->age,
         ] );
     }
 }
