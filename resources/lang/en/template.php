@@ -21,6 +21,7 @@ return [
     'operations' => 'Operations',
     'users' => 'Users',
     'orders' => 'Orders',
+    'companies' => 'Companies',
     'employees' => 'Employees',
     'vendors' => 'Vendors',
     'tyres' => 'Tyres',

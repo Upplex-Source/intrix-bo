@@ -858,7 +858,7 @@
   NioApp.OtherInit = function () {
     NioApp.ClassBody();
     NioApp.PassSwitch();
-    NioApp.CurrentLink();
+    // NioApp.CurrentLink();
     NioApp.LinkOff('.is-disable');
     NioApp.ClassNavMenu();
     NioApp.SetHW('[data-height]', 'height');

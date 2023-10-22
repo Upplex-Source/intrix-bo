@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\{
     AdministratorController,
     AuditController,
     BookingController,
+    CompanyController,
     CoreController,
     DashboardController,
     DriverController,
@@ -110,6 +111,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 
                 Route::post( 'all-audits', [ AuditController::class, 'allAudits' ] )->name( 'admin.audit.allAudits' );
                 Route::post( 'one-audit', [ AuditController::class, 'oneAudit' ] )->name( 'admin.audit.oneAudit' );
+            } );
+
+            Route::prefix( 'companies' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view companies' ] ], function() {
+                    Route::get( '/', [ CompanyController::class, 'index' ] )->name( 'admin.module_parent.company.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add companies' ] ], function() {
+                    Route::get( 'add', [ CompanyController::class, 'add' ] )->name( 'admin.company.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit companies' ] ], function() {
+                    Route::get( 'edit', [ CompanyController::class, 'edit' ] )->name( 'admin.company.edit' );
+                } );
+
+                Route::post( 'all-companies', [ CompanyController::class, 'allCompanies' ] )->name( 'admin.company.allCompanies' );
+                Route::post( 'one-company', [ CompanyController::class, 'oneCompany' ] )->name( 'admin.company.oneCompany' );
+                Route::post( 'create-company', [ CompanyController::class, 'createCompany' ] )->name( 'admin.company.createCompany' );
+                Route::post( 'update-company', [ CompanyController::class, 'updateCompany' ] )->name( 'admin.company.updateCompany' );
+                Route::post( 'update-company-status', [ CompanyController::class, 'updateCompanyStatus' ] )->name( 'admin.company.updateCompanyStatus' );
             } );
 
             Route::prefix( 'employees' )->group( function() {
