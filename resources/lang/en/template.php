@@ -23,6 +23,7 @@ return [
     'orders' => 'Orders',
     'companies' => 'Companies',
     'employees' => 'Employees',
+    'customers' => 'Customers',
     'vendors' => 'Vendors',
     'tyres' => 'Tyres',
     'parts' => 'Parts',

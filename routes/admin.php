@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\{
     BookingController,
     CompanyController,
     CoreController,
+    CustomerController,
     DashboardController,
     DriverController,
     EmployeeController,
@@ -148,6 +149,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-driver', [ EmployeeController::class, 'updateEmployee' ] )->name( 'admin.employee.updateEmployee' );
                 Route::post( 'update-driver-status', [ EmployeeController::class, 'updateEmployeeStatus' ] )->name( 'admin.employee.updateEmployeeStatus' );
                 Route::post( 'calculate-birthday', [ EmployeeController::class, 'calculateBirthday' ] )->name( 'admin.employee.calculateBirthday' );
+            } );
+
+            Route::prefix( 'customers' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view customers' ] ], function() {
+                    Route::get( '/', [ CustomerController::class, 'index' ] )->name( 'admin.module_parent.customer.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add customers' ] ], function() {
+                    Route::get( 'add', [ CustomerController::class, 'add' ] )->name( 'admin.customer.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit customers' ] ], function() {
+                    Route::get( 'edit', [ CustomerController::class, 'edit' ] )->name( 'admin.customer.edit' );
+                } );
+
+                Route::post( 'all-customers', [ CustomerController::class, 'allCustomers' ] )->name( 'admin.customer.allCustomers' );
+                Route::post( 'one-customer', [ CustomerController::class, 'oneCustomer' ] )->name( 'admin.customer.oneCustomer' );
+                Route::post( 'create-customer', [ CustomerController::class, 'createCustomer' ] )->name( 'admin.customer.createCustomer' );
+                Route::post( 'update-customer', [ CustomerController::class, 'updateCustomer' ] )->name( 'admin.customer.updateCustomer' );
+                Route::post( 'update-customer-status', [ CustomerController::class, 'updateCustomerStatus' ] )->name( 'admin.customer.updateCustomerStatus' );
             } );
             
             Route::prefix( 'vendors' )->group( function() {

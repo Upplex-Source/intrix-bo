@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Employee Module Language Lines
+    | Company Module Language Lines
     |--------------------------------------------------------------------------
     |
-    | The following language lines are used during Employee Module for various
+    | The following language lines are used during Company Module for various
     | messages that we need to display to the user. You are free to modify
     | these language lines according to your application's requirements.
     |

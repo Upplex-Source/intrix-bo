@@ -107,6 +107,14 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can( 'view customers' )
+                                <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\CustomerController' ? 'active current-page' : '' }}">
+                                    <a href="{{ route( 'admin.module_parent.customer.index' ) }}" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.customers' ) }}</span>
+                                    </a>
+                                </li>
+                                @endcan
                                 @can( 'view vendors' )
                                 <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VendorController' ? 'active current-page' : '' }}">
                                     <a href="{{ route( 'admin.module_parent.vendor.index' ) }}" class="nk-menu-link">
