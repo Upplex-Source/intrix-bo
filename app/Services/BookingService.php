@@ -30,12 +30,18 @@ class BookingService
 
         $currentBookings = [];
         foreach ( $bookings as $booking ) {
+
+            $plateNumber = $booking->vehicle ? $booking->vehicle->license_plate : '-';
+            $notes = $booking->notes ? $booking->notes : '-';
+
             array_push( $currentBookings, [
                 'id' => Helper::encode( $booking->id ),
                 'allDay' => true,
                 'start' => $booking->invoice_date . ' 00:00:00',
                 'end' => $booking->invoice_date . ' 23:59:59',
-                'title' => $booking->reference,
+                'title' => [
+                    'html' => 'Reference:' . $booking->reference . '<br>Plate Number:' . $plateNumber . '<br>Notes:' . $notes,
+                ],
                 'color' => '#9769ff',
             ] );
         }
@@ -285,6 +291,7 @@ class BookingService
             $createBooking = Booking::create( [
                 'reference' => $request->reference,
                 'customer_name' => $request->customer_name,
+                'notes' => $request->notes,
                 'invoice_number' => $request->invoice_number,
                 'invoice_date' => $request->invoice_date ? Carbon::createFromFormat( 'Y-m-d', $request->invoice_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'vehicle_id' => $request->vehicle,
@@ -434,6 +441,7 @@ class BookingService
             $updateBooking = Booking::find( $request->id );
             $updateBooking->reference = $request->reference;
             $updateBooking->customer_name = $request->customer_name;
+            $updateBooking->notes = $request->notes;
             $updateBooking->invoice_number = $request->invoice_number;
             $updateBooking->invoice_date = $request->invoice_date ? Carbon::createFromFormat( 'Y-m-d', $request->invoice_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateBooking->vehicle_id = $request->vehicle;

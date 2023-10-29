@@ -15,6 +15,7 @@ return [
 
     'reference' => 'Reference',
     'customer_name' => 'Customer Name',
+    'notes' => 'Notes',
     'invoice_number' => 'Invoice Number',
     'invoice_date' => 'Invoice Date',
     'vehicle' => 'Vehicle',

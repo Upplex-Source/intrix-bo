@@ -15,6 +15,7 @@ return [
 
     'reference' => '参考编号',
     'customer_name' => '客户名',
+    'notes' => 'Notes',
     'invoice_number' => '发票号码',
     'invoice_date' => '发票日期',
     'vehicle' => '载具',

@@ -12,55 +12,48 @@ $booking_edit = 'booking_edit';
 
 <div class="card">
     <div class="card-inner">
-        <div class="row">
+        <div class="row gx-5">
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_reference" class="col-sm-5 col-form-label">{{ __( 'booking.reference' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_reference" class="col-sm-4 col-form-label">{{ __( 'booking.reference' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_reference">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_customer_name" class="col-sm-5 col-form-label">{{ __( 'booking.customer_name' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_customer_name" class="col-sm-4 col-form-label">{{ __( 'booking.customer_name' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_customer_name" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_invoice_number" class="col-sm-5 col-form-label">{{ __( 'booking.invoice_number' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_invoice_number" placeholder="{{ __( 'template.optional' ) }}">
+                    <label for="{{ $booking_edit }}_notes" class="col-sm-4 col-form-label">{{ __( 'booking.notes' ) }}</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" id="{{ $booking_edit }}_notes" style="min-height: 40px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_invoice_date" class="col-sm-5 col-form-label">{{ __( 'booking.invoice_date' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_invoice_date" placeholder="{{ __( 'template.optional' ) }}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_vehicle" class="col-sm-5 col-form-label">{{ __( 'booking.vehicle' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_vehicle" class="col-sm-4 col-form-label">{{ __( 'booking.vehicle' ) }}</label>
+                    <div class="col-sm-6">
                         <select class="form-select" id="{{ $booking_edit }}_vehicle" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'booking.vehicle' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_delivery_order_number" class="col-sm-5 col-form-label">{{ __( 'booking.delivery_order_number' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_delivery_order_number" class="col-sm-4 col-form-label">{{ __( 'booking.delivery_order_number' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_delivery_order_number" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_delivery_order_date" class="col-sm-5 col-form-label">{{ __( 'booking.delivery_order_date' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_delivery_order_date" class="col-sm-4 col-form-label">{{ __( 'booking.delivery_order_date' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_delivery_order_date" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
@@ -75,31 +68,174 @@ $booking_edit = 'booking_edit';
                     <div class="invalid-feedback"></div>
                 </div>
                 <hr>
+                <h5 class="card-title mb-4">{{ __( 'booking.customer_amount' ) }}</h5>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_company" class="col-sm-4 col-form-label">{{ __( 'booking.company' ) }}</label>
+                    <div class="col-sm-6">
+                        <select class="form-select" id="{{ $booking_edit }}_company" >
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.company' ) ] ) }}</option>
+                            @foreach( $data['company'] as $key => $company )
+                            <option value="{{ $company['id'] }}">{{ $company['name'] }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_customer_type" class="col-sm-4 col-form-label">{{ __( 'booking.customer_type' ) }}</label>
+                    <div class="col-sm-6">
+                        <select class="form-select" id="{{ $booking_edit }}_customer_type" >
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.customer_type' ) ] ) }}</option>
+                            @foreach( $data['type'] as $key => $type )
+                            <option value="{{ $key }}">{{ $type }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_customer_quantity" class="col-sm-4 col-form-label">{{ __( 'booking.quantity' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="{{ $booking_edit }}_customer_quantity" value="0">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_customer_uom" class="col-sm-4 col-form-label">{{ __( 'booking.uom' ) }}</label>
+                    <div class="col-sm-6">
+                        <select class="form-select" id="{{ $booking_edit }}_customer_uom" >
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.uom' ) ] ) }}</option>
+                            @foreach( $data['uom'] as $key => $uom )
+                            <option value="{{ $key }}">{{ $uom }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_customer_rate" class="col-sm-4 col-form-label">{{ __( 'booking.customer_rate' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="{{ $booking_edit }}_customer_rate" value="0">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_customer_total_amount" class="col-sm-4 col-form-label">{{ __( 'booking.total_amount' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control-plaintext" id="{{ $booking_edit }}_customer_total_amount" value="0.00" readonly>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_invoice_number" class="col-sm-4 col-form-label">{{ __( 'booking.invoice_number' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_invoice_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_invoice_date" class="col-sm-4 col-form-label">{{ __( 'booking.invoice_date' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_invoice_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_customer_remarks" class="col-sm-4 col-form-label">{{ __( 'booking.remarks' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_customer_remarks" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <hr>
+                <h5 class="card-title mb-4">{{ __( 'booking.driver_amount' ) }}</h5>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_driver" class="col-sm-4 col-form-label">{{ __( 'booking.driver' ) }}</label>
+                    <div class="col-sm-6">
+                        <select class="form-select" id="{{ $booking_edit }}_driver" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'booking.driver' ) ] ) }}">
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_driver_quantity" class="col-sm-4 col-form-label">{{ __( 'booking.quantity' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="{{ $booking_edit }}_driver_quantity" value="0">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_driver_uom" class="col-sm-4 col-form-label">{{ __( 'booking.uom' ) }}</label>
+                    <div class="col-sm-6">
+                        <select class="form-select" id="{{ $booking_edit }}_driver_uom" >
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.uom' ) ] ) }}</option>
+                            @foreach( $data['uom'] as $key => $uom )
+                            <option value="{{ $key }}">{{ $uom }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_driver_rate" class="col-sm-4 col-form-label">{{ __( 'booking.driver_rate' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="{{ $booking_edit }}_driver_rate" value="0">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_driver_total_amount" class="col-sm-4 col-form-label">{{ __( 'booking.total_amount' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control-plaintext" id="{{ $booking_edit }}_driver_total_amount" value="0.00" readonly>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_driver_percentage" class="col-sm-4 col-form-label">{{ __( 'booking.percentage' ) }} (%)</label>
+                    <div class="col-sm-6">
+                        <input type="number" class="form-control" id="{{ $booking_edit }}_driver_percentage" value="0">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_driver_final_amount" class="col-sm-4 col-form-label">{{ __( 'booking.final_amount' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control-plaintext" id="{{ $booking_edit }}_driver_final_amount" value="0.00" readonly>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button id="{{ $booking_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    &nbsp;
+                    <button id="{{ $booking_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'booking.pickup_address' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_address_address_1" class="col-sm-5 col-form-label">{{ __( 'booking.address_1' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_pickup_address_address_1" class="col-sm-4 col-form-label">{{ __( 'booking.address_1' ) }}</label>
+                    <div class="col-sm-6">
                         <textarea class="form-control" id="{{ $booking_edit }}_pickup_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_address_address_2" class="col-sm-5 col-form-label">{{ __( 'booking.address_2' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_pickup_address_address_2" class="col-sm-4 col-form-label">{{ __( 'booking.address_2' ) }}</label>
+                    <div class="col-sm-6">
                         <textarea class="form-control" id="{{ $booking_edit }}_pickup_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_address_postcode" class="col-sm-5 col-form-label">{{ __( 'booking.postcode' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_pickup_address_postcode" class="col-sm-4 col-form-label">{{ __( 'booking.postcode' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_pickup_address_postcode" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_address_state" class="col-sm-5 col-form-label">{{ __( 'booking.state' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_pickup_address_state" class="col-sm-4 col-form-label">{{ __( 'booking.state' ) }}</label>
+                    <div class="col-sm-6">
                         <select class="form-select" id="{{ $booking_edit }}_pickup_address_state" >
                             <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.state' ) ] ) }}</option>
                             <option value="Johor">Johor</option>
@@ -123,8 +259,8 @@ $booking_edit = 'booking_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_pickup_address_city" class="col-sm-4 col-form-label">{{ __( 'booking.city' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_pickup_address_city" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
@@ -132,36 +268,36 @@ $booking_edit = 'booking_edit';
                 <hr>
                 <h5 class="card-title mb-4">{{ __( 'booking.dropoff_address' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_address_destination" class="col-sm-5 col-form-label">{{ __( 'booking.destination' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_dropoff_address_destination" class="col-sm-4 col-form-label">{{ __( 'booking.destination' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_address_destination" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_address_address_1" class="col-sm-5 col-form-label">{{ __( 'booking.address_1' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_dropoff_address_address_1" class="col-sm-4 col-form-label">{{ __( 'booking.address_1' ) }}</label>
+                    <div class="col-sm-6">
                         <textarea class="form-control" id="{{ $booking_edit }}_dropoff_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_address_address_2" class="col-sm-5 col-form-label">{{ __( 'booking.address_2' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_dropoff_address_address_2" class="col-sm-4 col-form-label">{{ __( 'booking.address_2' ) }}</label>
+                    <div class="col-sm-6">
                         <textarea class="form-control" id="{{ $booking_edit }}_dropoff_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_address_postcode" class="col-sm-5 col-form-label">{{ __( 'booking.postcode' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_dropoff_address_postcode" class="col-sm-4 col-form-label">{{ __( 'booking.postcode' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_address_postcode" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_address_state" class="col-sm-5 col-form-label">{{ __( 'booking.state' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_dropoff_address_state" class="col-sm-4 col-form-label">{{ __( 'booking.state' ) }}</label>
+                    <div class="col-sm-6">
                         <select class="form-select" id="{{ $booking_edit }}_dropoff_address_state" >
                             <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.state' ) ] ) }}</option>
                             <option value="Johor">Johor</option>
@@ -185,154 +321,26 @@ $booking_edit = 'booking_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_address_city" class="col-sm-5 col-form-label">{{ __( 'booking.city' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_dropoff_address_city" class="col-sm-4 col-form-label">{{ __( 'booking.city' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_address_city" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <hr>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_date" class="col-sm-5 col-form-label">{{ __( 'booking.pickup_date' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_pickup_date" class="col-sm-4 col-form-label">{{ __( 'booking.pickup_date' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_pickup_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_date" class="col-sm-5 col-form-label">{{ __( 'booking.dropoff_date' ) }}</label>
-                    <div class="col-sm-7">
+                    <label for="{{ $booking_edit }}_dropoff_date" class="col-sm-4 col-form-label">{{ __( 'booking.dropoff_date' ) }}</label>
+                    <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_date">
                         <div class="invalid-feedback"></div>
                     </div>
-                </div>
-                <hr>
-                <h5 class="card-title mb-4">{{ __( 'booking.customer_amount' ) }}</h5>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_company" class="col-sm-5 col-form-label">{{ __( 'booking.company' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $booking_edit }}_company" >
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.company' ) ] ) }}</option>
-                            @foreach( $data['company'] as $key => $company )
-                            <option value="{{ $company['id'] }}">{{ $company['name'] }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_customer_type" class="col-sm-5 col-form-label">{{ __( 'booking.customer_type' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $booking_edit }}_customer_type" >
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.customer_type' ) ] ) }}</option>
-                            @foreach( $data['type'] as $key => $type )
-                            <option value="{{ $key }}">{{ $type }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_customer_quantity" class="col-sm-5 col-form-label">{{ __( 'booking.quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $booking_edit }}_customer_quantity" value="0">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_customer_uom" class="col-sm-5 col-form-label">{{ __( 'booking.uom' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $booking_edit }}_customer_uom" >
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.uom' ) ] ) }}</option>
-                            @foreach( $data['uom'] as $key => $uom )
-                            <option value="{{ $key }}">{{ $uom }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_customer_rate" class="col-sm-5 col-form-label">{{ __( 'booking.customer_rate' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $booking_edit }}_customer_rate" value="0">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_customer_total_amount" class="col-sm-5 col-form-label">{{ __( 'booking.total_amount' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control-plaintext" id="{{ $booking_edit }}_customer_total_amount" value="0.00" readonly>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_customer_remarks" class="col-sm-5 col-form-label">{{ __( 'booking.remarks' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_customer_remarks" placeholder="{{ __( 'template.optional' ) }}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <hr>
-                <h5 class="card-title mb-4">{{ __( 'booking.driver_amount' ) }}</h5>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_driver" class="col-sm-5 col-form-label">{{ __( 'booking.driver' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $booking_edit }}_driver" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'booking.driver' ) ] ) }}">
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_driver_quantity" class="col-sm-5 col-form-label">{{ __( 'booking.quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $booking_edit }}_driver_quantity" value="0">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_driver_uom" class="col-sm-5 col-form-label">{{ __( 'booking.uom' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $booking_edit }}_driver_uom" >
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.uom' ) ] ) }}</option>
-                            @foreach( $data['uom'] as $key => $uom )
-                            <option value="{{ $key }}">{{ $uom }}</option>
-                            @endforeach
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_driver_rate" class="col-sm-5 col-form-label">{{ __( 'booking.driver_rate' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $booking_edit }}_driver_rate" value="0">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_driver_total_amount" class="col-sm-5 col-form-label">{{ __( 'booking.total_amount' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control-plaintext" id="{{ $booking_edit }}_driver_total_amount" value="0.00" readonly>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_driver_percentage" class="col-sm-5 col-form-label">{{ __( 'booking.percentage' ) }} (%)</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $booking_edit }}_driver_percentage" value="0">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_driver_final_amount" class="col-sm-5 col-form-label">{{ __( 'booking.final_amount' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="text" class="form-control-plaintext" id="{{ $booking_edit }}_driver_final_amount" value="0.00" readonly>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="text-end">
-                    <button id="{{ $booking_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
-                    &nbsp;
-                    <button id="{{ $booking_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -437,6 +445,7 @@ $booking_edit = 'booking_edit';
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'reference', $( be + '_reference' ).val() );
             formData.append( 'customer_name', $( be + '_customer_name' ).val() );
+            formData.append( 'notes', $( be + '_notes' ).val() );
             formData.append( 'invoice_number', $( be + '_invoice_number' ).val() );
             formData.append( 'invoice_date', $( be + '_invoice_date' ).val() );
             formData.append( 'vehicle', $( be + '_vehicle' ).val() );
@@ -664,6 +673,7 @@ $booking_edit = 'booking_edit';
 
                     $( be + '_reference' ).val( response.reference );
                     $( be + '_customer_name' ).val( response.customer_name );
+                    $( be + '_notes' ).val( response.notes );
                     $( be + '_invoice_number' ).val( response.invoice_number );
                     invoiceDate.setDate( response.invoice_date );
 
