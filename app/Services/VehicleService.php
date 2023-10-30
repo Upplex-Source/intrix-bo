@@ -164,11 +164,17 @@ class VehicleService
 
         $vehicle = Vehicle::with( [
             'employee',
+            'company',
         ] )->find( $request->id );
 
         if( $vehicle ) {
             $vehicle->append( [
                 'path',
+                'local_permit_start_date',
+                'local_road_tax_expiry_date',
+                'local_insurance_expiry_date',
+                'local_permit_expiry_date',
+                'local_inspection_expiry_date',
                 'encrypted_id',
             ] );
         }
@@ -181,22 +187,29 @@ class VehicleService
         $validator = Validator::make( $request->all(), [
             // 'photo' => [ 'required' ],
             'driver' => [ 'required', 'exists:employees,id' ],
+            'company' => [ 'required', 'exists:companies,id' ],
             'name' => [ 'required' ],
             'license_plate' => [ 'required' ],
             'type' => [ 'required' ],
+            'permit' => [ 'required', 'in:1,2' ],
+            'permit_start_date' => [ 'required' ],
             // 'in_service' => [ 'required', 'in:0,1' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'vehicle.name' ),
+            'name' => __( 'vehicle.model' ),
             'license_plate' => __( 'vehicle.license_plate' ),
+            'trailer_number' => __( 'vehicle.trailer_number' ),
             'road_tax_number' => __( 'vehicle.road_tax_number' ),
             'insurance_number' => __( 'vehicle.insurance_number' ),
             'permit_number' => __( 'vehicle.permit_number' ),
+            'permit' => __( 'vehicle.permit' ),
             'road_tax_expiry_date' => __( 'vehicle.road_tax_expiry_date' ),
             'insurance_expiry_date' => __( 'vehicle.insurance_expiry_date' ),
+            'permit_start_date' => __( 'vehicle.permit_start_date' ),
             'permit_expiry_date' => __( 'vehicle.permit_expiry_date' ),
+            'inspection_expiry_date' => __( 'vehicle.inspection_expiry_date' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
         ];
@@ -213,16 +226,21 @@ class VehicleService
 
             $createVehicle = Vehicle::create( [
                 'driver_id' => $request->driver,
+                'company_id' => $request->company,
                 'name' => $request->name,
                 'license_plate' => $request->license_plate,
+                'trailer_number' => $request->trailer_number,
                 'road_tax_number' => $request->road_tax_number,
                 'insurance_number' => $request->insurance_number,
-                'permit_number' => $request->permit_number,
-                'road_tax_expiry_date' => $request->road_tax_expiry_date,
-                'insurance_expiry_date' => $request->insurance_expiry_date,
-                'permit_expiry_date' => $request->permit_expiry_date,
+                'permit_number' => null,
+                'permit_type' => $request->permit,
+                'road_tax_expiry_date' => $request->road_tax_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->road_tax_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
+                'insurance_expiry_date' => $request->insurance_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->insurance_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
+                'permit_start_date' => $request->permit_start_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_start_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
+                'permit_expiry_date' => $request->permit_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
+                'inspection_expiry_date' => $request->inspection_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->inspection_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'in_service' => 0,
-                'type' => $request->type,
+                'type' => 1,
             ] );
 
             $file = FileManager::find( $request->photo );
@@ -262,22 +280,30 @@ class VehicleService
 
         $validator = Validator::make( $request->all(), [
             // 'photo' => [ 'required' ],
+            'driver' => [ 'required', 'exists:employees,id' ],
+            'company' => [ 'required', 'exists:companies,id' ],
             'name' => [ 'required' ],
             'license_plate' => [ 'required' ],
             'type' => [ 'required' ],
+            'permit' => [ 'required', 'in:1,2' ],
+            'permit_start_date' => [ 'required' ],
             // 'in_service' => [ 'required', 'in:0,1' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'vehicle.name' ),
+            'name' => __( 'vehicle.model' ),
             'license_plate' => __( 'vehicle.license_plate' ),
+            'trailer_number' => __( 'vehicle.trailer_number' ),
             'road_tax_number' => __( 'vehicle.road_tax_number' ),
             'insurance_number' => __( 'vehicle.insurance_number' ),
             'permit_number' => __( 'vehicle.permit_number' ),
+            'permit' => __( 'vehicle.permit' ),
             'road_tax_expiry_date' => __( 'vehicle.road_tax_expiry_date' ),
             'insurance_expiry_date' => __( 'vehicle.insurance_expiry_date' ),
+            'permit_start_date' => __( 'vehicle.permit_start_date' ),
             'permit_expiry_date' => __( 'vehicle.permit_expiry_date' ),
+            'inspection_expiry_date' => __( 'vehicle.inspection_expiry_date' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
         ];
@@ -294,15 +320,20 @@ class VehicleService
 
             $updateVehicle = Vehicle::find( $request->id );
             $updateVehicle->driver_id = $request->driver;
+            $updateVehicle->company_id = $request->company;
             $updateVehicle->name = $request->name;
             $updateVehicle->license_plate = $request->license_plate;
+            $updateVehicle->trailer_number = $request->trailer_number;
             $updateVehicle->road_tax_number = $request->road_tax_number;
             $updateVehicle->insurance_number = $request->insurance_number;
-            $updateVehicle->permit_number = $request->permit_number;
-            $updateVehicle->road_tax_expiry_date = $request->road_tax_expiry_date;
-            $updateVehicle->insurance_expiry_date = $request->insurance_expiry_date;
-            $updateVehicle->permit_expiry_date = $request->permit_expiry_date;
-            $updateVehicle->type = $request->type;
+            $updateVehicle->permit_number = null;
+            $updateVehicle->permit_type = $request->permit;
+            $updateVehicle->road_tax_expiry_date = $request->road_tax_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->road_tax_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
+            $updateVehicle->insurance_expiry_date = $request->insurance_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->insurance_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
+            $updateVehicle->permit_start_date = $request->permit_start_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_start_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
+            $updateVehicle->permit_expiry_date = $request->permit_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
+            $updateVehicle->inspection_expiry_date = $request->inspection_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->inspection_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
+            $updateVehicle->type = 1;
             $updateVehicle->save();
 
             if ( $request->photo ) {

@@ -18,6 +18,7 @@ return [
     'road_tax' => 'Road Tax',
     'insurance' => 'Insurance',
     'permit' => 'Permit',
+    'inspection' => 'Inspection',
 
     'notifications' => '通知',
     'x_new_notification' => '<span id="totalNewNotifications">:total</span>个新通知',

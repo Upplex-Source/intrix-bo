@@ -121,6 +121,30 @@ class CheckVehicleExpires extends Command
                     ] );
                 }
             }
+
+            if ( $vehicle->inspection_expiry_date ) {
+
+                $inspectionExpiryDate = Carbon::createFromFormat( 'Y-m-d', $vehicle->inspection_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay();
+
+                $diff = $today->diffInDays( $inspectionExpiryDate, false );
+
+                $this->info( $diff );
+
+                if( $diff == 30 ) {
+
+                    AdministratorNotification::create( [
+                        'module_id' => $vehicle->id,
+                        'system_title' => 'notification.vehicles_x_expiring_title',
+                        'system_content' => 'notification.vehicles_x_expiring_content',
+                        'meta_data' => json_encode( [
+                            'plate' => $vehicle->license_plate,
+                            'type' => 'notification.inspection',
+                        ] ),
+                        'module' => 'App\Models\Vehicle',
+                        'type' => 1,
+                    ] );
+                }
+            }            
         }
 
         return 0;

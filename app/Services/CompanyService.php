@@ -95,6 +95,12 @@ class CompanyService
             $filter = true;
         }
 
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( function( $query ) use ( $request ) {
+                $query->where( 'name', 'LIKE', '%' . $request->custom_search . '%' );
+            } );
+        }
+
         return [
             'filter' => $filter,
             'model' => $model,

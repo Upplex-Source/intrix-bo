@@ -33,7 +33,15 @@ $vehicle_create = 'vehicle_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vehicle_create }}_name" class="col-sm-5 col-form-label">{{ __( 'vehicle.name' ) }}</label>
+                    <label for="{{ $vehicle_create }}_company" class="col-sm-5 col-form-label">{{ __( 'vehicle.company' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $vehicle_create }}_company" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.company' ) ] ) }}">
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_name" class="col-sm-5 col-form-label">{{ __( 'vehicle.model' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vehicle_create }}_name">
                         <div class="invalid-feedback"></div>
@@ -43,6 +51,13 @@ $vehicle_create = 'vehicle_create';
                     <label for="{{ $vehicle_create }}_license_plate" class="col-sm-5 col-form-label">{{ __( 'vehicle.license_plate' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vehicle_create }}_license_plate">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_trailer_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.trailer_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_trailer_number" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -74,10 +89,30 @@ $vehicle_create = 'vehicle_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                @if ( 1 == 2 )
                 <div class="mb-3 row">
                     <label for="{{ $vehicle_create }}_permit_number" class="col-sm-5 col-form-label">{{ __( 'vehicle.permit_number' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vehicle_create }}_permit_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                @endif
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_permit" class="col-sm-5 col-form-label">{{ __( 'vehicle.permit' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $vehicle_create }}_permit">
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vehicle.permit' ) ] ) }}</option>
+                            <option value="1">A</option>
+                            <option value="2">C</option>
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_permit_start_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.permit_start_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_permit_start_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -88,6 +123,14 @@ $vehicle_create = 'vehicle_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_inspection_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.inspection_expiry_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_inspection_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                @if ( 1 == 2 )
                 <div class="mb-3 row">
                     <label for="{{ $vehicle_create }}_type" class="col-sm-5 col-form-label">{{ __( 'vehicle.type' ) }}</label>
                     <div class="col-sm-7">
@@ -100,6 +143,7 @@ $vehicle_create = 'vehicle_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                @endif
                 <div class="text-end">
                     <button id="{{ $vehicle_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -124,7 +168,15 @@ $vehicle_create = 'vehicle_create';
             disableMobile: true,
         } );
 
+        $( vc + '_permit_start_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
         $( vc + '_permit_expiry_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
+        $( vc + '_inspection_expiry_date' ).flatpickr( {
             disableMobile: true,
         } );
         
@@ -143,14 +195,19 @@ $vehicle_create = 'vehicle_create';
             let formData = new FormData();
             formData.append( 'photo', fileID );
             formData.append( 'driver', $( vc + '_driver' ).val() );
+            formData.append( 'company', $( vc + '_company' ).val() );
             formData.append( 'name', $( vc + '_name' ).val() );
             formData.append( 'license_plate', $( vc + '_license_plate' ).val() );
+            formData.append( 'trailer_number', $( vc + '_trailer_number' ).val() );
             formData.append( 'road_tax_number', $( vc + '_road_tax_number' ).val() );
             formData.append( 'road_tax_expiry_date', $( vc + '_road_tax_expiry_date' ).val() );
             formData.append( 'insurance_number', $( vc + '_insurance_number' ).val() );
             formData.append( 'insurance_expiry_date', $( vc + '_insurance_expiry_date' ).val() );
             formData.append( 'permit_number', $( vc + '_permit_number' ).val() );
+            formData.append( 'permit', $( vc + '_permit' ).val() );
+            formData.append( 'permit_start_date', $( vc + '_permit_start_date' ).val() );
             formData.append( 'permit_expiry_date', $( vc + '_permit_expiry_date' ).val() );
+            formData.append( 'inspection_expiry_date', $( vc + '_inspection_expiry_date' ).val() );
             formData.append( 'type', $( vc + '_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -212,6 +269,48 @@ $vehicle_create = 'vehicle_create';
                     let processedResult = [];
 
                     data.employees.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
+        $( vc + '_company' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.company.allCompanies' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.companies.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
                             text: v.name,
