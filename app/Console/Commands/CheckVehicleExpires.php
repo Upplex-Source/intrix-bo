@@ -54,7 +54,7 @@ class CheckVehicleExpires extends Command
 
                 $roadTaxExpiryDate = Carbon::createFromFormat( 'Y-m-d', $vehicle->road_tax_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay();
 
-                $diff = $roadTaxExpiryDate->diffInDays( $today, false );
+                $diff = $today->diffInDays( $roadTaxExpiryDate, false );
 
                 $this->info( $diff );
 
@@ -76,9 +76,9 @@ class CheckVehicleExpires extends Command
 
             if ( $vehicle->insurance_expiry_date ) {
 
-                $roadTaxExpiryDate = Carbon::createFromFormat( 'Y-m-d', $vehicle->insurance_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay();
+                $insuranceExpiryDate = Carbon::createFromFormat( 'Y-m-d', $vehicle->insurance_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay();
 
-                $diff = $roadTaxExpiryDate->diffInDays( $today, false );
+                $diff = $today->diffInDays( $insuranceExpiryDate, false );
 
                 $this->info( $diff );
 
@@ -100,9 +100,9 @@ class CheckVehicleExpires extends Command
 
             if ( $vehicle->permit_expiry_date ) {
 
-                $roadTaxExpiryDate = Carbon::createFromFormat( 'Y-m-d', $vehicle->permit_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay();
+                $permitExpiryDate = Carbon::createFromFormat( 'Y-m-d', $vehicle->permit_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay();
 
-                $diff = $roadTaxExpiryDate->diffInDays( $today, false );
+                $diff = $today->diffInDays( $permitExpiryDate, false );
 
                 $this->info( $diff );
 
