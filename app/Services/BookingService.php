@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\{
 
 use App\Models\{
     Booking,
+    BookingAddress,
     FileManager,
     Option,
 };
@@ -186,6 +187,8 @@ class BookingService
         $booking = Booking::with( [
             'driver',
             'vehicle',
+            'pickupAddresses',
+            'dropoffAddresses',
         ] )->find( $request->id );
 
         if ( $booking ) {
@@ -215,6 +218,11 @@ class BookingService
 
     public static function createBooking( $request ) {
 
+        $request->merge( [
+            'pickup_addresses' => json_decode( $request->pickup_addresses, true ),
+            'dropoff_addresses' => json_decode( $request->dropoff_addresses, true ),
+        ] );
+
         $validator = Validator::make( $request->all(), [
             'reference' => [ 'required', 'unique:bookings' ],
             // 'customer_name' => [ 'required' ],
@@ -224,10 +232,12 @@ class BookingService
             // 'pickup_address_address_1' => [ 'required' ],
             // 'pickup_address_city' => [ 'required' ],
             // 'pickup_address_state' => [ 'required' ],
+            'pickup_addresses.*.pickup_address_postcode' => [ 'nullable', 'digits:5' ],
             // 'dropoff_address_destination' => [ 'required' ],
             // 'dropoff_address_address_1' => [ 'required' ],
             // 'dropoff_address_city' => [ 'required' ],
             // 'dropoff_address_state' => [ 'required' ],
+            'dropoff_addresses.*.dropoff_address_postcode' => [ 'nullable', 'digits:5' ],
             'pickup_date' => [ 'required' ],
             'dropoff_date' => [ 'required' ],
             'company' => [ 'nullable' ],
@@ -256,12 +266,14 @@ class BookingService
             'pickup_address_city' => __( 'booking.city' ),
             'pickup_address_postcode' => __( 'booking.postcode' ),
             'pickup_address_state' => __( 'booking.state' ),
+            'pickup_addresses.*.pickup_address_postcode' => __( 'booking.postcode' ),
             'dropoff_address_destination' => __( 'booking.destination' ),
             'dropoff_address_address_1' => __( 'booking.address_1' ),
             'dropoff_address_address_2' => __( 'booking.address_2' ),
             'dropoff_address_city' => __( 'booking.city' ),
             'dropoff_address_postcode' => __( 'booking.postcode' ),
             'dropoff_address_state' => __( 'booking.state' ),
+            'dropoff_addresses.*.dropoff_address_postcode' => __( 'booking.postcode' ),
             'pickup_date' => __( 'booking.pickup_date' ),
             'dropoff_date' => __( 'booking.dropoff_date' ),
             'company' => __( 'booking.company' ),
@@ -297,21 +309,21 @@ class BookingService
                 'vehicle_id' => $request->vehicle,
                 'delivery_order_number' => $request->delivery_order_number,
                 'delivery_order_date' => $request->delivery_order_date ? Carbon::createFromFormat( 'Y-m-d', $request->delivery_order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
-                'pickup_address' => json_encode( [
-                    'a1' => $request->pickup_address_address_1,
-                    'a2' => $request->pickup_address_address_2,
-                    'c' => $request->pickup_address_city,
-                    'p' => $request->pickup_address_postcode,
-                    's' => $request->pickup_address_state,
-                ] ),
-                'dropoff_address' => json_encode( [
-                    'd' => $request->dropoff_address_destination,
-                    'a1' => $request->pickup_address_address_1,
-                    'a2' => $request->pickup_address_address_2,
-                    'c' => $request->pickup_address_city,
-                    'p' => $request->pickup_address_postcode,
-                    's' => $request->pickup_address_state,
-                ] ),
+                // 'pickup_address' => json_encode( [
+                //     'a1' => $request->pickup_address_address_1,
+                //     'a2' => $request->pickup_address_address_2,
+                //     'c' => $request->pickup_address_city,
+                //     'p' => $request->pickup_address_postcode,
+                //     's' => $request->pickup_address_state,
+                // ] ),
+                // 'dropoff_address' => json_encode( [
+                //     'd' => $request->dropoff_address_destination,
+                //     'a1' => $request->pickup_address_address_1,
+                //     'a2' => $request->pickup_address_address_2,
+                //     'c' => $request->pickup_address_city,
+                //     'p' => $request->pickup_address_postcode,
+                //     's' => $request->pickup_address_state,
+                // ] ),
                 'pickup_date' => $request->pickup_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->pickup_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'dropoff_date' => $request->dropoff_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->dropoff_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'company_id' => $request->company,
@@ -329,6 +341,33 @@ class BookingService
                 'driver_percentage' => $request->driver_percentage,
                 'driver_final_amount' => $request->driver_final_amount,
             ] );
+
+            foreach ( $request->pickup_addresses as $pickupAddress ) {
+
+                BookingAddress::create( [
+                    'booking_id' => $createBooking->id,
+                    'address_1' => $pickupAddress['pickup_address_address_1'],
+                    'address_2' => $pickupAddress['pickup_address_address_2'],
+                    'city' => $pickupAddress['pickup_address_city'],
+                    'state' => $pickupAddress['pickup_address_state'],
+                    'postcode' => $pickupAddress['pickup_address_postcode'],
+                    'type' => 1,
+                ] );
+            }
+
+            foreach ( $request->dropoff_addresses as $dropoffAddress ) {
+                
+                BookingAddress::create( [
+                    'booking_id' => $createBooking->id,
+                    'address_1' => $dropoffAddress['dropoff_address_address_1'],
+                    'address_2' => $dropoffAddress['dropoff_address_address_2'],
+                    'city' => $dropoffAddress['dropoff_address_city'],
+                    'state' => $dropoffAddress['dropoff_address_state'],
+                    'postcode' => $dropoffAddress['dropoff_address_postcode'],
+                    'destination' => $dropoffAddress['dropoff_address_destination'],
+                    'type' => 2,
+                ] );
+            }
 
             $file = FileManager::find( $request->delivery_order_image );
             if ( $file ) {
@@ -363,6 +402,8 @@ class BookingService
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
+            'pickup_addresses' => json_decode( $request->pickup_addresses, true ),
+            'dropoff_addresses' => json_decode( $request->dropoff_addresses, true ),
         ] );
 
         $validator = Validator::make( $request->all(), [
@@ -374,10 +415,12 @@ class BookingService
             // 'pickup_address_address_1' => [ 'required' ],
             // 'pickup_address_city' => [ 'required' ],
             // 'pickup_address_state' => [ 'required' ],
+            'pickup_addresses.*.pickup_address_postcode' => [ 'nullable', 'digits:5' ],
             // 'dropoff_address_destination' => [ 'required' ],
             // 'dropoff_address_address_1' => [ 'required' ],
             // 'dropoff_address_city' => [ 'required' ],
             // 'dropoff_address_state' => [ 'required' ],
+            'dropoff_addresses.*.dropoff_address_postcode' => [ 'nullable', 'digits:5' ],
             'pickup_date' => [ 'required' ],
             'dropoff_date' => [ 'required' ],
             'company' => [ 'nullable' ],
@@ -406,12 +449,14 @@ class BookingService
             'pickup_address_city' => __( 'booking.city' ),
             'pickup_address_postcode' => __( 'booking.postcode' ),
             'pickup_address_state' => __( 'booking.state' ),
+            'pickup_addresses.*.pickup_address_postcode' => __( 'booking.postcode' ),
             'dropoff_address_destination' => __( 'booking.destination' ),
             'dropoff_address_address_1' => __( 'booking.address_1' ),
             'dropoff_address_address_2' => __( 'booking.address_2' ),
             'dropoff_address_city' => __( 'booking.city' ),
             'dropoff_address_postcode' => __( 'booking.postcode' ),
             'dropoff_address_state' => __( 'booking.state' ),
+            'dropoff_addresses.*.dropoff_address_postcode' => __( 'booking.postcode' ),
             'pickup_date' => __( 'booking.pickup_date' ),
             'dropoff_date' => __( 'booking.dropoff_date' ),
             'company' => __( 'booking.company' ),
@@ -447,21 +492,21 @@ class BookingService
             $updateBooking->vehicle_id = $request->vehicle;
             $updateBooking->delivery_order_number = $request->delivery_order_number;
             $updateBooking->delivery_order_date = $request->delivery_order_date ? Carbon::createFromFormat( 'Y-m-d', $request->delivery_order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
-            $updateBooking->pickup_address = json_encode( [
-                'a1' => $request->pickup_address_address_1,
-                'a2' => $request->pickup_address_address_2,
-                'c' => $request->pickup_address_city,
-                'p' => $request->pickup_address_postcode,
-                's' => $request->pickup_address_state,
-            ] );
-            $updateBooking->dropoff_address = json_encode( [
-                'd' => $request->dropoff_address_destination,
-                'a1' => $request->pickup_address_address_1,
-                'a2' => $request->pickup_address_address_2,
-                'c' => $request->pickup_address_city,
-                'p' => $request->pickup_address_postcode,
-                's' => $request->pickup_address_state,
-            ] );
+            // $updateBooking->pickup_address = json_encode( [
+            //     'a1' => $request->pickup_address_address_1,
+            //     'a2' => $request->pickup_address_address_2,
+            //     'c' => $request->pickup_address_city,
+            //     'p' => $request->pickup_address_postcode,
+            //     's' => $request->pickup_address_state,
+            // ] );
+            // $updateBooking->dropoff_address = json_encode( [
+            //     'd' => $request->dropoff_address_destination,
+            //     'a1' => $request->pickup_address_address_1,
+            //     'a2' => $request->pickup_address_address_2,
+            //     'c' => $request->pickup_address_city,
+            //     'p' => $request->pickup_address_postcode,
+            //     's' => $request->pickup_address_state,
+            // ] );
             $updateBooking->pickup_date = $request->pickup_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->pickup_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateBooking->dropoff_date = $request->dropoff_date ? Carbon::createFromFormat( 'Y-m-d H:i', $request->dropoff_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateBooking->company_id = $request->company;
@@ -479,6 +524,35 @@ class BookingService
             $updateBooking->driver_percentage = $request->driver_percentage;
             $updateBooking->driver_final_amount = $request->driver_final_amount;
             $updateBooking->save();
+
+            BookingAddress::where( 'booking_id', $updateBooking->id )->delete();
+
+            foreach ( $request->pickup_addresses as $pickupAddress ) {
+
+                BookingAddress::create( [
+                    'booking_id' => $updateBooking->id,
+                    'address_1' => $pickupAddress['pickup_address_address_1'],
+                    'address_2' => $pickupAddress['pickup_address_address_2'],
+                    'city' => $pickupAddress['pickup_address_city'],
+                    'state' => $pickupAddress['pickup_address_state'],
+                    'postcode' => $pickupAddress['pickup_address_postcode'],
+                    'type' => 1,
+                ] );
+            }
+
+            foreach ( $request->dropoff_addresses as $dropoffAddress ) {
+                
+                BookingAddress::create( [
+                    'booking_id' => $updateBooking->id,
+                    'address_1' => $dropoffAddress['dropoff_address_address_1'],
+                    'address_2' => $dropoffAddress['dropoff_address_address_2'],
+                    'city' => $dropoffAddress['dropoff_address_city'],
+                    'state' => $dropoffAddress['dropoff_address_state'],
+                    'postcode' => $dropoffAddress['dropoff_address_postcode'],
+                    'destination' => $dropoffAddress['dropoff_address_destination'],
+                    'type' => 2,
+                ] );
+            }
 
             if ( $request->delivery_order_image ) {
                 $file = FileManager::find( $request->delivery_order_image );

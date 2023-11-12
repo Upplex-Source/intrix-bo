@@ -216,6 +216,189 @@ $bookingIncrement = $data['booking_increment'];
             </div>
             <div class="col-md-6 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'booking.pickup_address' ) }}</h5>
+                <div id="pickup_address_section">
+                    <div class="pickup-address" id="pickup_address_0" data-id="0">
+                        <div class="d-flex justify-content-between align-center mb-2">
+                            <strong>{{ __( 'booking.pickup_address' ) }}</strong>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_pickup_address_address_1" class="col-sm-4 col-form-label">{{ __( 'booking.address_1' ) }}</label>
+                            <div class="col-sm-6">
+                                <textarea class="form-control" id="{{ $booking_create }}_pickup_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_pickup_address_address_2" class="col-sm-4 col-form-label">{{ __( 'booking.address_2' ) }}</label>
+                            <div class="col-sm-6">
+                                <textarea class="form-control" id="{{ $booking_create }}_pickup_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_pickup_address_postcode" class="col-sm-4 col-form-label">{{ __( 'booking.postcode' ) }}</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="{{ $booking_create }}_pickup_address_postcode" placeholder="{{ __( 'template.optional' ) }}">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_pickup_address_state" class="col-sm-4 col-form-label">{{ __( 'booking.state' ) }}</label>
+                            <div class="col-sm-6">
+                                <select class="form-select" id="{{ $booking_create }}_pickup_address_state" >
+                                    <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.state' ) ] ) }}</option>
+                                    <option value="Johor">Johor</option>
+                                    <option value="Kedah">Kedah</option>
+                                    <option value="Kelantan">Kelantan</option>
+                                    <option value="Malacca">Malacca</option>
+                                    <option value="Negeri Sembilan">Negeri Sembilan</option>
+                                    <option value="Pahang">Pahang</option>
+                                    <option value="Penang">Penang</option>
+                                    <option value="Perlis">Perlis</option>
+                                    <option value="Sabah">Sabah</option>
+                                    <option value="Sarawak">Sarawak</option>
+                                    <option value="Selangor">Selangor</option>
+                                    <option value="Terengganu">Terengganu</option>
+                                    <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                    <option value="Labuan">Labuan</option>
+                                    <option value="Putrajaya">Putrajaya</option>
+                                    <option value="Perak">Perak</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_pickup_address_city" class="col-sm-4 col-form-label">{{ __( 'booking.city' ) }}</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="{{ $booking_create }}_pickup_address_city" placeholder="{{ __( 'template.optional' ) }}">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4" id="pickup_address_add">
+                        <em class="icon ni ni-plus-round address-icon pickup-address-add"></em>
+                    </div>
+                </div>
+                <hr>
+                <h5 class="card-title mb-4">{{ __( 'booking.dropoff_address' ) }}</h5>
+                <div id="dropoff_address_section">
+                    <div class="dropoff-address" id="dropoff_address_0" data-id="0">
+                        <div class="d-flex justify-content-between align-center mb-2">
+                            <strong>{{ __( 'booking.dropoff_address' ) }}</strong>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_dropoff_address_destination" class="col-sm-4 col-form-label">{{ __( 'booking.destination' ) }}</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_address_destination" placeholder="{{ __( 'template.optional' ) }}">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_dropoff_address_address_1" class="col-sm-4 col-form-label">{{ __( 'booking.address_1' ) }}</label>
+                            <div class="col-sm-6">
+                                <textarea class="form-control" id="{{ $booking_create }}_dropoff_address_address_1" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_dropoff_address_address_2" class="col-sm-4 col-form-label">{{ __( 'booking.address_2' ) }}</label>
+                            <div class="col-sm-6">
+                                <textarea class="form-control" id="{{ $booking_create }}_dropoff_address_address_2" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_dropoff_address_postcode" class="col-sm-4 col-form-label">{{ __( 'booking.postcode' ) }}</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_address_postcode" placeholder="{{ __( 'template.optional' ) }}">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_dropoff_address_state" class="col-sm-4 col-form-label">{{ __( 'booking.state' ) }}</label>
+                            <div class="col-sm-6">
+                                <select class="form-select" id="{{ $booking_create }}_dropoff_address_state" >
+                                    <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'booking.state' ) ] ) }}</option>
+                                    <option value="Johor">Johor</option>
+                                    <option value="Kedah">Kedah</option>
+                                    <option value="Kelantan">Kelantan</option>
+                                    <option value="Malacca">Malacca</option>
+                                    <option value="Negeri Sembilan">Negeri Sembilan</option>
+                                    <option value="Pahang">Pahang</option>
+                                    <option value="Penang">Penang</option>
+                                    <option value="Perlis">Perlis</option>
+                                    <option value="Sabah">Sabah</option>
+                                    <option value="Sarawak">Sarawak</option>
+                                    <option value="Selangor">Selangor</option>
+                                    <option value="Terengganu">Terengganu</option>
+                                    <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                    <option value="Labuan">Labuan</option>
+                                    <option value="Putrajaya">Putrajaya</option>
+                                    <option value="Perak">Perak</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="{{ $booking_create }}_dropoff_address_city" class="col-sm-4 col-form-label">{{ __( 'booking.city' ) }}</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_address_city" placeholder="{{ __( 'template.optional' ) }}">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4" id="dropoff_address_add">
+                        <em class="icon ni ni-plus-round address-icon dropoff-address-add"></em>
+                    </div>
+                </div>
+                <hr>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_create }}_pickup_date" class="col-sm-4 col-form-label">{{ __( 'booking.pickup_date' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_pickup_date">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_create }}_dropoff_date" class="col-sm-4 col-form-label">{{ __( 'booking.dropoff_date' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_date">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener( 'DOMContentLoaded', function() {
+
+        let bc = '#{{ $booking_create }}',
+            fileID = '',
+            paIndex = 0,
+            doaIndex = 0;
+
+        $( document ).on( 'click', '.pickup-address-remove', function() {
+            
+            let id = $( this ).data( 'id' );
+
+            $( '#pickup_address_' + id ).remove();
+
+            paIndex-=1;
+        } );
+
+        $( document ).on( 'click', '.pickup-address-add', function() {
+            
+            let html = 
+            `
+            <div class="pickup-address" id="pickup_address_` + paIndex + `" data-id="` + paIndex + `">
+                <div class="d-flex justify-content-between align-center mb-2">
+                    <strong>{{ __( 'booking.pickup_address' ) }}</strong>
+                    <div>
+                        <em class="icon ni ni-trash address-icon pickup-address-remove" data-id="` + paIndex + `"></em>
+                    </div>
+                </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_pickup_address_address_1" class="col-sm-4 col-form-label">{{ __( 'booking.address_1' ) }}</label>
                     <div class="col-sm-6">
@@ -269,8 +452,36 @@ $bookingIncrement = $data['booking_increment'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <hr>
-                <h5 class="card-title mb-4">{{ __( 'booking.dropoff_address' ) }}</h5>
+            </div>
+            `;
+
+            $( html ).insertBefore( '#pickup_address_add' );
+
+            paIndex+=1;
+        } );
+
+        $( document ).on( 'click', '.dropoff-address-remove', function() {
+            
+            let id = $( this ).data( 'id' );
+
+            $( '#dropoff_address_' + id ).remove();
+
+            paIndex-=1;
+        } );
+
+        $( document ).on( 'click', '.dropoff-address-add', function() {
+            
+            doaIndex+=1;
+
+            let html = 
+            `
+            <div class="dropoff-address" id="dropoff_address_` + doaIndex + `" data-id="` + doaIndex + `">
+                <div class="d-flex justify-content-between align-center mb-2">
+                    <strong>{{ __( 'booking.dropoff_address' ) }}</strong>
+                    <div>
+                        <em class="icon ni ni-trash address-icon dropoff-address-remove" data-id="` + doaIndex + `"></em>
+                    </div>
+                </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_dropoff_address_destination" class="col-sm-4 col-form-label">{{ __( 'booking.destination' ) }}</label>
                     <div class="col-sm-6">
@@ -331,31 +542,11 @@ $bookingIncrement = $data['booking_increment'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <hr>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_create }}_pickup_date" class="col-sm-4 col-form-label">{{ __( 'booking.pickup_date' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_pickup_date">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_create }}_dropoff_date" class="col-sm-4 col-form-label">{{ __( 'booking.dropoff_date' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_dropoff_date">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
             </div>
-        </div>
-    </div>
-</div>
+            `;
 
-<script>
-    document.addEventListener( 'DOMContentLoaded', function() {
-
-        let bc = '#{{ $booking_create }}',
-            fileID = '';
+            $( html ).insertBefore( '#dropoff_address_add' );
+        } );
 
         $( bc + '_invoice_date' ).flatpickr();
         $( bc + '_delivery_order_date' ).flatpickr();
@@ -456,18 +647,43 @@ $bookingIncrement = $data['booking_increment'];
             formData.append( 'delivery_order_date', $( bc + '_delivery_order_date' ).val() );
             formData.append( 'delivery_order_image', fileID );
 
-            formData.append( 'pickup_address_address_1', $( bc + '_pickup_address_address_1' ).val() );
-            formData.append( 'pickup_address_address_2', $( bc + '_pickup_address_address_2' ).val() );
-            formData.append( 'pickup_address_city', $( bc + '_pickup_address_city' ).val() );
-            formData.append( 'pickup_address_postcode', $( bc + '_pickup_address_postcode' ).val() );
-            formData.append( 'pickup_address_state', $( bc + '_pickup_address_state' ).val() );
+            let pickupAddresses = [];
+            $( '.pickup-address' ).each( function( i, v ) {
+                pickupAddresses.push( {
+                    'pickup_address_address_1': $( v ).find( bc + '_pickup_address_address_1' ).val(),
+                    'pickup_address_address_2': $( v ).find( bc + '_pickup_address_address_2' ).val(),
+                    'pickup_address_city': $( v ).find( bc + '_pickup_address_city' ).val(),
+                    'pickup_address_postcode': $( v ).find( bc + '_pickup_address_postcode' ).val(),
+                    'pickup_address_state': $( v ).find( bc + '_pickup_address_state' ).val(),
+                } );
+            } );
+            formData.append( 'pickup_addresses', JSON.stringify( pickupAddresses ) );
 
-            formData.append( 'dropoff_address_destination', $( bc + '_dropoff_address_destination' ).val() );
-            formData.append( 'dropoff_address_address_1', $( bc + '_dropoff_address_address_1' ).val() );
-            formData.append( 'dropoff_address_address_2', $( bc + '_dropoff_address_address_2' ).val() );
-            formData.append( 'dropoff_address_city', $( bc + '_dropoff_address_city' ).val() );
-            formData.append( 'dropoff_address_postcode', $( bc + '_dropoff_address_postcode' ).val() );
-            formData.append( 'dropoff_address_state', $( bc + '_dropoff_address_state' ).val() );
+            // formData.append( 'pickup_address_address_1', $( bc + '_pickup_address_address_1' ).val() );
+            // formData.append( 'pickup_address_address_2', $( bc + '_pickup_address_address_2' ).val() );
+            // formData.append( 'pickup_address_city', $( bc + '_pickup_address_city' ).val() );
+            // formData.append( 'pickup_address_postcode', $( bc + '_pickup_address_postcode' ).val() );
+            // formData.append( 'pickup_address_state', $( bc + '_pickup_address_state' ).val() );
+
+            let dropoffAddresses = [];
+            $( '.dropoff-address' ).each( function( i, v ) {
+                dropoffAddresses.push( {
+                    'dropoff_address_destination': $( v ).find( bc + '_dropoff_address_destination' ).val(),
+                    'dropoff_address_address_1': $( v ).find( bc + '_dropoff_address_address_1' ).val(),
+                    'dropoff_address_address_2': $( v ).find( bc + '_dropoff_address_address_2' ).val(),
+                    'dropoff_address_city': $( v ).find( bc + '_dropoff_address_city' ).val(),
+                    'dropoff_address_postcode': $( v ).find( bc + '_dropoff_address_postcode' ).val(),
+                    'dropoff_address_state': $( v ).find( bc + '_dropoff_address_state' ).val(),
+                } );
+            } );
+            formData.append( 'dropoff_addresses', JSON.stringify( dropoffAddresses ) );
+
+            // formData.append( 'dropoff_address_destination', $( bc + '_dropoff_address_destination' ).val() );
+            // formData.append( 'dropoff_address_address_1', $( bc + '_dropoff_address_address_1' ).val() );
+            // formData.append( 'dropoff_address_address_2', $( bc + '_dropoff_address_address_2' ).val() );
+            // formData.append( 'dropoff_address_city', $( bc + '_dropoff_address_city' ).val() );
+            // formData.append( 'dropoff_address_postcode', $( bc + '_dropoff_address_postcode' ).val() );
+            // formData.append( 'dropoff_address_state', $( bc + '_dropoff_address_state' ).val() );
             
             formData.append( 'pickup_date', $( bc + '_pickup_date' ).val() );
             formData.append( 'dropoff_date', $( bc + '_dropoff_date' ).val() );
@@ -514,6 +730,25 @@ $bookingIncrement = $data['booking_increment'];
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
+
+                            if ( key.includes( 'pickup_addresses' ) ) {
+
+                                let stringKey = key.split( '.' );
+
+                                $( '#pickup_address_' + stringKey[1] ).find( bc + '_' + stringKey[2] ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+
+                                return true;
+                            }
+
+                            if ( key.includes( 'dropoff_addresses' ) ) {
+
+                                let stringKey = key.split( '.' );
+
+                                $( '#dropoff_address_' + stringKey[1] ).find( bc + '_' + stringKey[2] ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+
+                                return true;
+                            }
+
                             $( bc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
                         $( '.form-control.is-invalid:first' ).get( 0 ).scrollIntoView( { block: 'center' } );

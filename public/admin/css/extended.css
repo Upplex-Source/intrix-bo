@@ -29,6 +29,12 @@ table.table.dataTable tr td {
     animation: pulse-animation 1s infinite;
 }
 
+.address-icon {
+    font-size: 20px;
+    cursor: pointer;
+    color: #854fff;
+}
+
 @keyframes pulse-animation {
     0% {
         box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
@@ -37,7 +43,6 @@ table.table.dataTable tr td {
         box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
     }
 }
-  
 
 .nk-notification-item.read {
     opacity: .5;

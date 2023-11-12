@@ -212,6 +212,80 @@ $booking_edit = 'booking_edit';
             </div>
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'booking.pickup_address' ) }}</h5>
+                <div id="pickup_address_section">
+                    <div class="text-center mt-4" id="pickup_address_add">
+                        <em class="icon ni ni-plus-round address-icon pickup-address-add"></em>
+                    </div>
+                </div>
+                <hr>
+                <h5 class="card-title mb-4">{{ __( 'booking.dropoff_address' ) }}</h5>
+                <div id="dropoff_address_section">
+                    <div class="text-center mt-4" id="dropoff_address_add">
+                        <em class="icon ni ni-plus-round address-icon dropoff-address-add"></em>
+                    </div>
+                </div>
+                <hr>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_pickup_date" class="col-sm-4 col-form-label">{{ __( 'booking.pickup_date' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_pickup_date">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $booking_edit }}_dropoff_date" class="col-sm-4 col-form-label">{{ __( 'booking.dropoff_date' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_date">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener( 'DOMContentLoaded', function() {
+
+        let be = '#{{ $booking_edit }}',
+            fileID = '',
+            paIndex = 0,
+            doaIndex = 0;
+
+        $( document ).on( 'click', '.pickup-address-remove', function() {
+            
+            let id = $( this ).data( 'id' );
+
+            $( '#pickup_address_' + id ).remove();
+
+            paIndex-=1;
+        } );
+
+        $( document ).on( 'click', '.pickup-address-add', function() {
+
+            $( renderPickupAddress( true ) ).insertBefore( '#pickup_address_add' );
+
+            paIndex+=1;
+        } );
+
+        function renderPickupAddress( removeEnabled ) {
+
+            let removeButton = removeEnabled ? 
+            `
+            <div>
+                <em class="icon ni ni-trash address-icon pickup-address-remove" data-id="` + paIndex + `"></em>
+            </div>
+            `
+            :
+            ``;
+
+            let html = 
+            `
+            <div class="pickup-address" id="pickup_address_` + paIndex + `" data-id="` + paIndex + `">
+                <div class="d-flex justify-content-between align-center mb-2">
+                    <strong>{{ __( 'booking.pickup_address' ) }}</strong>
+                    ` + removeButton + `
+                </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_pickup_address_address_1" class="col-sm-4 col-form-label">{{ __( 'booking.address_1' ) }}</label>
                     <div class="col-sm-6">
@@ -265,8 +339,48 @@ $booking_edit = 'booking_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <hr>
-                <h5 class="card-title mb-4">{{ __( 'booking.dropoff_address' ) }}</h5>
+            </div>
+            `;
+
+            return html;
+        }
+
+        $( document ).on( 'click', '.dropoff-address-remove', function() {
+
+            let id = $( this ).data( 'id' );
+
+            console.log( id );
+
+            $( '#dropoff_address_' + id ).remove();
+
+            doaIndex-=1;
+        } );
+
+        $( document ).on( 'click', '.dropoff-address-add', function() {
+
+            $( renderDropoffAddress( true ) ).insertBefore( '#dropoff_address_add' );
+
+            doaIndex+=1;
+        } );
+
+        function renderDropoffAddress( removeEnabled ) {
+
+            let removeButton = removeEnabled ? 
+            `
+            <div>
+                <em class="icon ni ni-trash address-icon dropoff-address-remove" data-id="` + doaIndex + `"></em>
+            </div>
+            `
+            :
+            ``;
+
+            let html = 
+            `
+            <div class="dropoff-address" id="dropoff_address_` + doaIndex + `" data-id="` + doaIndex + `">
+                <div class="d-flex justify-content-between align-center mb-2">
+                    <strong>{{ __( 'booking.dropoff_address' ) }}</strong>
+                    ` + removeButton + `
+                </div>
                 <div class="mb-3 row">
                     <label for="{{ $booking_edit }}_dropoff_address_destination" class="col-sm-4 col-form-label">{{ __( 'booking.destination' ) }}</label>
                     <div class="col-sm-6">
@@ -327,31 +441,11 @@ $booking_edit = 'booking_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                <hr>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_pickup_date" class="col-sm-4 col-form-label">{{ __( 'booking.pickup_date' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_pickup_date">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $booking_edit }}_dropoff_date" class="col-sm-4 col-form-label">{{ __( 'booking.dropoff_date' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $booking_edit }}_dropoff_date">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
             </div>
-        </div>
-    </div>
-</div>
+            `;
 
-<script>
-    document.addEventListener( 'DOMContentLoaded', function() {
-
-        let be = '#{{ $booking_edit }}',
-            fileID = '';
+            return html;
+        }
 
         let invoiceDate = $( be + '_invoice_date' ).flatpickr();
         let deliveryOrderDate = $( be + '_delivery_order_date' ).flatpickr();
@@ -455,18 +549,43 @@ $booking_edit = 'booking_edit';
                 formData.append( 'delivery_order_image', fileID );
             }
 
-            formData.append( 'pickup_address_address_1', $( be + '_pickup_address_address_1' ).val() );
-            formData.append( 'pickup_address_address_2', $( be + '_pickup_address_address_2' ).val() );
-            formData.append( 'pickup_address_city', $( be + '_pickup_address_city' ).val() );
-            formData.append( 'pickup_address_postcode', $( be + '_pickup_address_postcode' ).val() );
-            formData.append( 'pickup_address_state', $( be + '_pickup_address_state' ).val() );
+            let pickupAddresses = [];
+            $( '.pickup-address' ).each( function( i, v ) {
+                pickupAddresses.push( {
+                    'pickup_address_address_1': $( v ).find( be + '_pickup_address_address_1' ).val(),
+                    'pickup_address_address_2': $( v ).find( be + '_pickup_address_address_2' ).val(),
+                    'pickup_address_city': $( v ).find( be + '_pickup_address_city' ).val(),
+                    'pickup_address_postcode': $( v ).find( be + '_pickup_address_postcode' ).val(),
+                    'pickup_address_state': $( v ).find( be + '_pickup_address_state' ).val(),
+                } );
+            } );
+            formData.append( 'pickup_addresses', JSON.stringify( pickupAddresses ) );
 
-            formData.append( 'dropoff_address_destination', $( be + '_dropoff_address_destination' ).val() );
-            formData.append( 'dropoff_address_address_1', $( be + '_dropoff_address_address_1' ).val() );
-            formData.append( 'dropoff_address_address_2', $( be + '_dropoff_address_address_2' ).val() );
-            formData.append( 'dropoff_address_city', $( be + '_dropoff_address_city' ).val() );
-            formData.append( 'dropoff_address_postcode', $( be + '_dropoff_address_postcode' ).val() );
-            formData.append( 'dropoff_address_state', $( be + '_dropoff_address_state' ).val() );
+            // formData.append( 'pickup_address_address_1', $( be + '_pickup_address_address_1' ).val() );
+            // formData.append( 'pickup_address_address_2', $( be + '_pickup_address_address_2' ).val() );
+            // formData.append( 'pickup_address_city', $( be + '_pickup_address_city' ).val() );
+            // formData.append( 'pickup_address_postcode', $( be + '_pickup_address_postcode' ).val() );
+            // formData.append( 'pickup_address_state', $( be + '_pickup_address_state' ).val() );
+
+            let dropoffAddresses = [];
+            $( '.dropoff-address' ).each( function( i, v ) {
+                dropoffAddresses.push( {
+                    'dropoff_address_destination': $( v ).find( be + '_dropoff_address_destination' ).val(),
+                    'dropoff_address_address_1': $( v ).find( be + '_dropoff_address_address_1' ).val(),
+                    'dropoff_address_address_2': $( v ).find( be + '_dropoff_address_address_2' ).val(),
+                    'dropoff_address_city': $( v ).find( be + '_dropoff_address_city' ).val(),
+                    'dropoff_address_postcode': $( v ).find( be + '_dropoff_address_postcode' ).val(),
+                    'dropoff_address_state': $( v ).find( be + '_dropoff_address_state' ).val(),
+                } );
+            } );
+            formData.append( 'dropoff_addresses', JSON.stringify( dropoffAddresses ) );
+
+            // formData.append( 'dropoff_address_destination', $( be + '_dropoff_address_destination' ).val() );
+            // formData.append( 'dropoff_address_address_1', $( be + '_dropoff_address_address_1' ).val() );
+            // formData.append( 'dropoff_address_address_2', $( be + '_dropoff_address_address_2' ).val() );
+            // formData.append( 'dropoff_address_city', $( be + '_dropoff_address_city' ).val() );
+            // formData.append( 'dropoff_address_postcode', $( be + '_dropoff_address_postcode' ).val() );
+            // formData.append( 'dropoff_address_state', $( be + '_dropoff_address_state' ).val() );
             
             formData.append( 'pickup_date', $( be + '_pickup_date' ).val() );
             formData.append( 'dropoff_date', $( be + '_dropoff_date' ).val() );
@@ -686,18 +805,45 @@ $booking_edit = 'booking_edit';
                     $( be + '_delivery_order_number' ).val( response.delivery_order_number );
                     deliveryOrderDate.setDate( response.delivery_order_date );
 
-                    $( be + '_pickup_address_address_1' ).val( response.display_pickup_address.a1 );
-                    $( be + '_pickup_address_address_2' ).val( response.display_pickup_address.a2 );
-                    $( be + '_pickup_address_city' ).val( response.display_pickup_address.c );
-                    $( be + '_pickup_address_postcode' ).val( response.display_pickup_address.p );
-                    $( be + '_pickup_address_state' ).val( response.display_pickup_address.s );
+                    $.each( response.pickup_addresses, function( i, v ) {
 
-                    $( be + '_dropoff_address_destination' ).val( response.display_drop_off_address.d );
-                    $( be + '_dropoff_address_address_1' ).val( response.display_drop_off_address.a1 );
-                    $( be + '_dropoff_address_address_2' ).val( response.display_drop_off_address.a2 );
-                    $( be + '_dropoff_address_city' ).val( response.display_drop_off_address.c );
-                    $( be + '_dropoff_address_postcode' ).val( response.display_drop_off_address.p );
-                    $( be + '_dropoff_address_state' ).val( response.display_drop_off_address.s );
+                        $( renderPickupAddress( i == 0 ? false : true ) ).insertBefore( '#pickup_address_add' );
+
+                        paIndex+=1;
+                        
+                        $( '#pickup_address_' + i ).find( be + '_pickup_address_address_1' ).val( v.address_1 );
+                        $( '#pickup_address_' + i ).find( be + '_pickup_address_address_2' ).val( v.address_2 );
+                        $( '#pickup_address_' + i ).find( be + '_pickup_address_city' ).val( v.city );
+                        $( '#pickup_address_' + i ).find( be + '_pickup_address_postcode' ).val( v.postcode );
+                        $( '#pickup_address_' + i ).find( be + '_pickup_address_state' ).val( v.state );
+                    } );
+
+                    // $( be + '_pickup_address_address_1' ).val( response.display_pickup_address.a1 );
+                    // $( be + '_pickup_address_address_2' ).val( response.display_pickup_address.a2 );
+                    // $( be + '_pickup_address_city' ).val( response.display_pickup_address.c );
+                    // $( be + '_pickup_address_postcode' ).val( response.display_pickup_address.p );
+                    // $( be + '_pickup_address_state' ).val( response.display_pickup_address.s );
+
+                    $.each( response.dropoff_addresses, function( i, v ) {
+
+                        $( renderDropoffAddress( i == 0 ? false : true ) ).insertBefore( '#dropoff_address_add' );
+
+                        doaIndex+=1;
+                        
+                        $( '#dropoff_address_' + i ).find( be + '_dropoff_address_destination' ).val( v.address_1 );
+                        $( '#dropoff_address_' + i ).find( be + '_dropoff_address_address_1' ).val( v.address_1 );
+                        $( '#dropoff_address_' + i ).find( be + '_dropoff_address_address_2' ).val( v.address_2 );
+                        $( '#dropoff_address_' + i ).find( be + '_dropoff_address_city' ).val( v.city );
+                        $( '#dropoff_address_' + i ).find( be + '_dropoff_address_postcode' ).val( v.postcode );
+                        $( '#dropoff_address_' + i ).find( be + '_dropoff_address_state' ).val( v.state );
+                    } );
+
+                    // $( be + '_dropoff_address_destination' ).val( response.display_drop_off_address.d );
+                    // $( be + '_dropoff_address_address_1' ).val( response.display_drop_off_address.a1 );
+                    // $( be + '_dropoff_address_address_2' ).val( response.display_drop_off_address.a2 );
+                    // $( be + '_dropoff_address_city' ).val( response.display_drop_off_address.c );
+                    // $( be + '_dropoff_address_postcode' ).val( response.display_drop_off_address.p );
+                    // $( be + '_dropoff_address_state' ).val( response.display_drop_off_address.s );
 
                     pickupDate.setDate( response.pickup_date );
                     dropoffDate.setDate( response.dropoff_date );

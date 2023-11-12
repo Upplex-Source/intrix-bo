@@ -62,6 +62,14 @@ class Booking extends Model
         return $this->belongsTo( Employee::class, 'driver_id' );
     }
 
+    public function pickupAddresses() {
+        return $this->hasMany( BookingAddress::class, 'booking_id' )->where( 'type', 1 );
+    }
+
+    public function dropoffAddresses() {
+        return $this->hasMany( BookingAddress::class, 'booking_id' )->where( 'type', 2 );
+    }
+
     public function getDeliveryOrderImagePathAttribute() {
         return $this->attributes['delivery_order_image'] ? asset( 'storage/' . $this->attributes['delivery_order_image'] ) : null;
     }
