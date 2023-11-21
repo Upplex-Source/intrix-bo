@@ -209,7 +209,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-lead">{{ $ub->display_drop_off_address->d }}</span>
+                                                            <span class="tb-lead">{{ @$ub->display_drop_off_address->d }}</span>
                                                         </div>
                                                         <div class="nk-tb-col tb-col-sm">
                                                             <span class="tb-sub">{{ explode( ' ', $ub->pickup_date )[0] }}</span>
