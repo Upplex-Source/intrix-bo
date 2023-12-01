@@ -32,9 +32,16 @@ $customer_edit = 'customer_edit';
                 <hr>
                 <h5 class="card-title mb-4">{{ __( 'customer.address' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $customer_edit }}_address" class="col-sm-5 col-form-label">{{ __( 'customer.address' ) }}</label>
+                    <label for="{{ $customer_edit }}_address_1" class="col-sm-5 col-form-label">{{ __( 'customer.address_1' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $customer_edit }}_address" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                        <textarea class="form-control" id="{{ $customer_edit }}_address_1" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $customer_edit }}_address_2" class="col-sm-5 col-form-label">{{ __( 'customer.address_2' ) }}</label>
+                    <div class="col-sm-7">
+                        <textarea class="form-control" id="{{ $customer_edit }}_address_2" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -77,6 +84,13 @@ $customer_edit = 'customer_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $customer_edit }}_remarks" class="col-sm-5 col-form-label">{{ __( 'customer.remarks' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $customer_edit }}_remarks" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 <div class="text-end">
                     <button id="{{ $customer_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -108,10 +122,12 @@ $customer_edit = 'customer_edit';
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'name', $( ce + '_name' ).val() );
             formData.append( 'phone_number', $( ce + '_phone_number' ).val() );
-            formData.append( 'address', $( ce + '_address' ).val() );
+            formData.append( 'address_1', $( ce + '_address_1' ).val() );
+            formData.append( 'address_2', $( ce + '_address_2' ).val() );
             formData.append( 'postcode', $( ce + '_postcode' ).val() );
             formData.append( 'state', $( ce + '_state' ).val() );
             formData.append( 'city', $( ce + '_city' ).val() );
+            formData.append( 'remarks', $( ce + '_remarks' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -164,10 +180,12 @@ $customer_edit = 'customer_edit';
 
                     $( ce + '_name' ).val( response.name );
                     $( ce + '_phone_number' ).val( response.phone_number );
-                    $( ce + '_address' ).val( response.display_address.a1 );
+                    $( ce + '_address_1' ).val( response.display_address.a1 );
+                    $( ce + '_address_2' ).val( response.display_address.a2 );
                     $( ce + '_postcode' ).val( response.display_address.p );
                     $( ce + '_state' ).val( response.display_address.s );
                     $( ce + '_city' ).val( response.display_address.c );
+                    $( ce + '_remarks' ).val( response.remarks );
 
                     $( 'body' ).loading( 'stop' );
                 },

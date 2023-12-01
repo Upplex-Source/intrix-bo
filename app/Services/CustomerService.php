@@ -133,14 +133,18 @@ class CustomerService
         $validator = Validator::make( $request->all(), [
             'name' => [ 'required' ],
             'phone_number' => [ 'nullable' ],
-            'address' => [ 'nullable' ],
+            'address_1' => [ 'nullable' ],
+            'address_2' => [ 'nullable' ],
+            'remarks' => [ 'nullable' ],
             'postcode' => [ 'nullable', 'digits:5' ],
         ] );
 
         $attributeName = [
             'name' => __( 'customer.name' ),
             'phone_number' => __( 'customer.phone_number' ),
-            'address' => __( 'customer.address' ),
+            'address_1' => __( 'customer.address_1' ),
+            'address_2' => __( 'customer.address_2' ),
+            'remarks' => __( 'customer.remarks' ),
             'postcode' => __( 'customer.postcode' ),
         ];
 
@@ -157,12 +161,19 @@ class CustomerService
             $createCustomer = Customer::create( [
                 'name' => $request->name,
                 'phone_number' => $request->phone_number,
-                'address' => json_encode( [
-                    'a1' => $request->address,
-                    'c' => $request->city,
-                    'p' => $request->postcode,
-                    's' => $request->state,
-                ] ),
+                'address' => $request->address_1,
+                'address_2' => $request->address_2,
+                'city' => $request->city,
+                'state' => $request->state,
+                'postcode' => $request->postcode,
+                'remarks'=> $request->remarks,
+
+                // 'address' => json_encode( [
+                //     'a1' => $request->address,
+                //     'c' => $request->city,
+                //     'p' => $request->postcode,
+                //     's' => $request->state,
+                // ] ),
             ] );
 
             DB::commit();
@@ -190,14 +201,18 @@ class CustomerService
         $validator = Validator::make( $request->all(), [
             'name' => [ 'required' ],
             'phone_number' => [ 'nullable' ],
-            'address' => [ 'nullable' ],
+            'address_1' => [ 'nullable' ],
+            'address_2' => [ 'nullable' ],
+            'remarks' => [ 'nullable' ],
             'postcode' => [ 'nullable', 'digits:5' ],
         ] );
 
         $attributeName = [
             'name' => __( 'customer.name' ),
             'phone_number' => __( 'customer.phone_number' ),
-            'address' => __( 'customer.address' ),
+            'address_1' => __( 'customer.address_1' ),
+            'address_2' => __( 'customer.address_2' ),
+            'remarks' => __( 'customer.remarks' ),
             'postcode' => __( 'customer.postcode' ),
         ];
 
@@ -214,12 +229,18 @@ class CustomerService
             $updateCustomer = Customer::find( $request->id );
             $updateCustomer->name = $request->name;
             $updateCustomer->phone_number = $request->phone_number;
-            $updateCustomer->address = json_encode( [
-                'a1' => $request->address,
-                'c' => $request->city,
-                'p' => $request->postcode,
-                's' => $request->state,
-            ] );
+            $updateCustomer->address = $request->address_1;
+            $updateCustomer->address_2 = $request->address_2;
+            $updateCustomer->city = $request->city;
+            $updateCustomer->state = $request->state;
+            $updateCustomer->postcode = $request->postcode;
+            $updateCustomer->remarks = $request->remarks;
+            // $updateCustomer->address = json_encode( [
+            //     'a1' => $request->address,
+            //     'c' => $request->city,
+            //     'p' => $request->postcode,
+            //     's' => $request->state,
+            // ] );
             $updateCustomer->save();
 
             DB::commit();
