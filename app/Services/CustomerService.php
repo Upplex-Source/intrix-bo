@@ -16,7 +16,7 @@ use Helper;
 
 class CustomerService
 {
-    public function allCustomers( $request ) {
+    public static function allCustomers( $request ) {
 
         $customer = Customer::select( 'customers.*' );
 
@@ -94,6 +94,12 @@ class CustomerService
         if ( !empty( $request->status ) ) {
             $model->where( 'status', $request->status );
             $filter = true;
+        }
+
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( function( $query ) use ( $request ){
+                $query->where( 'name', 'LIKE', '%' . $request->custom_search . '%' );
+            } );
         }
 
         return [

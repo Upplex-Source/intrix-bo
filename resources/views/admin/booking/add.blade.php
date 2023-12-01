@@ -29,7 +29,8 @@ $bookingIncrement = $data['booking_increment'];
                 <div class="mb-3 row">
                     <label for="{{ $booking_create }}_customer_name" class="col-sm-4 col-form-label">{{ __( 'booking.customer_name' ) }}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $booking_create }}_customer_name" placeholder="{{ __( 'template.optional' ) }}">
+                        <select class="form-select" id="{{ $booking_create }}_customer_name" data-placeholder="{{ __( 'template.optional' ) }} - {{ __( 'datatables.select_x', [ 'title' => __( 'template.optional' ) ] ) }}">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -759,6 +760,48 @@ $bookingIncrement = $data['booking_increment'];
                     }
                 }
             } );
+        } );
+
+        $( bc + '_customer_name' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.customer.allCustomers' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.customers.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.name,
+                            text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
         } );
 
         $( bc + '_vehicle' ).select2( {
