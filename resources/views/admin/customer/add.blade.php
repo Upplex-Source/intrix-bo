@@ -32,9 +32,16 @@ $customer_create = 'customer_create';
                 <hr>
                 <h5 class="card-title mb-4">{{ __( 'customer.address' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $customer_create }}_address" class="col-sm-5 col-form-label">{{ __( 'customer.address' ) }}</label>
+                    <label for="{{ $customer_create }}_address_1" class="col-sm-5 col-form-label">{{ __( 'customer.address_1' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $customer_create }}_address" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                        <textarea class="form-control" id="{{ $customer_create }}_address_1" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $customer_create }}_address_2" class="col-sm-5 col-form-label">{{ __( 'customer.address_2' ) }}</label>
+                    <div class="col-sm-7">
+                        <textarea class="form-control" id="{{ $customer_create }}_address_2" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -77,6 +84,13 @@ $customer_create = 'customer_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $customer_create }}_remarks" class="col-sm-5 col-form-label">{{ __( 'customer.remarks' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $customer_create }}_remarks" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 <div class="text-end">
                     <button id="{{ $customer_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -107,10 +121,12 @@ $customer_create = 'customer_create';
             let formData = new FormData();
             formData.append( 'name', $( cc + '_name' ).val() );
             formData.append( 'phone_number', $( cc + '_phone_number' ).val() );
-            formData.append( 'address', $( cc + '_address' ).val() );
+            formData.append( 'address_1', $( cc + '_address_1' ).val() );
+            formData.append( 'address_2', $( cc + '_address_2' ).val() );
             formData.append( 'postcode', $( cc + '_postcode' ).val() );
             formData.append( 'state', $( cc + '_state' ).val() );
             formData.append( 'city', $( cc + '_city' ).val() );
+            formData.append( 'remarks', $( cc + '_remarks' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {

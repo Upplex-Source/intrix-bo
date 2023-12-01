@@ -22,11 +22,26 @@ class Customer extends Model
         'name',
         'phone_number',
         'address',
+        'address_2',
+        'city',
+        'state',
+        'postcode',
+        'remarks',
         'status',
     ];
 
     public function getDisplayAddressAttribute() {
-        return json_decode( $this->attributes['address'] );
+
+        $displayAddress = [
+            'a1' => $this->attributes['address'],
+            'a2' => $this->attributes['address_2'],
+            'c' => $this->attributes['city'],
+            'p' => $this->attributes['postcode'],
+            's' => $this->attributes['state'],
+        ];
+
+        return $displayAddress;
+        // return json_decode( $this->attributes['address'] );
     }
 
     public function getEncryptedIdAttribute() {
@@ -41,6 +56,11 @@ class Customer extends Model
         'name',
         'phone_number',
         'address',
+        'address_2',
+        'city',
+        'state',
+        'postcode',
+        'remarks',
         'status',
     ];
 

@@ -16,7 +16,11 @@ return [
     'name' => 'Name',
     'phone_number' => 'Phone Number',
     'address' => 'Address',
+    'address_1' => 'Address 1',
+    'address_2' => 'Address 2',
     'postcode' => 'Postcode',
     'state' => 'State',
     'city' => 'City',
+    'remarks' => 'Remarks',
+    
 ];
