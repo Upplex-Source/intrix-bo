@@ -129,7 +129,7 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "address" ) }}' ),
                 orderable: false,
                 render: function( data, type, row, meta ) {
-                    return data.a1 + '<br>' + data.c + '<br>' + data.p + '<br>' + data.s;
+                    return (data.a1 ?? '-') + '<br>' +( data.c ?? '-' )+ '<br>' +( data.p ?? '-' )+ '<br>' +( data.s ?? '-' );
                 },
             },
             {

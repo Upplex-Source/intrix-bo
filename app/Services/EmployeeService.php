@@ -193,7 +193,7 @@ class EmployeeService
             'license_number' => [ 'nullable' ],
             'license_expiry_date' => [ 'nullable' ],
             'designation' => [ 'required', 'in:1,2' ],
-            'driver_amount' => [ 'numeric' ],
+            'driver_amount' => [ 'nullable', 'numeric' ],
             'employment_date' => [ 'nullable', 'date_format:Y-m-d' ],
             'date_of_birth' => [ 'nullable', 'date_format:Y-m-d' ],
         ] );
@@ -220,6 +220,9 @@ class EmployeeService
 
         DB::beginTransaction();
 
+        $employmentDate = $request->employment_date != null ? Carbon::createFromFormat( 'Y-m-d', $request->employment_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay() : null;
+        $dateOfBirth = $request->date_of_birth != null ? Carbon::createFromFormat( 'Y-m-d', $request->date_of_birth, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay() : null;
+
         try {
 
             $createEmployee = Employee::create( [
@@ -232,10 +235,10 @@ class EmployeeService
                 'designation' => $request->designation,
                 'remarks' => $request->remarks,
                 'driver_amount' => empty( $request->driver_amount ) ? 0 : $request->driver_amount,
-                'employment_date' => $request->employment_date,
-                'date_of_birth' => $request->date_of_birth,
-                'employment_date' => Carbon::createFromFormat( 'Y-m-d', $request->employment_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay(),
-                'date_of_birth' => Carbon::createFromFormat( 'Y-m-d', $request->date_of_birth, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay(),
+                'employment_date' => $employmentDate,
+                'date_of_birth' => $dateOfBirth,
+                'employment_date' => $employmentDate,
+                'date_of_birth' => $dateOfBirth,
                 'age' => $request->age,
             ] );
 

@@ -317,6 +317,7 @@ $tyre_record_edit = 'tyre_record_edit';
         } );
 
         $( tre + '_tyre' ).select2( {
+            dropdownParent: $('#add_item_modal .modal-content'),
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
