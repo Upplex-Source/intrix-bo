@@ -23,9 +23,23 @@ $customer_create = 'customer_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $customer_create }}_email" class="col-sm-5 col-form-label">{{ __( 'customer.email' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="email" class="form-control" id="{{ $customer_create }}_email" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $customer_create }}_phone_number" class="col-sm-5 col-form-label">{{ __( 'customer.phone_number' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $customer_create }}_phone_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $customer_create }}_phone_number_2" class="col-sm-5 col-form-label">{{ __( 'customer.phone_number_2' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $customer_create }}_phone_number_2" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -121,6 +135,8 @@ $customer_create = 'customer_create';
             let formData = new FormData();
             formData.append( 'name', $( cc + '_name' ).val() );
             formData.append( 'phone_number', $( cc + '_phone_number' ).val() );
+            formData.append( 'phone_number_2', $( cc + '_phone_number_2' ).val() );
+            formData.append( 'email', $( cc + '_email' ).val() );
             formData.append( 'address_1', $( cc + '_address_1' ).val() );
             formData.append( 'address_2', $( cc + '_address_2' ).val() );
             formData.append( 'postcode', $( cc + '_postcode' ).val() );

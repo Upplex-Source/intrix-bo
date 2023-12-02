@@ -52,31 +52,31 @@ class Vehicle extends Model
 
     public function getLocalPermitStartDateAttribute() {
         return $this->attributes['permit_start_date'] ?
-        Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['permit_start_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' )
+        Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['permit_start_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' )
         : null;
     }
 
     public function getLocalRoadTaxExpiryDateAttribute() {
         return $this->attributes['road_tax_expiry_date'] ?
-        Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['road_tax_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' )
+        Carbon::createFromFormat( 'Y-m-d', $this->attributes['road_tax_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' )
         : null;
     }
 
     public function getLocalInsuranceExpiryDateAttribute() {
         return $this->attributes['insurance_expiry_date'] ?
-        Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['insurance_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' )
+        Carbon::createFromFormat( 'Y-m-d', $this->attributes['insurance_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' )
         : null;
     }
 
     public function getLocalPermitExpiryDateAttribute() {
         return $this->attributes['permit_expiry_date'] ?
-        Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['permit_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' )
+        Carbon::createFromFormat( 'Y-m-d', $this->attributes['permit_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' )
         : null;
     }
 
     public function getLocalInspectionExpiryDateAttribute() {
         return $this->attributes['inspection_expiry_date'] ?
-        Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['inspection_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' )
+        Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['inspection_expiry_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' )
         : null;
     }
 
@@ -85,7 +85,7 @@ class Vehicle extends Model
     }
 
     protected function serializeDate( DateTimeInterface $date ) {
-        return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+        return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
     }
 
     protected static $logAttributes = [
