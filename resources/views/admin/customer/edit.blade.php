@@ -23,9 +23,23 @@ $customer_edit = 'customer_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $customer_edit }}_email" class="col-sm-5 col-form-label">{{ __( 'customer.email' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="email" class="form-control" id="{{ $customer_edit }}_email" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $customer_edit }}_phone_number" class="col-sm-5 col-form-label">{{ __( 'customer.phone_number' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $customer_edit }}_phone_number" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $customer_edit }}_phone_number_2" class="col-sm-5 col-form-label">{{ __( 'customer.phone_number_2' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $customer_edit }}_phone_number_2" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -122,6 +136,8 @@ $customer_edit = 'customer_edit';
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'name', $( ce + '_name' ).val() );
             formData.append( 'phone_number', $( ce + '_phone_number' ).val() );
+            formData.append( 'phone_number_2', $( ce + '_phone_number_2' ).val() );
+            formData.append( 'email', $( ce + '_email' ).val() );
             formData.append( 'address_1', $( ce + '_address_1' ).val() );
             formData.append( 'address_2', $( ce + '_address_2' ).val() );
             formData.append( 'postcode', $( ce + '_postcode' ).val() );
@@ -180,6 +196,8 @@ $customer_edit = 'customer_edit';
 
                     $( ce + '_name' ).val( response.name );
                     $( ce + '_phone_number' ).val( response.phone_number );
+                    $( ce + '_phone_number_2' ).val( response.phone_number_2 );
+                    $( ce + '_email' ).val( response.email );
                     $( ce + '_address_1' ).val( response.display_address.a1 );
                     $( ce + '_address_2' ).val( response.display_address.a2 );
                     $( ce + '_postcode' ).val( response.display_address.p );
@@ -187,7 +205,7 @@ $customer_edit = 'customer_edit';
                     $( ce + '_city' ).val( response.display_address.c );
                     $( ce + '_remarks' ).val( response.remarks );
 
-                    $( 'body' ).loading( 'stop' );
+                    $( 'body'   ).loading( 'stop' );
                 },
             } );
         }

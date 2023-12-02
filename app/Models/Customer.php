@@ -20,7 +20,10 @@ class Customer extends Model
 
     protected $fillable = [
         'name',
+        'pic_name',
         'phone_number',
+        'phone_number_2',
+        'email',
         'address',
         'address_2',
         'city',
@@ -54,7 +57,10 @@ class Customer extends Model
 
     protected static $logAttributes = [
         'name',
+        'pic_name',
         'phone_number',
+        'phone_number_2',
+        'email',
         'address',
         'address_2',
         'city',

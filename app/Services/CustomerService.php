@@ -133,6 +133,8 @@ class CustomerService
         $validator = Validator::make( $request->all(), [
             'name' => [ 'required' ],
             'phone_number' => [ 'nullable' ],
+            'phone_number_2' => [ 'nullable' ],
+            'email' => [ 'nullable', 'email' ],
             'address_1' => [ 'nullable' ],
             'address_2' => [ 'nullable' ],
             'remarks' => [ 'nullable' ],
@@ -142,6 +144,8 @@ class CustomerService
         $attributeName = [
             'name' => __( 'customer.name' ),
             'phone_number' => __( 'customer.phone_number' ),
+            'phone_number_2' => __( 'customer.phone_number_2' ),
+            'email' => __( 'customer.email' ),
             'address_1' => __( 'customer.address_1' ),
             'address_2' => __( 'customer.address_2' ),
             'remarks' => __( 'customer.remarks' ),
@@ -161,6 +165,8 @@ class CustomerService
             $createCustomer = Customer::create( [
                 'name' => $request->name,
                 'phone_number' => $request->phone_number,
+                'phone_number_2' => $request->phone_number_2,
+                'email' => $request->email,
                 'address' => $request->address_1,
                 'address_2' => $request->address_2,
                 'city' => $request->city,
@@ -201,6 +207,8 @@ class CustomerService
         $validator = Validator::make( $request->all(), [
             'name' => [ 'required' ],
             'phone_number' => [ 'nullable' ],
+            'phone_number_2' => [ 'nullable' ],
+            'email' => [ 'nullable', 'email' ],
             'address_1' => [ 'nullable' ],
             'address_2' => [ 'nullable' ],
             'remarks' => [ 'nullable' ],
@@ -210,6 +218,8 @@ class CustomerService
         $attributeName = [
             'name' => __( 'customer.name' ),
             'phone_number' => __( 'customer.phone_number' ),
+            'phone_number_2' => __( 'customer.phone_number_2' ),
+            'email' => __( 'customer.email' ),
             'address_1' => __( 'customer.address_1' ),
             'address_2' => __( 'customer.address_2' ),
             'remarks' => __( 'customer.remarks' ),
@@ -229,6 +239,8 @@ class CustomerService
             $updateCustomer = Customer::find( $request->id );
             $updateCustomer->name = $request->name;
             $updateCustomer->phone_number = $request->phone_number;
+            $updateCustomer->phone_number_2 = $request->phone_number_2;
+            $updateCustomer->email = $request->email;
             $updateCustomer->address = $request->address_1;
             $updateCustomer->address_2 = $request->address_2;
             $updateCustomer->city = $request->city;
