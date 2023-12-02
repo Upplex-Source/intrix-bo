@@ -85,7 +85,7 @@ class Vehicle extends Model
     }
 
     protected function serializeDate( DateTimeInterface $date ) {
-        return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' );
+        return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 
     protected static $logAttributes = [
