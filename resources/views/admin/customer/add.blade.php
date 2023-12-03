@@ -23,6 +23,13 @@ $customer_create = 'customer_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $customer_create }}_pic_name" class="col-sm-5 col-form-label">{{ __( 'customer.pic_name' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $customer_create }}_pic_name" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $customer_create }}_email" class="col-sm-5 col-form-label">{{ __( 'customer.email' ) }}</label>
                     <div class="col-sm-7">
                         <input type="email" class="form-control" id="{{ $customer_create }}_email" placeholder="{{ __( 'template.optional' ) }}">
@@ -134,6 +141,7 @@ $customer_create = 'customer_create';
 
             let formData = new FormData();
             formData.append( 'name', $( cc + '_name' ).val() );
+            formData.append( 'pic_name', $( cc + '_pic_name' ).val() );
             formData.append( 'phone_number', $( cc + '_phone_number' ).val() );
             formData.append( 'phone_number_2', $( cc + '_phone_number_2' ).val() );
             formData.append( 'email', $( cc + '_email' ).val() );
