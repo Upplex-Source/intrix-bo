@@ -17,7 +17,7 @@ return [
     'phone_number' => 'Phone Number',
     'phone_number_2' => 'Phone Number 2',
     'email' => 'Email',
-    'pic_name' => 'Picture Name',
+    'pic_name' => 'Person In Charge',
     'address' => 'Address',
     'address_1' => 'Address 1',
     'address_2' => 'Address 2',

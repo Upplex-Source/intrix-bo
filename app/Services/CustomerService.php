@@ -132,6 +132,7 @@ class CustomerService
 
         $validator = Validator::make( $request->all(), [
             'name' => [ 'required' ],
+            'pic_name' => [ 'nullable' ],
             'phone_number' => [ 'nullable' ],
             'phone_number_2' => [ 'nullable' ],
             'email' => [ 'nullable', 'email' ],
@@ -143,6 +144,7 @@ class CustomerService
 
         $attributeName = [
             'name' => __( 'customer.name' ),
+            'pic_name' => __( 'customer.pic_name' ),
             'phone_number' => __( 'customer.phone_number' ),
             'phone_number_2' => __( 'customer.phone_number_2' ),
             'email' => __( 'customer.email' ),
@@ -164,6 +166,7 @@ class CustomerService
 
             $createCustomer = Customer::create( [
                 'name' => $request->name,
+                'pic_name' => $request->pic_name,
                 'phone_number' => $request->phone_number,
                 'phone_number_2' => $request->phone_number_2,
                 'email' => $request->email,
@@ -206,6 +209,7 @@ class CustomerService
 
         $validator = Validator::make( $request->all(), [
             'name' => [ 'required' ],
+            'pic_name' => [ 'nullable' ],
             'phone_number' => [ 'nullable' ],
             'phone_number_2' => [ 'nullable' ],
             'email' => [ 'nullable', 'email' ],
@@ -217,6 +221,7 @@ class CustomerService
 
         $attributeName = [
             'name' => __( 'customer.name' ),
+            'pic_name' => __( 'customer.pic_name' ),
             'phone_number' => __( 'customer.phone_number' ),
             'phone_number_2' => __( 'customer.phone_number_2' ),
             'email' => __( 'customer.email' ),
@@ -238,6 +243,7 @@ class CustomerService
 
             $updateCustomer = Customer::find( $request->id );
             $updateCustomer->name = $request->name;
+            $updateCustomer->pic_name = $request->pic_name;
             $updateCustomer->phone_number = $request->phone_number;
             $updateCustomer->phone_number_2 = $request->phone_number_2;
             $updateCustomer->email = $request->email;

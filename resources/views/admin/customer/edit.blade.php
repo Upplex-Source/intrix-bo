@@ -23,6 +23,13 @@ $customer_edit = 'customer_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $customer_edit }}_pic_name" class="col-sm-5 col-form-label">{{ __( 'customer.pic_name' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $customer_edit }}_pic_name" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $customer_edit }}_email" class="col-sm-5 col-form-label">{{ __( 'customer.email' ) }}</label>
                     <div class="col-sm-7">
                         <input type="email" class="form-control" id="{{ $customer_edit }}_email" placeholder="{{ __( 'template.optional' ) }}">
@@ -135,6 +142,7 @@ $customer_edit = 'customer_edit';
             let formData = new FormData();
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'name', $( ce + '_name' ).val() );
+            formData.append( 'pic_name', $( ce + '_pic_name' ).val() );
             formData.append( 'phone_number', $( ce + '_phone_number' ).val() );
             formData.append( 'phone_number_2', $( ce + '_phone_number_2' ).val() );
             formData.append( 'email', $( ce + '_email' ).val() );
@@ -195,6 +203,7 @@ $customer_edit = 'customer_edit';
                 success: function( response ) {
 
                     $( ce + '_name' ).val( response.name );
+                    $( ce + '_pic_name' ).val( response.pic_name );
                     $( ce + '_phone_number' ).val( response.phone_number );
                     $( ce + '_phone_number_2' ).val( response.phone_number_2 );
                     $( ce + '_email' ).val( response.email );
