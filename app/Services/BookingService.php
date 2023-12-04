@@ -147,6 +147,11 @@ class BookingService
             $filter = true;
         }
 
+        if ( !empty( $request->company_id ) ) {
+            $model->where( 'bookings.company_id', '=', $request->company_id );
+            $filter = true;
+        }
+
         if ( !empty( $request->reference ) ) {
             $model->where( 'bookings.reference', 'LIKE', '%' . $request->reference . '%' );
             $filter = true;
@@ -299,7 +304,6 @@ class BookingService
         DB::beginTransaction();
 
         try {
-
             $createBooking = Booking::create( [
                 'reference' => $request->reference,
                 'customer_name' => $request->customer_name,
@@ -331,13 +335,13 @@ class BookingService
                 'customer_quantity' => $request->customer_quantity,
                 'customer_unit_of_measurement' => $request->customer_uom,
                 'customer_rate' => $request->customer_rate,
-                'customer_total_amount' => $request->customer_total_amount,
+                'customer_total_amount' => str_replace(',', '', $request->customer_total_amount),
                 'customer_remarks' => $request->customer_remarks,
                 'driver_id' => $request->driver,
                 'driver_quantity' => $request->driver_quantity,
                 'driver_unit_of_measurement' => $request->driver_uom,
                 'driver_rate' => $request->driver_rate,
-                'driver_total_amount' => $request->driver_total_amount,
+                'driver_total_amount' => str_replace(',', '', $request->driver_total_amount),
                 'driver_percentage' => $request->driver_percentage,
                 'driver_final_amount' => $request->driver_final_amount,
             ] );

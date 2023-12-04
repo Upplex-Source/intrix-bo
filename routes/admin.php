@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\{
     FileController,
     FuelExpenseController,
     InspectionController,
+    InvoiceController,
     ModuleController,
     MaintenanceRecordController,
     PartController,
@@ -333,6 +334,23 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-booking', [ BookingController::class, 'updateBooking' ] )->name( 'admin.booking.updateBooking' );
                 Route::post( 'update-booking-status', [ BookingController::class, 'updateBookingStatus' ] )->name( 'admin.booking.updateBookingStatus' );
             } );
+
+            Route::prefix( 'invoices' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view invoices' ] ], function() {
+                    Route::get( '/', [ InvoiceController::class, 'index' ] )->name( 'admin.module_parent.invoice.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit invoices' ] ], function() {
+                    Route::get( 'edit', [ InvoiceController::class, 'edit' ] )->name( 'admin.invoice.edit' );
+                } );
+                
+                Route::post( 'all-invoices', [ InvoiceController::class, 'allInvoices' ] )->name( 'admin.invoice.allInvoices' );
+                Route::post( 'one-invoice', [ InvoiceController::class, 'oneInvoice' ] )->name( 'admin.invoice.oneInvoice' );
+                Route::post( 'create-invoice', [ InvoiceController::class, 'createInvoice' ] )->name( 'admin.invoice.createInvoice' );
+                Route::post( 'delete-invoice', [ InvoiceController::class, 'deleteInvoice' ] )->name( 'admin.invoice.deleteInvoice' );
+                Route::post( 'update-invoice', [ InvoiceController::class, 'updateInvoice' ] )->name( 'admin.invoice.updateInvoice' );
+                Route::get( 'download-invoice', [ InvoiceController::class, 'downloadInvoice' ] )->name( 'admin.invoice.downloadInvoice' );
+                Route::get( 'preview-invoice', [ InvoiceController::class, 'previewInvoice' ] )->name( 'admin.invoice.previewInvoice' );
+            });
 
             Route::prefix( 'expenses' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view expenses' ] ], function() {

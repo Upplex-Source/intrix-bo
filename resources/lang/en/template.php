@@ -46,6 +46,8 @@ return [
     'part_records' => 'Part Records',
     'item_list' => 'Item List',
     'calendar' => 'Calendar',
+    'invoices' => 'Invoices',
+    'invoice_list' => 'Invoice List',
 
     'loading' => 'Loading...',
     'add' => 'Add',
@@ -58,13 +60,19 @@ return [
     'import_x' => 'Import :title',
     'save_changes' => 'Save Changes',
     'cancel' => 'Cancel',
+    'delete' => 'Delete',
+    'download' => 'Download',
     'print' => 'Print',
     'confirm' => 'Confirm',
     'submit' => 'Submit',
     'export' => 'Export',
+    'generate_invoice' => 'Generate Invoice',
+    'preview' => 'Preview',
+    'generate_and_save' => 'Generate & Save',
 
     'new_x_created' => 'New :title Created.',
     'x_updated' => ':title Updated.',
+    'x_deleted' => ':title Deleted.',
 
     'leave_blank' => 'Leave blank to leave unchanged',
     'general_info' => 'General Info',

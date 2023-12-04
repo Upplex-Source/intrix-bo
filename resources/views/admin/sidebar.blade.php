@@ -210,6 +210,9 @@
                                         <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\BookingController' && in_array( $action, [ 'index', 'add', 'edit' ] ) ? 'active current-page' : '' }}">
                                             <a href="{{ route( 'admin.module_parent.booking.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.booking_list' ) }}</span></a>
                                         </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\InvoiceController' && in_array( $action, [ 'index', 'edit' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.invoice.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.invoice_list' ) }}</span></a>
+                                        </li>
                                     </ul>
                                 </li>
                                 @if ( 1 == 2 )

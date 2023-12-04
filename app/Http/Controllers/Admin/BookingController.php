@@ -51,6 +51,7 @@ class BookingController extends Controller
         $this->data['data']['status'] = [
             '1' => __( 'datatables.pending' ),
         ];
+        $this->data['data']['company'] = CompanyService::get();
 
         return view( 'admin.main' )->with( $this->data );
     }
