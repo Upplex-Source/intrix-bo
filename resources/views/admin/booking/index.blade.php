@@ -437,12 +437,16 @@ var statusMapper = @json( $data['status'] ),
 
                             let processedResult = [];
 
-                            data.bookings.map( function( v, i ) {
-                                processedResult.push( {
-                                    id: v.invoice_number,
-                                    text: v.invoice_number,
-                                } );
-                            } );
+                            data.bookings.forEach(function(v, i) {
+                                var invoiceNumber = v.invoice_number;
+
+                                if (!processedResult.some(item => item.id === invoiceNumber)) {
+                                    processedResult.push({
+                                        id: invoiceNumber,
+                                        text: invoiceNumber,
+                                    });
+                                }
+                            });
 
                             return {
                                 results: processedResult,
