@@ -72,8 +72,8 @@ class InvoiceController extends Controller
             $item->dropoff_address = DB::table('booking_addresses')->where(['booking_id' => $item->id, 'type' => 2])->first();
             $grouped[$licensePlate]['items'][] = $item;
             $grouped[$licensePlate]['total_amount'] += floatval($item->customer_total_amount);
-            $type = 'preview';
         }
+        $type = 'preview';
         return view('admin.invoice.preview', compact('grouped', 'invoice_detail', 'company', 'customer', 'type'));
     }
 
