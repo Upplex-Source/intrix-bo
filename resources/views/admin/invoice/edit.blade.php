@@ -179,7 +179,7 @@
                 data: function (params) {
                     return {
                         delivery_order_number: params.term, // search term
-                        company_id: $('#company_id').val(),
+                        // company_id: $('#company_id').val(),
                         status: 10,
                         start: params.page ? params.page : 0,
                         length: 10,
