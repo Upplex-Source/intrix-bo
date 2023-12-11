@@ -41,11 +41,11 @@ class Employee extends Model
     }
 
     public function getLocalEmploymentDateAttribute() {
-        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['employment_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+        return $this->attributes['employment_date'] ? Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['employment_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' ) : '-';
     }
 
     public function getLocalDateOfBirthAttribute() {
-        return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['date_of_birth'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+        return $this->attributes['date_of_birth'] ? Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['date_of_birth'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' ) : '-';
     }
 
     public function getEncryptedIdAttribute() {
