@@ -14,6 +14,7 @@ use App\Models\{
     Company,
     Customer,
     Invoice,
+    Booking,
 };
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -48,18 +49,30 @@ class InvoiceService
     }
 
     public static function createInvoice( $request ) {
-
+        
         self::validateInputs($request);
 
         DB::beginTransaction();
         try {
-            Invoice::create([
+            $invoiceCreate = Invoice::create([
                 'invoice_date' => $request->invoice_date,
                 'invoice_number' => $request->invoice_number,
                 'company_id' => $request->company_id,
                 'customer_id' => $request->customer_id,
                 'do_number' => $request->delivery_order_number,
             ]);
+
+            if( $invoiceCreate ){
+
+                $deliveryOrderNumbers = explode( ',', $request->delivery_order_number );
+
+                Booking::whereIn( 'delivery_order_number', $deliveryOrderNumbers )
+                    ->update([
+                        'invoice_date' => $invoiceCreate->invoice_date,
+                        'invoice_number' => $invoiceCreate->invoice_number
+                    ]);
+            }
+
             DB::commit();
 
         } catch ( \Throwable $th ) {
@@ -88,12 +101,32 @@ class InvoiceService
 
         try {
             $updateInvoice = Invoice::find( $request->id );
+
+            $oldDo = $updateInvoice->do_number;
+    
             $updateInvoice->company_id = $request->company_id;
             $updateInvoice->customer_id = $request->customer_id;
             $updateInvoice->invoice_number = $request->invoice_number;
             $updateInvoice->invoice_date = $request->invoice_date ? Carbon::createFromFormat( 'Y-m-d', $request->invoice_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateInvoice->do_number = $request->delivery_order_number;
             $updateInvoice->save();
+
+            if ( $updateInvoice ) {
+                $deliveryOrderNumbers = explode( ',', $updateInvoice->do_number );
+                $oldDeliveryOrderNumbers = explode( ',', $oldDo );
+            
+                Booking::whereIn( 'delivery_order_number', $oldDeliveryOrderNumbers )
+                    ->update([
+                        'invoice_date' => null,
+                        'invoice_number' => null
+                    ]);
+            
+                Booking::whereIn( 'delivery_order_number', $deliveryOrderNumbers )
+                    ->update([
+                        'invoice_date' => $updateInvoice->invoice_date,
+                        'invoice_number' => $updateInvoice->invoice_number
+                    ]);
+            }
 
             DB::commit();
 
@@ -182,8 +215,8 @@ class InvoiceService
                     'bookings.customer_unit_of_measurement',
                 ])
                 ->leftJoin('vehicles', 'vehicles.id', 'vehicle_id')
-                ->whereDate('invoice_date', $request->invoice_date)
                 ->whereIn('delivery_order_number', $delivery_order_numbers)
+                ->whereDate('invoice_date', $request->invoice_date)
                 ->where('invoice_number', $request->invoice_number)
                 ->groupBy('delivery_order_date', 'license_plate', 'invoice_date')
                 ->orderBy('delivery_order_date', 'asc')

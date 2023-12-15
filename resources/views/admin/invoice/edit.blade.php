@@ -34,9 +34,7 @@
                     <div class="form-group">
                         <label class="form-label" for="invoice_number">{{ __( 'booking.invoice_number' ) }}</label>
                         <div class="form-control-wrap">
-                            <select class="form-control" id="invoice_number" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'booking.invoice_number' ) ] ) }}">
-                                <option value>{{ __( 'datatables.select_x', [ 'title' => __( 'booking.invoice_number' ) ] ) }}</option>
-                            </select>
+                            <input type="text" class="form-control" id="invoice_number">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
@@ -207,52 +205,52 @@
                 }
             },
         } );
-        let invoiceNumberSelect2 = $( '#invoice_number' ).select2( {
-            language: '{{ App::getLocale() }}',
-            theme: 'bootstrap-5',
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-            ajax: {
-                method: 'POST',
-                url: '{{ route( 'admin.booking.allBookings' ) }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        invoice_number: params.term, // search term
-                        company_id: $('#company_id').val(),
-                        status: 10,
-                        start: params.page ? params.page : 0,
-                        length: 10,
-                        _token: '{{ csrf_token() }}',
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
+        // let invoiceNumberSelect2 = $( '#invoice_number' ).select2( {
+        //     language: '{{ App::getLocale() }}',
+        //     theme: 'bootstrap-5',
+        //     width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+        //     placeholder: $( this ).data( 'placeholder' ),
+        //     closeOnSelect: false,
+        //     ajax: {
+        //         method: 'POST',
+        //         url: '{{ route( 'admin.booking.allBookings' ) }}',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function (params) {
+        //             return {
+        //                 invoice_number: params.term, // search term
+        //                 company_id: $('#company_id').val(),
+        //                 status: 10,
+        //                 start: params.page ? params.page : 0,
+        //                 length: 10,
+        //                 _token: '{{ csrf_token() }}',
+        //             };
+        //         },
+        //         processResults: function (data, params) {
+        //             params.page = params.page || 1;
 
-                    let processedResult = [];
+        //             let processedResult = [];
 
-                    data.bookings.forEach(function(v, i) {
-                        var invoiceNumber = v.invoice_number;
+        //             data.bookings.forEach(function(v, i) {
+        //                 var invoiceNumber = v.invoice_number;
 
-                        if (!processedResult.some(item => item.id === invoiceNumber)) {
-                            processedResult.push({
-                                id: invoiceNumber,
-                                text: invoiceNumber,
-                            });
-                        }
-                    });
+        //                 if (!processedResult.some(item => item.id === invoiceNumber)) {
+        //                     processedResult.push({
+        //                         id: invoiceNumber,
+        //                         text: invoiceNumber,
+        //                     });
+        //                 }
+        //             });
 
-                    return {
-                        results: processedResult,
-                        pagination: {
-                            more: ( params.page * 10 ) < data.recordsFiltered
-                        }
-                    };
-                }
-            },
-        } );        
+        //             return {
+        //                 results: processedResult,
+        //                 pagination: {
+        //                     more: ( params.page * 10 ) < data.recordsFiltered
+        //                 }
+        //             };
+        //         }
+        //     },
+        // } );        
 
         getInvoice();
 
@@ -286,11 +284,13 @@
                         })
                     }
 
-                    if ( response.invoice_number ) {
-                        let option1 = new Option( response.invoice_number, response.invoice_number, true, true );
-                        invoiceNumberSelect2.append( option1 );
-                        invoiceNumberSelect2.trigger( 'change' );
-                    }
+                    // if ( response.invoice_number ) {
+                    //     let option1 = new Option( response.invoice_number, response.invoice_number, true, true );
+                    //     invoiceNumberSelect2.append( option1 );
+                    //     invoiceNumberSelect2.trigger( 'change' );
+                    // }
+
+                    $( '#invoice_number' ).val( response.invoice_number );
 
                     $( '#customer_id' ).val( response.customer_id );
                     $( '#company_id' ).val( response.company_id );
