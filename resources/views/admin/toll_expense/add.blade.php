@@ -253,7 +253,7 @@ $toll_expense_create = 'toll_expense_create';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: '(' + v.license_plate + ')',
+                            text: v.license_plate,
                         } );
                     } );
 

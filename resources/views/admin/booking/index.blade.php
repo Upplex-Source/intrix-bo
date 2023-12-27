@@ -100,33 +100,33 @@ $columns = [
     ],
     [
         'type' => 'date',
-        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
-        'id' => 'created_date',
-        'title' => __( 'datatables.created_date' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.delivery_order_date' ) ] ),
+        'id' => 'delivery_order_date',
+        'title' => __( 'booking.delivery_order_date' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.reference' ) ] ),
-        'id' => 'reference',
-        'title' => __( 'booking.reference' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.lorry_no' ) ] ),
+        'id' => 'vehicle',
+        'title' => __( 'booking.lorry_no' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.invoice_number' ) ] ),
-        'id' => 'invoice_number',
-        'title' => __( 'booking.invoice_number' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.customer' ) ] ),
+        'id' => 'customer',
+        'title' => __( 'booking.customer' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.delivery_order_number' ) ] ),
-        'id' => 'delivery_order_number',
-        'title' => __( 'booking.delivery_order_number' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.pickup_city' ) ] ),
+        'id' => 'pickup_city',
+        'title' => __( 'booking.pickup_city' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.license_plate' ) ] ),
-        'id' => 'license_plate',
-        'title' => __( 'booking.license_plate' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'booking.dropoff_city' ) ] ),
+        'id' => 'dropoff_city',
+        'title' => __( 'booking.dropoff_city' ),
     ],
     [
         'type' => 'input',
@@ -180,11 +180,11 @@ var statusMapper = @json( $data['status'] ),
         order: [[ 2, 'desc' ]],
         columns: [
             { data: null },
-            { data: 'created_at' },
-            { data: 'reference' },
-            { data: 'invoice_number' },
-            { data: 'delivery_order_number' },
+            { data: 'delivery_order_date' },
             { data: 'vehicle.license_plate' },
+            { data: 'customer_name' },
+            { data: 'pickup_addresses' },
+            { data: 'dropoff_addresses' },
             { data: 'driver.name' },
             { data: 'encrypted_id' },
         ],
@@ -198,28 +198,27 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "created_date" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "invoice_number" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-';
-                }
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "delivery_order_number" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-';
-                }
-            },
-            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "vehicle" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return data ? data : '-';
+                }
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "customer" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
+                }
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "pickup_city" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data[0]['city'].length > 0 ? data[0]['city'] : '-' : '-';
+                }
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "dropoff_city" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data[0]['city'].length > 0 ? data[0]['city'] : '-' : '-';
                 }
             },
             {
@@ -273,7 +272,7 @@ var statusMapper = @json( $data['status'] ),
     exportPath = '{{ route( 'admin.booking.export' ) }}';
 
     document.addEventListener( 'DOMContentLoaded', function() {
-        $( '#created_date' ).flatpickr( {
+        $( '#delivery_order_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
             onClose: function( selected, dateStr, instance ) {

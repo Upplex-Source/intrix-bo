@@ -52,6 +52,10 @@ return [
     'driver_rate' => '司机费率',
     'percentage' => '百分比',
     'final_amount' => '最终金额',
+    'lorry_no' => 'Lorry No',
+    'customer' => 'Customer',
+    'pickup_city' => 'Pickup City',
+    'dropoff_city' => 'Drop-off City',
 
         // Below are export
         'e_ref_no' => 'Ref No',

@@ -834,7 +834,7 @@ $bookingIncrement = $data['booking_increment'];
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: '(' + v.license_plate + ')',
+                            text: v.license_plate,
                         } );
                     } );
 

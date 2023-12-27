@@ -82,6 +82,10 @@ class Booking extends Model
         return json_decode( $this->attributes['dropoff_address'] );
     }
 
+    public function getDeliveryOrderDateAttribute() {
+        return $this->attributes['delivery_order_date'] ? Carbon::createFromFormat( 'Y-m-d', $this->attributes['delivery_order_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' ) : '-';
+    }
+
     public function getPickupDateAttribute() {
         return Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['pickup_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }

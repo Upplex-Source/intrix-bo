@@ -257,7 +257,7 @@ $part_record_edit = 'part_record_edit';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: '(' + v.license_plate + ')',
+                            text: v.license_plate,
                         } );
                     } );
 
@@ -302,7 +302,7 @@ $part_record_edit = 'part_record_edit';
                     }
 
                     if ( response.vehicle ) {
-                        let option2 = new Option( '(' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                        let option2 = new Option( response.vehicle.license_plate, response.vehicle.id, true, true );
                         vehicleSelect2.append( option2 );
                         vehicleSelect2.trigger( 'change' );
                     }
