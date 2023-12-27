@@ -52,6 +52,10 @@ return [
     'driver_rate' => 'Driver Rate',
     'percentage' => 'Percentage',
     'final_amount' => 'Final Amount',
+    'lorry_no' => 'Lorry No',
+    'customer' => 'Customer',
+    'pickup_city' => 'Pickup City',
+    'dropoff_city' => 'Drop-off City',
 
     // Below are export
     'e_ref_no' => 'Ref No',

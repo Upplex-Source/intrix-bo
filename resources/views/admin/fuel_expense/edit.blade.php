@@ -171,7 +171,7 @@ $fuel_expense_edit = 'fuel_expense_edit';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: '(' + v.license_plate + ')',
+                            text: v.license_plate,
                         } );
                     } );
 
@@ -202,7 +202,7 @@ $fuel_expense_edit = 'fuel_expense_edit';
                 },
                 success: function( response ) {
 
-                    let option = new Option( '(' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                    let option = new Option( response.vehicle.license_plate, response.vehicle.id, true, true );
                     vehicleSelect2.append( option );
                     vehicleSelect2.trigger( 'change' );
 

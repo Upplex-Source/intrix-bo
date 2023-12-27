@@ -453,7 +453,7 @@ $service_record_create = 'service_record_create';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: '(' + v.license_plate + ')',
+                            text: v.license_plate,
                         } );
                     } );
 

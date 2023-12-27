@@ -55,11 +55,15 @@ class BookingService
         $booking = Booking::with( [
             'driver',
             'vehicle',
+            'pickupAddresses',
+            'dropoffAddresses',
         ] )->select( 'bookings.*' );
 
         $booking->leftJoin( 'vehicles', 'vehicles.id', '=', 'bookings.vehicle_id' );
         $booking->leftJoin( 'employees', 'employees.id', '=', 'bookings.driver_id' );
-
+        $booking->leftJoin( 'booking_addresses AS pickup_addresses', 'pickup_addresses.booking_id', '=', 'bookings.id' )->where( 'pickup_addresses.type', '=', 1 );
+        $booking->leftJoin( 'booking_addresses AS dropoff_addresses', 'dropoff_addresses.booking_id', '=', 'bookings.id' )->where( 'dropoff_addresses.type', '=', 2 );
+            
         $filterObject = self::filter( $request, $booking );
         $booking = $filterObject['model'];
         $filter = $filterObject['filter'];
@@ -68,21 +72,21 @@ class BookingService
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 1:
-                    $booking->orderBy( 'bookings.created_at', $dir );
+                    $booking->orderBy( 'bookings.delivery_order_date', $dir );
                     break;
                 case 2:
-                    $booking->orderBy( 'bookings.reference', $dir );
-                    break;
-                case 3:
-                    $booking->orderBy( 'bookings.invoice_number', $dir );
-                    break;
-                case 4:
-                    $booking->orderBy( 'bookings.delivery_order_number', $dir );
-                    break;
-                case 5:
                     $booking->orderBy( 'vehicles.license_plate', $dir );
                     break;
-                case 6:
+                case 3:
+                    $booking->orderBy( 'bookings.customer_name', $dir );
+                    break;
+                case 4:
+                    $booking->orderBy( 'pickup_addresses.city', $dir );
+                    break;
+                case 5:
+                    $booking->orderBy( 'dropoff_addresses.city', $dir );
+                    break;
+                case 5:
                     $booking->orderBy( 'employees.name', $dir );
                     break;
             }
@@ -100,6 +104,7 @@ class BookingService
             if ( $bookings ) {
                 $bookings->append( [
                     'encrypted_id',
+                    'delivery_order_date'
                 ] );
             }
 
@@ -124,9 +129,9 @@ class BookingService
 
         $filter = false;
 
-        if ( !empty( $request->created_date ) ) {
-            if ( str_contains( $request->created_date, 'to' ) ) {
-                $dates = explode( ' to ', $request->created_date );
+        if ( !empty( $request->delivery_order_date ) ) {
+            if ( str_contains( $request->delivery_order_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->delivery_order_date );
 
                 $startDate = explode( '-', $dates[0] );
                 $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
@@ -134,7 +139,7 @@ class BookingService
                 $endDate = explode( '-', $dates[1] );
                 $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'bookings.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'bookings.delivery_order_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             } else {
 
                 $dates = explode( '-', $request->created_date );
@@ -142,33 +147,44 @@ class BookingService
                 $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'bookings.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'bookings.delivery_order_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             }
             $filter = true;
         }
 
-        if ( !empty( $request->company_id ) ) {
-            $model->where( 'bookings.company_id', '=', $request->company_id );
+        if ( !empty( $request->vehicle ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'vehicle', function ( $q ) use ( $request ) {
+                    $q->where( 'license_plate', 'LIKE', '%' . $request->vehicle . '%' );
+                });
+            });
+
             $filter = true;
         }
 
-        if ( !empty( $request->reference ) ) {
-            $model->where( 'bookings.reference', 'LIKE', '%' . $request->reference . '%' );
+        if ( !empty( $request->customer ) ) {
+            $model->where( 'bookings.customer_name', 'LIKE', '%' . $request->customer . '%' );
             $filter = true;
         }
 
-        if ( !empty( $request->invoice_number ) ) {
-            $model->where( 'bookings.invoice_number', 'LIKE', '%' . $request->invoice_number . '%' );
+        if ( !empty( $request->pickup_city ) ) {
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'pickupAddresses', function ( $q ) use ( $request ) {
+                    $q->where( 'type', 1 )->where( 'city', 'LIKE', '%' . $request->pickup_city . '%' );
+                });
+            });
+
             $filter = true;
         }
 
-        if ( !empty( $request->delivery_order_number ) ) {
-            $model->where( 'bookings.delivery_order_number', 'LIKE', '%' . $request->delivery_order_number . '%' );
-            $filter = true;
-        }
+        if ( !empty( $request->dropoff_city ) ) {
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'dropoffAddresses', function ( $q ) use ( $request ) {
+                    $q->where( 'type', 2 )->where( 'city', 'LIKE', '%' . $request->dropoff_city . '%' );
+                });
+            });
 
-        if ( !empty( $request->license_plate ) ) {
-            $model->where( 'vehicles.license_plate', 'LIKE', '%' . $request->license_plate . '%' );
             $filter = true;
         }
 
