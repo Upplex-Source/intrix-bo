@@ -123,6 +123,16 @@ class VehicleController extends Controller
                 'class' => 'active',
             ],
         ];
+        $this->data['data']['type'] = [
+            '1' => __( 'vehicle.truck' ),
+            '2' => __( 'vehicle.timber_jinker' ),
+            '3' => __( 'vehicle.curtain_sider' ),
+            '4' => __( 'vehicle.open_cargo' ),
+        ];
+        $this->data['data']['in_service'] = [
+            '0' => __( 'datatables.no' ),
+            '1' => __( 'datatables.yes' ),
+        ];
         $this->data['data']['status'] = [
             '10' => __( 'datatables.activated' ),
             '20' => __( 'datatables.suspended' ),
