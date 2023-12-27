@@ -37,6 +37,29 @@ $tyre_record_create = 'tyre_record_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $tyre_record_create }}_vendor" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.vendor' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $tyre_record_create }}_vendor" data-placeholder="{{ __( 'template.optional' ) }} - {{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.vendor' ) ] ) }}">
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $tyre_record_create }}_part" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.part' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $tyre_record_create }}_part" data-placeholder="{{ __( 'template.optional' ) }} - {{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.part' ) ] ) }}">
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $tyre_record_create }}_unit_price" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.unit_price' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $tyre_record_create }}_unit_price">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 <div class="mb-3">
                     <label>{{ __( 'maintenance_record.documents' ) }}</label>
                     <div class="dropzone mb-3" id="{{ $tyre_record_create }}_documents" style="min-height: 0px;">
@@ -162,6 +185,9 @@ $tyre_record_create = 'tyre_record_create';
             formData.append( 'purchase_bill_reference', $( trc + '_purchase_bill_reference' ).val() );
             formData.append( 'documents', fileID );
             formData.append( 'items', JSON.stringify( items ) );
+            formData.append( 'unit_price', $( trc + '_unit_price' ).val() );
+            formData.append( 'vendor', null === $( trc + '_vendor' ).val() ? '' : $( trc + '_vendor' ).val() );
+            formData.append( 'part', null === $( trc + '_part' ).val() ? '' : $( trc + '_part' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -284,7 +310,7 @@ $tyre_record_create = 'tyre_record_create';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -297,7 +323,7 @@ $tyre_record_create = 'tyre_record_create';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.name + ' (' + v.license_plate + ')',
+                            text: '(' + v.license_plate + ')',
                         } );
                     } );
 
@@ -327,7 +353,7 @@ $tyre_record_create = 'tyre_record_create';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -341,6 +367,90 @@ $tyre_record_create = 'tyre_record_create';
                         processedResult.push( {
                             id: v.id,
                             text: '(' + v.code + ') ' + v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
+        $( trc + '_vendor' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.vendor.allVendors' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.vendors.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
+        $( trc + '_part' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.part.allParts' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.parts.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.name,
                         } );
                     } );
 

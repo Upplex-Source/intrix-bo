@@ -107,6 +107,30 @@ class VehicleController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
+    public function vehicleExpiryList( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.vehicle_expiry_list' );
+        $this->data['content'] = 'admin.vehicle.vehicle_expiry_list';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.vehicle_expiry_list' ),
+                'class' => 'active',
+            ],
+        ];
+        $this->data['data']['status'] = [
+            '10' => __( 'datatables.activated' ),
+            '20' => __( 'datatables.suspended' ),
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
     public function allVehicles( Request $request ) {
 
         return VehicleService::allVehicles( $request );

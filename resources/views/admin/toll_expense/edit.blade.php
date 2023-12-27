@@ -241,7 +241,7 @@ $toll_expense_edit = 'toll_expense_edit';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -254,7 +254,7 @@ $toll_expense_edit = 'toll_expense_edit';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.name + ' (' + v.license_plate + ')',
+                            text: '(' + v.license_plate + ')',
                         } );
                     } );
 
@@ -288,7 +288,7 @@ $toll_expense_edit = 'toll_expense_edit';
                     transactionTime.setDate( response.transaction_time );
                     postedDate.setDate( response.posted_date );
 
-                    let option = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                    let option = new Option( '(' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
                     vehicleSelect2.append( option );
                     vehicleSelect2.trigger( 'change' );
 

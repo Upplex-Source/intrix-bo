@@ -29,6 +29,7 @@ return [
     'parts' => 'Parts',
     'vehicles' => 'Vehicles',
     'vehicle_list' => 'Vehicle List',
+    'vehicle_expiry_list' => 'Vehicle Expiry List',
     'vehicle_inspections' => 'Vehicle Inspections',
     'bookings' => 'Bookings',
     'booking_list' => 'Booking List',

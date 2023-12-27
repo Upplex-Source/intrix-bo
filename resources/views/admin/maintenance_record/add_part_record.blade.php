@@ -16,14 +16,14 @@ $part_record_create = 'part_record_create';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $part_record_create }}_part_date" class="col-sm-5 col-form-label">{{ __( 'datatables.part_date' ) }}</label>
+                    <label for="{{ $part_record_create }}_part_date" class="col-sm-5 col-form-label">{{ __( 'datatables.purchase_date' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $part_record_create }}_part_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $part_record_create }}_reference" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.reference' ) }}</label>
+                    <label for="{{ $part_record_create }}_reference" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.purchase_bill_reference' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $part_record_create }}_reference">
                         <div class="invalid-feedback"></div>
@@ -49,6 +49,14 @@ $part_record_create = 'part_record_create';
                     <label for="{{ $part_record_create }}_unit_price" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.unit_price' ) }}</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $part_record_create }}_unit_price">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $part_record_create }}_vehicle" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.vehicle' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $part_record_create }}_vehicle" data-placeholder="{{ __( 'template.optional' ) }} - {{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.vehicle' ) ] ) }}">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -97,6 +105,7 @@ $part_record_create = 'part_record_create';
             formData.append( 'vendor', null === $( prc + '_vendor' ).val() ? '' : $( prc + '_vendor' ).val() );
             formData.append( 'part', null === $( prc + '_part' ).val() ? '' : $( prc + '_part' ).val() );
             formData.append( 'unit_price', $( prc + '_unit_price' ).val() );
+            formData.append( 'vehicle', null === $( prc + '_vehicle' ).val() ? '' : $( prc + '_vehicle' ).val() );
             formData.append( 'documents', fileID );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -146,7 +155,7 @@ $part_record_create = 'part_record_create';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -188,7 +197,7 @@ $part_record_create = 'part_record_create';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -202,6 +211,48 @@ $part_record_create = 'part_record_create';
                         processedResult.push( {
                             id: v.id,
                             text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
+        $( prc + '_vehicle' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.vehicles.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: '(' + v.license_plate + ')',
                         } );
                     } );
 

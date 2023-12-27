@@ -1,22 +1,8 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.vehicles' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.vehicle_expiry_list' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add vehicles' )
-        <div class="nk-block-head-content">
-            <div class="toggle-wrap nk-block-tools-toggle">
-                <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
-                <div class="toggle-expand-content" data-content="pageMenu">
-                    <ul class="nk-block-tools g-3">
-                        <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.vehicle.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div><!-- .nk-block-head-content -->
-        @endcan
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
@@ -27,11 +13,6 @@ $columns = [
         'id' => 'dt_no',
         'title' => 'No.',
     ],
-    // [
-    //     'type' => 'default',
-    //     'id' => 'photo',
-    //     'title' => __( 'datatables.photo' ),
-    // ],
     [
         'type' => 'date',
         'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
@@ -63,19 +44,19 @@ $columns = [
         'title' => __( 'vehicle.license_plate' ),
     ],
     [
-        'type' => 'input',
+        'type' => 'date',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.road_tax_expiry_date' ) ] ),
         'id' => 'road_tax_expiry_date',
         'title' => __( 'vehicle.road_tax_expiry_date' ),
     ],
     [
-        'type' => 'input',
+        'type' => 'date',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.insurance_expiry_date' ) ] ),
         'id' => 'insurance_expiry_date',
         'title' => __( 'vehicle.insurance_expiry_date' ),
     ],
     [
-        'type' => 'input',
+        'type' => 'date',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.inspection_expiry_date' ) ] ),
         'id' => 'inspection_expiry_date',
         'title' => __( 'vehicle.inspection_expiry_date' ),
@@ -126,6 +107,7 @@ var typeMapper = @json( $data['type'] ),
         ajax: {
             url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
             data: {
+                'expiry_checking' : true,
                 '_token': '{{ csrf_token() }}',
             },
             dataSrc: 'vehicles',
@@ -140,9 +122,9 @@ var typeMapper = @json( $data['type'] ),
             { data: 'name' },
             { data: 'type' },
             { data: 'license_plate' },
-            { data: 'road_tax_expiry_date' },
-            { data: 'insurance_expiry_date' },
-            { data: 'inspection_expiry_date' },
+            { data: 'local_road_tax_expiry_date' },
+            { data: 'local_insurance_expiry_date' },
+            { data: 'local_inspection_expiry_date' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -152,7 +134,16 @@ var typeMapper = @json( $data['type'] ),
                 orderable: false,
                 width: '1%',
                 render: function( data, type, row, meta ) {
-                    return table_no += 1;
+                    table_no = meta.row + 1;
+                    indicator = '';
+
+                    if ( data.local_road_tax_expiry_date_status || data.local_insurance_expiry_date_status || data.local_inspection_expiry_date_status ) {
+                        indicator = '<span style=" background-color: #ff0000; "class = "expiry-status" ></span>';
+                    } else {
+                        indicator = '<span style=" background-color: #ff7a1b; "class = "expiry-status"></span>';
+                    }
+
+                    return indicator + table_no;
                 },
             },
             // {

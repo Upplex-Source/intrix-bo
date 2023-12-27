@@ -52,4 +52,5 @@ return [
 
     'part' => 'Part',
     'unit_price' => 'Unit Price',
+    'purchase_date' => 'Purchase Date',
 ];

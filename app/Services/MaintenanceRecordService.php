@@ -410,6 +410,8 @@ class MaintenanceRecordService
 
         $tyreRecord = TyreRecord::with( [
             'vehicle',
+            'part',
+            'vendor',
         ] )->select( 'tyre_records.*' );
 
         $tyreObject = self::filterTyreRecord( $request, $tyreRecord );
@@ -427,6 +429,12 @@ class MaintenanceRecordService
                     break;
                 case 3:
                     $tyreRecord->orderBy( 'tyre_records.vehicle_id', $dir );
+                    break;
+                case 4:
+                    $tyreRecord->orderBy( 'tyre_records.vendor_id', $dir );
+                    break;
+                case 5:
+                    $tyreRecord->orderBy( 'tyre_records.part_id', $dir );
                     break;
             }
         }
@@ -489,6 +497,39 @@ class MaintenanceRecordService
             $filter = true;
         }
 
+        if ( !empty( $request->vehicle ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'vehicle', function ( $q ) use ( $request ) {
+                    $q->where( 'license_plate', 'LIKE', '%' . $request->vehicle . '%' );
+                });
+            });
+
+            $filter = true;
+        }
+
+        if ( !empty( $request->part ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'part', function ( $q ) use ( $request ) {
+                    $q->where( 'name', 'LIKE', '%' . $request->part . '%' );
+                });
+            });
+
+            $filter = true;
+        }
+
+        if ( !empty( $request->vendor ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'vendor', function ( $q ) use ( $request ) {
+                    $q->where( 'name', 'LIKE', '%' . $request->vendor . '%' );
+                });
+            });
+
+            $filter = true;
+        }
+
         return [
             'filter' => $filter,
             'model' => $model,
@@ -533,6 +574,8 @@ class MaintenanceRecordService
             'items.tyre',
             'items.tyre.vendor',
             'vehicle',
+            'part',
+            'vendor',
             'documents',
         ] )->find( $request->id );
 
@@ -555,6 +598,9 @@ class MaintenanceRecordService
 
         $validator = Validator::make( $request->all(), [
             'vehicle' => [ 'nullable', 'exists:vehicles,id' ],
+            'part' => [ 'nullable', 'exists:parts,id' ],
+            'vendor' => [ 'nullable', 'exists:vendors,id' ],
+            'unit_price' => [ 'required' ],
             'purchase_date' => [ 'required' ],
             'purchase_bill_reference' => [ 'required' ],
         ] );
@@ -563,6 +609,9 @@ class MaintenanceRecordService
             'vehicle' => __( 'maintenance_record.vehicle' ),
             'purchase_date' => __( 'datatables.purchase_date' ),
             'purchase_bill_reference' => __( 'maintenance_record.purchase_bill_reference' ),
+            'vendor' => __( 'maintenance_record.vendor' ),
+            'part' => __( 'maintenance_record.part' ),
+            'unit_price' => __( 'maintenance_record.unit_price' ),
         ];
 
         foreach ( $attributeName as $key => $aName ) {
@@ -577,6 +626,9 @@ class MaintenanceRecordService
 
             $createTyreRecord = TyreRecord::create( [
                 'vehicle_id' => $request->vehicle ? $request->vehicle : null,
+                'vendor_id' => $request->vendor ? $request->vendor : null,
+                'part_id' => $request->part ? $request->part : null,
+                'unit_price' => $request->unit_price,
                 'purchase_date' => Carbon::createFromFormat( 'Y-m-d', $request->purchase_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ),
                 'purchase_bill_reference' => $request->purchase_bill_reference,
             ] );
@@ -645,6 +697,9 @@ class MaintenanceRecordService
 
         $validator = Validator::make( $request->all(), [
             'vehicle' => [ 'nullable', 'exists:vehicles,id' ],
+            'part' => [ 'nullable', 'exists:parts,id' ],
+            'vendor' => [ 'nullable', 'exists:vendors,id' ],
+            'unit_price' => [ 'required' ],
             'purchase_date' => [ 'required' ],
             'purchase_bill_reference' => [ 'required' ],
         ] );
@@ -653,6 +708,9 @@ class MaintenanceRecordService
             'vehicle' => __( 'maintenance_record.vehicle' ),
             'purchase_date' => __( 'datatables.purchase_date' ),
             'purchase_bill_reference' => __( 'maintenance_record.purchase_bill_reference' ),
+            'vendor' => __( 'maintenance_record.vendor' ),
+            'part' => __( 'maintenance_record.part' ),
+            'unit_price' => __( 'maintenance_record.unit_price' ),
         ];
 
         foreach ( $attributeName as $key => $aName ) {
@@ -667,11 +725,14 @@ class MaintenanceRecordService
 
             $updateTyreRecord = TyreRecord::find( $request->id );
             $updateTyreRecord->vehicle_id = $request->vehicle ? $request->vehicle : null;
+            $updateTyreRecord->vendor_id = $request->vendor ? $request->vendor : null;
+            $updateTyreRecord->part_id = $request->part ? $request->part : null;
+            $updateTyreRecord->unit_price = $request->unit_price;
             $updateTyreRecord->purchase_date = Carbon::createFromFormat( 'Y-m-d', $request->purchase_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' );
             $updateTyreRecord->purchase_bill_reference = $request->purchase_bill_reference;
             $updateTyreRecord->save();
 
-            TyreRecordItem::where('tyre_record_id', $updateTyreRecord->id )->delete();
+            TyreRecordItem::where( 'tyre_record_id', $updateTyreRecord->id )->delete();
 
             $items = json_decode( $request->items );
             foreach ( $items as $item ) {
@@ -757,6 +818,15 @@ class MaintenanceRecordService
                 case 1:
                     $partRecord->orderBy( 'part_records.part_date', $dir );
                     break;
+                case 2:
+                    $tyreRecord->orderBy( 'tyre_records.vehicle_id', $dir );
+                    break;
+                case 3:
+                    $tyreRecord->orderBy( 'tyre_records.vendor_id', $dir );
+                    break;
+                case 4:
+                    $tyreRecord->orderBy( 'tyre_records.part_id', $dir );
+                    break;
             }
         }
 
@@ -813,6 +883,44 @@ class MaintenanceRecordService
             $filter = true;
         }
 
+        if ( !empty( $request->reference ) ) {
+            $model->where( 'reference', 'LIKE', '%' . $request->reference . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->vehicle ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'vehicle', function ( $q ) use ( $request ) {
+                    $q->where( 'license_plate', 'LIKE', '%' . $request->vehicle . '%' );
+                });
+            });
+
+            $filter = true;
+        }
+
+        if ( !empty( $request->part ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'part', function ( $q ) use ( $request ) {
+                    $q->where( 'name', 'LIKE', '%' . $request->part . '%' );
+                });
+            });
+
+            $filter = true;
+        }
+
+        if ( !empty( $request->vendor ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'vendor', function ( $q ) use ( $request ) {
+                    $q->where( 'name', 'LIKE', '%' . $request->vendor . '%' );
+                });
+            });
+
+            $filter = true;
+        }
+
         return [
             'filter' => $filter,
             'model' => $model,
@@ -828,6 +936,7 @@ class MaintenanceRecordService
         $partRecord = PartRecord::with( [
             'vendor',
             'part',
+            'vehicle',
             'documents',
         ] )->find( $request->id );
         
@@ -855,6 +964,7 @@ class MaintenanceRecordService
             'vendor' => [ 'required', 'exists:vendors,id' ],
             'part' => [ 'required', 'exists:parts,id' ],
             'unit_price' => [ 'required' ],
+            'vehicle' => [ 'required', 'exists:vehicles,id' ],
         ] );
 
         $attributeName = [
@@ -863,6 +973,7 @@ class MaintenanceRecordService
             'vendor' => __( 'maintenance_record.vendor' ),
             'part' => __( 'maintenance_record.part' ),
             'unit_price' => __( 'maintenance_record.unit_price' ),
+            'vehicles' => __( 'maintenance_record.vehicle' ),
         ];
 
         foreach ( $attributeName as $key => $aName ) {
@@ -881,7 +992,8 @@ class MaintenanceRecordService
                 'vendor_id' => $request->vendor ? $request->vendor : null,
                 'part_id' => $request->part ? $request->part : null,
                 'unit_price' => $request->unit_price,
-            ] );
+                'vehicle_id' => $request->vehicle ? $request->vehicle : null,
+                ] );
 
             if ( !empty( $request->documents ) ) {
 
@@ -938,6 +1050,7 @@ class MaintenanceRecordService
             'vendor' => [ 'required', 'exists:vendors,id' ],
             'part' => [ 'required', 'exists:parts,id' ],
             'unit_price' => [ 'required' ],
+            'vehicle' => [ 'required', 'exists:vehicles,id' ],
         ] );
 
         $attributeName = [
@@ -946,6 +1059,7 @@ class MaintenanceRecordService
             'vendor' => __( 'maintenance_record.vendor' ),
             'part' => __( 'maintenance_record.part' ),
             'unit_price' => __( 'maintenance_record.unit_price' ),
+            'vehicle' => __( 'maintenance_record.vehicle' ),
         ];
 
         foreach ( $attributeName as $key => $aName ) {
@@ -964,6 +1078,7 @@ class MaintenanceRecordService
             $updatePartRecord->vendor_id = $request->vendor;
             $updatePartRecord->part_id = $request->part;
             $updatePartRecord->unit_price = $request->unit_price;
+            $updatePartRecord->vehicle_id = $request->vehicle;
             $updatePartRecord->save();
 
             if ( !empty( $request->to_be_delete_documents ) ) {

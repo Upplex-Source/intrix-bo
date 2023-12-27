@@ -445,7 +445,7 @@ $service_record_edit = 'service_record_edit';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -458,7 +458,7 @@ $service_record_edit = 'service_record_edit';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.name + ' (' + v.license_plate + ')',
+                            text: '(' + v.license_plate + ')',
                         } );
                     } );
 
@@ -491,7 +491,7 @@ $service_record_edit = 'service_record_edit';
                     $( 'body' ).loading( 'stop' );
 
                     if ( response.vehicle ) {
-                        let option1 = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                        let option1 = new Option( '(' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
                         vehicleSelect2.append( option1 );
                         vehicleSelect2.trigger( 'change' );
                     }

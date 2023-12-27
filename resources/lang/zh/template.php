@@ -29,6 +29,7 @@ return [
     'parts' => '零件',
     'vehicles' => '载具',
     'vehicle_list' => '载具列表',
+    'vehicle_expiry_list' => '逾期载具列表',
     'vehicle_inspections' => '载具检查',
     'bookings' => '预订',
     'booking_list' => 'Booking List',

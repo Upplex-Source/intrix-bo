@@ -40,7 +40,7 @@ class VehicleService
         $filterObject = self::filter( $request, $vehicle );
         $vehicle = $filterObject['model'];
         $filter = $filterObject['filter'];
-
+        
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
@@ -60,6 +60,15 @@ class VehicleService
                     $vehicle->orderBy( 'vehicles.license_plate', $dir );
                     break;
                 case 7:
+                    $vehicle->orderBy( 'vehicles.road_tax_expiry_date', $dir );
+                    break;
+                case 8:
+                    $vehicle->orderBy( 'vehicles.insurance_expiry_date', $dir );
+                    break;
+                case 9:
+                    $vehicle->orderBy( 'vehicles.inspection_expiry_date', $dir );
+                    break;
+                case 10:
                     $vehicle->orderBy( 'vehicles.status', $dir );
                     break;
             }
@@ -75,6 +84,12 @@ class VehicleService
         if ( $vehicles ) {
             $vehicles->append( [
                 'path',
+                'local_road_tax_expiry_date',
+                'local_insurance_expiry_date',
+                'local_inspection_expiry_date',
+                'local_road_tax_expiry_date_status',
+                'local_insurance_expiry_date_status',
+                'local_inspection_expiry_date_status',
                 'encrypted_id',
             ] );
         }
@@ -138,6 +153,75 @@ class VehicleService
             $filter = true;
         }
 
+        if ( !empty( $request->road_tax_expiry_date ) ) {
+            if ( str_contains( $request->road_tax_expiry_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->road_tax_expiry_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.road_tax_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->road_tax_expiry_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.road_tax_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->insurance_expiry_date ) ) {
+            if ( str_contains( $request->insurance_expiry_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->insurance_expiry_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.insurance_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->road_tax_expiry_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.insurance_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->inspection_expiry_date ) ) {
+            if ( str_contains( $request->inspection_expiry_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->inspection_expiry_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.inspection_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->inspection_expiry_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.inspection_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
         if ( !empty( $request->status ) ) {
             $model->where( 'vehicles.status', $request->status );
             $filter = true;
@@ -147,7 +231,27 @@ class VehicleService
             $model->where( function( $query ) {
                 $query->where( 'vehicles.name', 'LIKE', '%' . request( 'custom_search' ) . '%' );
                 $query->orWhere( 'vehicles.license_plate', 'LIKE', '%' . request( 'custom_search' ) . '%' );
+                $filter = true;
             } );
+        }
+
+        if ( !empty( $request->expiry_checking ) ) {
+
+            $model->where( function ( $query ) use ( $request ) {
+                $query->where( function( $query ) {
+                    $query->whereDate( 'road_tax_expiry_date', '<=', Carbon::now()->addMonths( 1 ) )
+                        ->orWhereDate( 'road_tax_expiry_date', '<', Carbon::now() );
+                })
+                ->orWhere( function( $query ) {
+                    $query->whereDate( 'insurance_expiry_date', '<=', Carbon::now()->addMonths( 1 ) )
+                        ->orWhereDate( 'insurance_expiry_date', '<', Carbon::now() );
+                })
+                ->orWhere( function( $query ) {
+                    $query->whereDate( 'inspection_expiry_date', '<=', Carbon::now()->addMonths( 1 ) )
+                        ->orWhereDate( 'inspection_expiry_date', '<', Carbon::now() );
+                });
+            });
+            $filter = true;
         }
 
         return [

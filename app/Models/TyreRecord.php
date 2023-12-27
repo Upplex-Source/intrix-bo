@@ -20,6 +20,9 @@ class TyreRecord extends Model
 
     protected $fillable = [
         'vehicle_id',
+        'vendor_id',
+        'part_id',
+        'unit_price',
         'job_month',
         'job_no',
         'job_no_full',
@@ -29,6 +32,14 @@ class TyreRecord extends Model
 
     public function items() {
         return $this->hasMany( TyreRecordItem::class, 'tyre_record_id' );
+    }
+
+    public function vendor() {
+        return $this->belongsTo( Vendor::class, 'vendor_id' );
+    }
+
+    public function part() {
+        return $this->belongsTo( Part::class, 'part_id' );
     }
 
     public function vehicle() {

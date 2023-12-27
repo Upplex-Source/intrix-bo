@@ -40,9 +40,27 @@ $columns = [
         'title' => __( 'maintenance_record.purchase_bill_reference' ),
     ],
     [
-        'type' => 'default',
+        'type' => 'input',
+        'placeholder' => __( 'maintenance_record.vehicle' ),
         'id' => 'vehicle',
         'title' => __( 'maintenance_record.vehicle' ),
+    ],
+    [
+        'type' => 'input',
+        'placeholder' => __( 'maintenance_record.vendor' ),
+        'id' => 'vendor',
+        'title' => __( 'maintenance_record.vendor' ),
+    ],
+    [
+        'type' => 'input',
+        'placeholder' => __( 'maintenance_record.part' ),
+        'id' => 'part',
+        'title' => __( 'maintenance_record.part' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'unit_price',
+        'title' => __( 'maintenance_record.unit_price' ),
     ],
     [
         'type' => 'default',
@@ -92,6 +110,9 @@ var dt_table,
             { data: 'local_purchase_date' },
             { data: 'purchase_bill_reference' },
             { data: 'vehicle' },
+            { data: 'vendor.name' },
+            { data: 'part.name' },
+            { data: 'unit_price' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [
@@ -114,6 +135,18 @@ var dt_table,
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "vehicle" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return data ? data.license_plate : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "vendor" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "part" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
                 },
             },
             {

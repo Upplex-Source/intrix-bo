@@ -16,7 +16,7 @@ class CreatePartRecordsTable extends Migration
         Schema::create('part_records', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vendor_id')->nullable()->constrained('vendors')->onUpdate( 'restrict')->onDelete('cascade');
-            $table->foreignId('vehicle_id')->nullable()->constrained('companies')->onUpdate('restrict')->onDelete('cascade');
+            $table->foreignId('vehicle_id')->nullable()->constrained('vehicles')->onUpdate('restrict')->onDelete('cascade');
             $table->foreignId('part_id')->nullable()->constrained('parts')->onUpdate( 'restrict')->onDelete('cascade');
             $table->string('reference')->nullable();
             $table->decimal('unit_price',12,2)->default(0);
