@@ -16,7 +16,7 @@ class CreateFuelExpensesTable extends Migration
         Schema::create('fuel_expenses', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->nullable()->constrained('companies')->onUpdate('restrict')->onDelete('cascade');
-            $table->foreignId('vehicle_id')->nullable()->constrained('companies')->onUpdate('restrict')->onDelete('cascade');
+            $table->foreignId('vehicle_id')->nullable()->constrained('vehicles')->onUpdate('restrict')->onDelete('cascade');
             $table->string('location')->nullable();
             $table->string('day',2)->nullable();
             $table->string('month',2)->nullable();

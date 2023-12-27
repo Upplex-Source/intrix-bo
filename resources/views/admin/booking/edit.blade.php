@@ -659,8 +659,9 @@ $booking_edit = 'booking_edit';
                 data: function (params) {
                     return {
                         custom_search: params.term, // search term
+                        company: $( be + '_company' ).select2, // define company
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -703,7 +704,7 @@ $booking_edit = 'booking_edit';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -716,7 +717,7 @@ $booking_edit = 'booking_edit';
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.name + ' (' + v.license_plate + ')',
+                            text: '(' + v.license_plate + ')',
                         } );
                     } );
 
@@ -747,7 +748,7 @@ $booking_edit = 'booking_edit';
                         custom_search: params.term, // search term
                         designation: 1,
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -844,7 +845,7 @@ $booking_edit = 'booking_edit';
                     invoiceDate.setDate( response.invoice_date );
 
                     if ( response.vehicle ) {
-                        let option1 = new Option( response.vehicle.name + ' (' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                        let option1 = new Option( '(' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
                         vehicleSelect2.append( option1 );
                         vehicleSelect2.trigger( 'change' );
                     }

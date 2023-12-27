@@ -136,7 +136,7 @@
                     return {
                         name: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -179,7 +179,7 @@
                         delivery_order_number: params.term, // search term
                         // company_id: $('#company_id').val(),
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };

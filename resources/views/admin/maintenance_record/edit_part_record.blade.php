@@ -16,14 +16,14 @@ $part_record_edit = 'part_record_edit';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $part_record_edit }}_part_date" class="col-sm-5 col-form-label">{{ __( 'datatables.part_date' ) }}</label>
+                    <label for="{{ $part_record_edit }}_part_date" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.purchase_date' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $part_record_edit }}_part_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $part_record_edit }}_reference" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.reference' ) }}</label>
+                    <label for="{{ $part_record_edit }}_reference" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.purchase_bill_reference' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $part_record_edit }}_reference">
                         <div class="invalid-feedback"></div>
@@ -49,6 +49,14 @@ $part_record_edit = 'part_record_edit';
                     <label for="{{ $part_record_edit }}_unit_price" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.unit_price' ) }}</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $part_record_edit }}_unit_price">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $part_record_edit }}_vehicle" class="col-sm-5 col-form-label">{{ __( 'maintenance_record.vehicle' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $part_record_edit }}_vehicle" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'maintenance_record.vehicle' ) ] ) }}">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -101,6 +109,7 @@ $part_record_edit = 'part_record_edit';
             formData.append( 'vendor', null === $( pre + '_vendor' ).val() ? '' : $( pre + '_vendor' ).val() );
             formData.append( 'part', null === $( pre + '_part' ).val() ? '' : $( pre + '_part' ).val() );
             formData.append( 'unit_price', $( pre + '_unit_price' ).val() );
+            formData.append( 'vehicle', null === $( pre + '_vehicle' ).val() ? '' : $( pre + '_vehicle' ).val() );
             formData.append( 'documents', fileID );
             formData.append( 'to_be_delete_documents', toBeDeleteFileID );
             formData.append( '_token', '{{ csrf_token() }}' );
@@ -151,7 +160,7 @@ $part_record_edit = 'part_record_edit';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -193,7 +202,7 @@ $part_record_edit = 'part_record_edit';
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -207,6 +216,48 @@ $part_record_edit = 'part_record_edit';
                         processedResult.push( {
                             id: v.id,
                             text: v.name,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
+        let vehicleSelect2 = $( pre + '_vehicle' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.vehicle.allVehicles' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.vehicles.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: '(' + v.license_plate + ')',
                         } );
                     } );
 
@@ -248,6 +299,12 @@ $part_record_edit = 'part_record_edit';
                         let option2 = new Option( response.part.name, response.part.id, true, true );
                         partSelect2.append( option2 );
                         partSelect2.trigger( 'change' );
+                    }
+
+                    if ( response.vehicle ) {
+                        let option2 = new Option( '(' + response.vehicle.license_plate + ')', response.vehicle.id, true, true );
+                        vehicleSelect2.append( option2 );
+                        vehicleSelect2.trigger( 'change' );
                     }
 
                     partDate.setDate( response.local_part_date );

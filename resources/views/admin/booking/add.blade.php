@@ -777,7 +777,7 @@ $bookingIncrement = $data['booking_increment'];
                     return {
                         custom_search: params.term, // search term
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -819,8 +819,9 @@ $bookingIncrement = $data['booking_increment'];
                 data: function (params) {
                     return {
                         custom_search: params.term, // search term
+                        designation: 1,
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
@@ -833,7 +834,7 @@ $bookingIncrement = $data['booking_increment'];
                     data.vehicles.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.name + ' (' + v.license_plate + ')',
+                            text: '(' + v.license_plate + ')',
                         } );
                     } );
 
@@ -864,7 +865,7 @@ $bookingIncrement = $data['booking_increment'];
                         custom_search: params.term, // search term
                         designation: 1,
                         status: 10,
-                        start: params.page ? params.page : 0,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };

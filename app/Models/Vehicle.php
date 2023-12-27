@@ -80,6 +80,24 @@ class Vehicle extends Model
         : null;
     }
 
+    public function getLocalRoadTaxExpiryDateStatusAttribute() {
+        return $this->attributes['road_tax_expiry_date'] ?
+            $this->attributes['road_tax_expiry_date'] < Carbon::now() ? true : false
+        : false;
+    }
+
+    public function getLocalInsuranceExpiryDateStatusAttribute() {
+        return $this->attributes['insurance_expiry_date'] ?
+            $this->attributes['insurance_expiry_date'] < Carbon::now() ? true : false
+        : false;
+    }
+
+    public function getLocalInspectionExpiryDateStatusAttribute() {
+        return $this->attributes['inspection_expiry_date'] ?
+            $this->attributes['inspection_expiry_date'] < Carbon::now() ? true : false
+        : false;
+    }
+
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }

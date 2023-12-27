@@ -29,15 +29,15 @@ $columns = [
     ],
     [
         'type' => 'date',
-        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.part_date' ) ] ),
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'maintenance_record.purchase_date' ) ] ),
         'id' => 'part_date',
-        'title' => __( 'datatables.part_date' ),
+        'title' => __( 'maintenance_record.purchase_date' ),
     ],
     [
         'type' => 'input',
-        'placeholder' => __( 'maintenance_record.reference' ),
+        'placeholder' => __( 'maintenance_record.purchase_bill_reference' ),
         'id' => 'reference',
-        'title' => __( 'maintenance_record.reference' ),
+        'title' => __( 'maintenance_record.purchase_bill_reference' ),
     ],
     [
         'type' => 'input',

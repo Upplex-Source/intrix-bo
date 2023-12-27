@@ -157,6 +157,9 @@
                                         <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VehicleController' && in_array( $action, [ 'index' ] ) ? 'active current-page' : '' }}">
                                             <a href="{{ route( 'admin.module_parent.vehicle.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.vehicle_list' ) }}</span></a>
                                         </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VehicleController' && in_array( $action, [ 'vehicleExpiryList' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.vehicle.vehicleExpiryList' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.vehicle_expiry_list' ) }}</span></a>
+                                        </li>
                                     </ul>
                                 </li>
                                 @endcan
