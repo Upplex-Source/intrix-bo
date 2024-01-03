@@ -45,30 +45,21 @@ class VehicleService
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 2:
-                    $vehicle->orderBy( 'vehicles.created_at', $dir );
-                    break;
-                case 3:
                     $vehicle->orderBy( 'employees.name', $dir );
                     break;
-                case 4:
-                    $vehicle->orderBy( 'vehicles.name', $dir );
-                    break;
-                case 5:
-                    $vehicle->orderBy( 'vehicles.type', $dir );
-                    break;
-                case 6:
-                    $vehicle->orderBy( 'vehicles.license_plate', $dir );
-                    break;
-                case 7:
+                case 3:
                     $vehicle->orderBy( 'vehicles.road_tax_expiry_date', $dir );
                     break;
-                case 8:
+                case 4:
                     $vehicle->orderBy( 'vehicles.insurance_expiry_date', $dir );
                     break;
-                case 9:
+                case 5:
                     $vehicle->orderBy( 'vehicles.inspection_expiry_date', $dir );
                     break;
-                case 10:
+                case 6:
+                    $vehicle->orderBy( 'vehicles.permit_expiry_date', $dir );
+                    break;
+                case 7:
                     $vehicle->orderBy( 'vehicles.status', $dir );
                     break;
             }
@@ -87,9 +78,12 @@ class VehicleService
                 'local_road_tax_expiry_date',
                 'local_insurance_expiry_date',
                 'local_inspection_expiry_date',
+                'local_permit_expiry_date',
+                'local_permit_start_date',
                 'local_road_tax_expiry_date_status',
                 'local_insurance_expiry_date_status',
                 'local_inspection_expiry_date_status',
+                'local_permit_expiry_date_status',
                 'encrypted_id',
             ] );
         }
@@ -218,6 +212,54 @@ class VehicleService
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
                 $model->whereBetween( 'vehicles.inspection_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->permit_expiry_date ) ) {
+            if ( str_contains( $request->permit_expiry_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->permit_expiry_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.permit_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->permit_expiry_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.permit_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->permit ) ) {
+            if ( str_contains( $request->permit, 'to' ) ) {
+                $dates = explode( ' to ', $request->permit );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.permit_start_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] )
+                        ->orWhereBetween( 'vehicles.permit_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->permit );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.permit_start_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] )
+                        ->orWhereBetween( 'vehicles.permit_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             }
             $filter = true;
         }
@@ -487,5 +529,87 @@ class VehicleService
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.vehicles' ) ) ] ),
         ] );
+    }
+
+    public static function exportBookings( $request ) {
+
+        $bookings = self::allBookings( $request, true );
+
+        $html = '<table>';
+        $html .= '
+        <thead>
+            <tr>
+                <th><strong>' .__( 'vehicle.driver' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.license_plate' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.trailer_number' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.lorry_model' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.road_tax_number' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.insurance_number' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.permit_number' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.permit_type' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.insurance_expiry_date' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.inspection_expiry_date' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.permit_date' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.type' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.in_service' ). '</strong></th>
+            </tr>
+        </thead>
+        ';
+        $html .= '<tbody>';
+
+        $permitType = [
+            '1' => strtoupper( 'A' ),
+            '2' => strtoupper( 'C'),
+        ];
+        $vehicleType = [
+            '1' => strtoupper( __( 'vehicle.truck' ) ),
+            '2' => strtoupper( __( 'vehicle.timber_jinker' ) ),
+            '3' => strtoupper( __( 'vehicle.curtain_sider' ) ),
+            '3' => strtoupper( __( 'vehicle.open_cargo' ) ),
+        ];
+        $inServiceType = [
+            '10' => __( 'datatables.activated' ),
+            '20' => __( 'datatables.suspended' ),
+        ];
+
+        foreach ( $bookings as $key => $booking ) {
+            $refNo = explode( ' ', $booking->reference );
+            $html .=
+            '
+            <tr>
+                <td>' . $booking->reference . '</td>
+                <td>' . $refNo[0] . '</td>
+                <td>' . $refNo[1] . '</td>
+                <td>' . $booking->invoice_number . '</td>
+                <td>' . $booking->invoice_date . '</td>
+                <td>' . $booking->vehicle->license_plate . '</td>
+                <td>' . $booking->delivery_order_number . '</td>
+                <td>' . date( 'd/m/Y', strtotime( $booking->delivery_order_date ) ) . '</td>
+                <td>' . $booking->customer_name . '</td>
+                <td>' . $booking->display_pickup_address->a1 . '</td>
+                <td>' . $booking->display_dropoff_address->a1 . '</td>
+                <td>' . $booking->display_dropoff_address->d . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->customer_quantity, 4 ) . '</td>
+                <td>' . $uom[$booking->customer_unit_of_measurement] . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->customer_rate, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->customer_total_amount, 2 ) . '</td>
+                <td>' . $customerType[$booking->customer_type] . '</td>
+                <td>' . $booking->company->name . '</td>
+                <td>' . $booking->customer_remarks . '</td>
+                <td>' . $booking->driver->name . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_quantity, 4 ) . '</td>
+                <td>' . $uom[$booking->driver_unit_of_measurement] . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_total_amount, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_percentage, 2 ) . '</td>
+                <td>' . Helper::numberFormatNoComma( $booking->driver_final_amount, 2 ) . '</td>
+            </tr>
+            ';
+        }
+
+        $html .= '</tbody></table>';
+
+        Helper::exportReport( $html, 'Booking' );
     }
 }

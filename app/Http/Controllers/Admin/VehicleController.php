@@ -165,4 +165,9 @@ class VehicleController extends Controller
 
         return VehicleService::updateVehicleStatus( $request );
     }
+
+    public function export( Request $request ) {
+
+        return VehicleService::exportVehicles( $request );
+    }
 }

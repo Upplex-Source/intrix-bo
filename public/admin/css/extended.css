@@ -4,6 +4,7 @@ ul.pagination {
 
 table.table.dataTable tr td {
     vertical-align: middle;
+    white-space:nowrap;
 }
 
 .listing-filter {

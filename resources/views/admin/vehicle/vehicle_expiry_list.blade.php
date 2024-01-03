@@ -13,11 +13,17 @@ $columns = [
         'id' => 'dt_no',
         'title' => 'No.',
     ],
+    // [
+    //     'type' => 'date',
+    //     'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
+    //     'id' => 'created_date',
+    //     'title' => __( 'datatables.created_date' ),
+    // ],
     [
-        'type' => 'date',
-        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
-        'id' => 'created_date',
-        'title' => __( 'datatables.created_date' ),
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.license_plate' ) ] ),
+        'id' => 'license_plate',
+        'title' => __( 'vehicle.license_plate' ),
     ],
     [
         'type' => 'input',
@@ -25,24 +31,18 @@ $columns = [
         'id' => 'driver',
         'title' => __( 'vehicle.driver' ),
     ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.name' ) ] ),
-        'id' => 'name',
-        'title' => __( 'vehicle.name' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.type' ) ] ),
-        'id' => 'type',
-        'title' => __( 'vehicle.type' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.license_plate' ) ] ),
-        'id' => 'license_plate',
-        'title' => __( 'vehicle.license_plate' ),
-    ],
+    // [
+    //     'type' => 'input',
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.name' ) ] ),
+    //     'id' => 'name',
+    //     'title' => __( 'vehicle.name' ),
+    // ],
+    // [
+    //     'type' => 'input',
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.type' ) ] ),
+    //     'id' => 'type',
+    //     'title' => __( 'vehicle.type' ),
+    // ],
     [
         'type' => 'date',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.road_tax_expiry_date' ) ] ),
@@ -60,6 +60,12 @@ $columns = [
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.inspection_expiry_date' ) ] ),
         'id' => 'inspection_expiry_date',
         'title' => __( 'vehicle.inspection_expiry_date' ),
+    ],
+    [
+        'type' => 'date',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.permit_expiry_date' ) ] ),
+        'id' => 'permit_expiry_date',
+        'title' => __( 'vehicle.permit_expiry_date' ),
     ],
     [
         'type' => 'select',
@@ -117,14 +123,15 @@ var typeMapper = @json( $data['type'] ),
         columns: [
             { data: null },
             // { data: 'path' },
-            { data: 'created_at' },
-            { data: 'employee.name' },
-            { data: 'name' },
-            { data: 'type' },
+            // { data: 'created_at' },
             { data: 'license_plate' },
+            { data: 'employee.name' },
+            // { data: 'name' },
+            // { data: 'type' },
             { data: 'local_road_tax_expiry_date' },
             { data: 'local_insurance_expiry_date' },
             { data: 'local_inspection_expiry_date' },
+            { data: 'local_permit_expiry_date' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -137,7 +144,7 @@ var typeMapper = @json( $data['type'] ),
                     table_no = meta.row + 1;
                     indicator = '';
 
-                    if ( data.local_road_tax_expiry_date_status || data.local_insurance_expiry_date_status || data.local_inspection_expiry_date_status ) {
+                    if ( data.local_road_tax_expiry_date_status || data.local_insurance_expiry_date_status || data.local_inspection_expiry_date_status || data.local_permit_expiry_date_status ) {
                         indicator = '<span style=" background-color: #ff0000; "class = "expiry-status" ></span>';
                     } else {
                         indicator = '<span style=" background-color: #ff7a1b; "class = "expiry-status"></span>';
@@ -155,17 +162,41 @@ var typeMapper = @json( $data['type'] ),
             //         return data ? ( '<img src="' + data + '" width="75px" />' ) : '<img src="{{ asset( 'admin/images/jjk-small.png' ) }}" width="75px" style="opacity:.5;" />';
             //     },
             // },
+            // {
+            //     targets: parseInt( '{{ Helper::columnIndex( $columns, "created_date" ) }}' ),
+            //     width: '10%',
+            //     render: function( data, type, row, meta ) {
+            //         return data;
+            //     },
+            // },
+            // {
+            //     targets: parseInt( '{{ Helper::columnIndex( $columns, "type" ) }}' ),
+            //     render: function( data, type, row, meta ) {
+            //         return typeMapper[data];
+            //     },
+            // },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "created_date" ) }}' ),
-                width: '10%',
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "road_tax_expiry_date" ) }}' ),
                 render: function( data, type, row, meta ) {
-                    return data;
+                    return data ? data : '-';
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "type" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "insurance_expiry_date" ) }}' ),
                 render: function( data, type, row, meta ) {
-                    return typeMapper[data];
+                    return data ? data : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "inspection_expiry_date" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "permit_expiry_date" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
                 },
             },
             {
@@ -219,7 +250,7 @@ var typeMapper = @json( $data['type'] ),
 
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        $( '#created_date' ).flatpickr( {
+        $( '#permit_expiry_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
             onClose: function( selected, dateStr, instance ) {

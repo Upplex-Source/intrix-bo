@@ -35,4 +35,8 @@ return [
     'permit_expiry_date' => '准证逾期日期',
     'inspection_expiry_date' => 'Inspection Expiry Date',
     'in_service' => '正在保养',
+    'lorry_model' => 'Lorry Model',
+    'road_tax' => 'RoadTax',
+    'insurance' => 'Insurance',
+    'inspection' => 'Inspection',
 ];
