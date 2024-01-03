@@ -660,6 +660,7 @@ class BookingService
         ];
 
         foreach ( $bookings as $key => $booking ) {
+
             $refNo = explode( ' ', $booking->reference );
             $html .=
             '
@@ -673,20 +674,20 @@ class BookingService
                 <td>' . $booking->delivery_order_number . '</td>
                 <td>' . date( 'd/m/Y', strtotime( $booking->delivery_order_date ) ) . '</td>
                 <td>' . $booking->customer_name . '</td>
-                <td>' . $booking->display_pickup_address->a1 . '</td>
-                <td>' . $booking->display_dropoff_address->a1 . '</td>
-                <td>' . $booking->display_dropoff_address->d . '</td>
+                <td>' . ( $booking->pickup_address ? $booking->pickup_address->address_1 : '-' ) . '</td>
+                <td>' . ( $booking->dropoff_address ? $booking->dropoff_address->address_1 : '-' ) . '</td>
+                <td>' . ( $booking->dropoff_address ? $booking->dropoff_address->address_1 : '-' ). '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->customer_quantity, 4 ) . '</td>
-                <td>' . $uom[$booking->customer_unit_of_measurement] . '</td>
+                <td>' . ( $booking->customer_unit_of_measurement ? $uom[$booking->customer_unit_of_measurement] : '-' ) . '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->customer_rate, 2 ) . '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->customer_total_amount, 2 ) . '</td>
-                <td>' . $customerType[$booking->customer_type] . '</td>
-                <td>' . $booking->company->name . '</td>
+                <td>' . ( $booking->customer_type ? $customerType[$booking->customer_type] : '-' ) . '</td>
+                <td>' . ( $booking->company ? $booking->company->name : '-' ) . '</td>
                 <td>' . $booking->customer_remarks . '</td>
-                <td>' . $booking->driver->name . '</td>
+                <td>' . ( $booking->driver ? $booking->driver->name : '-' ) . '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->driver_quantity, 4 ) . '</td>
-                <td>' . $uom[$booking->driver_unit_of_measurement] . '</td>
+                <td>' . ( $booking->driver_unit_of_measurement ? $uom[$booking->driver_unit_of_measurement] : '-' ) . '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->driver_total_amount, 2 ) . '</td>
                 <td>' . Helper::numberFormatNoComma( $booking->driver_percentage, 2 ) . '</td>

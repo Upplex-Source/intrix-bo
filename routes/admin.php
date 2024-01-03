@@ -238,6 +238,10 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                     Route::get( 'expiry-list', [ VehicleController::class, 'vehicleExpiryList' ] )->name( 'admin.vehicle.vehicleExpiryList' );
                 } );
 
+                Route::group( [ 'middleware' => [ 'permission:view vehicles' ] ], function() {
+                    Route::get( 'export', [ VehicleController::class, 'export' ] )->name( 'admin.vehicle.export' );
+                } );
+
                 Route::post( 'all-vehicles', [ VehicleController::class, 'allVehicles' ] )->name( 'admin.vehicle.allVehicles' );
                 Route::post( 'one-vehicle', [ VehicleController::class, 'oneVehicle' ] )->name( 'admin.vehicle.oneVehicle' );
                 Route::post( 'create-vehicle', [ VehicleController::class, 'createVehicle' ] )->name( 'admin.vehicle.createVehicle' );

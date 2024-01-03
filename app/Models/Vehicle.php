@@ -98,6 +98,12 @@ class Vehicle extends Model
         : false;
     }
 
+    public function getLocalPermitExpiryDateStatusAttribute() {
+        return $this->attributes['permit_expiry_date'] ?
+            $this->attributes['permit_expiry_date'] < Carbon::now() ? true : false
+        : false;
+    }
+
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }
