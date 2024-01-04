@@ -83,6 +83,13 @@ $vehicle_edit = 'vehicle_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_insurance_start_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_start_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_insurance_start_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $vehicle_edit }}_insurance_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_expiry_date' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vehicle_edit }}_insurance_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
@@ -171,6 +178,10 @@ $vehicle_edit = 'vehicle_edit';
             disableMobile: true,
         } );
 
+        let insuranceStartDate = $( ve + '_insurance_start_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
         let insuranceExpiryDate = $( ve + '_insurance_expiry_date' ).flatpickr( {
             disableMobile: true,
         } );
@@ -221,6 +232,7 @@ $vehicle_edit = 'vehicle_edit';
             formData.append( 'road_tax_number', $( ve + '_road_tax_number' ).val() );
             formData.append( 'road_tax_expiry_date', $( ve + '_road_tax_expiry_date' ).val() );
             formData.append( 'insurance_number', $( ve + '_insurance_number' ).val() );
+            formData.append( 'insurance_start_date', $( ve + '_insurance_start_date' ).val() );
             formData.append( 'insurance_expiry_date', $( ve + '_insurance_expiry_date' ).val() );
             formData.append( 'tngsn', $( ve + '_tngsn' ).val() );
             formData.append( 'permit_number', $( ve + '_permit_number' ).val() );
@@ -380,6 +392,7 @@ $vehicle_edit = 'vehicle_edit';
                     $( ve + '_road_tax_number' ).val( response.road_tax_number );
                     roadTaxExpiryDate.setDate( response.local_road_tax_expiry_date );
                     $( ve + '_insurance_number' ).val( response.insurance_number );
+                    insuranceStartDate.setDate( response.local_insurance_start_date );
                     insuranceExpiryDate.setDate( response.local_insurance_expiry_date );
                     $( ve + '_permit_number' ).val( response.permit_number );
                     $( ve + '_tngsn' ).val( response.tngsn );

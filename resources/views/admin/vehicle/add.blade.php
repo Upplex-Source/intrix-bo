@@ -83,6 +83,13 @@ $vehicle_create = 'vehicle_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_insurance_start_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_start_date' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_insurance_start_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $vehicle_create }}_insurance_expiry_date" class="col-sm-5 col-form-label">{{ __( 'vehicle.insurance_expiry_date' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vehicle_create }}_insurance_expiry_date" placeholder="{{ __( 'template.optional' ) }}">
@@ -171,6 +178,10 @@ $vehicle_create = 'vehicle_create';
             disableMobile: true,
         } );
 
+        $( vc + '_insurance_start_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
         $( vc + '_insurance_expiry_date' ).flatpickr( {
             disableMobile: true,
         } );
@@ -209,6 +220,7 @@ $vehicle_create = 'vehicle_create';
             formData.append( 'road_tax_number', $( vc + '_road_tax_number' ).val() );
             formData.append( 'road_tax_expiry_date', $( vc + '_road_tax_expiry_date' ).val() );
             formData.append( 'insurance_number', $( vc + '_insurance_number' ).val() );
+            formData.append( 'insurance_start_date', $( vc + '_insurance_start_date' ).val() );
             formData.append( 'insurance_expiry_date', $( vc + '_insurance_expiry_date' ).val() );
             formData.append( 'permit_number', $( vc + '_permit_number' ).val() );
             formData.append( 'permit', $( vc + '_permit' ).val() );

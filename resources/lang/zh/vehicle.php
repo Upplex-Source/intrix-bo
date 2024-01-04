@@ -41,5 +41,8 @@ return [
     'inspection' => 'Inspection',
     'tngsn' => 'TNG S/N',
     'lorry_number' => 'Lorry No.',
-
+    'permit_date' => 'Permit Date',
+    'permit_type' => 'Permit Type',
+    'insurance_start_date' => 'Insurance Start Date',
+    'insurance_date' => 'Insurance Date',
 ];
