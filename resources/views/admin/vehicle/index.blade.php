@@ -12,9 +12,9 @@
                         <li class="nk-block-tools-opt">
                             <a href="{{ route( 'admin.vehicle.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
-                        {{-- <li class="nk-block-tools-opt">
+                        <li class="nk-block-tools-opt">
                             <button type="button" class="btn btn-secondary dt-export">{{ __( 'template.export' ) }}</button>
-                        </li> --}}
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -43,9 +43,9 @@ $columns = [
     // ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.license_plate' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.lorry_number' ) ] ),
         'id' => 'license_plate',
-        'title' => __( 'vehicle.license_plate' ),
+        'title' => __( 'vehicle.lorry_number' ),
     ],
     [
         'type' => 'input',
@@ -53,12 +53,12 @@ $columns = [
         'id' => 'name',
         'title' => __( 'vehicle.lorry_model' ),
     ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.driver' ) ] ),
-        'id' => 'driver',
-        'title' => __( 'vehicle.driver' ),
-    ],
+    // [
+    //     'type' => 'input',
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.driver' ) ] ),
+    //     'id' => 'driver',
+    //     'title' => __( 'vehicle.driver' ),
+    // ],
     // [
     //     'type' => 'input',
     //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.type' ) ] ),
@@ -88,6 +88,12 @@ $columns = [
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.permit' ) ] ),
         'id' => 'permit',
         'title' => __( 'vehicle.permit' ),
+    ],
+    [
+        'type' => 'date',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.tngsn' ) ] ),
+        'id' => 'tngsn',
+        'title' => __( 'vehicle.tngsn' ),
     ],
     [
         'type' => 'select',
@@ -147,11 +153,12 @@ var typeMapper = @json( $data['type'] ),
             // { data: 'created_at' },
             { data: 'license_plate' },
             { data: 'name' },
-            { data: 'employee.name' },
+            // { data: 'employee.name' },
             { data: 'local_road_tax_expiry_date' },
             { data: 'local_insurance_expiry_date' },
             { data: 'local_inspection_expiry_date' },
             { data: 'local_permit_expiry_date' },
+            { data: 'tngsn' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -207,7 +214,13 @@ var typeMapper = @json( $data['type'] ),
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "permit" ) }}' ),
                 render: function( data, type, row, meta ) {
-                    return ( row.local_permit_start_date ) ? row.local_permit_start_date + ' -<br>' + data : data ;
+                    return ( row.local_permit_start_date ? row.local_permit_start_date : '-' ) + ' -<br>' + ( data ? data : '-' ) ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "tngsn" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
                 },
             },
             {
@@ -258,7 +271,7 @@ var typeMapper = @json( $data['type'] ),
     },
     table_no = 0,
     timeout = null;
-    // exportPath = '{{ route( 'admin.vehicle.export' ) }}';
+    exportPath = '{{ route( 'admin.vehicle.export' ) }}';
 
     document.addEventListener( 'DOMContentLoaded', function() {
 

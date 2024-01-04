@@ -29,7 +29,7 @@ class VehicleService
         return $vehicles;
     }
 
-    public static function allVehicles( $request ) {
+    public static function allVehicles( $request, $export = false ) {
 
         $vehicle = Vehicle::with( [
             'employee'
@@ -40,12 +40,12 @@ class VehicleService
         $filterObject = self::filter( $request, $vehicle );
         $vehicle = $filterObject['model'];
         $filter = $filterObject['filter'];
-        
+
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 2:
-                    $vehicle->orderBy( 'employees.name', $dir );
+                    $vehicle->orderBy( 'created_at', $dir );
                     break;
                 case 3:
                     $vehicle->orderBy( 'vehicles.road_tax_expiry_date', $dir );
@@ -60,6 +60,9 @@ class VehicleService
                     $vehicle->orderBy( 'vehicles.permit_expiry_date', $dir );
                     break;
                 case 7:
+                    $vehicle->orderBy( 'vehicles.tngsn', $dir );
+                    break;
+                case 8:
                     $vehicle->orderBy( 'vehicles.status', $dir );
                     break;
             }
@@ -67,10 +70,14 @@ class VehicleService
 
         $vehicleCount = $vehicle->count();
 
-        $limit = $request->length;
-        $offset = $request->start;
+        $limit = $request->length ?? 10;
+        $offset = $request->start ?? 0;
 
-        $vehicles = $vehicle->skip( $offset )->take( $limit )->get();
+        if ( $export == false ) {
+            $vehicles = $vehicle->skip( $offset )->take( $limit )->get();
+        } else {
+            return $vehicle->get();
+        }
 
         if ( $vehicles ) {
             $vehicles->append( [
@@ -144,6 +151,11 @@ class VehicleService
 
         if ( !empty( $request->license_plate ) ) {
             $model->where( 'vehicles.license_plate', 'LIKE', '%' . $request->license_plate . '%' );
+            $filter = true;
+        }
+        
+        if ( !empty( $request->tngsn ) ) {
+            $model->where( 'vehicles.tngsn', 'LIKE', '%' . $request->tngsn . '%' );
             $filter = true;
         }
 
@@ -339,6 +351,7 @@ class VehicleService
             'type' => [ 'required' ],
             'permit' => [ 'required', 'in:1,2' ],
             'permit_start_date' => [ 'required' ],
+            'tngsn' => [ 'nullable' ],
             // 'in_service' => [ 'required', 'in:0,1' ],
         ] );
 
@@ -358,6 +371,7 @@ class VehicleService
             'inspection_expiry_date' => __( 'vehicle.inspection_expiry_date' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
+            'tngsn' => __( 'vehicle.tngsn' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -387,6 +401,7 @@ class VehicleService
                 'inspection_expiry_date' => $request->inspection_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->inspection_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'in_service' => 0,
                 'type' => 1,
+                'tngsn' => $request->tngsn,
             ] );
 
             $file = FileManager::find( $request->photo );
@@ -433,6 +448,7 @@ class VehicleService
             'type' => [ 'required' ],
             'permit' => [ 'required', 'in:1,2' ],
             'permit_start_date' => [ 'required' ],
+            'tngsn' => [ 'nullable' ],
             // 'in_service' => [ 'required', 'in:0,1' ],
         ] );
 
@@ -452,6 +468,7 @@ class VehicleService
             'inspection_expiry_date' => __( 'vehicle.inspection_expiry_date' ),
             'in_service' => __( 'vehicle.in_service' ),
             'type' => __( 'vehicle.type' ),
+            'tngsn' => __( 'vehicle.tngsn' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -480,6 +497,7 @@ class VehicleService
             $updateVehicle->permit_expiry_date = $request->permit_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateVehicle->inspection_expiry_date = $request->inspection_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->inspection_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateVehicle->type = 1;
+            $updateVehicle->tngsn = $request->tngsn;
             $updateVehicle->save();
 
             if ( $request->photo ) {
@@ -531,9 +549,9 @@ class VehicleService
         ] );
     }
 
-    public static function exportBookings( $request ) {
+    public static function exportVehicles( $request ) {
 
-        $bookings = self::allBookings( $request, true );
+        $vehicles = self::allVehicles( $request, true );
 
         $html = '<table>';
         $html .= '
@@ -547,11 +565,13 @@ class VehicleService
                 <th><strong>' .__( 'vehicle.insurance_number' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.permit_number' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.permit_type' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.road_tax_expiry_date' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.insurance_expiry_date' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.inspection_expiry_date' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.permit_date' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.type' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.in_service' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.tngsn' ). '</strong></th>
             </tr>
         </thead>
         ';
@@ -568,48 +588,37 @@ class VehicleService
             '3' => strtoupper( __( 'vehicle.open_cargo' ) ),
         ];
         $inServiceType = [
+            '0' => __( 'vehicle.in_service' ),
             '10' => __( 'datatables.activated' ),
             '20' => __( 'datatables.suspended' ),
         ];
 
-        foreach ( $bookings as $key => $booking ) {
-            $refNo = explode( ' ', $booking->reference );
+        foreach ( $vehicles as $key => $vehicle ) {
+
             $html .=
             '
             <tr>
-                <td>' . $booking->reference . '</td>
-                <td>' . $refNo[0] . '</td>
-                <td>' . $refNo[1] . '</td>
-                <td>' . $booking->invoice_number . '</td>
-                <td>' . $booking->invoice_date . '</td>
-                <td>' . $booking->vehicle->license_plate . '</td>
-                <td>' . $booking->delivery_order_number . '</td>
-                <td>' . date( 'd/m/Y', strtotime( $booking->delivery_order_date ) ) . '</td>
-                <td>' . $booking->customer_name . '</td>
-                <td>' . $booking->display_pickup_address->a1 . '</td>
-                <td>' . $booking->display_dropoff_address->a1 . '</td>
-                <td>' . $booking->display_dropoff_address->d . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->customer_quantity, 4 ) . '</td>
-                <td>' . $uom[$booking->customer_unit_of_measurement] . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->customer_rate, 2 ) . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->customer_total_amount, 2 ) . '</td>
-                <td>' . $customerType[$booking->customer_type] . '</td>
-                <td>' . $booking->company->name . '</td>
-                <td>' . $booking->customer_remarks . '</td>
-                <td>' . $booking->driver->name . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->driver_quantity, 4 ) . '</td>
-                <td>' . $uom[$booking->driver_unit_of_measurement] . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->driver_rate, 2 ) . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->driver_total_amount, 2 ) . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->driver_percentage, 2 ) . '</td>
-                <td>' . Helper::numberFormatNoComma( $booking->driver_final_amount, 2 ) . '</td>
+                <td>' . $vehicle->employee->name . '</td>
+                <td>' . $vehicle->license_plate . '</td>
+                <td>' . ( $vehicle->trailer_number ? $vehicle->trailer_number : '-' ) . '</td>
+                <td>' . $vehicle->name . '</td>
+                <td>' . ( $vehicle->road_tax_number ? $vehicle->road_tax_number : '-' ) . '</td>
+                <td>' . ( $vehicle->insurance_number ? $vehicle->insurance_number : '-' ) . '</td>
+                <td>' . ( $vehicle->permit_number ? $vehicle->permit_number : '-' ) . '</td>
+                <td>' . $permitType[$vehicle->permit_type] . '</td>
+                <td>' . ( $vehicle->local_raod_tax_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->raod_tax_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->local_insurance_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->insurance_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->local_inspection_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->inspection_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->permit_start_date ? date( 'd/m/Y', strtotime( $vehicle->permit_start_date ) ) : '-' ) . ' - ' . ( $vehicle->permit_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->permit_expiry_date ) ) : '-' ) . '</td>
+                <td>' . $vehicleType[$vehicle->type] . '</td>
+                <td>' . $inServiceType[$vehicle->in_service] . '</td>
+                <td>' . ( $vehicle->tngsn ? $vehicle->tngsn : '-' ) . '</td>
             </tr>
             ';
         }
 
         $html .= '</tbody></table>';
 
-        Helper::exportReport( $html, 'Booking' );
+        Helper::exportReport( $html, 'Vehicle' );
     }
 }
