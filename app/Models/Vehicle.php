@@ -35,6 +35,7 @@ class Vehicle extends Model
         'inspection_expiry_date',
         'in_service',
         'type',
+        'tngsn',
         'status',
     ];
 
@@ -129,6 +130,7 @@ class Vehicle extends Model
         'inspection_expiry_date',
         'in_service',
         'type',
+        'tngsn',
         'status',
     ];
 

@@ -130,6 +130,13 @@ $vehicle_create = 'vehicle_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_create }}_tngsn" class="col-sm-5 col-form-label">{{ __( 'vehicle.tngsn' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_create }}_tngsn" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 @if ( 1 == 2 )
                 <div class="mb-3 row">
                     <label for="{{ $vehicle_create }}_type" class="col-sm-5 col-form-label">{{ __( 'vehicle.type' ) }}</label>
@@ -208,6 +215,7 @@ $vehicle_create = 'vehicle_create';
             formData.append( 'permit_start_date', $( vc + '_permit_start_date' ).val() );
             formData.append( 'permit_expiry_date', $( vc + '_permit_expiry_date' ).val() );
             formData.append( 'inspection_expiry_date', $( vc + '_inspection_expiry_date' ).val() );
+            formData.append( 'tngsn', $( vc + '_tngsn' ).val() );
             formData.append( 'type', $( vc + '_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 

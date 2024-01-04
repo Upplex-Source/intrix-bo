@@ -39,4 +39,7 @@ return [
     'road_tax' => 'RoadTax',
     'insurance' => 'Insurance',
     'inspection' => 'Inspection',
+    'tngsn' => 'TNG S/N',
+    'lorry_number' => 'Lorry No.',
+
 ];

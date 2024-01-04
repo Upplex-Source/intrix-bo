@@ -130,6 +130,13 @@ $vehicle_edit = 'vehicle_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vehicle_edit }}_tngsn" class="col-sm-5 col-form-label">{{ __( 'vehicle.tngsn' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vehicle_edit }}_tngsn" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 @if ( 1 == 2 )
                 <div class="mb-3 row">
                     <label for="{{ $vehicle_edit }}_type" class="col-sm-5 col-form-label">{{ __( 'vehicle.type' ) }}</label>
@@ -215,6 +222,7 @@ $vehicle_edit = 'vehicle_edit';
             formData.append( 'road_tax_expiry_date', $( ve + '_road_tax_expiry_date' ).val() );
             formData.append( 'insurance_number', $( ve + '_insurance_number' ).val() );
             formData.append( 'insurance_expiry_date', $( ve + '_insurance_expiry_date' ).val() );
+            formData.append( 'tngsn', $( ve + '_tngsn' ).val() );
             formData.append( 'permit_number', $( ve + '_permit_number' ).val() );
             formData.append( 'permit', $( ve + '_permit' ).val() );
             formData.append( 'permit_start_date', $( ve + '_permit_start_date' ).val() );
@@ -374,6 +382,7 @@ $vehicle_edit = 'vehicle_edit';
                     $( ve + '_insurance_number' ).val( response.insurance_number );
                     insuranceExpiryDate.setDate( response.local_insurance_expiry_date );
                     $( ve + '_permit_number' ).val( response.permit_number );
+                    $( ve + '_tngsn' ).val( response.tngsn );
                     $( ve + '_permit' ).val( response.permit_type );
                     permitStartDate.setDate( response.local_permit_start_date );
                     permitExpiryDate.setDate( response.local_permit_expiry_date );
