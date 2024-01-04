@@ -36,6 +36,7 @@ class Vehicle extends Model
         'in_service',
         'type',
         'tngsn',
+        'insurance_start_date',
         'status',
     ];
 
@@ -54,6 +55,12 @@ class Vehicle extends Model
     public function getLocalPermitStartDateAttribute() {
         return $this->attributes['permit_start_date'] ?
         Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['permit_start_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' )
+        : null;
+    }
+
+    public function getLocalInsuranceStartDateAttribute() {
+        return $this->attributes['insurance_start_date'] ?
+        Carbon::createFromFormat( 'Y-m-d', $this->attributes['insurance_start_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d' )
         : null;
     }
 
@@ -131,6 +138,7 @@ class Vehicle extends Model
         'in_service',
         'type',
         'tngsn',
+        'insurance_start_date',
         'status',
     ];
 

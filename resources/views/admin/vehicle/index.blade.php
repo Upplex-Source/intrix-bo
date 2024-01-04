@@ -74,7 +74,7 @@ $columns = [
     [
         'type' => 'date',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'vehicle.insurance' ) ] ),
-        'id' => 'insurance_expiry_date',
+        'id' => 'insurance',
         'title' => __( 'vehicle.insurance' ),
     ],
     [
@@ -200,9 +200,9 @@ var typeMapper = @json( $data['type'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "insurance_expiry_date" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "insurance" ) }}' ),
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-';
+                    return ( row.local_insurance_start_date ? row.local_insurance_start_date : '-' ) + ' -<br>' + ( data ? data : '-' ) ;
                 },
             },
             {
@@ -293,7 +293,7 @@ var typeMapper = @json( $data['type'] ),
             }
         } );
 
-        $( '#insurance_expiry_date' ).flatpickr( {
+        $( '#insurance' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
             onClose: function( selected, dateStr, instance ) {

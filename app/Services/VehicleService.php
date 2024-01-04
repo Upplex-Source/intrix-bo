@@ -87,6 +87,7 @@ class VehicleService
                 'local_inspection_expiry_date',
                 'local_permit_expiry_date',
                 'local_permit_start_date',
+                'local_insurance_start_date',
                 'local_road_tax_expiry_date_status',
                 'local_insurance_expiry_date_status',
                 'local_inspection_expiry_date_status',
@@ -276,6 +277,31 @@ class VehicleService
             $filter = true;
         }
 
+        if ( !empty( $request->insurance ) ) {
+            if ( str_contains( $request->insurance, 'to' ) ) {
+                $dates = explode( ' to ', $request->insurance );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.insurance_start_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] )
+                        ->orWhereBetween( 'vehicles.insurance_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->insurance );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vehicles.insurance_start_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] )
+                        ->orWhereBetween( 'vehicles.insurance_expiry_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
         if ( !empty( $request->status ) ) {
             $model->where( 'vehicles.status', $request->status );
             $filter = true;
@@ -332,6 +358,7 @@ class VehicleService
                 'local_road_tax_expiry_date',
                 'local_insurance_expiry_date',
                 'local_permit_expiry_date',
+                'local_insurance_start_date',
                 'local_inspection_expiry_date',
                 'encrypted_id',
             ] );
@@ -365,6 +392,7 @@ class VehicleService
             'permit_number' => __( 'vehicle.permit_number' ),
             'permit' => __( 'vehicle.permit' ),
             'road_tax_expiry_date' => __( 'vehicle.road_tax_expiry_date' ),
+            'insurance_start_date' => __( 'vehicle.insurance_start_date' ),
             'insurance_expiry_date' => __( 'vehicle.insurance_expiry_date' ),
             'permit_start_date' => __( 'vehicle.permit_start_date' ),
             'permit_expiry_date' => __( 'vehicle.permit_expiry_date' ),
@@ -395,6 +423,7 @@ class VehicleService
                 'permit_number' => null,
                 'permit_type' => $request->permit,
                 'road_tax_expiry_date' => $request->road_tax_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->road_tax_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
+                'insurance_start_date' => $request->insurance_start_date ? Carbon::createFromFormat( 'Y-m-d', $request->insurance_start_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'insurance_expiry_date' => $request->insurance_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->insurance_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'permit_start_date' => $request->permit_start_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_start_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
                 'permit_expiry_date' => $request->permit_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
@@ -462,6 +491,7 @@ class VehicleService
             'permit_number' => __( 'vehicle.permit_number' ),
             'permit' => __( 'vehicle.permit' ),
             'road_tax_expiry_date' => __( 'vehicle.road_tax_expiry_date' ),
+            'insurance_start_date' => __( 'vehicle.insurance_start_date' ),
             'insurance_expiry_date' => __( 'vehicle.insurance_expiry_date' ),
             'permit_start_date' => __( 'vehicle.permit_start_date' ),
             'permit_expiry_date' => __( 'vehicle.permit_expiry_date' ),
@@ -492,6 +522,7 @@ class VehicleService
             $updateVehicle->permit_number = null;
             $updateVehicle->permit_type = $request->permit;
             $updateVehicle->road_tax_expiry_date = $request->road_tax_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->road_tax_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
+            $updateVehicle->insurance_start_date = $request->insurance_start_date ? Carbon::createFromFormat( 'Y-m-d', $request->insurance_start_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateVehicle->insurance_expiry_date = $request->insurance_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->insurance_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateVehicle->permit_start_date = $request->permit_start_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_start_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateVehicle->permit_expiry_date = $request->permit_expiry_date ? Carbon::createFromFormat( 'Y-m-d', $request->permit_expiry_date, 'Asia/Kuala_Lumpur' )->startOfDay()->timezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
@@ -566,12 +597,12 @@ class VehicleService
                 <th><strong>' .__( 'vehicle.permit_number' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.permit_type' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.road_tax_expiry_date' ). '</strong></th>
-                <th><strong>' .__( 'vehicle.insurance_expiry_date' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.insurance_date' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.inspection_expiry_date' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.permit_date' ). '</strong></th>
+                <th><strong>' .__( 'vehicle.tngsn' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.type' ). '</strong></th>
                 <th><strong>' .__( 'vehicle.in_service' ). '</strong></th>
-                <th><strong>' .__( 'vehicle.tngsn' ). '</strong></th>
             </tr>
         </thead>
         ';
@@ -606,13 +637,13 @@ class VehicleService
                 <td>' . ( $vehicle->insurance_number ? $vehicle->insurance_number : '-' ) . '</td>
                 <td>' . ( $vehicle->permit_number ? $vehicle->permit_number : '-' ) . '</td>
                 <td>' . $permitType[$vehicle->permit_type] . '</td>
-                <td>' . ( $vehicle->local_raod_tax_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->raod_tax_expiry_date ) ) : '-' ) . '</td>
-                <td>' . ( $vehicle->local_insurance_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->insurance_expiry_date ) ) : '-' ) . '</td>
-                <td>' . ( $vehicle->local_inspection_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->inspection_expiry_date ) ) : '-' ) . '</td>
-                <td>' . ( $vehicle->permit_start_date ? date( 'd/m/Y', strtotime( $vehicle->permit_start_date ) ) : '-' ) . ' - ' . ( $vehicle->permit_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->permit_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->local_road_tax_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->local_road_tax_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->local_insurance_start_date ? date( 'd/m/Y', strtotime( $vehicle->local_insurance_start_date ) ) : '-' ) . ' - ' . ( $vehicle->local_insurance_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->local_insurance_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->local_inspection_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->local_inspection_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->local_permit_start_date ? date( 'd/m/Y', strtotime( $vehicle->local_permit_start_date ) ) : '-' ) . ' - ' . ( $vehicle->local_permit_expiry_date ? date( 'd/m/Y', strtotime( $vehicle->local_permit_expiry_date ) ) : '-' ) . '</td>
+                <td>' . ( $vehicle->tngsn ? $vehicle->tngsn : '-' ) . '</td>
                 <td>' . $vehicleType[$vehicle->type] . '</td>
                 <td>' . $inServiceType[$vehicle->in_service] . '</td>
-                <td>' . ( $vehicle->tngsn ? $vehicle->tngsn : '-' ) . '</td>
             </tr>
             ';
         }
