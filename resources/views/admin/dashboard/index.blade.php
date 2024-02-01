@@ -13,12 +13,12 @@
                                                     <div class="card-inner">
                                                         <div class="card-title-group">
                                                             <div class="card-title">
-                                                                <h6 class="title">{{ __( 'dashboard.total_drivers' ) }}</h6>
+                                                                <h6 class="title">{{ __( 'dashboard.total_owners' ) }}</h6>
                                                             </div>
                                                         </div>
                                                         <div class="data">
                                                             <div class="data-group">
-                                                                <div class="amount" id="total_drivers">
+                                                                <div class="amount" id="total_owners">
                                                                     <div class="spinner-grow text-secondary" role="status">
                                                                         <span class="visually-hidden">Loading...</span>
                                                                     </div>
@@ -35,12 +35,12 @@
                                                     <div class="card-inner">
                                                         <div class="card-title-group">
                                                             <div class="card-title">
-                                                                <h6 class="title">{{ __( 'dashboard.total_vehicles' ) }}</h6>
+                                                                <h6 class="title">{{ __( 'dashboard.total_farms' ) }}</h6>
                                                             </div>
                                                         </div>
                                                         <div class="data">
                                                             <div class="data-group">
-                                                                <div class="amount" id="total_vehicles">
+                                                                <div class="amount" id="total_farms">
                                                                     <div class="spinner-grow text-secondary" role="status">
                                                                         <span class="visually-hidden">Loading...</span>
                                                                     </div>
@@ -57,12 +57,12 @@
                                                     <div class="card-inner">
                                                         <div class="card-title-group">
                                                             <div class="card-title">
-                                                                <h6 class="title">{{ __( 'dashboard.total_vendors' ) }}</h6>
+                                                                <h6 class="title">{{ __( 'dashboard.total_buyers' ) }}</h6>
                                                             </div>
                                                         </div>
                                                         <div class="data">
                                                             <div class="data-group">
-                                                                <div class="amount" id="total_vendors">
+                                                                <div class="amount" id="total_buyers">
                                                                     <div class="spinner-grow text-secondary" role="status">
                                                                         <span class="visually-hidden">Loading...</span>
                                                                     </div>
@@ -79,56 +79,12 @@
                                                     <div class="card-inner">
                                                         <div class="card-title-group">
                                                             <div class="card-title">
-                                                                <h6 class="title">{{ __( 'dashboard.total_bookings' ) }}</h6>
+                                                                <h6 class="title">{{ __( 'dashboard.total_orders' ) }}</h6>
                                                             </div>
                                                         </div>
                                                         <div class="data">
                                                             <div class="data-group">
-                                                                <div class="amount" id="total_bookings">
-                                                                    <div class="spinner-grow text-secondary" role="status">
-                                                                        <span class="visually-hidden">Loading...</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div><!-- .card-inner -->
-                                                </div><!-- .nk-ecwg -->
-                                            </div><!-- .card -->
-                                        </div><!-- .col -->
-                                        <div class="col-xxl-3 col-sm-6">
-                                            <div class="card">
-                                                <div class="nk-ecwg nk-ecwg6">
-                                                    <div class="card-inner">
-                                                        <div class="card-title-group">
-                                                            <div class="card-title">
-                                                                <h6 class="title">{{ __( 'dashboard.total_incomes' ) }}</h6>
-                                                            </div>
-                                                        </div>
-                                                        <div class="data">
-                                                            <div class="data-group">
-                                                                <div class="amount" id="total_incomes">
-                                                                    <div class="spinner-grow text-secondary" role="status">
-                                                                        <span class="visually-hidden">Loading...</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div><!-- .card-inner -->
-                                                </div><!-- .nk-ecwg -->
-                                            </div><!-- .card -->
-                                        </div><!-- .col -->
-                                        <div class="col-xxl-3 col-sm-6">
-                                            <div class="card">
-                                                <div class="nk-ecwg nk-ecwg6">
-                                                    <div class="card-inner">
-                                                        <div class="card-title-group">
-                                                            <div class="card-title">
-                                                                <h6 class="title">{{ __( 'dashboard.total_expenses' ) }}</h6>
-                                                            </div>
-                                                        </div>
-                                                        <div class="data">
-                                                            <div class="data-group">
-                                                                <div class="amount" id="total_expenses">
+                                                                <div class="amount" id="total_orders">
                                                                     <div class="spinner-grow text-secondary" role="status">
                                                                         <span class="visually-hidden">Loading...</span>
                                                                     </div>
@@ -147,7 +103,7 @@
                                                     <div class="card-inner">
                                                         <div class="card-title-group mb-3">
                                                             <div class="card-title">
-                                                                <h6 class="title">{{ __( 'dashboard.expenses_statistics' ) }}</h6>
+                                                                <h6 class="title">{{ __( 'dashboard.order_statistics' ) }}</h6>
                                                             </div>
                                                             @if ( 1 == 2 )
                                                             <div class="card-tools">
@@ -169,55 +125,6 @@
                                                         </div>
                                                     </div><!-- .card-inner -->
                                                 </div>
-                                            </div><!-- .card -->
-                                        </div><!-- .col -->
-                                        <?php
-                                        $upcomingBookings = $data['upcoming_bookings'];
-                                        ?>
-                                        <div class="col-xxl-6">
-                                            <div class="card card-full">
-                                                <div class="card-inner">
-                                                    <div class="card-title-group">
-                                                        <div class="card-title">
-                                                            <h6 class="title">{{ __( 'dashboard.upcoming_bookings' ) }}</h6>
-                                                        </div>
-                                                    </div>
-                                                    @if ( count( $upcomingBookings ) == 0 )
-                                                    <div class="nk-ecwg8-ck d-flex justify-content-center align-items-center">
-                                                        <div>No upcoming bookings.</div>
-                                                    </div>
-                                                    @endif
-                                                </div>
-                                                @if ( count( $upcomingBookings ) > 0 )
-                                                <div class="nk-tb-list mt-n2">
-                                                    <div class="nk-tb-item nk-tb-head">
-                                                        <div class="nk-tb-col"><span>{{ __( 'dashboard.reference' ) }}</span></div>
-                                                        <div class="nk-tb-col tb-col-sm"><span>{{ __( 'dashboard.customer' ) }}</span></div>
-                                                        <div class="nk-tb-col tb-col-sm"><span>{{ __( 'dashboard.destination' ) }}</span></div>
-                                                        <div class="nk-tb-col tb-col-sm"><span>{{ __( 'dashboard.pickup_date' ) }}</span></div>
-                                                    </div>
-                                                    @foreach( $upcomingBookings as $ub )
-                                                    <div class="nk-tb-item">
-                                                        <div class="nk-tb-col">
-                                                            <span class="tb-lead"><a href="{{ route( 'admin.booking.edit' ) . '?id=' . $ub->encrypted_id }}">{{ $ub->reference }}</a></span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <div class="user-card">
-                                                                <div class="user-name">
-                                                                    <span class="tb-lead">{{ $ub->customer_name }}</span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-lead">{{ @$ub->display_drop_off_address->d }}</span>
-                                                        </div>
-                                                        <div class="nk-tb-col tb-col-sm">
-                                                            <span class="tb-sub">{{ explode( ' ', $ub->pickup_date )[0] }}</span>
-                                                        </div>
-                                                    </div>
-                                                    @endforeach
-                                                </div>
-                                                @endif
                                             </div><!-- .card -->
                                         </div><!-- .col -->
                                     </div><!-- .row -->
@@ -277,11 +184,8 @@
                         }
                     } )
                     chart.updateSeries( [ {
-                        name: '{{ __( 'dashboard.fuel' ) }}',
-                        data: response.fuelData
-                    }, {
-                        name: '{{ __( 'dashboard.toll' ) }}',
-                        data: response.tollData
+                        name: '{{ __( 'template.orders' ) }}',
+                        data: response.orderData
                     } ] );
                 }
             } );
@@ -297,12 +201,10 @@
                     _token: '{{ csrf_token() }}'
                 },
                 success: function( response ) {
-                    $( '#total_drivers' ).html( response.total_drivers );
-                    $( '#total_vehicles' ).html( response.total_vehicles );
-                    $( '#total_vendors' ).html( response.total_vendors );
-                    $( '#total_bookings' ).html( response.total_bookings );
-                    $( '#total_incomes' ).html( response.total_incomes );
-                    $( '#total_expenses' ).html( response.total_expenses );
+                    $( '#total_owners' ).html( response.total_owners );
+                    $( '#total_farms' ).html( response.total_farms );
+                    $( '#total_buyers' ).html( response.total_buyers );
+                    $( '#total_orders' ).html( response.total_orders );
                 },
             } );
         }

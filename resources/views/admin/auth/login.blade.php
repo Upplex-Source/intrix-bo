@@ -7,7 +7,7 @@
                         <div class="brand-logo pb-4 text-center">
                             <a href="{{ route( 'admin.home' ) }}" class="logo-link">
                                 <!-- <img class="logo-dark logo-img logo-img-lg" src="{{ asset( 'admin/images/settlelaah-dark.png' ) }}" srcset="{{ asset( 'admin/images/settlelaah-dark2x.png' ) }} 2x" alt="logo"> -->
-                                <img src="{{ asset( 'admin/images/jjk-small.png' ) }}" width="50%" />
+                                <img src="{{ asset( 'admin/images/logo.png' ) }}" width="50%" />
                             </a>
                         </div>
                         <div class="card" style="border-radius: 10px;">
@@ -21,12 +21,15 @@
                                     @csrf
                                     <div class="form-group">
                                         <div class="form-label-group">
-                                            <label class="form-label" for="email">{{ __( 'auth.email' ) }}</label>
+                                            <label class="form-label" for="email">{{ __( 'auth.credentials' ) }}</label>
                                         </div>
-                                        <div class="form-control-wrap">
+                                        <div class="form-control-wrap input-group">
+                                            <button class="flex-shrink-0 inline-flex items-center input-group-text" type="button">
+                                                +60
+                                            </button>
                                             <input type="text" class="form-control form-control-lg @error('email') is-invalid @enderror" 
                                             id="email" name="email" 
-                                            placeholder="{{ __( 'auth.enter_your_x', [ 'type' => strtolower( __( 'auth.email' ) ) ] ) }}"
+                                            placeholder="{{ __( 'auth.enter_your_x', [ 'type' => strtolower( __( 'auth.email' ) .' or '. __( 'auth.phone_number' ) ) ] ) }}"
                                             value="{{ old( 'email' ) ? old( 'email' ) : '' }}">
                                             @error('email')
                                             <span class="invalid-feedback" role="alert">
@@ -82,7 +85,7 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="nk-block-content text-center text-lg-left">
-                                        <p class="text-soft">&copy; {{ date( 'Y' ) }} Settlelaah. All Rights Reserved.</p>
+                                        <p class="text-soft">&copy; {{ date( 'Y' ) . ' ' . config( 'app.name' ) }} All Rights Reserved.</p>
                                     </div>
                                 </div>
                             </div>

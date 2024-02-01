@@ -19,12 +19,19 @@ class Administrator extends Authenticatable
 
     protected $fillable = [
         'name',
+        'user_id',
         'email',
         'password',
         'fullname',
+        'phone_number',
+        'calling_code',
         'role',
         'status',
     ];
+
+    public function owner() {
+        return $this->hasOne( User::class, 'id', 'user_id' );
+    }
 
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
@@ -36,9 +43,12 @@ class Administrator extends Authenticatable
 
     protected static $logAttributes = [
         'name',
+        'user_id',
         'email',
         'password',
         'fullname',
+        'phone_number',
+        'calling_code',
         'role',
         'status',
     ];

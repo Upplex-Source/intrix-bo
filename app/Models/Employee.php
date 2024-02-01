@@ -24,28 +24,17 @@ class Employee extends Model
         'email',
         'phone_number',
         'identification_number',
-        'license_number',
-        'remarks',
-        'driver_amount',
-        'license_expiry_date',
-        'status',
-        'designation',
-        'employment_type',
-        'employment_date',
         'date_of_birth',
-        'age',
+        'remarks',
+        'status',
     ];
 
     public function getPathAttribute() {
         return $this->attributes['photo'] ? asset( 'storage/' . $this->attributes['photo'] ) : null;
     }
 
-    public function getLocalEmploymentDateAttribute() {
-        return $this->attributes['employment_date'] ? Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['employment_date'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' ) : '-';
-    }
-
     public function getLocalDateOfBirthAttribute() {
-        return $this->attributes['date_of_birth'] ? Carbon::createFromFormat( 'Y-m-d H:i:s', $this->attributes['date_of_birth'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' ) : '-';
+        return $this->attributes['date_of_birth'] ? Carbon::createFromFormat( 'Y-m-d', $this->attributes['date_of_birth'] )->setTimezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' ) : '-';
     }
 
     public function getEncryptedIdAttribute() {
@@ -62,16 +51,9 @@ class Employee extends Model
         'email',
         'phone_number',
         'identification_number',
-        'license_number',
-        'remarks',
-        'driver_amount',
-        'license_expiry_date',
-        'status',
-        'designation',
-        'employment_type',
-        'employment_date',
         'date_of_birth',
-        'age',
+        'remarks',
+        'status',
     ];
 
     protected static $logName = 'employees';

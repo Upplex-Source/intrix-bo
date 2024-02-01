@@ -16,6 +16,7 @@ return [
     'username' => 'Username',
     'email' => 'Email',
     'fullname' => 'Fullname',
+    'phone_number' => 'Phone Number',
     'role' => 'Role',
     'password' => 'Password',
 ];

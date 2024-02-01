@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules\Password;
 
 use App\Models\{
     Administrator,
+    User,
     Role as RoleModel
 };
 
@@ -114,6 +115,11 @@ class AdministratorService
             $filter = true;
         }
 
+        if ( !empty( $request->phone_number ) ) {
+            $model->where( 'phone_number', 'LIKE', '%' . $request->phone_number . '%' );
+            $filter = true;
+        }
+
         if ( !empty( $request->role ) ) {
             $model->where( 'role', $request->role );
             $filter = true;
@@ -160,18 +166,34 @@ class AdministratorService
 
         try {
 
-            $createAdmin = Administrator::create( [
+            $basicAttribute = [
                 'name' => strtolower( $request->username ),
                 'email' => strtolower( $request->email ),
                 'fullname' => $request->fullname,
-                'password' => Hash::make( $request->password ),
                 'role' => $request->role,
+                'password' => Hash::make( $request->password ),
                 'status' => 10,
-            ] );
+            ];
+
+            $createAdmin = Administrator::create( $basicAttribute );
     
             $roleModel = RoleModel::find( $request->role );
     
             $createAdmin->syncRoles( [ $roleModel->name ] );
+
+            $createUserObject = [
+                'name' => strtolower( $request->username ),
+                'fullname' => $request->fullname,
+                'email' => strtolower( $request->email ),
+                'phone_number' => null,
+                'password' => Hash::make( $request->password ),
+                'status' => 10,
+            ];
+
+            $createUser = User::create( $createUserObject );
+
+            $createAdmin->user_id = $createUser->id;
+            $createAdmin->save();
 
             DB::commit();
 
@@ -296,4 +318,195 @@ class AdministratorService
             'status' => true,
         ] );
     }
+
+    public static function allOwners( $request ) {
+
+        $owner = Administrator::with( [ 
+            'owner'
+        ] )->where( 'role', 3 )->where( 'status', 10 );
+
+        $filterObject = self::filter( $request, $owner );
+        $owner = $filterObject['model'];
+        $filter = $filterObject['filter'];
+
+        if ( $request->input( 'order.0.column' ) != 0 ) {
+            $dir = $request->input( 'order.0.dir' );
+            switch ( $request->input( 'order.0.column' ) ) {
+                case 1:
+                    $owner->orderBy( 'created_at', $dir );
+                    break;
+                case 2:
+                    $owner->orderBy( 'name', $dir );
+                    break;
+                case 3:
+                    $owner->orderBy( 'email', $dir );
+                    break;
+                case 4:
+                    $owner->orderBy( 'role', $dir );
+                    break;
+            }
+        }
+
+        $ownerCount = $owner->count();
+
+        $limit = $request->length;
+        $offset = $request->start;
+
+        $owners = $owner->skip( $offset )->take( $limit )->get();
+
+        if ( $owners ) {
+            $owners->append( [
+                'encrypted_id',
+            ] );
+        }
+
+        $totalRecord = Administrator::count();
+        
+        $data = [
+            'owners' => $owners,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $ownerCount : $totalRecord,
+            'recordsTotal' => $totalRecord,
+        ];
+
+        return $data;
+
+    }
+
+    public static function oneOwner( $request ) {
+        $owner = Administrator::find( Helper::decode( $request->id ) );
+
+        return response()->json( $owner );
+    }
+
+    public static function createOwner( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'username' => [ 'required', 'alpha_dash', 'unique:administrators,name', new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'unique:administrators,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'phone_number' => [ 'required', 'bail', 'unique:administrators,phone_number' ],
+            'fullname' => [ 'required' ],
+            'password' => [ 'required', Password::min( 8 ) ],
+        ] );
+
+        $attributeName = [
+            'username' => __( 'administrator.username' ),
+            'email' => __( 'administrator.email' ),
+            'fullname' => __( 'administrator.fullname' ),
+            'password' => __( 'administrator.password' ),
+            'phone_number' => __( 'administrator.phone_number' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $basicAttribute = [
+                'name' => strtolower( $request->username ),
+                'email' => strtolower( $request->email ),
+                'fullname' => $request->fullname,
+                'phone_number' => $request->phone_number,
+                'role' => 3,
+                'password' => Hash::make( $request->password ),
+                'status' => 10,
+            ];
+
+            $createOwner = Administrator::create( $basicAttribute );
+    
+            $roleModel = RoleModel::find( 3 );
+    
+            $createOwner->syncRoles( [ $roleModel->name ] );
+
+            $createUserObject = [
+                'name' => strtolower( $request->username ),
+                'fullname' => $request->fullname,
+                'email' => strtolower( $request->email ),
+                'phone_number' => $request->phone_number,
+                'password' => Hash::make( $request->password ),
+                'status' => 10,
+            ];
+
+            $createUser = User::create( $createUserObject );
+
+            $createOwner->user_id = $createUser->id;
+            $createOwner->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.owners' ) ) ] ),
+        ] );
+    }
+
+    public static function updateOwner( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'username' => [ 'required', 'alpha_dash', 'unique:administrators,name,' . $request->id, new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'unique:administrators,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'phone_number' => [ 'required', 'bail', 'unique:administrators,phone_number,' .$request->id ],
+            'fullname' => [ 'required' ],
+            'password' => [ 'nullable', Password::min( 8 ) ],
+        ] );
+
+        $attributeName = [
+            'username' => __( 'administrator.username' ),
+            'email' => __( 'administrator.email' ),
+            'fullname' => __( 'administrator.fullname' ),
+            'phone_number' => __( 'administrator.phone_number' ),
+            'password' => __( 'administrator.password' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateOwner = Administrator::find( $request->id );
+            $updateOwner->name = strtolower( $request->username );
+            $updateOwner->email = strtolower( $request->email );
+            $updateOwner->phone_number = $phone_number;
+            $updateOwner->fullname = $request->fullname;
+
+            $updateOwner->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.owners' ) ) ] ),
+        ] );
+    }
+
 }

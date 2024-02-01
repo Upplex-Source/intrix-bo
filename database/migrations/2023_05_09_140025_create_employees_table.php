@@ -20,13 +20,9 @@ class CreateEmployeesTable extends Migration
             $table->string('email',50)->nullable();
             $table->string('phone_number',15)->nullable();
             $table->string('identification_number',20)->nullable();
-            $table->string('license_number',50)->nullable();
+            $table->date( 'date_of_birth' )->nullable();
             $table->string('remarks')->nullable();
-            $table->decimal('driver_amount',16,2)->default(0);
-            $table->date('license_expiry_date')->nullable();
             $table->tinyInteger('status')->default(10);
-            $table->tinyInteger('designation')->default(1);
-            $table->tinyInteger('employment_type')->default(1)->comment('1:fulltime 2:parttime');
             $table->timestamps();
         });
     }

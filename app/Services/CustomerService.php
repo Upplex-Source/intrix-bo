@@ -170,7 +170,7 @@ class CustomerService
                 'phone_number' => $request->phone_number,
                 'phone_number_2' => $request->phone_number_2,
                 'email' => $request->email,
-                'address' => $request->address_1,
+                'address_1' => $request->address_1,
                 'address_2' => $request->address_2,
                 'city' => $request->city,
                 'state' => $request->state,
@@ -247,7 +247,7 @@ class CustomerService
             $updateCustomer->phone_number = $request->phone_number;
             $updateCustomer->phone_number_2 = $request->phone_number_2;
             $updateCustomer->email = $request->email;
-            $updateCustomer->address = $request->address_1;
+            $updateCustomer->address_1 = $request->address_1;
             $updateCustomer->address_2 = $request->address_2;
             $updateCustomer->city = $request->city;
             $updateCustomer->state = $request->state;

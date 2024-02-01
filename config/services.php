@@ -40,4 +40,8 @@ return [
         'api' => env( 'API_URL' ),
         'crm' => env( 'CRM_URL' ),
     ],
+
+    'app' => [
+        'name' => env( 'APP_NAME' ),
+    ]
 ];

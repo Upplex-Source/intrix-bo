@@ -36,6 +36,18 @@ $administrator_create = 'administrator_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $administrator_create }}_phone_number" class="col-sm-5 col-form-label">{{ __( 'administrator.phone_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <div class="input-group">
+                            <button class="flex-shrink-0 inline-flex items-center input-group-text" type="button">
+                                +60
+                            </button>
+                            <input type="text" class="form-control" id="{{ $administrator_create }}_phone_number">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $administrator_create }}_password" class="col-sm-5 col-form-label">{{ __( 'administrator.password' ) }}</label>
                     <div class="col-sm-7">
                         <input type="password" class="form-control" id="{{ $administrator_create }}_password" autocomplete="new-password">
@@ -47,8 +59,9 @@ $administrator_create = 'administrator_create';
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $administrator_create }}_role">
                             <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'administrator.role' ) ] ) }}</option>
-                            <option value="1">Super Admin</option>
-                            <option value="2">Admin</option>
+                            @foreach( $data['roles'] as $role )
+                            <option value="{{ $role['value'] }}">{{ $role['title'] }}</option>
+                            @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -84,6 +97,7 @@ $administrator_create = 'administrator_create';
             formData.append( 'username', $( ac + '_username' ).val() );
             formData.append( 'email', $( ac + '_email' ).val() );
             formData.append( 'fullname', $( ac + '_fullname' ).val() );
+            formData.append( 'phone_number', $( ac + '_phone_number' ).val() );
             formData.append( 'password', $( ac + '_password' ).val() );
             formData.append( 'role', $( ac + '_role' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );

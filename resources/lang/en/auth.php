@@ -18,6 +18,8 @@ return [
     
     'sign_in_to' => 'Sign in to your account',
     'email' => 'Email',
+    'phone_number' => 'Phone Number',
+    'credentials' => 'Credentials',
     'password' => 'Password',
     'enter_your_x' => 'Enter your :type',
     'continue' => 'Continue',

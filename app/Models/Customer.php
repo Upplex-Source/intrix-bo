@@ -24,7 +24,7 @@ class Customer extends Model
         'phone_number',
         'phone_number_2',
         'email',
-        'address',
+        'address_1',
         'address_2',
         'city',
         'state',
@@ -36,7 +36,7 @@ class Customer extends Model
     public function getDisplayAddressAttribute() {
 
         $displayAddress = [
-            'a1' => $this->attributes['address'],
+            'a1' => $this->attributes['address_1'],
             'a2' => $this->attributes['address_2'],
             'c' => $this->attributes['city'],
             'p' => $this->attributes['postcode'],
@@ -61,7 +61,7 @@ class Customer extends Model
         'phone_number',
         'phone_number_2',
         'email',
-        'address',
+        'address_1',
         'address_2',
         'city',
         'state',

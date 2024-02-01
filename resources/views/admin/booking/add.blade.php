@@ -11,7 +11,7 @@ $booking_create = 'booking_create';
 </div><!-- .nk-block-head -->
 
 <?php
-$bookingIncrement = $data['booking_increment'];
+$bookingIncrement = [$data['booking_increment']];
 ?>
 
 <div class="card">

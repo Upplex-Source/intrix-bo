@@ -9,6 +9,10 @@ use App\Services\{
     AdministratorService,
 };
 
+use Illuminate\Support\Facades\{
+    DB,
+};
+
 class AdministratorController extends Controller
 {
     public function login( Request $request ) {
@@ -60,6 +64,12 @@ class AdministratorController extends Controller
                 'class' => 'active',
             ],
         ];
+
+        $roles = [];
+        foreach( DB::table( 'roles' )->select( 'id', 'name' )->orderBy( 'id', 'ASC' )->get() as $role ) {
+            $roles[] = [ 'key' => $role->name, 'value' => $role->id, 'title' => __( 'role.' . $role->name ) ];
+        }
+        $this->data['data']['roles'] = $roles;
 
         return view( 'admin.main' )->with( $this->data );
     }
@@ -128,5 +138,15 @@ class AdministratorController extends Controller
     public function verifyCode( Request $request ) {
 
         return AdministratorService::verifyCode( $request );
+    }
+
+    public function allOwners( Request $request ) {
+
+        return AdministratorService::allOwners( $request );
+    }
+
+    public function oneOwner( Request $request ) {
+
+        return AdministratorService::oneOwner( $request );
     }
 }

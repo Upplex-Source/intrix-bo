@@ -15,7 +15,7 @@ class DashboardController extends Controller
 
         $this->data['header']['title'] = __( 'template.dashboard' );
         $this->data['content'] = 'admin.dashboard.index';
-        $this->data['data']['upcoming_bookings'] = DashboardService::upcomingBooking( $request );
+        $this->data['data']['upcoming_bookings'] = [];
 
         return view( 'admin.main' )->with( $this->data );
     }

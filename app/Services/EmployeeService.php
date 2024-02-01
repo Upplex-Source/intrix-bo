@@ -22,37 +22,37 @@ use Carbon\Carbon;
 
 class EmployeeService
 {
-    public static function allEmployees( $request ) {
+    public static function allWorkers( $request ) {
 
-        $employee = Employee::select( 'employees.*' );
+        $worker = Employee::select( 'employees.*' );
 
-        $filterObject = self::filter( $request, $employee );
-        $employee = $filterObject['model'];
+        $filterObject = self::filter( $request, $worker );
+        $worker = $filterObject['model'];
         $filter = $filterObject['filter'];
 
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 2:
-                    $employee->orderBy( 'created_at', $dir );
+                    $worker->orderBy( 'created_at', $dir );
                     break;
                 case 3:
-                    $employee->orderBy( 'name', $dir );
+                    $worker->orderBy( 'name', $dir );
                     break;
                 case 4:
-                    $employee->orderBy( 'phone_number', $dir );
+                    $worker->orderBy( 'phone_number', $dir );
                     break;
                 case 5:
-                    $employee->orderBy( 'identification_number', $dir );
+                    $worker->orderBy( 'identification_number', $dir );
                     break;
                 case 6:
-                    $employee->orderBy( 'license_number', $dir );
+                    $worker->orderBy( 'license_number', $dir );
                     break;
                 case 7:
-                    $employee->orderBy( 'license_expiry_date', $dir );
+                    $worker->orderBy( 'license_expiry_date', $dir );
                     break;
                 case 8:
-                    $employee->orderBy( 'designation', $dir );
+                    $worker->orderBy( 'designation', $dir );
                     break;
                 case 9:
                     $vendor->orderBy( 'status', $dir );
@@ -60,15 +60,15 @@ class EmployeeService
             }
         }
 
-        $employeeCount = $employee->count();
+        $workerCount = $worker->count();
 
         $limit = $request->length;
         $offset = $request->start;
 
-        $employees = $employee->skip( $offset )->take( $limit )->get();
+        $workers = $worker->skip( $offset )->take( $limit )->get();
 
-        if ( $employees ) {
-            $employees->append( [
+        if ( $workers ) {
+            $workers->append( [
                 'path',
                 'encrypted_id',
             ] );
@@ -77,9 +77,9 @@ class EmployeeService
         $totalRecord = Employee::count();
 
         $data = [
-            'employees' => $employees,
+            'workers' => $workers,
             'draw' => $request->draw,
-            'recordsFiltered' => $filter ? $employeeCount : $totalRecord,
+            'recordsFiltered' => $filter ? $workerCount : $totalRecord,
             'recordsTotal' => $totalRecord,
         ];
 
@@ -160,29 +160,26 @@ class EmployeeService
         ];
     }
 
-    public static function oneEmployee( $request ) {
+    public static function oneWorker( $request ) {
 
-        if ( !$request->simple_mode ) {
-            $request->merge( [
-                'id' => Helper::decode( $request->id ),
-            ] );
-        }
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
 
-        $employee = Employee::find( $request->id );
+        $worker = Employee::find( $request->id );
 
-        if( $employee ) {
-            $employee->append( [
+        if( $worker ) {
+            $worker->append( [
                 'path',
-                'local_employment_date',
                 'local_date_of_birth',
                 'encrypted_id',
             ] );
         }
 
-        return response()->json( $employee );
+        return response()->json( $worker );
     }
 
-    public static function createEmployee( $request ) {
+    public static function createWorker( $request ) {
 
         $validator = Validator::make( $request->all(), [
             // 'photo' => [ 'required' ],
@@ -190,26 +187,16 @@ class EmployeeService
             'email' => [ 'nullable', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
             'identification_number' => [ 'required' ],
-            'license_number' => [ 'nullable' ],
-            'license_expiry_date' => [ 'nullable' ],
-            'designation' => [ 'required', 'in:1,2' ],
-            'driver_amount' => [ 'nullable', 'numeric' ],
-            'employment_date' => [ 'nullable', 'date_format:Y-m-d' ],
             'date_of_birth' => [ 'nullable', 'date_format:Y-m-d' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'employee.name' ),
-            'email' => __( 'employee.email' ),
-            'phone_number' => __( 'employee.phone_number' ),
-            'identification_number' => __( 'employee.identification_number' ),
-            'license_number' => __( 'employee.license_number' ),
-            'license_expiry_date' => __( 'employee.license_expiry_date' ),
-            'designation' => __( 'employee.designation' ),
-            'driver_amount' => __( 'employee.driver_amount' ),
-            'employment_date' => __( 'employee.designation' ),
-            'date_of_birth' => __( 'employee.driver_amount' ),
+            'name' => __( 'worker.name' ),
+            'email' => __( 'worker.email' ),
+            'phone_number' => __( 'worker.phone_number' ),
+            'identification_number' => __( 'worker.identification_number' ),
+            'date_of_birth' => __( 'worker.driver_amount' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -225,19 +212,13 @@ class EmployeeService
 
         try {
 
-            $createEmployee = Employee::create( [
+            $createWorker = Employee::create( [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone_number' => $request->phone_number,
                 'identification_number' => $request->identification_number,
-                'license_number' => $request->license_number,
-                'license_expiry_date' => $request->license_expiry_date,
-                'designation' => $request->designation,
                 'remarks' => $request->remarks,
-                'driver_amount' => empty( $request->driver_amount ) ? 0 : $request->driver_amount,
-                'employment_date' => $employmentDate,
                 'date_of_birth' => $dateOfBirth,
-                'employment_date' => $employmentDate,
                 'date_of_birth' => $dateOfBirth,
                 'age' => $request->age,
             ] );
@@ -245,11 +226,11 @@ class EmployeeService
             $file = FileManager::find( $request->photo );
             if ( $file ) {
                 $fileName = explode( '/', $file->file );
-                $target = 'employees/' . $createEmployee->id . '/' . $fileName[1];
+                $target = 'workers/' . $createWorker->id . '/' . $fileName[1];
                 Storage::disk( 'public' )->move( $file->file, $target );
 
-                $createEmployee->photo = $target;
-                $createEmployee->save();
+                $createWorker->photo = $target;
+                $createWorker->save();
 
                 $file->status = 10;
                 $file->save();
@@ -267,11 +248,11 @@ class EmployeeService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.employees' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.workers' ) ) ] ),
         ] );
     }
 
-    public static function updateEmployee( $request ) {
+    public static function updateWorker( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -283,26 +264,16 @@ class EmployeeService
             'email' => [ 'nullable', 'bail', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'phone_number' => [ 'required', 'digits_between:8,15' ],
             'identification_number' => [ 'required' ],
-            'license_number' => [ 'nullable' ],
-            'license_expiry_date' => [ 'nullable' ],
-            'designation' => [ 'required', 'in:1,2' ],
-            'driver_amount' => [ 'nullable', 'numeric' ],
-            'employment_date' => [ 'nullable', 'date_format:Y-m-d' ],
             'date_of_birth' => [ 'nullable', 'date_format:Y-m-d' ],
         ] );
 
         $attributeName = [
             'photo' => __( 'datatables.photo' ),
-            'name' => __( 'employee.name' ),
-            'email' => __( 'employee.email' ),
-            'phone_number' => __( 'employee.phone_number' ),
-            'identification_number' => __( 'employee.identification_number' ),
-            'license_number' => __( 'employee.license_number' ),
-            'license_expiry_date' => __( 'employee.license_expiry_date' ),
-            'designation' => __( 'employee.designation' ),
-            'driver_amount' => __( 'employee.driver_amount' ),
-            'employment_date' => __( 'employee.designation' ),
-            'date_of_birth' => __( 'employee.driver_amount' ),
+            'name' => __( 'worker.name' ),
+            'email' => __( 'worker.email' ),
+            'phone_number' => __( 'worker.phone_number' ),
+            'identification_number' => __( 'worker.identification_number' ),
+            'date_of_birth' => __( 'worker.driver_amount' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -315,33 +286,27 @@ class EmployeeService
 
         try {
 
-            $updateEmployee = Employee::find( $request->id );
-            $updateEmployee->name = $request->name;
-            $updateEmployee->email = $request->email;
-            $updateEmployee->phone_number = $request->phone_number;
-            $updateEmployee->identification_number = $request->identification_number;
-            $updateEmployee->license_number = $request->license_number;
-            $updateEmployee->license_expiry_date = $request->license_expiry_date;
-            $updateEmployee->designation = $request->designation;
-            $updateEmployee->remarks = $request->remarks;
-            $updateEmployee->driver_amount = empty( $request->driver_amount ) ? 0 : $request->driver_amount;
-            $updateEmployee->employment_date = Carbon::createFromFormat( 'Y-m-d', $request->employment_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay();
-            $updateEmployee->date_of_birth = Carbon::createFromFormat( 'Y-m-d', $request->date_of_birth, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay();
-            $updateEmployee->age = $request->age;
-            $updateEmployee->save();
+            $updateWorker = Employee::find( $request->id );
+            $updateWorker->name = $request->name;
+            $updateWorker->email = $request->email;
+            $updateWorker->phone_number = $request->phone_number;
+            $updateWorker->identification_number = $request->identification_number;
+            $updateWorker->remarks = $request->remarks;
+            $updateWorker->date_of_birth = Carbon::createFromFormat( 'Y-m-d', $request->date_of_birth, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->startOfDay();
+            $updateWorker->save();
 
             if ( $request->photo ) {
                 $file = FileManager::find( $request->photo );
                 if ( $file ) {
 
-                    Storage::disk( 'public' )->delete( $updateEmployee->photo );
+                    Storage::disk( 'public' )->delete( $updateWorker->photo );
 
                     $fileName = explode( '/', $file->file );
-                    $target = 'employees/' . $updateEmployee->id . '/' . $fileName[1];
+                    $target = 'workers/' . $updateWorker->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $file->file, $target );
     
-                    $updateEmployee->photo = $target;
-                    $updateEmployee->save();
+                    $updateWorker->photo = $target;
+                    $updateWorker->save();
     
                     $file->status = 10;
                     $file->save();
@@ -360,22 +325,22 @@ class EmployeeService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.employees' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.workers' ) ) ] ),
         ] );
     }
 
-    public static function updateEmployeeStatus( $request ) {
+    public static function updateWorkerStatus( $request ) {
         
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $updateEmployee = Employee::find( $request->id );
-        $updateEmployee->status = $request->status;
-        $updateEmployee->save();
+        $updateWorker = Employee::find( $request->id );
+        $updateWorker->status = $request->status;
+        $updateWorker->save();
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.employees' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.workers' ) ) ] ),
         ] );
     }
 

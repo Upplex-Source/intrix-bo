@@ -2,39 +2,57 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use DateTimeInterface;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
+use Helper;
+
+use Carbon\Carbon;
+
+class User extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory, LogsActivity;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'fullname',
+        'email',
+        'email_verified_at',
+        'password',
+        'status',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
+    public function getEncryptedIdAttribute() {
+        return Helper::encode( $this->attributes['id'] );
+    }
+
+    protected function serializeDate( DateTimeInterface $date ) {
+        return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+    }
+
+    protected static $logAttributes = [
+        'name',
+        'fullname',
+        'email',
+        'email_verified_at',
+        'password',
+        'status',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    protected static $logName = 'users';
+
+    protected static $logOnlyDirty = true;
+
+    public function getActivitylogOptions(): LogOptions {
+        return LogOptions::defaults()->logFillable();
+    }
+
+    public function getDescriptionForEvent( string $eventName ): string {
+        return "{$eventName} user";
+    }
 }

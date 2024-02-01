@@ -44,6 +44,12 @@ $columns = [
         'title' => __( 'administrator.email' ),
     ],
     [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'administrator.phone_number' ) ] ),
+        'id' => 'phone_number',
+        'title' => __( 'administrator.phone_number' ),
+    ],
+    [
         'type' => 'default',
         'id' => 'dt_action',
         'title' => __( 'datatables.action' ),
@@ -91,6 +97,7 @@ $columns = [
                 { data: 'created_at' },
                 { data: 'name' },
                 { data: 'email' },
+                { data: 'phone_number' },
                 { data: 'id' },
             ],
             columnDefs: [
@@ -99,6 +106,20 @@ $columns = [
                     orderable: false,
                     render: function( data, type, row, meta ) {
                         return table_no += 1;
+                    },
+                },
+                {
+                    targets: parseInt( '{{ Helper::columnIndex( $columns, "email" ) }}' ),
+                    orderable: false,
+                    render: function( data, type, row, meta ) {
+                        return data ? data : '-';
+                    },
+                },
+                {
+                    targets: parseInt( '{{ Helper::columnIndex( $columns, "phone_number" ) }}' ),
+                    orderable: false,
+                    render: function( data, type, row, meta ) {
+                        return data ? row.calling_code + ' ' + data : '-';
                     },
                 },
                 {

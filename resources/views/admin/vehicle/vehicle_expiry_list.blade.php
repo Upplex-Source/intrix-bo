@@ -159,7 +159,7 @@ var typeMapper = @json( $data['type'] ),
             //     width: '75px',
             //     class: "text-center",
             //     render: function( data, type, row, meta ) {
-            //         return data ? ( '<img src="' + data + '" width="75px" />' ) : '<img src="{{ asset( 'admin/images/jjk-small.png' ) }}" width="75px" style="opacity:.5;" />';
+            //         return data ? ( '<img src="' + data + '" width="75px" />' ) : '<img src="{{ asset( 'admin/images/logo.png' ) }}" width="75px" style="opacity:.5;" />';
             //     },
             // },
             // {

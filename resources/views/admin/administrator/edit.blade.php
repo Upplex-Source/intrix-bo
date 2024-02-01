@@ -36,6 +36,18 @@ $administrator_edit = 'administrator_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="{{ $administrator_edit }}_phone_number" class="col-sm-5 col-form-label">{{ __( 'administrator.phone_number' ) }}</label>
+                    <div class="col-sm-7">
+                        <div class="input-group">
+                            <button class="flex-shrink-0 inline-flex items-center input-group-text" type="button">
+                                +60
+                            </button>
+                            <input type="text" class="form-control" id="{{ $administrator_edit }}_phone_number">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="mb-3 row">
                     <label for="{{ $administrator_edit }}_password" class="col-sm-5 col-form-label">{{ __( 'administrator.password' ) }}</label>
                     <div class="col-sm-7">
                         <input type="password" class="form-control" id="{{ $administrator_edit }}_password" autocomplete="new-password" placeholder="{{ __( 'template.leave_blank' ) }}">
@@ -85,6 +97,7 @@ $administrator_edit = 'administrator_edit';
             formData.append( 'username', $( ae + '_username' ).val() );
             formData.append( 'email', $( ae + '_email' ).val() );
             formData.append( 'fullname', $( ae + '_fullname' ).val() );
+            formData.append( 'phone_number', $( ae + '_phone_number' ).val() );
             formData.append( 'password', $( ae + '_password' ).val() );
             formData.append( 'role', $( ae + '_role' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
@@ -140,6 +153,7 @@ $administrator_edit = 'administrator_edit';
                     $( ae + '_username' ).val( response.name );
                     $( ae + '_email' ).val( response.email );
                     $( ae + '_fullname' ).val( response.fullname );
+                    $( ae + '_phone_number' ).val( response.phone_number );
                     $( ae + '_role' ).val( response.role );
 
                     $( 'body' ).loading( 'stop' );

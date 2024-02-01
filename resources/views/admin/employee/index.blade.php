@@ -1,7 +1,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.employees' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.workers' ) }}</h3>
         </div><!-- .nk-block-head-content -->
         @can( 'add employees' )
         <div class="nk-block-head-content">
@@ -10,7 +10,7 @@
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.employee.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.worker.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -40,39 +40,21 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'employee.name' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'worker.name' ) ] ),
         'id' => 'name',
-        'title' => __( 'employee.name' ),
+        'title' => __( 'worker.name' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'employee.phone_number' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'worker.phone_number' ) ] ),
         'id' => 'phone_number',
-        'title' => __( 'employee.phone_number' ),
+        'title' => __( 'worker.phone_number' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'employee.identification_number' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'worker.identification_number' ) ] ),
         'id' => 'identification_number',
-        'title' => __( 'employee.identification_number' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'employee.license_number' ) ] ),
-        'id' => 'license_number',
-        'title' => __( 'employee.license_number' ),
-    ],
-    [
-        'type' => 'date',
-        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'employee.license_expiry_date' ) ] ),
-        'id' => 'license_expiry_date',
-        'title' => __( 'employee.license_expiry_date' ),
-    ],
-    [
-        'type' => 'select',
-        'options' => $data['designation'],
-        'id' => 'designation',
-        'title' => __( 'employee.designation' ),
+        'title' => __( 'worker.identification_number' ),
     ],
     [
         'type' => 'select',
@@ -117,11 +99,11 @@ var designationMapper = @json( $data['designation'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.employee.allEmployees' ) }}',
+            url: '{{ route( 'admin.worker.allWorkers' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'employees',
+            dataSrc: 'workers',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
@@ -132,9 +114,6 @@ var designationMapper = @json( $data['designation'] ),
             { data: 'name' },
             { data: 'phone_number' },
             { data: 'identification_number' },
-            { data: 'license_number' },
-            { data: 'license_expiry_date' },
-            { data: 'designation' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -153,7 +132,7 @@ var designationMapper = @json( $data['designation'] ),
                 width: '75px',
                 class: "text-center",
                 render: function( data, type, row, meta ) {
-                    return data ? ( '<img src="' + data + '" width="75px" />' ) : '<img src="{{ asset( 'admin/images/jjk-small.png' ) }}" width="75px" style="opacity:.5;" />';
+                    return data ? ( '<img src="' + data + '" width="75px" />' ) : '<img src="{{ asset( 'admin/images/logo.png' ) }}" width="75px" style="opacity:.5;" />';
                 },
             },
             {
@@ -168,26 +147,6 @@ var designationMapper = @json( $data['designation'] ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-';
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "license_number" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-';
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "license_expiry_date" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-';
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "designation" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return designationMapper[data];
                 },
             },
             {
@@ -259,13 +218,13 @@ var designationMapper = @json( $data['designation'] ),
         } );
 
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.employee.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.worker.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
 
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.employee.updateEmployeeStatus' ) }}',
+                url: '{{ route( 'admin.worker.updateWorkerStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),

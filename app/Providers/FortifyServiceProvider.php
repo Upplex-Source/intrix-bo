@@ -8,9 +8,21 @@ use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\{
+    Hash,
+    RateLimiter,
+    Validator,
+};
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
+
+use App\Models\{
+    Administrator,
+};
+
+use Helper;
+
+Use Carbon\Carbon;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -48,6 +60,35 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for( 'two-factor', function ( Request $request ) {
             return Limit::perMinute( 5 )->by( $request->session()->get( 'login.id' ) );
         } );
+
+        Fortify::authenticateUsing( function ( Request $request ) {
+            $validator = Validator::make( $request->all(), [
+                'email' => [ 'required', function( $attribute, $value, $fail ) use ( $request, &$administrator ) {
+                    $administrator = Administrator::where( 'email', $request->email )
+                        ->orWhere('phone_number', $request->email)
+                        ->where( 'status', 10 )
+                        ->first();
+
+                    if ( !$administrator || !Hash::check( $request->password, $administrator->password ) ) {
+                        $fail( __( 'auth.failed' ) );
+                    }
+                } ],
+                'password' => 'required',
+            ] );
+
+            $attributeName = [
+                'username' => __( 'administrator.email' ),
+            ];
+    
+            foreach( $attributeName as $key => $aName ) {
+                $attributeName[$key] = strtolower( $aName );
+            }
+            
+            $validator->setAttributeNames( $attributeName )->validate();
+            
+            return $administrator;
+        } );
+
 
         $this->app->singleton(
             \Laravel\Fortify\Contracts\LogoutResponse::class,

@@ -16,7 +16,9 @@ class CreateAdministratorsTable extends Migration
         Schema::create('administrators', function (Blueprint $table) {
             $table->id();
             $table->string('name',25)->unique();
-            $table->string('email',50)->unique();
+            $table->string('email',50)->unique()->nullable();
+            $table->string('phone_number')->unique();
+            $table->string('calling_code')->default('+60');
             $table->string('password');
             $table->string('fullname',100)->nullable();
             $table->text('mfa_secret')->nullable();

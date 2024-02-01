@@ -13,7 +13,7 @@ class EmployeeController extends Controller
 {
     public function index( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.employees' );
+        $this->data['header']['title'] = __( 'template.workers' );
         $this->data['content'] = 'admin.employee.index';
         $this->data['breadcrumb'] = [
             [
@@ -23,12 +23,12 @@ class EmployeeController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.employees' ),
+                'text' => __( 'template.workers' ),
                 'class' => 'active',
             ],
         ];
         $this->data['data']['designation'] = [
-            '1' => __( 'employee.driver' ),
+            '1' => __( 'worker.driver' ),
         ];
         $this->data['data']['status'] = [
             '10' => __( 'datatables.activated' ),
@@ -40,7 +40,7 @@ class EmployeeController extends Controller
 
     public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.employees' ) ) ] );
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.workers' ) ) ] );
         $this->data['content'] = 'admin.employee.add';
         $this->data['breadcrumb'] = [
             [
@@ -49,18 +49,18 @@ class EmployeeController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.employee.index' ),
-                'text' => __( 'template.employees' ),
+                'url' => route( 'admin.module_parent.worker.index' ),
+                'text' => __( 'template.workers' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.employees' ) ) ] ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.workers' ) ) ] ),
                 'class' => 'active',
             ],
         ];
         $this->data['data']['designation'] = [
-            '1' => __( 'employee.driver' ),
+            '1' => __( 'worker.driver' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -68,7 +68,7 @@ class EmployeeController extends Controller
 
     public function edit( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.employees' ) ) ] );
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.workers' ) ) ] );
         $this->data['content'] = 'admin.employee.edit';
         $this->data['breadcrumb'] = [
             [
@@ -77,46 +77,46 @@ class EmployeeController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.employee.index' ),
-                'text' => __( 'template.employees' ),
+                'url' => route( 'admin.module_parent.worker.index' ),
+                'text' => __( 'template.workers' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.employees' ) ) ] ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.workers' ) ) ] ),
                 'class' => 'active',
             ],
         ];
         $this->data['data']['designation'] = [
-            '1' => __( 'employee.driver' ),
+            '1' => __( 'worker.driver' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function allEmployees( Request $request ) {
+    public function allWorkers( Request $request ) {
 
-        return EmployeeService::allEmployees( $request );
+        return EmployeeService::allWorkers( $request );
     }
 
-    public function oneEmployee( Request $request ) {
+    public function oneWorker( Request $request ) {
 
-        return EmployeeService::oneEmployee( $request );
+        return EmployeeService::oneWorker( $request );
     }
 
-    public function createEmployee( Request $request ) {
+    public function createWorker( Request $request ) {
 
-        return EmployeeService::createEmployee( $request );
+        return EmployeeService::createWorker( $request );
     }
 
-    public function updateEmployee( Request $request ) {
+    public function updateWorker( Request $request ) {
 
-        return EmployeeService::updateEmployee( $request );
+        return EmployeeService::updateWorker( $request );
     }
 
-    public function updateEmployeeStatus( Request $request ) {
+    public function updateWorkerStatus( Request $request ) {
 
-        return EmployeeService::updateEmployeeStatus( $request );
+        return EmployeeService::updateWorkerStatus( $request );
     }
 
     public function calculateBirthday( Request $request ) {

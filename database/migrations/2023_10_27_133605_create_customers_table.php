@@ -17,8 +17,16 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->string('phone_number')->nullable();
-            $table->text('address')->nullable();
+            $table->text('address_1')->nullable();
             $table->tinyInteger('status')->default(10);
+            $table->string('remarks')->nullable();
+            $table->string('state',50)->nullable();
+            $table->string('city',50)->nullable();
+            $table->string('postcode',5)->nullable();
+            $table->string('address_2')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone_number_2')->nullable();
+            $table->string('pic_name')->nullable();
             $table->timestamps();
         });
     }

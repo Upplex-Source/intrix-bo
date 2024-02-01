@@ -19,6 +19,11 @@ return [
     'total_bookings' => '总预订',
     'total_incomes' => '总收入',
     'total_expenses' => '总开销',
+    'total_owners' => 'Total Owners',
+    'total_farms' => 'Total Farms',
+    'total_buyers' => 'Total Buyers',
+    'total_orders' => 'Total Orders',
+    'order_statistics' => 'Order Statistics',
 
     'expenses_statistics' => '开销统计',
     'upcoming_bookings' => '未来预订',

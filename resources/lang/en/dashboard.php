@@ -13,12 +13,12 @@ return [
     |
     */
 
-    'total_drivers' => 'Total Drivers',
-    'total_vehicles' => 'Total Vehicles',
-    'total_vendors' => 'Total Vendors',
-    'total_bookings' => 'Total Bookings',
     'total_incomes' => 'Total Incomes',
-    'total_expenses' => 'Total Expenses',
+    'total_owners' => 'Total Owners',
+    'total_farms' => 'Total Farms',
+    'total_buyers' => 'Total Buyers',
+    'total_orders' => 'Total Orders',
+    'order_statistics' => 'Order Statistics',
 
     'expenses_statistics' => 'Expenses Statistics',
     'upcoming_bookings' => 'Upcoming Bookings',

@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Models\{
-    Booking,
-    Employee,
-    Expense,
-    Vehicle,
-    Vendor,
+    Order,
+    Owner,
+    Farm,
+    Buyer,
+    Administrator,
 };
 
 use Helper;
@@ -18,59 +18,37 @@ class DashboardService
 {
     public static function getDashboardData( $request ) {
 
-        $totalDrivers = 0;
-        $totalVehicles = 0;
-        $totalVendors = 0;
-        $totalBookings = 0;
-        $totalIncomes = 0;
-        $totalExpenses = 0;
-
-        $totalDrivers = Employee::where( 'status', 10 )
-            ->where( 'designation', 1 )
-            ->count();
-
-        $totalVehicles = Vehicle::where( 'status', 10 )
-            ->count();
-
-        $totalVendors = Vendor::where( 'status', 10 )
-            ->count();
-
-        $totalBookings = Booking::count();
-
-        $totalExpenses = Expense::sum( 'amount' );
+        $totalOwners = Helper::numberFormat( Administrator::where( 'role', 3 )->count(), 0 );
+        $totalFarms = Helper::numberFormat( Farm::where( 'status', 10 )->count(), 0 );
+        $totalBuyers = Helper::numberFormat( Buyer::where( 'status', 10 )->count(), 0 );
+        $totalOrders = Helper::numberFormat( Order::where( 'status', 10 )->count(), 0 );
 
         return response()->json( [
-            'total_drivers' => Helper::numberFormat( $totalDrivers, 0 ),
-            'total_vehicles' => Helper::numberFormat( $totalVehicles, 0 ),
-            'total_vendors' => Helper::numberFormat( $totalVendors, 0 ),
-            'total_bookings' => Helper::numberFormat( $totalBookings, 0 ),
-            'total_incomes' => Helper::numberFormat( $totalIncomes, 2 ),
-            'total_expenses' => Helper::numberFormat( $totalExpenses, 2 ),
+            'total_owners' => $totalOwners,
+            'total_farms'  => $totalFarms,
+            'total_buyers' => $totalBuyers,
+            'total_orders' => $totalOrders,
         ] );
     }
 
     public static function getExpensesStatistics( $request ) {
 
         $xAxis = []; // Weeks
-        $fuelData = [];
-        $tollData = [];
+        $orderData = [];
         for ( $x = 6; $x >= 0; $x-- ) {
 
             $day = strtotime( date( 'M d' ) . ' -' . $x . ' day' );
             $thisDay = new \DateTime( date( 'Y-m-d', $day ) );
             $thisDay = $thisDay->format( 'Y-m-d' );
 
-            $thisDayFuel = Expense::where( 'type', 1 )->whereBetween( 'transaction_time', [ $thisDay . ' 00:00:00', $thisDay . ' 23:59:59' ] )->sum( 'amount' );
-            $thisDayToll = Expense::where( 'type', 2 )->whereBetween( 'transaction_time', [ $thisDay . ' 00:00:00', $thisDay . ' 23:59:59' ] )->sum( 'amount' );
+            $thisDayOrder = Order::where( 'status', 10 )->whereBetween( 'order_date', [ $thisDay . ' 00:00:00', $thisDay . ' 23:59:59' ] )->count();
 
             array_push( $xAxis, date( 'M d', $day ) ); 
-            array_push( $fuelData, $thisDayFuel );
-            array_push( $tollData, $thisDayToll );
+            array_push( $orderData, $thisDayOrder );
         }
 
         return response()->json( [
-            'fuelData' => $fuelData,
-            'tollData' => $tollData,
+            'orderData' => $orderData,
             'xAxis' => $xAxis,
         ] );
     }

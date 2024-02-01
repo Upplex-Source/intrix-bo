@@ -16,6 +16,7 @@ return [
     'username' => '用户名',
     'email' => '电子邮件',
     'fullname' => '全名',
+    'phone_number' => 'Phone Number',
     'role' => '角色',
     'password' => '密码',
 ];

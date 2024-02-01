@@ -19,7 +19,7 @@
                             </div>
                             <div class="nk-header-brand d-xl-none">
                                 <a href="{{ route( 'admin.home' ) }}" class="logo-link">
-                                    <img class="logo-dark logo-img" src="{{ asset( 'admin/images/jjk.png' ) }}" srcset="{{ asset( 'admin/images/jjk.png' ) }} 2x" alt="logo-dark">
+                                    <img class="logo-dark logo-img" src="{{ asset( 'admin/images/logo.png' ) }}" srcset="{{ asset( 'admin/images/logo.png' ) }} 2x" alt="logo-dark">
                                 </a>
                             </div><!-- .nk-header-brand -->
                             @if ( 1 == 2 )

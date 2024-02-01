@@ -19,6 +19,7 @@ return [
 
     'super_admin' => '超级管理员',
     'admin' => '管理员',
+    'owner' => 'Owner',
 
     'no_action_found' => '没有找到操作',
     'no_module_found' => '没有找到模块',
