@@ -84,7 +84,7 @@ $farm_create = 'farm_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $farm_create }}_size" class="col-sm-5 col-form-label">{{ __( 'farm.size' ) }} ({{ __( 'farm.acres' ) }}) </label>
+                    <label for="{{ $farm_create }}_size" class="col-sm-5 col-form-label">{{ __( 'farm.size' ) }} ({{ __( 'farm.km' ) }}) </label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $farm_create }}_size" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>

@@ -22,6 +22,7 @@ return [
     'operations' => 'Operations',
     'users' => 'Users',
     'orders' => 'Orders',
+    'order_items' => 'Order Items',
     'sales_report' => 'Sales Report',
     'companies' => 'Companies',
     'employees' => 'Employees',
@@ -54,6 +55,8 @@ return [
     'invoices' => 'Invoices',
     'invoice_list' => 'Invoice List',
     'farms' => 'Farms',
+    'order_list' => 'Order List',
+    'order_item_list' => 'Order Item List',
 
     'loading' => 'Loading...',
     'add' => 'Add',

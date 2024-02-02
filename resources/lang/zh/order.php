@@ -25,5 +25,6 @@ return [
     'weight' => '重量 (g)',
     'subtotal' => '小计',
     'total' => '总计',
+    'rm' => 'RM',
     
 ];

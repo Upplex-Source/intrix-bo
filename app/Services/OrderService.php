@@ -82,9 +82,6 @@ class OrderService
                     $order->orderBy( 'orders.buyer_id', $dir );
                     break;
                 case 6:
-                    $order->orderBy( 'orders.grade', $dir );
-                    break;
-                case 7:
                     $order->orderBy( 'orders.status', $dir );
                     break;
             }
@@ -278,7 +275,7 @@ class OrderService
                     'order_id' => $createOrder->id,
                     'grade' => $orderItems['grade'],
                     'weight' => $orderItems['weight'] != null ? $orderItems['weight'] : 0,
-                    'rate' => $orderItems['rate'] != null ? $orderItems['weight'] : 0,
+                    'rate' => $orderItems['rate'] != null ? $orderItems['rate'] : 0,
                 ] );
             }
 
@@ -357,7 +354,7 @@ class OrderService
                     'order_id' => $updateOrder->id,
                     'grade' => $orderItems['grade'],
                     'weight' => $orderItems['weight'] != null ? $orderItems['weight'] : 0,
-                    'rate' => $orderItems['rate'] != null ? $orderItems['weight'] : 0,
+                    'rate' => $orderItems['rate'] != null ? $orderItems['rate'] : 0,
                 ] );
             }
 
@@ -373,7 +370,7 @@ class OrderService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.bookings' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.orders' ) ) ] ),
         ] );
     }
 

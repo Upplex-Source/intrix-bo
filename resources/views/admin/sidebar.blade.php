@@ -125,6 +125,23 @@
                                 @endcan
 
                                 @can( 'view orders' )
+                                <li class="nk-menu-item has-sub {{ str_contains($controller, 'App\Http\Controllers\Admin\Order') ? 'active current-page' : '' }}">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.orders' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' && in_array( $action, [ 'index', 'add', 'edit' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.order_list' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderItemController' && in_array( $action, [ 'index', 'add', 'edit' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.order_items.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.order_item_list' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
+                                @if ( 1 == 2 ) 
+                                @can( 'view orders' )
                                 <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' ? 'active current-page' : '' }}">
                                     <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link">
                                         <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
@@ -132,6 +149,7 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @endif
                             </ul><!-- .nk-menu -->
                         </div><!-- .nk-sidebar-menu -->
                     </div><!-- .nk-sidebar-content -->

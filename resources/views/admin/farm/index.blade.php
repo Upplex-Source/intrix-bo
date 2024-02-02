@@ -46,7 +46,7 @@ $columns = [
         'title' => __( 'farm.owner' ),
     ],
     [
-        'type' => 'input',
+        'type' => 'default',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'farm.size' ) ] ),
         'id' => 'size',
         'title' => __( 'farm.size' ),

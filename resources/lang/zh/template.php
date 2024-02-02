@@ -22,6 +22,7 @@ return [
     'operations' => '运营管理',
     'users' => '用户',
     'orders' => '订单',
+    'order_items' => 'Order Items',
     'sales_report' => 'Sales Report',
     'companies' => '公司',
     'employees' => '员工',
@@ -54,6 +55,8 @@ return [
     'invoices' => '发票',
     'invoice_list' => '发票列表',
     'farms' => 'Farms',
+    'order_list' => 'Order List',
+    'order_item_list' => 'Order Item List',
 
     'loading' => '载入中...',
     'add' => '新增',

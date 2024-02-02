@@ -29,7 +29,7 @@ class OrderItem extends Model
     ];
 
     public function order() {
-        return $this->belongsTo( User::class, 'order_id' );
+        return $this->belongsTo( Order::class, 'order_id' );
     }
 
     public function getEncryptedIdAttribute() {

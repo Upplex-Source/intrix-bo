@@ -25,5 +25,6 @@ return [
     'weight' => 'Weight (g)',
     'subtotal' => 'Subtotal',
     'total' => 'Total',
+    'rm' => 'RM',
     
 ];

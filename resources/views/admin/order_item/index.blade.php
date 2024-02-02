@@ -3,23 +3,6 @@
         <div class="nk-block-head-content">
             <h3 class="nk-block-title page-title">{{ __( 'template.orders' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add orders' )
-        <div class="nk-block-head-content">
-            <div class="toggle-wrap nk-block-tools-toggle">
-                <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
-                <div class="toggle-expand-content" data-content="pageMenu">
-                    <ul class="nk-block-tools g-3">
-                        <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.order.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
-                        </li>
-                        <li class="nk-block-tools-opt">
-                            <button type="button" class="btn btn-secondary dt-export">{{ __( 'template.export' ) }}</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div><!-- .nk-block-head-content -->
-        @endcan
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
@@ -44,27 +27,21 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.owner' ) ] ),
-        'id' => 'owner',
-        'title' => __( 'order.owner' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.farm' ) ] ),
-        'id' => 'farm',
-        'title' => __( 'order.farm' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.buyer' ) ] ),
-        'id' => 'buyer',
-        'title' => __( 'order.buyer' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.grade' ) ] ),
+        'id' => 'grade',
+        'title' => __( 'order.grade' ),
     ],
     [
         'type' => 'default',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.total' ) ] ),
-        'id' => 'total',
-        'title' => __( 'order.total' ) . ' (' . __( 'order.rm' ) . ')',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.weight' ) ] ),
+        'id' => 'weight',
+        'title' => __( 'order.weight' ),
+    ],
+    [
+        'type' => 'default',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.rate' ) ] ),
+        'id' => 'rate',
+        'title' => __( 'order.rate' ),
     ],
     [
         'type' => 'select',
@@ -72,15 +49,10 @@ $columns = [
         'id' => 'status',
         'title' => __( 'datatables.status' ),
     ],
-    [
-        'type' => 'default',
-        'id' => 'dt_action',
-        'title' => __( 'datatables.action' ),
-    ],
 ];
 ?>
 
-<x-data-tables id="order_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="order_item_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -94,7 +66,7 @@ window['{{ $column['id'] }}'] = '';
 
 var statusMapper = @json( $data['status'] ),
     dt_table,
-    dt_table_name = '#order_table',
+    dt_table_name = '#order_item_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -108,7 +80,7 @@ var statusMapper = @json( $data['status'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.order.allOrders' ) }}',
+            url: '{{ route( 'admin.order.allOrderItems' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
@@ -118,14 +90,12 @@ var statusMapper = @json( $data['status'] ),
         order: [[ 2, 'desc' ]],
         columns: [
             { data: null },
-            { data: 'order_date' },
-            { data: 'reference' },
-            { data: 'owner.fullname' },
-            { data: 'farm.title' },
-            { data: 'buyer.name' },
-            { data: 'total' },
+            { data: 'order' },
+            { data: 'order' },
+            { data: 'grade' },
+            { data: 'weight' },
+            { data: 'rate' },
             { data: 'status' },
-            { data: 'encrypted_id' },
         ],
         columnDefs: [
             {
@@ -140,58 +110,21 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "order_date" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data;
+                    console.log(data)
+                    return data ? data.order_date : '-' ;
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "total" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "reference" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data;
+                    return data ? data.reference : '-' ;
                 },
             },
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return statusMapper[data];
-                },
-            },
-            {
-                targets: parseInt( '{{ count( $columns ) - 1 }}' ),
-                orderable: false,
-                width: '1%',
-                className: 'text-center',
-                render: function( data, type, row, meta ) {
-
-                    @canany( [ 'edit orders', 'delete orders' ] )
-                    let edit, status = '';
-
-                    @can( 'edit orders' )
-                    edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
-                    @endcan
-
-                    @can( 'delete orders' )
-                    status = row['status'] == 10 ? 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
-                    @endcan
-                    
-                    let html = 
-                        `
-                        <div class="dropdown">
-                            <a class="dropdown-toggle btn btn-icon btn-trigger" href="#" type="button" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
-                            <div class="dropdown-menu">
-                                <ul class="link-list-opt">
-                                    `+edit+`
-                                    `+status+`
-                                </ul>
-                            </div>
-                        </div>
-                        `;
-                        return html;
-                    @else
-                    return '-';
-                    @endcanany
                 },
             },
         ],
