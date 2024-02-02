@@ -18,8 +18,8 @@ return [
 
     'sign_in_to' => '登入您的帐号',
     'email' => '电子邮件',
-    'phone_number' => 'Phone Number',
-    'credentials' => 'Credentials',
+    'phone_number' => '电话号码',
+    'credentials' => '凭证',
     'password' => '密码',
     'enter_your_x' => '输入您的:type',
     'continue' => '继续',

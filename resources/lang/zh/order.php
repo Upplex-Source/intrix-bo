@@ -13,17 +13,17 @@ return [
     |
     */
 
-    'order_details' => 'Order Details',
-    'owner_name' => 'Owner Name',
-    'owner' => 'Owner',
-    'reference' => 'reference',
-    'farm' => 'Farm',
-    'buyer' => 'Buyer',
-    'order_date' => 'Order Date',
-    'grade' => 'Grade',
-    'rate' => 'Rate (RM/kg)',
-    'weight' => 'Weight (g)',
-    'subtotal' => 'Subtotal',
-    'total' => 'Total',
+    'order_details' => '订单资料',
+    'owner_name' => '业主名称',
+    'owner' => '业主',
+    'reference' => '参考号',
+    'farm' => '农场',
+    'buyer' => '买家',
+    'order_date' => '订单日期',
+    'grade' => '等级',
+    'rate' => '费率 (RM/kg)',
+    'weight' => '重量 (g)',
+    'subtotal' => '小计',
+    'total' => '总计',
     
 ];
