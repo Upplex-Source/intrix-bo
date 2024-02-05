@@ -53,8 +53,8 @@ class OrderService
     public static function allOrders( $request, $export = false ) {
 
         $order = Order::with( [
-            'owner',
             'farm',
+            'farm.owner',
             'buyer',
             'orderItems',
         ] )->select( 'orders.*' );
@@ -196,8 +196,8 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'owner',
             'farm',
+            'farm.owner',
             'buyer',
             'orderItems',
         ] )->find( $request->id );
@@ -227,7 +227,6 @@ class OrderService
 
         $validator = Validator::make( $request->all(), [
             'reference' => [ 'required', 'unique:orders' ],
-            'owner' => [ 'required', 'exists:users,id'  ],
             'farm' => [ 'required', 'exists:farms,id'  ],
             'buyer' => [ 'required', 'exists:buyers,id'  ],
             'order_items' => [ 'nullable' ],
@@ -236,11 +235,15 @@ class OrderService
             'rate' => [ 'nullable' ],
             'total' => [ 'nullable' ],
             'subtotal' => [ 'nullable' ],
+
+            'order_items' => ['nullable', 'array'],
+            'order_items.*.weight' => ['nullable', 'numeric', 'min:0'],
+            'order_items.*.rate' => ['nullable', 'numeric', 'min:0'],
+
         ] );
 
         $attributeName = [
             'reference' => __( 'order.reference' ),
-            'owner' => __( 'order.owner_name' ),
             'farm' => __( 'order.farm' ),
             'buyer' => __( 'order.buyer' ),
             'grade' => __( 'order.grade' ),
@@ -248,6 +251,10 @@ class OrderService
             'rate' => __( 'order.rate' ),
             'total' => __( 'order.total' ),
             'subtotal' => __( 'order.subtotal' ),
+
+            'order_items.*.weight' => __( 'order.order_items' ),
+            'order_items.*.rate' => __( 'order.order_items' ),
+            'order_items' => __( 'order.order_items' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -261,7 +268,6 @@ class OrderService
         try {
             $createOrder = Order::create( [
                 'reference' => $request->reference,
-                'owner_id' => $request->owner,
                 'farm_id' => $request->farm,
                 'buyer_id' => $request->buyer,
                 'order_date' => $request->order_date ? Carbon::createFromFormat( 'Y-m-d', $request->order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
@@ -304,7 +310,6 @@ class OrderService
 
         $validator = Validator::make( $request->all(), [
             'reference' => [ 'required', 'unique:orders,reference,' . $request->id ],
-            'owner' => [ 'required', 'exists:users,id'  ],
             'farm' => [ 'required', 'exists:farms,id'  ],
             'buyer' => [ 'required', 'exists:buyers,id'  ],
             'order_items' => [ 'nullable' ],
@@ -317,7 +322,6 @@ class OrderService
 
         $attributeName = [
             'reference' => __( 'order.reference' ),
-            'owner' => __( 'order.owner_name' ),
             'farm' => __( 'order.farm' ),
             'buyer' => __( 'order.buyer' ),
             'grade' => __( 'order.grade' ),
@@ -339,7 +343,6 @@ class OrderService
 
             $updateOrder = Order::find( $request->id );
             $updateOrder->reference = $request->reference;
-            $updateOrder->owner_id = $request->owner;
             $updateOrder->buyer_id = $request->buyer;
             $updateOrder->order_date = $request->order_date ? Carbon::createFromFormat( 'Y-m-d', $request->order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
             $updateOrder->subtotal = $request->subtotal;
@@ -374,82 +377,144 @@ class OrderService
         ] );
     }
 
-    public static function exportOrders( $request ) {
+    public static function exportOrders($request)
+    {
+        $orders = self::allOrders($request, true);
 
-        $orders = self::allOrders( $request, true );
+        $grades = [
+            'A',
+            'B',
+            'C',
+            'D',
+        ];
+
+        $grandSubtotalTotal = $grandTotalTotal = 0;
+        $grandRates['A']['rates'] = 0;
+        $grandRates['A']['weight'] = 0;
+        $grandRates['B']['rates'] = 0;
+        $grandRates['B']['weight'] = 0;
+        $grandRates['C']['rates'] = 0;
+        $grandRates['C']['weight'] = 0;
+        $grandRates['D']['rates'] = 0;
+        $grandRates['D']['weight'] = 0;
     
         $html = '<table>';
-
+    
         $html .= '
-        <thead>
-            <tr>
-                <th colspan="6"></th>
-                <th colspan="3" class="text-center"><strong>' .__( 'order.order_details' ). '</strong></th>
-                <th colspan="2"></th>
-            <tr>
-                <th><strong>' .__( 'datatables.no' ). '</strong></th>
-                <th><strong>' .__( 'order.reference' ). '</strong></th>
-                <th><strong>' .__( 'order.order_date' ). '</strong></th>
-                <th><strong>' .__( 'order.owner' ). '</strong></th>
-                <th><strong>' .__( 'order.farm' ). '</strong></th>
-                <th><strong>' .__( 'order.buyer' ). '</strong></th>
-                <th><strong>' .__( 'order.grade' ). '</strong></th>
-                <th><strong>' .__( 'order.rate' ). '</strong></th>
-                <th><strong>' .__( 'order.weight' ). '</strong></th>
-                <th><strong>' .__( 'order.subtotal' ). '</strong></th>
-                <th><strong>' .__( 'order.total' ). '</strong></th>
-            </tr>
-        </thead>
-        ';
+            <thead>
+                <tr>
+                    <th colspan="6"></th>
+                    <th colspan="' . (count($grades) * 3) . '" class="text-center"><strong>' . __('order.order_items') . '</strong></th>
+                    <th colspan="2"></th>
+                <tr>
+                    <th><strong>' . __('datatables.no') . '</strong></th>
+                    <th><strong>' . __('order.reference') . '</strong></th>
+                    <th><strong>' . __('order.order_date') . '</strong></th>
+                    <th><strong>' . __('order.owner') . '</strong></th>
+                    <th><strong>' . __('order.farm') . '</strong></th>
+                    <th><strong>' . __('order.buyer') . '</strong></th>';
+    
+        foreach ($grades as $grade) {
+            $html .= '<th><strong>' . __('order.grade') . '</strong></th>';
+            $html .= '<th><strong>' . __('order.rate') . '</strong></th>';
+            $html .= '<th><strong>' . __('order.weight') . '</strong></th>';
+        }
+    
+        $html .= '<th><strong>' . __('order.subtotal') . '</strong></th>';
+        $html .= '<th><strong>' . __('order.total') . '</strong></th>';
+        $html .= '</tr>
+            </thead>';
         $html .= '<tbody>';
     
-        $totalAmount = 0;
-    
-        foreach ( $orders as $key => $order) {
+        foreach ($orders as $key => $order) {
     
             $html .= '
-            <tr>
-                <td>' . (intval( $key) + 1) . '</td>
-                <td>' . $order->reference . '</td>
-                <td>' . $order->order_date . '</td>
-                <td>' . ( $order->owner ? $order->owner->name : '-' ) . '</td>
-                <td>' . ( $order->farm ? $order->farm->title : '-' ) . '</td>
-                <td>' . ( $order->buyer ? $order->buyer->name : '-' ) . '</td>
-            ';
+                <tr>
+                    <td>' . (intval($key) + 1) . '</td>
+                    <td>' . $order['reference'] . '</td>
+                    <td>' . $order['order_date'] . '</td>
+                    <td>' . ($order->farm->owner->name ?? '-') . '</td>
+                    <td>' . ($order->farm->title ?? '-') . '</td>
+                    <td>' . ($order->buyer->name ?? '-') . '</td>';
     
-            $grade = $weight = $rate = ''; 
-    
-            foreach ( $order->orderItems as $item) {
-                $grade .= $item->grade . '<br>';
-                $weight .= $item->weight . '<br>';
-                $rate .= $item->rate . '<br>';
-            }
+            foreach ($grades as $grade) {
 
-            $html .= '
-                <td>' . $grade . '</td>
-                <td>' . $rate . '</td>
-                <td>' . $weight . '</td>
-                <td>' . ( $order->subtotal) . '</td>
-                <td>' . ( $order->total) . '</td>
-            </tr>
-            ';
+                if (isset($order->orderItems)) {
+                    $foundGrade = false;
+        
+                    foreach ($order->orderItems as $orderItem) {
+                        if (isset($orderItem['grade']) && $orderItem['grade'] == $grade) {
+                            $foundGrade = true;
+                            $html .= '<td>' . $orderItem['grade'] . '</td>';
+                            $html .= '<td>' . $orderItem['rate'] . '</td>';
+                            $html .= '<td>' . $orderItem['weight'] . '</td>';
+                            $grandRates[$grade]['rates'] += $orderItem['rate'];
+                            $grandRates[$grade]['weight'] += $orderItem['weight'];
+                        }
+                    }
+        
+                    if (!$foundGrade) {
+                        $html .= '<td>-</td>';
+                        $html .= '<td>-</td>';
+                        $html .= '<td>-</td>';
+                    }
+                }
+        
+            }
     
-            $totalAmount += $order->total;
+            $html .= '<td>' . $order['subtotal'] . '</td>';
+            $html .= '<td>' . $order['total'] . '</td>';
     
+            $grandTotalTotal += $order['total'];
+            $grandSubtotalTotal += $order['subtotal'];
+    
+            $html .= '</tr>';
         }
     
         $html .= '
-            <tr>
-                <td colspan="9"></td>
-                <td><strong>' . __( 'datatables.grand_total' ) . '</strong></td>
-                <td><strong>' . Helper::numberFormat( $totalAmount, 2) . '</strong></td>
-                <td colspan="3"></td>
-            </tr>
-        ';
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">' . __('datatables.grand_total') . '</td>';
     
-        $html .= '</tbody></table>';
+        foreach ($grades as $grade) {
+            $html .= '<td colspan=""></td>';
+            $html .= '<td>' . $grandRates[$grade]['rates'] . '</td>';
+            $html .= '<td>' . $grandRates[$grade]['weight'] . '</td>';
+        }
     
-        Helper::exportReport( $html, 'Order' );
+        $html .= '<td>' . $grandSubtotalTotal . '</td>';
+        $html .= '<td>' . $grandTotalTotal . '</td>';
+        $html .= '</tr>
+            </tfoot>';
+    
+        $html .= '</table>';
+    
+        Helper::exportReport($html, 'Order');
+    }
+
+    public static function salesReport( $request ) {
+
+        $date = $request->date ? $request->date : date( 'Y m' );
+
+        $start = Carbon::createFromFormat( 'Y m', $date, 'Asia/Kuala_Lumpur' )->startOfMonth()->timezone( 'UTC' );
+
+        $end = Carbon::createFromFormat( 'Y m', $date, 'Asia/Kuala_Lumpur' )->endOfMonth()->timezone( 'UTC' );
+
+        $currenctPeriodSales = [];
+
+        $salesRecords = Order::with( [
+            'farm.owner',
+            'buyer',
+            'orderItems',
+        ] )->where( 'created_at', '>=', $start->format( 'Y-m-d H:i:s' ) )
+            ->where( 'created_at', '<=', $end->format( 'Y-m-d H:i:s' ) )
+            ->get()
+            ->toArray();
+
+        return [
+            'orders' => $salesRecords,
+        ];
     }
     
 }

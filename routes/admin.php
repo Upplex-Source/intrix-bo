@@ -222,7 +222,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-order', [ OrderController::class, 'createOrder' ] )->name( 'admin.order.createOrder' );
                 Route::post( 'update-order', [ OrderController::class, 'updateOrder' ] )->name( 'admin.order.updateOrder' );
                 Route::post( 'update-order-status', [ OrderController::class, 'updateOrderStatus' ] )->name( 'admin.order.updateOrderStatus' );
-                Route::post( 'all-sales-report', [ OrderController::class, 'allSalesReport' ] )->name( 'admin.order.allSalesReport' );
+                Route::get( 'all-sales-report', [ OrderController::class, 'allSalesReport' ] )->name( 'admin.order.allSalesReport' );
             } );
 
             Route::prefix( 'order-items' )->group( function() {

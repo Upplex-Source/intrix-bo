@@ -19,4 +19,6 @@
     <link href="{{ asset( 'admin/css/flatpickr.min.css' ) . Helper::assetVersion() }}" rel="stylesheet">
     <link href="{{ asset( 'admin/css/select2.min.css' ) . Helper::assetVersion() }}" rel="stylesheet">
     <link href="{{ asset( 'admin/css/select2-bootstrap-5-theme.min.css' ) . Helper::assetVersion() }}" rel="stylesheet">
+    <link href="{{ asset( 'admin/css/flatpickr-monthSelect.css' ) . Helper::assetVersion() }}" rel="stylesheet">
+
 </head>

@@ -131,6 +131,9 @@
                                         <span class="nk-menu-text">{{ __( 'template.orders' ) }}</span>
                                     </a>
                                     <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' && in_array( $action, [ 'salesReport' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.order.salesReport' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.sales_report' ) }}</span></a>
+                                        </li>
                                         <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' && in_array( $action, [ 'index', 'add', 'edit' ] ) ? 'active current-page' : '' }}">
                                             <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.order_list' ) }}</span></a>
                                         </li>

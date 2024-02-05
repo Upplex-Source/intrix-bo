@@ -26,5 +26,7 @@ return [
     'subtotal' => '小计',
     'total' => '总计',
     'rm' => 'RM',
+
+    'order_items' => 'Order Items',
     
 ];

@@ -90,8 +90,8 @@ class OrderController extends Controller
 
     public function salesReport( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.orders' );
-        $this->data['content'] = 'admin.order.index';
+        $this->data['header']['title'] = __( 'template.sales_report' );
+        $this->data['content'] = 'admin.order.sales_report';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -103,6 +103,14 @@ class OrderController extends Controller
                 'text' => __( 'template.orders' ),
                 'class' => 'active',
             ],
+        ];
+
+        $this->data['data']['orders'] = OrderService::salesReport( $request );
+        $this->data['data']['grades'] = [
+            'A',
+            'B',
+            'C',
+            'D',
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -124,8 +132,8 @@ class OrderController extends Controller
         return OrderService::updateOrder( $request );
     }
 
-    public function allSalesReport( Request $request ) {
-        return OrderService::allSalesReport( $request );
+    public function getSalesReport( Request $request ) {
+        return OrderService::getSalesReport( $request );
     }
 
     public function export( Request $request ) {

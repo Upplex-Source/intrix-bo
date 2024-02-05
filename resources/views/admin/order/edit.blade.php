@@ -23,14 +23,6 @@ $order_edit = 'order_edit';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $order_edit }}_owner" class="col-sm-4 col-form-label">{{ __( 'order.owner_name' ) }}</label>
-                    <div class="col-sm-6">
-                        <select class="form-select" id="{{ $order_edit }}_owner" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.owner_name' ) ] ) }}">
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
                     <label for="{{ $order_edit }}_farm" class="col-sm-4 col-form-label">{{ __( 'order.farm' ) }}</label>
                     <div class="col-sm-6">
                         <select class="form-select" id="{{ $order_edit }}_farm" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.farm' ) ] ) }}">
@@ -191,7 +183,6 @@ $order_edit = 'order_edit';
             let formData = new FormData();
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'reference', $( oe + '_reference' ).val() );
-            formData.append( 'owner', $( oe + '_owner' ).val() );
             formData.append( 'farm', $( oe + '_farm' ).val() );
             formData.append( 'buyer', $( oe + '_buyer' ).val() );
             formData.append( 'order_date', $( oe + '_order_date' ).val() );
@@ -244,48 +235,6 @@ $order_edit = 'order_edit';
             } );
         } );
 
-        let ownerSelect2 = $( oe + '_owner' ).select2( {
-            language: '{{ App::getLocale() }}',
-            theme: 'bootstrap-5',
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-            ajax: {
-                method: 'POST',
-                url: '{{ route( 'admin.owner.allOwners' ) }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        custom_search: params.term, // search term
-                        status: 10,
-                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
-                        length: 10,
-                        _token: '{{ csrf_token() }}',
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
-
-                    let processedResult = [];
-
-                    data.owners.map( function( v, i ) {
-                        processedResult.push( {
-                            id: v.owner.id,
-                            text: v.name,
-                        } );
-                    } );
-
-                    return {
-                        results: processedResult,
-                        pagination: {
-                            more: ( params.page * 10 ) < data.recordsFiltered
-                        }
-                    };
-                }
-            },
-        } );
-
         let farmSelect2 = $( oe + '_farm' ).select2( {
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
@@ -316,7 +265,7 @@ $order_edit = 'order_edit';
                     data.farms.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.title,
+                            text: v.title + ' (' + v.owner.name + ')' ,
                         } );
                     } );
 
@@ -420,14 +369,8 @@ $order_edit = 'order_edit';
                     $( oe + '_reference' ).val( response.reference );
                     orderDate.setDate( response.order_date );
 
-                    if ( response.owner ) {
-                        let option1 = new Option( response.owner.name, response.owner.id, true, true );
-                        ownerSelect2.append( option1 );
-                        ownerSelect2.trigger( 'change' );
-                    }
-
                     if ( response.farm ) {
-                        let option1 = new Option( response.farm.title, response.farm.id, true, true );
+                        let option1 = new Option( response.farm.title + ' (' + response.farm.owner.name + ')', response.farm.id, true, true );
                         farmSelect2.append( option1 );
                         farmSelect2.trigger( 'change' );
                     }

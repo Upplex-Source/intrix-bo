@@ -3,7 +3,8 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
     <script src="{{ asset( 'admin/js/jquery.loading.min.js' ) . Helper::assetVersion() }}"></script>
-    <script src="{{ asset( 'admin/js/flatpickr-4.6.9.js' ) . Helper::assetVersion() }}"></script>
+    <script src="{{ asset( 'admin/js/flatpickr-4.6.13.js' ) . Helper::assetVersion() }}"></script>
+    <script src="{{ asset( 'admin/js/flatpickr-monthSelect.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/select2.min.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/notification-helper.js' ) . Helper::assetVersion() }}"></script>
 

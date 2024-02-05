@@ -27,4 +27,5 @@ return [
     'total' => 'Total',
     'rm' => 'RM',
     
+    'order_items' => 'Order Items',
 ];

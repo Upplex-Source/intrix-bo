@@ -28,14 +28,6 @@ $grade = $data['grade'];
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $order_create }}_owner" class="col-sm-4 col-form-label">{{ __( 'order.owner_name' ) }}</label>
-                    <div class="col-sm-6">
-                        <select class="form-select" id="{{ $order_create }}_owner" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.owner_name' ) ] ) }}">
-                        </select>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
                     <label for="{{ $order_create }}_farm" class="col-sm-4 col-form-label">{{ __( 'order.farm' ) }}</label>
                     <div class="col-sm-6">
                         <select class="form-select" id="{{ $order_create }}_farm" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.farm' ) ] ) }}">
@@ -60,32 +52,36 @@ $grade = $data['grade'];
                 </div>
             </div>
             <div class="col-md-6 col-lg-6 order-details">
-                <h5 class="card-title mb-4">{{ __( 'order.order_details' ) }}</h5>
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_grade" class="col-sm-4 col-form-label">{{ __( 'order.grade' ) }}</label>
-                    <div class="col-sm-6">
-                        <select class="form-select" id="{{ $order_create }}_grade" >
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
-                        </select>
+
+                <div id="order_details_0">
+                    <h5 class="card-title mb-4">{{ __( 'order.order_details' ) }}</h5>
+                    <div class="mb-3 row">
+                        <label for="{{ $order_create }}_grade" class="col-sm-4 col-form-label">{{ __( 'order.grade' ) }}</label>
+                        <div class="col-sm-6">
+                            <select class="form-select" id="{{ $order_create }}_grade" >
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="{{ $order_create }}_weight" class="col-sm-4 col-form-label">{{ __( 'order.weight' ) }}</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="{{ $order_create }}_rate" class="col-sm-4 col-form-label">{{ __( 'order.rate' ) }}</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_weight" class="col-sm-4 col-form-label">{{ __( 'order.weight' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_rate" class="col-sm-4 col-form-label">{{ __( 'order.rate' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
+
                 <div class="text-center mt-2 mb-2" id="order_details_add">
                     <em class="icon ni ni-plus-round address-icon order-details-add"></em>
                 </div>
@@ -159,7 +155,6 @@ $grade = $data['grade'];
 
             let formData = new FormData();
             formData.append( 'reference', $( oc + '_reference' ).val() );
-            formData.append( 'owner', $( oc + '_owner' ).val() );
             formData.append( 'farm', $( oc + '_farm' ).val() );
             formData.append( 'buyer', $( oc + '_buyer' ).val() );
             formData.append( 'order_date', $( oc + '_order_date' ).val() );
@@ -201,76 +196,27 @@ $grade = $data['grade'];
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
 
-                            if ( key.includes( 'pickup_addresses' ) ) {
+                            if ( key.includes( 'order_items' ) ) {
 
                                 let stringKey = key.split( '.' );
 
-                                $( '#order_details' + stringKey[1] ).find( oc + '_' + stringKey[2] ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-
+                                $( '#order_details_' + stringKey[1] ).find( oc + '_' + stringKey[2] ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                                console.log('#order_details_' + stringKey[1])
+                                console.log($( '#order_details_' + stringKey[1] ))
+                                console.log(stringKey[2])
+                                console.log(value)
                                 return true;
                             }
 
-                            if ( key.includes( 'dropoff_addresses' ) ) {
-
-                                let stringKey = key.split( '.' );
-
-                                $( '#dropoff_address_' + stringKey[1] ).find( oc + '_' + stringKey[2] ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-
-                                return true;
-                            }
-
-                            $( oc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            // $( oc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
-                        $( '.form-control.is-invalid:first' ).get( 0 ).scrollIntoView( { block: 'center' } );
-                        $( '.form-select.is-invalid:first' ).get( 0 ).scrollIntoView( { block: 'center' } );
+
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
                         modalDanger.toggle();
                     }
                 }
             } );
-        } );
-
-        $( oc + '_owner' ).select2( {
-            language: '{{ App::getLocale() }}',
-            theme: 'bootstrap-5',
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-            ajax: {
-                method: 'POST',
-                url: '{{ route( 'admin.owner.allOwners' ) }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        custom_search: params.term, // search term
-                        status: 10,
-                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
-                        length: 10,
-                        _token: '{{ csrf_token() }}',
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
-
-                    let processedResult = [];
-
-                    data.owners.map( function( v, i ) {
-                        processedResult.push( {
-                            id: v.owner.id,
-                            text: v.name,
-                        } );
-                    } );
-
-                    return {
-                        results: processedResult,
-                        pagination: {
-                            more: ( params.page * 10 ) < data.recordsFiltered
-                        }
-                    };
-                }
-            },
         } );
 
         $( oc + '_farm' ).select2( {
@@ -303,7 +249,7 @@ $grade = $data['grade'];
                     data.farms.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.title,
+                            text: v.title + ' (' + v.owner.name + ')',
                         } );
                     } );
 
