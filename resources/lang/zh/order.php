@@ -27,6 +27,6 @@ return [
     'total' => '总计',
     'rm' => 'RM',
 
-    'order_items' => 'Order Items',
+    'order_items' => '订单项目',
     
 ];

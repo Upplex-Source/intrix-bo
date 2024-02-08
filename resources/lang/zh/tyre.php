@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'vendor' => 'Vendor',
-    'code' => 'Code',
-    'name' => 'Name',
+    'vendor' => '供应商',
+    'code' => '编码',
+    'name' => '名称',
 ];
