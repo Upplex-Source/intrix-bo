@@ -14,7 +14,7 @@ return [
     */
 
     'failed' => '此登入凭证不符合我们的记录。',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'throttle' => '登录尝试过多。 请在 :seconds 秒后重试。',
 
     'sign_in_to' => '登入您的帐号',
     'email' => '电子邮件',

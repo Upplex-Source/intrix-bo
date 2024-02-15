@@ -13,13 +13,12 @@ return [
     |
     */
 
-    'vehicles_x_expiring_title' => ':plate :type Expires Soon!',
-    'vehicles_x_expiring_content' => ':plate :type is about to expire in one month, this is the final notice before it expires, please proceed to renew it. Thank you.',
-    'road_tax' => 'Road Tax',
-    'insurance' => 'Insurance',
-    'permit' => 'Permit',
-    'inspection' => 'Inspection',
-
+    'vehicles_x_expiring_title' => ':plate :type 即将到期！',
+    'vehicles_x_expiring_content' => ':plate :type 将在一个月内到期，这是到期前的最后通知，请尽快续费。谢谢。',
+    'road_tax' => '马路税',
+    'insurance' => '保险',
+    'permit' => '许可证',
+    'inspection' => '检查',
     'notifications' => '通知',
     'x_new_notification' => '<span id="totalNewNotifications">:total</span>个新通知',
     'mark_all_as_read' => '标记为已读',
