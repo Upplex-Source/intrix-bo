@@ -91,6 +91,11 @@ $order_edit = 'order_edit';
 
             $( renderOrderItems( true ) ).insertBefore( '#order_item_add' );
 
+            newOrderItem = document.querySelector( "#order_details_" + ( oeIndex - 1 ) );
+            calculateSubtotal( newOrderItem );
+            calculateTotal();
+            renderEventListener(oeIndex-1);
+
             oeIndex+=1;
         } );
 
@@ -415,18 +420,22 @@ $order_edit = 'order_edit';
             document.getElementById( 'order_edit_total' ).value = total.toFixed(2);
         }
         
-        function renderEventListener( oeIndex ) {
+        function renderEventListener( index ) {
 
             newOrderItem.querySelector( '.rate' ).addEventListener( 'input', function() {
-                calculateSubtotal( document.querySelector( "#order_details_" + oeIndex ) );
+                console.log(index)
+                calculateSubtotal( document.querySelector( "#order_details_" + index ) );
             });
             newOrderItem.querySelector( '.weight' ).addEventListener( 'input', function() {
-                calculateSubtotal( document.querySelector( "#order_details_" + oeIndex ) );
+                console.log(index)
+
+                calculateSubtotal( document.querySelector( "#order_details_" + index ) );
             });
             newOrderItem.querySelector( '.subtotal' ).addEventListener( 'input', function() {
                 calculateTotal();
+                console.log(index)
 
-                var parentDiv = document.querySelector( "#order_details_" + oeIndex ).closest('[id^="order_details_"]');
+                var parentDiv = document.querySelector( "#order_details_" + index ).closest('[id^="order_details_"]');
                 parentDiv.querySelector('.rate').value = '';
                 parentDiv.querySelector('.weight').value = '';
                 

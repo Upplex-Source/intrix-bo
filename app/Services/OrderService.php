@@ -421,7 +421,6 @@ class OrderService
             $html .= '<th><strong>' . __('order.weight') . '</strong></th>';
         }
     
-        $html .= '<th><strong>' . __('order.subtotal') . '</strong></th>';
         $html .= '<th><strong>' . __('order.total') . '</strong></th>';
         $html .= '</tr>
             </thead>';
@@ -438,32 +437,26 @@ class OrderService
                     <td>' . ($order->farm->title ?? '-') . '</td>
                     <td>' . ($order->buyer->name ?? '-') . '</td>';
     
-            foreach ($grades as $grade) {
+            $grandRates = [];
+                            
+            foreach($grades as $grade) {
+                $grandRates[$grade]['rates'] = 0;
+                $grandRates[$grade]['weight'] = 0;
+            }
+        
+            foreach($order->orderItems as $orderItem) {
+                $grade = $orderItem['grade'];
+                $grandRates[$grade]['rates'] += $orderItem['rate'];
+                $grandRates[$grade]['weight'] += $orderItem['weight'];
+            }
 
-                if (isset($order->orderItems)) {
-                    $foundGrade = false;
-        
-                    foreach ($order->orderItems as $orderItem) {
-                        if (isset($orderItem['grade']) && $orderItem['grade'] == $grade) {
-                            $foundGrade = true;
-                            $html .= '<td>' . $orderItem['grade'] . '</td>';
-                            $html .= '<td>' . $orderItem['rate'] . '</td>';
-                            $html .= '<td>' . $orderItem['weight'] . '</td>';
-                            $grandRates[$grade]['rates'] += $orderItem['rate'];
-                            $grandRates[$grade]['weight'] += $orderItem['weight'];
-                        }
-                    }
-        
-                    if (!$foundGrade) {
-                        $html .= '<td>-</td>';
-                        $html .= '<td>-</td>';
-                        $html .= '<td>-</td>';
-                    }
-                }
-        
+            foreach($grades as $grade) {
+                 $html .= '<td>' . $grade . '</td>';
+                 $html .= '<td>' . ( $grandRates[$grade]['rates'] != 0 ? $grandRates[$grade]['rates'] : '-' ) . '</td>';
+                 $html .= '<td>' . ( $grandRates[$grade]['weight'] != 0 ? $grandRates[$grade]['weight'] : '-' ) . '</td>';              
             }
     
-            $html .= '<td>' . $order['subtotal'] . '</td>';
+            // $html .= '<td>' . $order['subtotal'] . '</td>';
             $html .= '<td>' . $order['total'] . '</td>';
     
             $grandTotalTotal += $order['total'];
@@ -473,23 +466,7 @@ class OrderService
         }
     
         $html .= '
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="6">' . __('datatables.grand_total') . '</td>';
-    
-        foreach ($grades as $grade) {
-            $html .= '<td colspan=""></td>';
-            $html .= '<td>' . $grandRates[$grade]['rates'] . '</td>';
-            $html .= '<td>' . $grandRates[$grade]['weight'] . '</td>';
-        }
-    
-        $html .= '<td>' . $grandSubtotalTotal . '</td>';
-        $html .= '<td>' . $grandTotalTotal . '</td>';
-        $html .= '</tr>
-            </tfoot>';
-    
-        $html .= '</table>';
+            </tbody></table>';
     
         Helper::exportReport($html, 'Order');
     }

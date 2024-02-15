@@ -1,6 +1,7 @@
 <?php
     $orders = $data['orders']['orders'];
     $grades = $data['grades'];
+
 ?>
 <div class="card">
     <div class="card-body">
@@ -63,35 +64,26 @@
                             <td>{{ $order['farm']['title'] }}</td>
                             <td>{{ $order['buyer']['name'] }}</td>
             
+                            @php
+                                $grandRates = [];
+                            
+                                foreach($grades as $grade) {
+                                    $grandRates[$grade]['rates'] = 0;
+                                    $grandRates[$grade]['weight'] = 0;
+                                }
+                            
+                                foreach($order['order_items'] as $orderItem) {
+                                    $grade = $orderItem['grade'];
+                                    $grandRates[$grade]['rates'] += $orderItem['rate'];
+                                    $grandRates[$grade]['weight'] += $orderItem['weight'];
+                                }
+                                
+                            @endphp
+                            
                             @foreach($grades as $grade)
-            
-                                @if(isset($order['order_items']))
-                                    @php
-                                        $foundGrade = false;
-                                    @endphp
-                                
-                                    @foreach($order['order_items'] as $orderItem)
-                                        @if(isset($orderItem['grade']) && $orderItem['grade'] == $grade)
-                                            @php
-                                                $foundGrade = true;
-                                            @endphp
-                                            <td>{{ $orderItem['grade'] }}</td>
-                                            <td>{{ $orderItem['rate'] }}</td>
-                                            <td>{{ $orderItem['weight'] }}</td>
-                                            @php
-                                                $grandRates[$grade]['rates'] += $orderItem['rate'];
-                                                $grandRates[$grade]['weight'] += $orderItem['weight'];
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                
-                                    @unless($foundGrade)
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    @endunless
-                                @endif
-                                
+                                <td>{{ $grade }}</td>
+                                <td>{{ $grandRates[$grade]['rates'] != 0 ? $grandRates[$grade]['rates'] : '-' }}</td>
+                                <td>{{ $grandRates[$grade]['weight'] != 0 ? $grandRates[$grade]['weight'] : '-' }}</td>                        
                             @endforeach
             
                             {{-- <td>{{ $order['subtotal'] }}</td> --}}
