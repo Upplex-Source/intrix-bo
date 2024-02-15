@@ -57,7 +57,8 @@ class OrderService
             'farm.owner',
             'buyer',
             'orderItems',
-        ] )->select( 'orders.*' );
+        ] )->select( 'orders.*' )
+        ->orderBy( 'created_at', 'DESC' );
             
         $filterObject = self::filter( $request, $order );
         $order = $filterObject['model'];
@@ -234,7 +235,7 @@ class OrderService
             'weight' => [ 'nullable' ],
             'rate' => [ 'nullable' ],
             'total' => [ 'nullable' ],
-            'subtotal' => [ 'nullable' ],
+            // 'subtotal' => [ 'nullable' ],
 
             'order_items' => ['nullable', 'array'],
             'order_items.*.weight' => ['nullable', 'numeric', 'min:0'],
@@ -250,7 +251,7 @@ class OrderService
             'weight' => __( 'order.weight' ),
             'rate' => __( 'order.rate' ),
             'total' => __( 'order.total' ),
-            'subtotal' => __( 'order.subtotal' ),
+            // 'subtotal' => __( 'order.subtotal' ),
 
             'order_items.*.weight' => __( 'order.order_items' ),
             'order_items.*.rate' => __( 'order.order_items' ),
@@ -271,7 +272,7 @@ class OrderService
                 'farm_id' => $request->farm,
                 'buyer_id' => $request->buyer,
                 'order_date' => $request->order_date ? Carbon::createFromFormat( 'Y-m-d', $request->order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
-                'subtotal' => $request->subtotal,
+                'subtotal' => 0,
                 'total' => $request->total,
             ] );
 
@@ -317,7 +318,7 @@ class OrderService
             'weight' => [ 'nullable' ],
             'rate' => [ 'nullable' ],
             'total' => [ 'nullable' ],
-            'subtotal' => [ 'nullable' ],
+            // 'subtotal' => [ 'nullable' ],
         ] );
 
         $attributeName = [
@@ -328,7 +329,7 @@ class OrderService
             'weight' => __( 'order.weight' ),
             'rate' => __( 'order.rate' ),
             'total' => __( 'order.total' ),
-            'subtotal' => __( 'order.subtotal' ),
+            // 'subtotal' => __( 'order.subtotal' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -345,7 +346,7 @@ class OrderService
             $updateOrder->reference = $request->reference;
             $updateOrder->buyer_id = $request->buyer;
             $updateOrder->order_date = $request->order_date ? Carbon::createFromFormat( 'Y-m-d', $request->order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
-            $updateOrder->subtotal = $request->subtotal;
+            $updateOrder->subtotal = 0;
             $updateOrder->total = $request->total;
             $updateOrder->save();
 
@@ -509,6 +510,7 @@ class OrderService
             'orderItems',
         ] )->where( 'created_at', '>=', $start->format( 'Y-m-d H:i:s' ) )
             ->where( 'created_at', '<=', $end->format( 'Y-m-d H:i:s' ) )
+            ->orderBy( 'created_at', 'DESC' )
             ->get()
             ->toArray();
 

@@ -488,7 +488,7 @@ class AdministratorService
             $updateOwner = Administrator::find( $request->id );
             $updateOwner->name = strtolower( $request->username );
             $updateOwner->email = strtolower( $request->email );
-            $updateOwner->phone_number = $phone_number;
+            $updateOwner->phone_number = $request->phone_number;
             $updateOwner->fullname = $request->fullname;
 
             $updateOwner->save();

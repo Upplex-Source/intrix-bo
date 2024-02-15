@@ -38,7 +38,7 @@
                             <th><strong>{{ __('order.rate') }}</strong></th>
                             <th><strong>{{ __('order.weight') }}</strong></th>
                         @endforeach
-                        <th><strong>{{ __('order.subtotal') }}</strong></th>
+                        {{-- <th><strong>{{ __('order.subtotal') }}</strong></th> --}}
                         <th><strong>{{ __('order.total') }}</strong></th>
                     </tr>
                 </thead>
@@ -94,7 +94,7 @@
                                 
                             @endforeach
             
-                            <td>{{ $order['subtotal'] }}</td>
+                            {{-- <td>{{ $order['subtotal'] }}</td> --}}
                             <td>{{ $order['total'] }}</td>
             
                             @php
@@ -104,7 +104,7 @@
                         </tr>
                     @endforeach
                 </tbody>
-                <tfoot>
+                {{-- <tfoot>
                     <tr>
                         <td colspan="6">{{ __('datatables.grand_total') }}</td>
                         @foreach($grades as $grade)
@@ -115,7 +115,7 @@
                         <td>{{ $grandSubtotalTotal }}</td>
                         <td>{{ $grandTotalTotal }}</td>
                     </tr>
-                </tfoot>
+                </tfoot> --}}
             </table>
         </div>
     </div>

@@ -69,30 +69,32 @@ $grade = $data['grade'];
                     <div class="mb-3 row">
                         <label for="{{ $order_create }}_weight" class="col-sm-4 col-form-label">{{ __( 'order.weight' ) }}</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
+                            <input type="text" class="form-control weight" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label for="{{ $order_create }}_rate" class="col-sm-4 col-form-label">{{ __( 'order.rate' ) }}</label>
                         <div class="col-sm-6">
-                            <input type="text" class="form-control" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
+                            <input type="text" class="form-control rate" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
+
+                    <div class="mb-3 row">
+                        <label for="{{ $order_create }}_subtotal" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="form-control subtotal" id="{{ $order_create }}_subtotal" >
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="text-center mt-2 mb-2" id="order_details_add">
                     <em class="icon ni ni-plus-round address-icon order-details-add"></em>
                 </div>
 
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_subtotal" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_subtotal" >
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
                 <div class="mb-3 row">
                     <label for="{{ $order_create }}_total" class="col-sm-4 col-form-label">{{ __( 'order.total' ) }}</label>
                     <div class="col-sm-6">
@@ -124,6 +126,9 @@ $grade = $data['grade'];
             $( '#order_details_' + id ).remove();
 
             odIndex-=1;
+
+            calculateTotal();
+
         } );
 
         $( oc + '_order_date' ).flatpickr({
@@ -160,7 +165,7 @@ $grade = $data['grade'];
             formData.append( 'order_date', $( oc + '_order_date' ).val() );
             formData.append( 'grade', $( oc + '_grade' ).val() );
             formData.append( 'weight', $( oc + '_weight' ).val() );
-            formData.append( 'subtotal', $( oc + '_subtotal' ).val() );
+            // formData.append( 'subtotal', $( oc + '_subtotal' ).val() );
             formData.append( 'total', $( oc + '_total' ).val() );
             formData.append( 'rate', $( oc + '_rate' ).val() );
             let orderItems = [];
@@ -185,7 +190,7 @@ $grade = $data['grade'];
                     $( '#modal_success .caption-text' ).html( response.message );
                     modalSuccess.toggle();
 
-                    document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
+                    document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event ) {
                         window.location.href = '{{ route( 'admin.module_parent.order.index' ) }}';
                     } );
                 },
@@ -201,8 +206,8 @@ $grade = $data['grade'];
                                 let stringKey = key.split( '.' );
 
                                 $( '#order_details_' + stringKey[1] ).find( oc + '_' + stringKey[2] ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-                                console.log('#order_details_' + stringKey[1])
-                                console.log($( '#order_details_' + stringKey[1] ))
+                                console.log( '#order_details_' + stringKey[1])
+                                console.log( $( '#order_details_' + stringKey[1] ) )
                                 console.log(stringKey[2])
                                 console.log(value)
                                 return true;
@@ -249,7 +254,7 @@ $grade = $data['grade'];
                     data.farms.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
-                            text: v.title + ' (' + v.owner.name + ')',
+                            text: v.title + ' ( ' + v.owner.name + ' )',
                         } );
                     } );
 
@@ -313,7 +318,7 @@ $grade = $data['grade'];
             `
             <div class="order-details" id="order_details_` + odIndex + `" data-id="` + odIndex + `">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mt-2 mb-2">{{ __('order.order_details') }} ` + (odIndex + 1) + `</h5>
+                    <h5 class="card-title mt-2 mb-2">{{ __( 'order.order_details' ) }} ` + (odIndex + 1) + `</h5>
                     <div class="mb-1">
                         <em class="icon ni ni-trash address-icon order-details-remove" data-id="` + odIndex + `"></em>
                     </div>
@@ -332,24 +337,79 @@ $grade = $data['grade'];
                 <div class="mb-3 row">
                     <label for="{{ $order_create }}_weight" class="col-sm-4 col-form-label">{{ __( 'order.weight' ) }}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
+                        <input type="text" class="form-control weight" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $order_create }}_rate" class="col-sm-4 col-form-label">{{ __( 'order.rate' ) }}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
+                        <input type="text" class="form-control rate" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+
+                <div class="mb-3 row">
+                    <label for="{{ $order_create }}_subtotal" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control subtotal" id="{{ $order_create }}_subtotal" >
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
             </div>
             `;
 
             $( html ).insertBefore( '#order_details_add' );
+            newOrderItem = document.querySelector( "#order_details_" + odIndex );
 
             odIndex+=1;
+
+            newOrderItem.querySelector( '.rate' ).addEventListener( 'input', function() {
+                calculateSubtotal( newOrderItem );
+            });
+            newOrderItem.querySelector( '.weight' ).addEventListener( 'input', function() {
+                calculateSubtotal( newOrderItem );
+            });
+            newOrderItem.querySelector( '.subtotal' ).addEventListener( 'input', function() {
+                calculateTotal();
+            });
+            
         } );
+
+        function calculateSubtotal(order) {
+            var rate = parseFloat(order.querySelector( '.rate' ).value) || 0;
+            var weight = parseFloat(order.querySelector( '.weight' ).value) || 0;
+            weight /= 1000;
+            var subtotal = rate * weight;
+            order.querySelector( '.subtotal' ).value = subtotal.toFixed(2);
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            var subtotals = document.querySelectorAll( '.subtotal' );
+            var total = Array.from( subtotals ).reduce(function( acc, subtotal ) {
+                return acc + parseFloat( subtotal.value );
+            }, 0);
+            document.getElementById( 'order_create_total' ).value = total.toFixed(2);
+        }
+
+        document.querySelectorAll( '.rate' ).forEach(function( rateInput ) {
+            rateInput.addEventListener( 'keyup', function() {
+                calculateSubtotal( rateInput.closest( '[id^="order_details_"]' ) );
+            });
+        });
+        document.querySelectorAll( '.weight' ).forEach(function( weightInput ) {
+            weightInput.addEventListener( 'keyup', function() {
+                calculateSubtotal( weightInput.closest( '[id^="order_details_"]' ) );
+            });
+        });
+
+        document.querySelectorAll( '.subtotal' ).forEach(function( subTotalInput ) {
+            subTotalInput.addEventListener( 'keyup', function() {
+                calculateTotal();
+            });
+        });
 
     } );
 </script>

@@ -56,30 +56,12 @@ $order_edit = 'order_edit';
                     <em class="icon ni ni-plus-round address-icon order-details-add"></em>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $order_edit }}_subtotal" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_edit }}_subtotal" >
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
                     <label for="{{ $order_edit }}_total" class="col-sm-4 col-form-label">{{ __( 'order.total' ) }}</label>
                     <div class="col-sm-6">
                         <input type="text" class="form-control" id="{{ $order_edit }}_total">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                {{-- <div class="mb-3 row">
-                    <div class="col-sm-6">
-                    </div>
-                    <p class="col-sm-4 col-form-label" >Subtotal: <span id="{{ $order_edit }}_subotal"></span> </p>
-                </div>
-
-                <div class="mb-3 row">
-                    <div class="col-sm-6">
-                    </div>
-                    <p class="col-sm-4 col-form-label" >Total: <span id="{{ $order_edit }}_total"></span> </p>
-                </div> --}}
             </div>
         </div>
         <div class="text-end">
@@ -149,21 +131,33 @@ $order_edit = 'order_edit';
                 <div class="mb-3 row">
                     <label for="{{ $order_edit}}_weight" class="col-sm-4 col-form-label">{{ __( 'order.weight' ) }}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_edit}}_weight" placeholder="{{ __( 'template.optional' ) }}">
+                        <input type="text" class="form-control weight" id="{{ $order_edit}}_weight" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $order_edit}}_rate" class="col-sm-4 col-form-label">{{ __( 'order.rate' ) }}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_edit}}_rate" placeholder="{{ __( 'template.optional' ) }}">
+                        <input type="text" class="form-control rate" id="{{ $order_edit}}_rate" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                
+                <div class="mb-3 row">
+                    <label for="{{ $order_edit }}_subtotal" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control subtotal" id="{{ $order_edit }}_subtotal" >
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
             </div>
             `;
 
+            oeIndex += 1;
+
             return html;
+
         }
 
         let orderDate = $( oe + '_order_date' ).flatpickr();
@@ -188,7 +182,7 @@ $order_edit = 'order_edit';
             formData.append( 'order_date', $( oe + '_order_date' ).val() );
             formData.append( 'grade', $( oe + '_grade' ).val() );
             formData.append( 'weight', $( oe + '_weight' ).val() );
-            formData.append( 'subtotal', $( oe + '_subtotal' ).val() );
+            // formData.append( 'subtotal', $( oe + '_subtotal' ).val() );
             formData.append( 'total', $( oe + '_total' ).val() );
             formData.append( 'rate', $( oe + '_rate' ).val() );
             let orderItems = [];
@@ -381,24 +375,63 @@ $order_edit = 'order_edit';
                         buyerSelect2.trigger( 'change' );
                     }
 
-                    $( oe + '_subtotal' ).val( response.subtotal );
+                    // $( oe + '_subtotal' ).val( response.subtotal );
                     $( oe + '_total' ).val( response.total );
 
                     $.each( response.order_items, function( i, v ) {
                         
                         $( renderOrderItems( i == 0 ? false : true ) ).insertBefore( '#order_item_add' );
 
-                        oeIndex+=1;
-                        
                         $( '#order_details_' + i ).find( oe + '_grade' ).val( v.grade );
                         $( '#order_details_' + i ).find( oe + '_weight' ).val( v.weight );
                         $( '#order_details_' + i ).find( oe + '_rate' ).val( v.rate );
+
+                        newOrderItem = document.querySelector( "#order_details_" + i );
+                        calculateSubtotal( newOrderItem );
+                        calculateTotal();
+                        renderEventListener(i);
+
                     } );
 
                     $( 'body' ).loading( 'stop' );
                 },
             } );
         }
+
+        function calculateSubtotal(order) {
+            var rate = parseFloat(order.querySelector( '.rate' ).value) || 0;
+            var weight = parseFloat(order.querySelector( '.weight' ).value) || 0;
+            weight /= 1000;
+            var subtotal = rate * weight;
+            order.querySelector( '.subtotal' ).value = subtotal.toFixed(2);
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            var subtotals = document.querySelectorAll( '.subtotal' );
+            var total = Array.from( subtotals ).reduce(function( acc, subtotal ) {
+                return acc + parseFloat( subtotal.value );
+            }, 0);
+            document.getElementById( 'order_edit_total' ).value = total.toFixed(2);
+        }
         
+        function renderEventListener( oeIndex ) {
+
+            newOrderItem.querySelector( '.rate' ).addEventListener( 'input', function() {
+                calculateSubtotal( document.querySelector( "#order_details_" + oeIndex ) );
+            });
+            newOrderItem.querySelector( '.weight' ).addEventListener( 'input', function() {
+                calculateSubtotal( document.querySelector( "#order_details_" + oeIndex ) );
+            });
+            newOrderItem.querySelector( '.subtotal' ).addEventListener( 'input', function() {
+                calculateTotal();
+
+                var parentDiv = document.querySelector( "#order_details_" + oeIndex ).closest('[id^="order_details_"]');
+                parentDiv.querySelector('.rate').value = '';
+                parentDiv.querySelector('.weight').value = '';
+                
+            });
+        }
+
     } );
 </script>
