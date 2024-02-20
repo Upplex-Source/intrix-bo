@@ -488,11 +488,16 @@ class OrderService
         ] )->where( 'created_at', '>=', $start->format( 'Y-m-d H:i:s' ) )
             ->where( 'created_at', '<=', $end->format( 'Y-m-d H:i:s' ) )
             ->orderBy( 'created_at', 'DESC' )
-            ->get()
-            ->toArray();
+            ->get();
+
+        if ( $salesRecords ) {
+            $salesRecords->append( [
+                'encrypted_id',
+            ] );
+        }
 
         return [
-            'orders' => $salesRecords,
+            'orders' => $salesRecords->toArray(),
         ];
     }
     

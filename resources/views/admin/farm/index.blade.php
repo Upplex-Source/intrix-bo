@@ -134,6 +134,13 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "size" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-' ;
+                },
+            },
+            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "remarks" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {

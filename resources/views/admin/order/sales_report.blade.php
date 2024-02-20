@@ -1,7 +1,6 @@
 <?php
     $orders = $data['orders']['orders'];
     $grades = $data['grades'];
-
 ?>
 <div class="card">
     <div class="card-body">
@@ -56,7 +55,7 @@
                         $grandRates['D']['weight'] = 0;
                     @endphp
                     @foreach ($orders as $order)
-                        <tr>
+                        <tr class='clickable-row' data-href='{{ route( 'admin.order.edit', [ 'id' => $order['encrypted_id'] ] ) }}'>
                             <td>{{ $loop->index + 1 }}</td>
                             <td>{{ $order['reference'] }}</td>
                             <td>{{ $order['order_date'] }}</td>
@@ -117,6 +116,10 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
 
         function appendDataToTable(data) {
             var tableBody = document.querySelector('.table-bordered tbody');
