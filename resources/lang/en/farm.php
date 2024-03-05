@@ -28,5 +28,5 @@ return [
     'galleries' => 'Galleries',
     'acres' => 'Acres',
     'km' => 'KM',
-
+    'farmer' => 'Farmer',
 ];
