@@ -13,7 +13,7 @@ use Carbon\Carbon;
 class AuditService
 {
     public static function allAudits( $request, $export = false ) {
-
+        // test commit
         $audit = ActivityLog::select( 'activity_log.*', 'administrators.name AS admin_username' );
         $audit->leftJoin( 'administrators', 'activity_log.causer_id', '=', 'administrators.id' );
         $audit->where( 'causer_type', 'App\Models\Administrator' );
