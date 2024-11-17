@@ -12,7 +12,7 @@ class Helper {
     }
 
     public static function assetVersion() {
-        return '?v=1.06';
+        return '?v=1.01';
     }
 
     public static function moduleActions() {

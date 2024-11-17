@@ -94,4 +94,21 @@ return [
 
     'drop_file_or_click_to_upload' => 'Drop file here or click to upload.',
     'drop_files_or_click_to_upload' => 'Drop files here or click to upload.',
+
+    // new table
+    'categories' => 'Categories',
+    'products' => 'Products',
+    'brands' => 'Brands',
+    'units' => 'Units',
+    'suppliers' => 'Suppliers',
+    'bundles' => 'Bundles',
+    'product_types' => 'Product Types',
+    'product_categories' => 'Product Categories',
+    'product_bundles' => 'Product Bundles',
+    'product_inventories' => 'Product Inventories',
+    'product_variants' => 'Product Variants',
+    'product_galleries' => 'Product Galleries',
+    'Warehouses' => 'Warehouses',
+    'parents' => 'Parents',
+    'warehouse_products' => 'Warehouse Products',
 ];

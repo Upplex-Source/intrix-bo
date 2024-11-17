@@ -10,29 +10,56 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-use Helper;
+use App\Traits\HasTranslations;
 
-use Carbon\Carbon;
+use Helper;
 
 class Supplier extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasTranslations;
 
     protected $fillable = [
-        'name',
+        'title',
+        'description',
+        'image',
+        'thumbnail',
+        'url_slug',
+        'strucuture',
+        'sort',
         'status',
     ];
 
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'supplier_id');
+    }
+
+    public function getImagePathAttribute() {
+        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
+    }
+
+    public function getThumbnailPathAttribute() {
+        return $this->attributes['thumbnail'] ? asset( 'storage/'.$this->attributes['thumbnail'] ) : asset( 'admin/images/placeholder.png' );
+    }
+    
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }
+
+    public $translatable = [ 'name', 'description' ];
 
     protected function serializeDate( DateTimeInterface $date ) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 
     protected static $logAttributes = [
-        'name',
+        'title',
+        'description',
+        'image',
+        'thumbnail',
+        'url_slug',
+        'strucuture',
+        'sort',
         'status',
     ];
 
