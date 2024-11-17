@@ -72,6 +72,28 @@ class Product extends Model
         ];
     }
 
+    public static function getPredefinedUnits()
+    {
+        return [
+            'purchase_units' => [
+                'Box',
+                'Kilogram (kg)',
+                'Liter (L)',
+                'Piece (pc)',
+                'Meter (m)',
+                'Bundle',
+            ],
+            'sale_units' => [
+                'Piece (pc)',
+                'Kilogram (kg)',
+                'Liter (L)',
+                'Box',
+                'Set',
+                'Meter (m)',
+            ]
+        ];
+    }
+
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'products_categories')
