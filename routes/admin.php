@@ -24,6 +24,8 @@ use App\Http\Controllers\Admin\{
     BrandController,
     SupplierController,
     ProductController,
+    WarehouseController,
+    UnitController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -333,6 +335,48 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-product', [ ProductController::class, 'updateProduct' ] )->name( 'admin.product.updateProduct' );
                 Route::post( 'update-product-status', [ ProductController::class, 'updateProductStatus' ] )->name( 'admin.product.updateProductStatus' );
                 Route::post( 'remove-product-gallery-image', [ ProductController::class, 'removeProductGalleryImage' ] )->name( 'admin.product.removeProductGalleryImage' );
+
+                Route::post( 'ckeUpload', [ ProductController::class, 'ckeUpload' ] )->name( 'admin.product.ckeUpload' );
+                Route::post( 'generate-product-code', [ ProductController::class, 'generateProductCode' ] )->name( 'admin.product.generateProductCode' );
+            } );
+
+            // new routes
+            Route::prefix( 'warehouses' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view warehouses' ] ], function() {
+                    Route::get( '/', [ WarehouseController::class, 'index' ] )->name( 'admin.module_parent.warehouse.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add warehouses' ] ], function() {
+                    Route::get( 'add', [ WarehouseController::class, 'add' ] )->name( 'admin.warehouse.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit warehouses' ] ], function() {
+                    Route::get( 'edit', [ WarehouseController::class, 'edit' ] )->name( 'admin.warehouse.edit' );
+                } );
+
+                Route::post( 'all-warehouses', [ WarehouseController::class, 'allWarehouses' ] )->name( 'admin.warehouse.allWarehouses' );
+                Route::post( 'one-warehouse', [ WarehouseController::class, 'oneWarehouse' ] )->name( 'admin.warehouse.oneWarehouse' );
+                Route::post( 'create-warehouse', [ WarehouseController::class, 'createWarehouse' ] )->name( 'admin.warehouse.createWarehouse' );
+                Route::post( 'update-warehouse', [ WarehouseController::class, 'updateWarehouse' ] )->name( 'admin.warehouse.updateWarehouse' );
+                Route::post( 'update-warehouse-status', [ WarehouseController::class, 'updateWarehouseStatus' ] )->name( 'admin.warehouse.updateWarehouseStatus' );
+                Route::post( 'remove-warehouse-gallery-image', [ WarehouseController::class, 'removeWarehouseGalleryImage' ] )->name( 'admin.warehouse.removeWarehouseGalleryImage' );
+            } );
+
+            // new routes
+            Route::prefix( 'units' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view units' ] ], function() {
+                    Route::get( '/', [ UnitController::class, 'index' ] )->name( 'admin.module_parent.unit.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add units' ] ], function() {
+                    Route::get( 'add', [ UnitController::class, 'add' ] )->name( 'admin.unit.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit units' ] ], function() {
+                    Route::get( 'edit', [ UnitController::class, 'edit' ] )->name( 'admin.unit.edit' );
+                } );
+
+                Route::post( 'all-units', [ UnitController::class, 'allUnits' ] )->name( 'admin.unit.allUnits' );
+                Route::post( 'one-unit', [ UnitController::class, 'oneUnit' ] )->name( 'admin.unit.oneUnit' );
+                Route::post( 'create-unit', [ UnitController::class, 'createUnit' ] )->name( 'admin.unit.createUnit' );
+                Route::post( 'update-unit', [ UnitController::class, 'updateUnit' ] )->name( 'admin.unit.updateUnit' );
+                Route::post( 'update-unit-status', [ UnitController::class, 'updateUnitStatus' ] )->name( 'admin.unit.updateUnitStatus' );
             } );
 
         } );

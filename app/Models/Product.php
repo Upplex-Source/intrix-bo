@@ -24,6 +24,7 @@ class Product extends Model
         'supplier_id',
         'unit_id',
         'title',
+        'description',
         'product_code',
         'barcode_symbology',
         'workmanship',
@@ -43,10 +44,13 @@ class Product extends Model
         'promotion_on',
         'cost',
         'alert_quantity',
+        'quantity',
         'thumbnail',
         'imei',
         'serial_number',
-        'stock_\worth',
+        'stock_worth',
+        'tax_method',
+        'featured',
         'status',
     ];
 
@@ -63,6 +67,15 @@ class Product extends Model
         ];
     }
 
+    public static function getPredefinedTaxMethods()
+    {
+        return [
+            1 => 'Exclusive',
+            2 => 'Inclusive',
+            3 => 'Flat',
+        ];
+    }
+
     public static function getPredefinedProductTypes()
     {
         return [
@@ -72,10 +85,10 @@ class Product extends Model
         ];
     }
 
-    public static function getPredefinedUnits()
+public static function getPredefinedUnits()
     {
         return [
-            'purchase_units' => [
+            'purchase_unit' => [
                 'Box',
                 'Kilogram (kg)',
                 'Liter (L)',
@@ -83,7 +96,7 @@ class Product extends Model
                 'Meter (m)',
                 'Bundle',
             ],
-            'sale_units' => [
+            'sale_unit' => [
                 'Piece (pc)',
                 'Kilogram (kg)',
                 'Liter (L)',
@@ -94,10 +107,27 @@ class Product extends Model
         ];
     }
 
+    public function bundles()
+    {
+        return $this->belongsToMany(Bundle::class, 'products_bundles')
+        ->withPivot('quantity', 'price');
+    }
+    
+    public function galleries() {
+        return $this->hasMany( ProductGallery::class, 'product_id' );
+    }
+
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'products_categories')
                     ->withPivot('is_child', 'status')
+                    ->withTimestamps();
+    }
+
+    public function warehouses()
+    {
+        return $this->belongsToMany(Warehouse::class, 'warehouses_products')
+                    ->withPivot('quantity', 'price', 'status')
                     ->withTimestamps();
     }
 
@@ -142,34 +172,20 @@ class Product extends Model
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id');
+    }
+
     public function productInventories()
     {
         return $this->hasMany(ProductInventory::class);
     }
 
-    public function getNumberOfProductsAttribute()
-    {
-        return $this->products()->count();
+    public function getStockWorthAttribute() {
+        return ( $this->attributes['price'] && $this->attributes['quantity'] ) ? $this->attributes['price'] . ' / ' . $this->attributes['quantity'] : '-';
     }
 
-    // Calculate the total stock quantity of related products
-    public function getStockQuantityAttribute()
-    {
-        return $this->products()->with('productInventories')->get()->sum(function ($product) {
-            return $product->productInventories->sum('quantity');
-        });
-    }
-
-    // Calculate the total stock worth of related products
-    public function getStockWorthAttribute()
-    {
-        return $this->products()->with('productInventories')->get()->sum(function ($product) {
-            return $product->productInventories->sum(function ($inventory) use ($product) {
-                return $inventory->quantity * $product->price;
-            });
-        });
-    }
-    
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
     }
@@ -194,6 +210,7 @@ class Product extends Model
         'supplier_id',
         'unit_id',
         'title',
+        'description',
         'product_code',
         'barcode_symbology',
         'workmanship',
@@ -213,10 +230,13 @@ class Product extends Model
         'promotion_on',
         'cost',
         'alert_quantity',
+        'quantity',
         'thumbnail',
         'imei',
         'serial_number',
         'stock_worth',
+        'tax_method',
+        'featured',
         'status',
     ];
 

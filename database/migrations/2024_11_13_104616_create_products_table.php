@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->foreignId('unit_id')->nullable()->constrained('units')->onUpdate('restrict')->onDelete('cascade');
             $table->integer('type')->nullable();
             $table->string('title')->nullable();
+            $table->longText('description')->nullable();
             $table->string('product_code')->nullable();
             $table->string('barcode_symbology')->nullable();
             $table->string('workmanship')->nullable();
@@ -30,8 +31,9 @@ class CreateProductsTable extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('postcode')->nullable();
-            $table->string('purchase_unit');
-            $table->string('sale_unit');
+            $table->string('purchase_unit')->nullable();
+            $table->string('sale_unit')->nullable();
+            $table->integer('quantity')->nullable();
             $table->decimal('price', 11, 2)->nullable();
             $table->decimal('promotional_price', 11, 2)->nullable();
             $table->timestamp('promotion_start')->nullable();
@@ -42,6 +44,8 @@ class CreateProductsTable extends Migration
             $table->string('thumbnail')->nullable();
             $table->string('imei')->nullable();
             $table->string('serial_number')->nullable();
+            $table->tinyInteger('tax_method')->default(1);
+            $table->tinyInteger('featured')->default(0);
             $table->tinyInteger('status')->default(10)->comment('20:disabled 10:enabled');
             $table->timestamps();
         });

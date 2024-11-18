@@ -17,7 +17,8 @@ class CreateWarehousesProductsTable extends Migration
             $table->id();
             $table->foreignId('warehouse_id')->constrained('warehouses')->onUpdate('restrict')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onUpdate('restrict')->onDelete('cascade');
-            $table->integer('quantity');
+            $table->integer('quantity')->nullable();
+            $table->integer('price')->nullable();
             $table->tinyInteger('status')->default(10);
             $table->timestamps();
         });

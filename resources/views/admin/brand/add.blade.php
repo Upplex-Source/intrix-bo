@@ -5,7 +5,7 @@ $brand_create = 'brand_create';
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.categories' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.brands' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->

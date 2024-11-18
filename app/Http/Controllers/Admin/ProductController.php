@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 
 use App\Services\{
     ProductService,
+    WarehouseService,
 };
 
 use App\Models\{
-    Product
+    Product,
 };
 
 class ProductController extends Controller
@@ -60,9 +61,12 @@ class ProductController extends Controller
                 'class' => 'active',
             ],
         ];
-    
+
         $this->data['data']['barcodes'] = Product::getPredefinedBarcodeSymbologies();
         $this->data['data']['product_types'] = Product::getPredefinedProductTypes();
+        $this->data['data']['unit_types'] = Product::getPredefinedUnits();
+        $this->data['data']['tax_methods'] = Product::getPredefinedTaxMethods();
+        $this->data['data']['warehouses'] = WarehouseService::getWareHouses( $request );
 
         return view( 'admin.main' )->with( $this->data );
     }
@@ -89,6 +93,12 @@ class ProductController extends Controller
             ],
         ];
 
+        $this->data['data']['barcodes'] = Product::getPredefinedBarcodeSymbologies();
+        $this->data['data']['product_types'] = Product::getPredefinedProductTypes();
+        $this->data['data']['unit_types'] = Product::getPredefinedUnits();
+        $this->data['data']['tax_methods'] = Product::getPredefinedTaxMethods();
+        $this->data['data']['warehouses'] = WarehouseService::getWareHouses( $request );
+
         return view( 'admin.main' )->with( $this->data );
     }
 
@@ -108,7 +118,6 @@ class ProductController extends Controller
     }
 
     public function updateProduct( Request $request ) {
-
         return ProductService::updateProduct( $request );
     }
 
@@ -120,5 +129,15 @@ class ProductController extends Controller
     public function removeProductGalleryImage( Request $request ) {
 
         return ProductService::removeProductGalleryImage( $request );
+    }
+
+    public function ckeUpload( Request $request ) {
+
+        return ProductService::ckeUpload( $request );
+    }
+
+    public function generateProductCode( Request $request ) {
+
+        return ProductService::generateProductCode( $request );
     }
 }

@@ -14,7 +14,7 @@ use Helper;
 use App\Models\{
     Company,
     Customer,
-    Unit,
+    Warehouse,
     Booking,
     FileManager,
 };
@@ -23,13 +23,12 @@ use App\Models\{
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
-class UnitService
+class WarehouseService
 {
 
-    public static function createUnit( $request ) {
+    public static function createWarehouse( $request ) {
         
         $validator = Validator::make( $request->all(), [
-            'parent_id' => [ 'nullable', 'exists:units,id' ],
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'image' => [ 'nullable' ],
@@ -37,16 +36,15 @@ class UnitService
         ] );
 
         $attributeName = [
-            'parent_id' => __( 'unit.parent_id' ),
-            'title' => __( 'unit.title' ),
-            'description' => __( 'unit.description' ),
-            'image' => __( 'unit.image' ),
-            'thumbnail' => __( 'unit.thumbnail' ),
-            'url_slug' => __( 'unit.url_slug' ),
-            'structure' => __( 'unit.structure' ),
-            'size' => __( 'unit.size' ),
-            'phone_number' => __( 'unit.phone_number' ),
-            'sort' => __( 'unit.sort' ),
+            'title' => __( 'warehouse.title' ),
+            'description' => __( 'warehouse.description' ),
+            'image' => __( 'warehouse.image' ),
+            'thumbnail' => __( 'warehouse.thumbnail' ),
+            'url_slug' => __( 'warehouse.url_slug' ),
+            'structure' => __( 'warehouse.structure' ),
+            'size' => __( 'warehouse.size' ),
+            'phone_number' => __( 'warehouse.phone_number' ),
+            'sort' => __( 'warehouse.sort' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -58,8 +56,7 @@ class UnitService
         DB::beginTransaction();
         
         try {
-            $unitCreate = Unit::create([
-                'parent_id' => $request->parent_id,
+            $warehouseCreate = Warehouse::create([
                 'title' => $request->title,
                 'description' => $request->description,
             ]);
@@ -76,11 +73,11 @@ class UnitService
                     $fileName = explode( '/', $imageFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'unit/' . $unitCreate->id . '/' . $fileName[1];
+                    $target = 'warehouse/' . $warehouseCreate->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $imageFile->file, $target );
 
-                   $unitCreate->image = $target;
-                   $unitCreate->save();
+                   $warehouseCreate->image = $target;
+                   $warehouseCreate->save();
 
                     $imageFile->status = 10;
                     $imageFile->save();
@@ -94,11 +91,11 @@ class UnitService
                     $fileName = explode( '/', $thumbnailFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'unit/' . $unitCreate->id . '/' . $fileName[1];
+                    $target = 'warehouse/' . $warehouseCreate->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $thumbnailFile->file, $target );
 
-                   $unitCreate->thumbnail = $target;
-                   $unitCreate->save();
+                   $warehouseCreate->thumbnail = $target;
+                   $warehouseCreate->save();
 
                     $thumbnailFile->status = 10;
                     $thumbnailFile->save();
@@ -118,11 +115,11 @@ class UnitService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.units' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.warehouses' ) ) ] ),
         ] );
     }
     
-    public static function updateUnit( $request ) {
+    public static function updateWarehouse( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -130,7 +127,6 @@ class UnitService
 
          
         $validator = Validator::make( $request->all(), [
-            'parent_id' => [ 'nullable', 'exists:units,id' ],
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'image' => [ 'nullable' ],
@@ -138,16 +134,15 @@ class UnitService
         ] );
 
         $attributeName = [
-            'parent_id' => __( 'unit.parent_id' ),
-            'title' => __( 'unit.title' ),
-            'description' => __( 'unit.description' ),
-            'image' => __( 'unit.image' ),
-            'thumbnail' => __( 'unit.thumbnail' ),
-            'url_slug' => __( 'unit.url_slug' ),
-            'structure' => __( 'unit.structure' ),
-            'size' => __( 'unit.size' ),
-            'phone_number' => __( 'unit.phone_number' ),
-            'sort' => __( 'unit.sort' ),
+            'title' => __( 'warehouse.title' ),
+            'description' => __( 'warehouse.description' ),
+            'image' => __( 'warehouse.image' ),
+            'thumbnail' => __( 'warehouse.thumbnail' ),
+            'url_slug' => __( 'warehouse.url_slug' ),
+            'structure' => __( 'warehouse.structure' ),
+            'size' => __( 'warehouse.size' ),
+            'phone_number' => __( 'warehouse.phone_number' ),
+            'sort' => __( 'warehouse.sort' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -159,11 +154,10 @@ class UnitService
         DB::beginTransaction();
 
         try {
-            $updateUnit = Unit::find( $request->id );
+            $updateWarehouse = Warehouse::find( $request->id );
     
-            $updateUnit->parent_id = $request->parent_id;
-            $updateUnit->title = $request->title;
-            $updateUnit->description = $request->description;
+            $updateWarehouse->title = $request->title;
+            $updateWarehouse->description = $request->description;
 
             $image = explode( ',', $request->image );
             $thumbnail = explode( ',', $request->thumbnail );
@@ -177,11 +171,11 @@ class UnitService
                     $fileName = explode( '/', $imageFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'unit/' . $updateUnit->id . '/' . $fileName[1];
+                    $target = 'warehouse/' . $updateWarehouse->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $imageFile->file, $target );
 
-                   $updateUnit->image = $target;
-                   $updateUnit->save();
+                   $updateWarehouse->image = $target;
+                   $updateWarehouse->save();
 
                     $imageFile->status = 10;
                     $imageFile->save();
@@ -189,7 +183,7 @@ class UnitService
                 }
             }
 
-            $updateUnit->save();
+            $updateWarehouse->save();
 
             DB::commit();
 
@@ -203,57 +197,54 @@ class UnitService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.units' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.warehouses' ) ) ] ),
         ] );
     }
 
-     public static function allUnits( $request ) {
+     public static function allWarehouses( $request ) {
 
-        $units = Unit::select( 'units.*' );
+        $warehouses = Warehouse::select( 'warehouses.*');
 
-        $filterObject = self::filter( $request, $units );
-        $unit = $filterObject['model'];
+        $filterObject = self::filter( $request, $warehouses );
+        $warehouse = $filterObject['model'];
         $filter = $filterObject['filter'];
 
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
-                case 1:
-                    $unit->orderBy( 'units.created_at', $dir );
+                case 2:
+                    $warehouse->orderBy( 'warehouses.created_at', $dir );
                     break;
                 case 2:
-                    $unit->orderBy( 'units.parent_id', $dir );
+                    $warehouse->orderBy( 'warehouses.title', $dir );
                     break;
                 case 3:
-                    $unit->orderBy( 'units.title', $dir );
-                    break;
-                case 4:
-                    $unit->orderBy( 'units.description', $dir );
+                    $warehouse->orderBy( 'warehouses.description', $dir );
                     break;
             }
         }
 
-            $unitCount = $unit->count();
+            $warehouseCount = $warehouse->count();
 
             $limit = $request->length;
             $offset = $request->start;
 
-            $units = $unit->skip( $offset )->take( $limit )->get();
+            $warehouses = $warehouse->skip( $offset )->take( $limit )->get();
 
-            if ( $units ) {
-                $units->append( [
+            if ( $warehouses ) {
+                $warehouses->append( [
                     'encrypted_id',
                     'image_path',
                     'thumbnail_path',
                 ] );
             }
 
-            $totalRecord = Unit::count();
+            $totalRecord = Warehouse::count();
 
             $data = [
-                'units' => $units,
+                'warehouses' => $warehouses,
                 'draw' => $request->draw,
-                'recordsFiltered' => $filter ? $unitCount : $totalRecord,
+                'recordsFiltered' => $filter ? $warehouseCount : $totalRecord,
                 'recordsTotal' => $totalRecord,
             ];
 
@@ -267,23 +258,29 @@ class UnitService
         $filter = false;
 
         if ( !empty( $request->title ) ) {
-            $model->where( 'units.title', 'LIKE', '%' . $request->title . '%' );
+            $model->where( 'warehouses.title', 'LIKE', '%' . $request->title . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->id ) ) {
+            $model->where( 'warehouses.id', '!=', Helper::decode($request->id) );
+            $filter = true;
+        }
+
+        if (!empty($request->parent_warehouse)) {
+            $model->whereHas('parent', function ($query) use ($request) {
+                $query->where('title', 'LIKE', '%' . $request->parent_warehouse . '%');
+            });
+            $filter = true;
+        }
+
+        if ( !empty( $request->status ) ) {
+            $model->where( 'status', $request->status );
             $filter = true;
         }
 
         if ( !empty( $request->custom_search ) ) {
-            $model->where( 'units.title', 'LIKE', '%' . $request->custom_search . '%' );
-            $filter = true;
-        }
-        if ( !empty( $request->id ) ) {
-            $model->where( 'units.id', '!=', Helper::decode($request->id) );
-            $filter = true;
-        }
-
-        if (!empty($request->parent_unit)) {
-            $model->whereHas('parent', function ($query) use ($request) {
-                $query->where('title', 'LIKE', '%' . $request->parent_unit . '%');
-            });
+            $model->where( 'warehouse.title', 'LIKE', '%' . $request->custom_search . '%' );
             $filter = true;
         }
         
@@ -293,20 +290,20 @@ class UnitService
         ];
     }
 
-    public static function oneUnit( $request ) {
+    public static function oneWarehouse( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $unit = Unit::select( 'units.*' )->find( $request->id );
+        $warehouse = Warehouse::find( $request->id );
 
-        $unit->append( ['encrypted_id','image_path'] );
+        $warehouse->append( ['encrypted_id','image_path'] );
         
-        return response()->json( $unit );
+        return response()->json( $warehouse );
     }
 
-    public static function deleteUnit( $request ){
+    public static function deleteWarehouse( $request ){
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
@@ -316,7 +313,7 @@ class UnitService
         ] );
             
         $attributeName = [
-            'id' => __( 'unit.id' ),
+            'id' => __( 'warehouse.id' ),
         ];
             
         foreach( $attributeName as $key => $aName ) {
@@ -328,7 +325,7 @@ class UnitService
         DB::beginTransaction();
 
         try {
-            Unit::find($request->id)->delete($request->id);
+            Warehouse::find($request->id)->delete($request->id);
             
             DB::commit();
         } catch ( \Throwable $th ) {
@@ -341,11 +338,11 @@ class UnitService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.units' ) ) ] ),
+            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.warehouses' ) ) ] ),
         ] );
     }
 
-    public static function updateUnitStatus( $request ) {
+    public static function updateWarehouseStatus( $request ) {
         
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -355,16 +352,16 @@ class UnitService
 
         try {
 
-            $updateUnit = Unit::find( $request->id );
-            $updateUnit->status = $updateUnit->status == 10 ? 20 : 10;
+            $updateWarehouse = Warehouse::find( $request->id );
+            $updateWarehouse->status = $updateWarehouse->status == 10 ? 20 : 10;
 
-            $updateUnit->save();
+            $updateWarehouse->save();
             DB::commit();
 
             return response()->json( [
                 'data' => [
-                    'unit' => $updateUnit,
-                    'message_key' => 'update_unit_success',
+                    'warehouse' => $updateWarehouse,
+                    'message_key' => 'update_warehouse_success',
                 ]
             ] );
 
@@ -372,19 +369,27 @@ class UnitService
 
             return response()->json( [
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
-                'message_key' => 'create_unit_failed',
+                'message_key' => 'create_warehouse_failed',
             ], 500 );
         }
     }
 
-    public static function removeUnitGalleryImage( $request ) {
+    public static function removeWarehouseGalleryImage( $request ) {
 
-        $updateFarm = Unit::find( Helper::decode($request->id) );
+        $updateFarm = Warehouse::find( Helper::decode($request->id) );
         $updateFarm->image = null;
         $updateFarm->save();
 
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'farm.galleries' ) ) ] ),
         ] );
+    }
+
+    public static function getWareHouses( $request ) {
+
+        $warehouses = Warehouse::select( 'warehouses.*')->where( 'status', 10 )->get();
+
+        return $warehouses;
+              
     }
 }

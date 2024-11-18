@@ -1,11 +1,11 @@
 <?php
-$supplier_edit = 'supplier_edit';
+$warehouse_edit = 'warehouse_edit';
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.suppliers' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.warehouses' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -16,22 +16,22 @@ $supplier_edit = 'supplier_edit';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $supplier_edit }}_title" class="col-sm-5 col-form-label">{{ __( 'supplier.title' ) }}</label>
+                    <label for="{{ $warehouse_edit }}_title" class="col-sm-5 col-form-label">{{ __( 'warehouse.title' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $supplier_edit }}_title">
+                        <input type="text" class="form-control" id="{{ $warehouse_edit }}_title">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $supplier_edit }}_description" class="col-sm-5 col-form-label">{{ __( 'supplier.description' ) }}</label>
+                    <label for="{{ $warehouse_edit }}_description" class="col-sm-5 col-form-label">{{ __( 'warehouse.description' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $supplier_edit }}_description"></textarea>
+                        <textarea class="form-control" id="{{ $warehouse_edit }}_description"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label>{{ __( 'supplier.image' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $supplier_edit }}_image" style="min-height: 0px;">
+                    <label>{{ __( 'warehouse.image' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $warehouse_edit }}_image" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
@@ -39,9 +39,9 @@ $supplier_edit = 'supplier_edit';
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="text-end">
-                    <button id="{{ $supplier_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $warehouse_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $supplier_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $warehouse_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -51,11 +51,11 @@ $supplier_edit = 'supplier_edit';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let fe = '#{{ $supplier_edit }}',
+        let fe = '#{{ $warehouse_edit }}',
                 fileID = '';
 
         $( fe + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.supplier.index' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.warehouse.index' ) }}';
         } );
 
         $( fe + '_submit' ).click( function() {
@@ -74,7 +74,7 @@ $supplier_edit = 'supplier_edit';
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.supplier.updateSupplier' ) }}',
+                url: '{{ route( 'admin.warehouse.updateWarehouse' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -85,7 +85,7 @@ $supplier_edit = 'supplier_edit';
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.supplier.index' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.warehouse.index' ) }}';
                     } );
                 },
                 error: function( error ) {
@@ -104,17 +104,17 @@ $supplier_edit = 'supplier_edit';
             } );
         } );
 
-        getSupplier();
+        getWarehouse();
         Dropzone.autoDiscover = false;
 
-        function getSupplier() {
+        function getWarehouse() {
 
             $( 'body' ).loading( {
                 message: '{{ __( 'template.loading' ) }}'
             } );
 
             $.ajax( {
-                url: '{{ route( 'admin.supplier.oneSupplier' ) }}',
+                url: '{{ route( 'admin.warehouse.oneWarehouse' ) }}',
                 type: 'POST',
                 data: {
                     'id': '{{ request( 'id' ) }}',
@@ -191,7 +191,7 @@ $supplier_edit = 'supplier_edit';
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.supplier.removeSupplierGalleryImage' ) }}',
+                url: '{{ route( 'admin.warehouse.removeWarehouseGalleryImage' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,

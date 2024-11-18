@@ -29,11 +29,6 @@ class Unit extends Model
         'status',
     ];
 
-    public function products()
-    {
-        return $this->hasMany(Product::class, 'unit_id');
-    }
-
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
     }

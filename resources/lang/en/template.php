@@ -108,7 +108,8 @@ return [
     'product_inventories' => 'Product Inventories',
     'product_variants' => 'Product Variants',
     'product_galleries' => 'Product Galleries',
-    'Warehouses' => 'Warehouses',
+    'warehouses' => 'Warehouses',
     'parents' => 'Parents',
     'warehouse_products' => 'Warehouse Products',
+    'stock_info' => 'Stock Info',
 ];

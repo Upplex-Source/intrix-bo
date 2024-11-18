@@ -1,16 +1,16 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.suppliers' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.warehouses' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add suppliers' )
+        @can( 'add warehouses' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
                 <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.supplier.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.warehouse.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -36,31 +36,31 @@ $columns = [
     [
         'type' => 'default',
         'id' => 'image',
-        'title' => __( 'supplier.image' ),
+        'title' => __( 'warehouse.image' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'supplier.title' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'warehouse.title' ) ] ),
         'id' => 'title',
-        'title' => __( 'supplier.title' ),
+        'title' => __( 'warehouse.title' ),
     ],
     // [
     //     'type' => 'default',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'supplier.number_of_product' ) ] ),
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'warehouse.number_of_product' ) ] ),
     //     'id' => 'number_of_product',
-    //     'title' => __( 'supplier.number_of_product' ),
+    //     'title' => __( 'warehouse.number_of_product' ),
     // ],
     // [
     //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'supplier.stock_quantity' ) ] ),
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'warehouse.stock_quantity' ) ] ),
     //     'id' => 'stock_quantity',
-    //     'title' => __( 'supplier.stock_quantity' ),
+    //     'title' => __( 'warehouse.stock_quantity' ),
     // ],
     // [
     //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'supplier.stock_worth' ) ] ),
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'warehouse.stock_worth' ) ] ),
     //     'id' => 'stock_worth',
-    //     'title' => __( 'supplier.stock_worth' ),
+    //     'title' => __( 'warehouse.stock_worth' ),
     // ],
     [
         'type' => 'select',
@@ -76,7 +76,7 @@ $columns = [
 ];
 ?>
 
-<x-data-tables id="supplier_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="warehouse_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -90,7 +90,7 @@ window['{{ $column['id'] }}'] = '';
 
 var statusMapper = @json( $data['status'] ),
     dt_table,
-    dt_table_name = '#supplier_table',
+    dt_table_name = '#warehouse_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -104,11 +104,11 @@ var statusMapper = @json( $data['status'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.supplier.allSuppliers' ) }}',
+            url: '{{ route( 'admin.warehouse.allWarehouses' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'suppliers',
+            dataSrc: 'warehouses',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
@@ -155,7 +155,7 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "parent_supplier" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "parent_warehouse" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-' ;
@@ -181,14 +181,14 @@ var statusMapper = @json( $data['status'] ),
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit suppliers', 'delete suppliers' ] )
+                    @canany( [ 'edit warehouses', 'delete warehouses' ] )
                     let edit, status = '';
 
-                    @can( 'edit suppliers' )
+                    @can( 'edit warehouses' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'delete suppliers' )
+                    @can( 'delete warehouses' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
@@ -229,13 +229,13 @@ var statusMapper = @json( $data['status'] ),
         } );
 
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.supplier.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.warehouse.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
 
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.supplier.updateSupplierStatus' ) }}',
+                url: '{{ route( 'admin.warehouse.updateWarehouseStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),

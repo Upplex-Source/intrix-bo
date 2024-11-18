@@ -17,7 +17,8 @@ class CreateProductsBundlesTable extends Migration
             $table->id();
             $table->foreignId('product_id')->constrained('products')->onUpdate('restrict')->onDelete('cascade');
             $table->foreignId('bundle_id')->constrained('bundles')->onUpdate('restrict')->onDelete('cascade');
-            $table->integer('quantity');
+            $table->integer('quantity')->nullable();
+            $table->integer('price')->nullable();
             $table->tinyInteger('status')->default(10);
             $table->timestamps();
         });

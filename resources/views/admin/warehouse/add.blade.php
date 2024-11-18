@@ -1,11 +1,11 @@
 <?php
-$supplier_create = 'supplier_create';
+$warehouse_create = 'warehouse_create';
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.suppliers' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.warehouses' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -16,22 +16,22 @@ $supplier_create = 'supplier_create';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $supplier_create }}_title" class="col-sm-5 col-form-label">{{ __( 'supplier.title' ) }}</label>
+                    <label for="{{ $warehouse_create }}_title" class="col-sm-5 col-form-label">{{ __( 'warehouse.title' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $supplier_create }}_title">
+                        <input type="text" class="form-control" id="{{ $warehouse_create }}_title">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $supplier_create }}_description" class="col-sm-5 col-form-label">{{ __( 'supplier.description' ) }}</label>
+                    <label for="{{ $warehouse_create }}_description" class="col-sm-5 col-form-label">{{ __( 'warehouse.description' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $supplier_create }}_description"></textarea>
+                        <textarea class="form-control" id="{{ $warehouse_create }}_description"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label>{{ __( 'supplier.image' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $supplier_create }}_image" style="min-height: 0px;">
+                    <label>{{ __( 'warehouse.image' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $warehouse_create }}_image" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
@@ -39,9 +39,9 @@ $supplier_create = 'supplier_create';
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="text-end">
-                    <button id="{{ $supplier_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $warehouse_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $supplier_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $warehouse_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -51,11 +51,11 @@ $supplier_create = 'supplier_create';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let fc = '#{{ $supplier_create }}',
+        let fc = '#{{ $warehouse_create }}',
                 fileID = '';
 
         $( fc + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.supplier.index' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.warehouse.index' ) }}';
         } );
 
         $( fc + '_submit' ).click( function() {
@@ -73,7 +73,7 @@ $supplier_create = 'supplier_create';
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.supplier.createSupplier' ) }}',
+                url: '{{ route( 'admin.warehouse.createWarehouse' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -84,7 +84,7 @@ $supplier_create = 'supplier_create';
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.supplier.index' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.warehouse.index' ) }}';
                     } );
                 },
                 error: function( error ) {

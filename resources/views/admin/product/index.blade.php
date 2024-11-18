@@ -63,8 +63,7 @@ $columns = [
         'title' => __( 'product.category' ),
     ],
     [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.quantity' ) ] ),
+        'type' => 'default',
         'id' => 'quantity',
         'title' => __( 'product.quantity' ),
     ],
@@ -75,20 +74,17 @@ $columns = [
         'title' => __( 'product.unit' ),
     ],
     [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.price' ) ] ),
+        'type' => 'default',
         'id' => 'price',
         'title' => __( 'product.price' ),
     ],
     [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.cost' ) ] ),
+        'type' => 'default',
         'id' => 'cost',
         'title' => __( 'product.cost' ),
     ],
     [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.stock_worth' ) ] ),
+        'type' => 'default',
         'id' => 'stock_worth',
         'title' => __( 'product.stock_worth' ),
     ],
@@ -163,13 +159,13 @@ var statusMapper = @json( $data['status'] ),
         columns: [
             { data: null },
             { data: 'created_at' },
-            { data: 'image_path' },
+            { data: 'galleries' },
             { data: 'title' },
             { data: 'product_code' },
-            { data: 'brand' },
-            { data: 'category.name' },
+            { data: 'brand.title' },
+            { data: 'categories' },
             { data: 'quantity' },
-            { data: 'unit' },
+            { data: 'unit.title' },
             { data: 'price' },
             { data: 'cost' },
             { data: 'stock_worth' },
@@ -193,14 +189,19 @@ var statusMapper = @json( $data['status'] ),
                 orderable: false,
                 render: function( data, type, row, meta ) {
                     if ( data ) {
-
-                        return '<img src="' + ( data ? data : '{{ asset( 'admin/img/placeholder/fff.jpg' ) }}' ) + '" width="75px" />';
-
+                        return '<img src="' + (data && data.length > 0 ? data[data.length - 1].image_path : '{{ asset( 'admin/images/placeholder.png' ) }}') + '" width="75px" />';
                     } else {
 
-                        return '<img src="' + '{{ asset( 'admin/img/placeholder/fff.jpg' ) }}' + '" width="75px" />'
+                        return '<img src="' + '{{ asset( 'admin/images/placeholder.png' ) }}' + '" width="75px" />'
                         
                     }
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "unit" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-' ;
                 },
             },
             {
@@ -208,6 +209,34 @@ var statusMapper = @json( $data['status'] ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "quantity" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "price" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "cost" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "category" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data ? data[0].title : '-' ;
                 },
             },
             {

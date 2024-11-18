@@ -145,11 +145,11 @@ var statusMapper = @json( $data['status'] ),
                 render: function( data, type, row, meta ) {
                     if ( data ) {
 
-                        return '<img src="' + ( data ? data : '{{ asset( 'admin/img/placeholder/fff.jpg' ) }}' ) + '" width="75px" />';
+                        return '<img src="' + ( data ? data : '{{ asset( 'admin/images/placeholder.png' ) }}' ) + '" width="75px" />';
 
                     } else {
 
-                        return '<img src="' + '{{ asset( 'admin/img/placeholder/fff.jpg' ) }}' + '" width="75px" />'
+                        return '<img src="' + '{{ asset( 'admin/images/placeholder.png' ) }}' + '" width="75px" />'
                         
                     }
                 },

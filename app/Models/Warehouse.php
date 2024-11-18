@@ -29,6 +29,13 @@ class Warehouse extends Model
         'status',
     ];
 
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'warehouses_products')
+                    ->withPivot('quantity', 'price', 'status')
+                    ->withTimestamps();
+    }
+
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
     }

@@ -70,6 +70,15 @@
                                     </li>
                                 @endcan
                                 
+                                @can( 'view Warehouse' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WarehouseController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.warehouse.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-slack"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.warehouses' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                
                                 @can( 'view Products' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link">
