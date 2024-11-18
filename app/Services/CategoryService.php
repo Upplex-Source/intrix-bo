@@ -29,7 +29,11 @@ class CategoryService
     public static function createCategory( $request ) {
         
         $validator = Validator::make( $request->all(), [
-            'parent_id' => [ 'nullable', 'exists:categories,id' ],
+           'parent_id' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'null' && $value !== '' && !\App\Models\Category::find($value)) {
+                    $fail(__('The selected category is invalid.'));
+                }
+            }],
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'image' => [ 'nullable' ],
@@ -58,6 +62,10 @@ class CategoryService
         DB::beginTransaction();
         
         try {
+            if( $request->parent_id == 'null' ){
+                $request->merge( ['parent_id' => null] );
+            }
+            
             $categoryCreate = Category::create([
                 'parent_id' => $request->parent_id,
                 'title' => $request->title,
@@ -128,9 +136,12 @@ class CategoryService
             'id' => Helper::decode( $request->id ),
         ] );
 
-         
         $validator = Validator::make( $request->all(), [
-            'parent_id' => [ 'nullable', 'exists:categories,id' ],
+            'parent_id' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'null' && $value !== '' && !\App\Models\Category::find($value)) {
+                    $fail(__('The selected category is invalid.'));
+                }
+            }],
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'image' => [ 'nullable' ],
@@ -159,6 +170,10 @@ class CategoryService
         DB::beginTransaction();
 
         try {
+            if( $request->parent_id == 'null' ){
+                $request->merge( ['parent_id' => null] );
+            }
+
             $updateCategory = Category::find( $request->id );
     
             $updateCategory->parent_id = $request->parent_id;

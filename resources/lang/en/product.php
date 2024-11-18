@@ -14,6 +14,7 @@ return [
     */
 
     "parent_id" => "Parent Category",
+    "parent_category" => "Parent Category",
     "brand_id" => "Brand ID",
     "supplier_id" => "Supplier ID",
     "unit_id" => "Unit ID",

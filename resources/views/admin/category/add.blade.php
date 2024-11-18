@@ -1,5 +1,5 @@
 <?php
-$product_create = 'product_create';
+$category_create = 'category_create';
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
@@ -16,30 +16,30 @@ $product_create = 'product_create';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_parent_product" class="col-sm-5 col-form-label">{{ __( 'product.parent_product' ) }}</label>
+                    <label for="{{ $category_create }}_parent_category" class="col-sm-5 col-form-label">{{ __( 'category.parent_category' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $product_create }}_parent_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.parent_product' ) ] ) }}">
+                        <select class="form-select" id="{{ $category_create }}_parent_category" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'category.parent_category' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_title" class="col-sm-5 col-form-label">{{ __( 'product.title' ) }}</label>
+                    <label for="{{ $category_create }}_title" class="col-sm-5 col-form-label">{{ __( 'category.title' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $product_create }}_title">
+                        <input type="text" class="form-control" id="{{ $category_create }}_title">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_description" class="col-sm-5 col-form-label">{{ __( 'product.description' ) }}</label>
+                    <label for="{{ $category_create }}_description" class="col-sm-5 col-form-label">{{ __( 'category.description' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $product_create }}_description"></textarea>
+                        <textarea class="form-control" id="{{ $category_create }}_description"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label>{{ __( 'product.image' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $product_create }}_image" style="min-height: 0px;">
+                    <label>{{ __( 'category.image' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $category_create }}_image" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
@@ -47,9 +47,9 @@ $product_create = 'product_create';
                     <div class="invalid-feedback"></div>
                 </div>
                 <div class="text-end">
-                    <button id="{{ $product_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $category_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $product_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $category_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -59,11 +59,11 @@ $product_create = 'product_create';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let fc = '#{{ $product_create }}',
+        let fc = '#{{ $category_create }}',
                 fileID = '';
 
         $( fc + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.product.index' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.category.index' ) }}';
         } );
 
         $( fc + '_submit' ).click( function() {
@@ -75,14 +75,14 @@ $product_create = 'product_create';
             } );
 
             let formData = new FormData();
-            formData.append( 'parent_id', $( fc + '_parent_product' ).val() );
+            formData.append( 'parent_id', $( fc + '_parent_category' ).val() );
             formData.append( 'title', $( fc + '_title' ).val() );
             formData.append( 'description', $( fc + '_description' ).val() );
             formData.append( 'image', fileID );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.product.createCategory' ) }}',
+                url: '{{ route( 'admin.category.createCategory' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -93,7 +93,7 @@ $product_create = 'product_create';
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.product.index' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.category.index' ) }}';
                     } );
                 },
                 error: function( error ) {
@@ -146,7 +146,7 @@ $product_create = 'product_create';
             }
         } );
 
-        $( fc + '_parent_product' ).select2( {
+        $( fc + '_parent_category' ).select2( {
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
@@ -154,7 +154,7 @@ $product_create = 'product_create';
             closeOnSelect: false,
             ajax: {
                 method: 'POST',
-                url: '{{ route( 'admin.product.allProducts' ) }}',
+                url: '{{ route( 'admin.category.allCategories' ) }}',
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
