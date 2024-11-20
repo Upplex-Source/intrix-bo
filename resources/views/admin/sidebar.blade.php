@@ -78,15 +78,62 @@
                                         </a>
                                     </li>
                                 @endcan
+
+                                @can( 'view products' )
+                                <li class="nk-menu-item has-sub {{ $controller == ('App\Http\Controllers\Admin\ProductController' || 'App\Http\Controllers\Admin\BundleController') ? 'active current-page' : '' }}">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-slack"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.products' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' && in_array( $action, [ 'index', 'edit' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.products' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\BundleController' && in_array( $action, [ 'index', 'edit' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.bundle.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.bundles' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
                                 
-                                @can( 'view Products' )
-                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' ? 'active current-page' : '' }}">
-                                        <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link">
+                                @can( 'view TaxMethods' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\TaxMethodController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.tax_method.index' ) }}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-slack"></em></span>
-                                            <span class="nk-menu-text">{{ __( 'template.products' ) }}</span>
+                                            <span class="nk-menu-text">{{ __( 'template.tax_methods' ) }}</span>
                                         </a>
                                     </li>
                                 @endcan
+                                
+                                @can( 'view Workmanships' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WorkmanshipController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.workmanship.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-slack"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.workmanships' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                
+                                @can( 'view MeasurementUnits' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\MeasurementUnitController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.measurement_unit.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-slack"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.measurement_units' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @if( 1 == 2 )
+                                @can( 'view Services' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ServiceController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.settings' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @endif
+
                             </ul><!-- .nk-menu -->
                         </div><!-- .nk-sidebar-menu -->
                     </div><!-- .nk-sidebar-content -->

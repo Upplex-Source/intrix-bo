@@ -35,6 +35,7 @@ return [
     "promotion_start" => "Promotion Start",
     "promotion_end" => "Promotion End",
     "promotion_on" => "Promotion On",
+    "promotion_enabled" => "Promotion Enabled",
     "cost" => "Cost",
     "alert_quantity" => "Alert Quantity",
     "thumbnail" => "Thumbnail",

@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Category Module Language Lines
+    | Tax Method Module Language Lines
     |--------------------------------------------------------------------------
     |
-    | The following language lines are used during Category Module for various
+    | The following language lines are used during Tax Method Module for various
     | messages that we need to display to the user. You are free to modify
     | these language lines according to your application's requirements.
     |
@@ -22,10 +22,5 @@ return [
     'url_slug' => 'URL Slug',
     'structure' => 'Structure',
     'sort' => 'Sort Order',
-    
-    'promotion_enabled' => 'Promotion Enabled',
-    'promotion_start' => 'Promotion Start',
-    'promotion_end' => 'Promotion End',
-    'price' => 'Price',
-    'promotion_price' => 'Promotion Price',
+    'tax_percentage' => 'Tax Percetage',
 ];

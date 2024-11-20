@@ -114,7 +114,8 @@ $warehouses = $data['warehouses'];
                     </div>
                     <div class="col-sm-4">
                         <label for="{{ $product_create }}_workmanship" class="form-label">{{ __( 'product.workmanship' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_workmanship">
+                        <select class="form-select" id="{{ $product_create }}_workmanship" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.workmanship' ) ] ) }}">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -205,10 +206,6 @@ $warehouses = $data['warehouses'];
                     <div class="col-sm-4">
                         <label for="{{ $product_create }}_tax_method" class="form-label">{{ __( 'product.tax_method' ) }}</label>
                         <select class="form-select" id="{{ $product_create }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
-                            <option value="">{{ __('Select Tax Method Type') }}</option>
-                            @foreach ($taxMethods as $key => $taxMethod)
-                                <option value="{{ $key }}">{{ $taxMethod }}</option>
-                            @endforeach
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -354,7 +351,6 @@ $warehouses = $data['warehouses'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                
                 
                 <div class="text-end">
                     <button id="{{ $product_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
@@ -704,6 +700,90 @@ window.cke_element1 = 'product_create_description';
                     let processedResult = [];
 
                     data.units.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.title,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+        
+        $( fc + '_workmanship' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.workmanship.allWorkmanships' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.workmanships.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.fullname,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+        
+        $( fc + '_tax_method' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.tax_method.allTaxMethods' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.tax_methods.map( function( v, i ) {
                         processedResult.push( {
                             id: v.id,
                             text: v.title,

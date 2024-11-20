@@ -81,6 +81,16 @@ class ProductService
                     $fail(__('The selected unit is invalid.'));
                 }
             }],
+            'tax_method' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'null' && $value !== '' && !\App\Models\TaxMethod::find($value)) {
+                    $fail(__('The selected unit is invalid.'));
+                }
+            }],
+            'workmanship' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'null' && $value !== '' && !\App\Models\Workmanship::find($value)) {
+                    $fail(__('The selected unit is invalid.'));
+                }
+            }],
         ] );
 
         $attributeName = [
@@ -140,11 +150,23 @@ class ProductService
             $request->merge( ['unit' => null] );
         }
 
+        if( $request->workmanship == 'null' ){
+            $request->merge( ['workmanship' => null] );
+        }
+
+
+        if( $request->tax_method == 'null' ){
+            $request->merge( ['tax_method' => null] );
+        }
+
+
         try {
             $productCreate = Product::create([
                 'brand_id' => $request->brand,
                 'supplier_id' => $request->supplier,
                 'unit_id' => $request->unit,
+                'tax_method_id' => $request->tax_method,
+                'workmanship_id' => $request->workmanship,
                 'title' => $request->title,
                 'description' => $request->description,
                 'product_code' => $request->product_code ?? Carbon::now()->timestamp,
@@ -302,6 +324,16 @@ class ProductService
                     $fail(__('The selected unit is invalid.'));
                 }
             }],
+            'tax_method' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'null' && $value !== '' && !\App\Models\TaxMethod::find($value)) {
+                    $fail(__('The selected unit is invalid.'));
+                }
+            }],
+            'workmanship' => ['nullable', function ($attribute, $value, $fail) {
+                if ($value !== 'null' && $value !== '' && !\App\Models\Workmanship::find($value)) {
+                    $fail(__('The selected unit is invalid.'));
+                }
+            }],
         ] );
 
         $attributeName = [
@@ -362,6 +394,14 @@ class ProductService
             if( $request->unit == 'null' ){
                 $request->merge( ['unit' => null] );
             }
+
+            if( $request->workmanship == 'null' ){
+                $request->merge( ['workmanship' => null] );
+            }
+            
+            if( $request->tax_method == 'null' ){
+                $request->merge( ['tax_method' => null] );
+            }
             
             $updateProduct = Product::find( $request->id );
 
@@ -392,6 +432,8 @@ class ProductService
             $updateProduct->featured = $request->featured ?? $updateProduct->featured;
             $updateProduct->imei = $request->imei ?? $updateProduct->imei;
             $updateProduct->serial_number = $request->serial_number ?? $updateProduct->serial_number;
+            $updateProduct->tax_method_id = $request->tax_method ?? $updateProduct->tax_method_id;
+            $updateProduct->workmanship_id = $request->tax_method ?? $updateProduct->workmanship_id;
 
             $image = explode( ',', $request->image );
 
@@ -627,7 +669,7 @@ class ProductService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $product = Product::select( 'products.*' )->with(['variants','bundles', 'categories', 'warehouses', 'galleries','brand','supplier', 'unit'])
+        $product = Product::select( 'products.*' )->with(['variants','bundles', 'categories', 'warehouses', 'galleries','brand','supplier', 'unit','workmanship','taxMethod'])
         ->find( $request->id );
 
         if ( $product ) {

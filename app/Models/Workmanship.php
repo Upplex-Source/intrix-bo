@@ -14,11 +14,12 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class Bundle extends Model
+class Workmanship extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
     protected $fillable = [
+        'fullname',
         'title',
         'description',
         'image',
@@ -26,18 +27,14 @@ class Bundle extends Model
         'url_slug',
         'strucuture',
         'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
         'status',
+        'calculation_type',
+        'calculation_rate',
     ];
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'products_bundles')
-        ->withPivot('quantity', 'price');
+        return $this->hasMany(Product::class, 'workmanship_id');
     }
 
     public function getImagePathAttribute() {
@@ -59,6 +56,7 @@ class Bundle extends Model
     }
 
     protected static $logAttributes = [
+        'fullname',
         'title',
         'description',
         'image',
@@ -66,15 +64,12 @@ class Bundle extends Model
         'url_slug',
         'strucuture',
         'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
         'status',
+        'calculation_type',
+        'calculation_rate',
     ];
 
-    protected static $logName = 'bundles';
+    protected static $logName = 'workmanships';
 
     protected static $logOnlyDirty = true;
 
@@ -83,6 +78,6 @@ class Bundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} bundle";
+        return "{$eventName} workmanship";
     }
 }

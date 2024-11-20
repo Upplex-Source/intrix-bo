@@ -1,16 +1,16 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.products' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.workmanships' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add products' )
+        @can( 'add workmanships' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
                 <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.product.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.workmanship.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -36,75 +36,36 @@ $columns = [
     [
         'type' => 'default',
         'id' => 'image',
-        'title' => __( 'product.image' ),
+        'title' => __( 'workmanship.image' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.title' ) ] ),
-        'id' => 'title',
-        'title' => __( 'product.title' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.product_code' ) ] ),
-        'id' => 'product_code',
-        'title' => __( 'product.product_code' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.brand' ) ] ),
-        'id' => 'brand',
-        'title' => __( 'product.brand' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.category' ) ] ),
-        'id' => 'category',
-        'title' => __( 'product.category' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'workmanship.fullname' ) ] ),
+        'id' => 'fullname',
+        'title' => __( 'workmanship.fullname' ),
     ],
     [
         'type' => 'default',
-        'id' => 'quantity',
-        'title' => __( 'product.quantity' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.unit' ) ] ),
-        'id' => 'unit',
-        'title' => __( 'product.unit' ),
-    ],
-    [
-        'type' => 'default',
-        'id' => 'price',
-        'title' => __( 'product.price' ),
-    ],
-    [
-        'type' => 'default',
-        'id' => 'cost',
-        'title' => __( 'product.cost' ),
-    ],
-    [
-        'type' => 'default',
-        'id' => 'stock_worth',
-        'title' => __( 'product.stock_worth' ),
+        'id' => 'calculation_rate',
+        'title' => __( 'workmanship.calculation_rate' ),
     ],
     // [
     //     'type' => 'default',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.number_of_product' ) ] ),
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'workmanship.number_of_product' ) ] ),
     //     'id' => 'number_of_product',
-    //     'title' => __( 'product.number_of_product' ),
+    //     'title' => __( 'workmanship.number_of_product' ),
     // ],
     // [
     //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.stock_quantity' ) ] ),
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'workmanship.stock_quantity' ) ] ),
     //     'id' => 'stock_quantity',
-    //     'title' => __( 'product.stock_quantity' ),
+    //     'title' => __( 'workmanship.stock_quantity' ),
     // ],
     // [
     //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.stock_worth' ) ] ),
+    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'workmanship.stock_worth' ) ] ),
     //     'id' => 'stock_worth',
-    //     'title' => __( 'product.stock_worth' ),
+    //     'title' => __( 'workmanship.stock_worth' ),
     // ],
     [
         'type' => 'select',
@@ -120,7 +81,7 @@ $columns = [
 ];
 ?>
 
-<x-data-tables id="product_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="workmanship_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -134,7 +95,7 @@ window['{{ $column['id'] }}'] = '';
 
 var statusMapper = @json( $data['status'] ),
     dt_table,
-    dt_table_name = '#product_table',
+    dt_table_name = '#workmanship_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -148,27 +109,20 @@ var statusMapper = @json( $data['status'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.product.allProducts' ) }}',
+            url: '{{ route( 'admin.workmanship.allWorkmanships' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'products',
+            dataSrc: 'workmanships',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
         columns: [
             { data: null },
             { data: 'created_at' },
-            { data: 'galleries' },
-            { data: 'title' },
-            { data: 'product_code' },
-            { data: 'brand' },
-            { data: 'categories' },
-            { data: 'quantity' },
-            { data: 'unit' },
-            { data: 'price' },
-            { data: 'cost' },
-            { data: 'stock_worth' },
+            { data: 'image_path' },
+            { data: 'fullname' },
+            { data: 'calculation_rate' },
             // { data: 'number_of_product' },
             // { data: 'stock_quantity' },
             // { data: 'stock_worth' },
@@ -189,33 +143,14 @@ var statusMapper = @json( $data['status'] ),
                 orderable: false,
                 render: function( data, type, row, meta ) {
                     if ( data ) {
-                        return '<img src="' + (data && data.length > 0 ? data[data.length - 1].image_path : '{{ asset( 'admin/images/placeholder.png' ) }}') + '" width="75px" />';
+
+                        return '<img src="' + ( data ? data : '{{ asset( 'admin/images/placeholder.png' ) }}' ) + '" width="75px" />';
+
                     } else {
 
                         return '<img src="' + '{{ asset( 'admin/images/placeholder.png' ) }}' + '" width="75px" />'
                         
                     }
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "title" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "brand" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data.title : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "unit" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data.title : '-' ;
                 },
             },
             {
@@ -226,35 +161,7 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "quantity" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "price" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "cost" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "category" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data.length > 0 ? data[0].title : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "parent_product" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "parent_workmanship" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-' ;
@@ -280,14 +187,14 @@ var statusMapper = @json( $data['status'] ),
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit products', 'delete products' ] )
+                    @canany( [ 'edit workmanships', 'delete workmanships' ] )
                     let edit, status = '';
 
-                    @can( 'edit products' )
+                    @can( 'edit workmanships' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'delete products' )
+                    @can( 'delete workmanships' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
@@ -328,13 +235,13 @@ var statusMapper = @json( $data['status'] ),
         } );
 
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.product.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.workmanship.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
 
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.product.updateProductStatus' ) }}',
+                url: '{{ route( 'admin.workmanship.updateWorkmanshipStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),

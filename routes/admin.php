@@ -26,6 +26,11 @@ use App\Http\Controllers\Admin\{
     ProductController,
     WarehouseController,
     UnitController,
+    ProductBundleController,
+    BundleController,
+    TaxMethodController,
+    WorkmanshipController,
+    MeasurementUnitController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -377,6 +382,86 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-unit', [ UnitController::class, 'createUnit' ] )->name( 'admin.unit.createUnit' );
                 Route::post( 'update-unit', [ UnitController::class, 'updateUnit' ] )->name( 'admin.unit.updateUnit' );
                 Route::post( 'update-unit-status', [ UnitController::class, 'updateUnitStatus' ] )->name( 'admin.unit.updateUnitStatus' );
+            } );
+
+            // new routes
+            Route::prefix( 'bundles' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view bundles' ] ], function() {
+                    Route::get( '/', [ BundleController::class, 'index' ] )->name( 'admin.module_parent.bundle.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add bundles' ] ], function() {
+                    Route::get( 'add', [ BundleController::class, 'add' ] )->name( 'admin.bundle.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit bundles' ] ], function() {
+                    Route::get( 'edit', [ BundleController::class, 'edit' ] )->name( 'admin.bundle.edit' );
+                } );
+
+                Route::post( 'all-bundles', [ BundleController::class, 'allBundles' ] )->name( 'admin.bundle.allBundles' );
+                Route::post( 'one-bundle', [ BundleController::class, 'oneBundle' ] )->name( 'admin.bundle.oneBundle' );
+                Route::post( 'create-bundle', [ BundleController::class, 'createBundle' ] )->name( 'admin.bundle.createBundle' );
+                Route::post( 'update-bundle', [ BundleController::class, 'updateBundle' ] )->name( 'admin.bundle.updateBundle' );
+                Route::post( 'update-bundle-status', [ BundleController::class, 'updateBundleStatus' ] )->name( 'admin.bundle.updateBundleStatus' );
+                Route::post( 'remove-bundle-gallery-image', [ BundleController::class, 'removeBundleGalleryImage' ] )->name( 'admin.bundle.removeBundleGalleryImage' );
+            } );
+
+            // new routes
+            Route::prefix( 'tax-methods' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view tax-methods' ] ], function() {
+                    Route::get( '/', [ TaxMethodController::class, 'index' ] )->name( 'admin.module_parent.tax_method.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add tax-methods' ] ], function() {
+                    Route::get( 'add', [ TaxMethodController::class, 'add' ] )->name( 'admin.tax_method.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit tax-methods' ] ], function() {
+                    Route::get( 'edit', [ TaxMethodController::class, 'edit' ] )->name( 'admin.tax_method.edit' );
+                } );
+
+                Route::post( 'all-tax-methods', [ TaxMethodController::class, 'allTaxMethods' ] )->name( 'admin.tax_method.allTaxMethods' );
+                Route::post( 'one-tax-method', [ TaxMethodController::class, 'oneTaxMethod' ] )->name( 'admin.tax_method.oneTaxMethod' );
+                Route::post( 'create-tax-method', [ TaxMethodController::class, 'createTaxMethod' ] )->name( 'admin.tax_method.createTaxMethod' );
+                Route::post( 'update-tax-method', [ TaxMethodController::class, 'updateTaxMethod' ] )->name( 'admin.tax_method.updateTaxMethod' );
+                Route::post( 'update-tax-method-status', [ TaxMethodController::class, 'updateTaxMethodStatus' ] )->name( 'admin.tax_method.updateTaxMethodStatus' );
+                Route::post( 'remove-tax-method-gallery-image', [ TaxMethodController::class, 'removeTaxMethodGalleryImage' ] )->name( 'admin.tax_method.removeTaxMethodGalleryImage' );
+            } );
+
+            // new routes
+            Route::prefix( 'workmanships' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view workmanships' ] ], function() {
+                    Route::get( '/', [ WorkmanshipController::class, 'index' ] )->name( 'admin.module_parent.workmanship.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add workmanships' ] ], function() {
+                    Route::get( 'add', [ WorkmanshipController::class, 'add' ] )->name( 'admin.workmanship.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit workmanships' ] ], function() {
+                    Route::get( 'edit', [ WorkmanshipController::class, 'edit' ] )->name( 'admin.workmanship.edit' );
+                } );
+
+                Route::post( 'all-workmanships', [ WorkmanshipController::class, 'allWorkmanships' ] )->name( 'admin.workmanship.allWorkmanships' );
+                Route::post( 'one-workmanship', [ WorkmanshipController::class, 'oneWorkmanship' ] )->name( 'admin.workmanship.oneWorkmanship' );
+                Route::post( 'create-workmanship', [ WorkmanshipController::class, 'createWorkmanship' ] )->name( 'admin.workmanship.createWorkmanship' );
+                Route::post( 'update-workmanship', [ WorkmanshipController::class, 'updateWorkmanship' ] )->name( 'admin.workmanship.updateWorkmanship' );
+                Route::post( 'update-workmanship-status', [ WorkmanshipController::class, 'updateWorkmanshipStatus' ] )->name( 'admin.workmanship.updateWorkmanshipStatus' );
+                Route::post( 'remove-workmanship-gallery-image', [ WorkmanshipController::class, 'removeWorkmanshipGalleryImage' ] )->name( 'admin.workmanship.removeWorkmanshipGalleryImage' );
+            } );
+
+            // new routes
+            Route::prefix( 'measurement-units' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view measurement-units' ] ], function() {
+                    Route::get( '/', [ MeasurementUnitController::class, 'index' ] )->name( 'admin.module_parent.measurement_unit.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add measurement-units' ] ], function() {
+                    Route::get( 'add', [ MeasurementUnitController::class, 'add' ] )->name( 'admin.measurement_unit.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit measurement-units' ] ], function() {
+                    Route::get( 'edit', [ MeasurementUnitController::class, 'edit' ] )->name( 'admin.measurement_unit.edit' );
+                } );
+
+                Route::post( 'all-measurement-units', [ MeasurementUnitController::class, 'allMeasurementUnits' ] )->name( 'admin.measurement_unit.allMeasurementUnits' );
+                Route::post( 'one-measurement-unit', [ MeasurementUnitController::class, 'oneMeasurementUnit' ] )->name( 'admin.measurement_unit.oneMeasurementUnit' );
+                Route::post( 'create-measurement-unit', [ MeasurementUnitController::class, 'createMeasurementUnit' ] )->name( 'admin.measurement_unit.createMeasurementUnit' );
+                Route::post( 'update-measurement-unit', [ MeasurementUnitController::class, 'updateMeasurementUnit' ] )->name( 'admin.measurement_unit.updateMeasurementUnit' );
+                Route::post( 'update-measurement-unit-status', [ MeasurementUnitController::class, 'updateMeasurementUnit-Status' ] )->name( 'admin.measurement_unit.updateMeasurementUnitStatus' );
+                Route::post( 'remove-measurement-unit-gallery-image', [ MeasurementUnitController::class, 'removeMeasurementUnit-GalleryImage' ] )->name( 'admin.measurement_unit.removeMeasurementUnitGalleryImage' );
             } );
 
         } );

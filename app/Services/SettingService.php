@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 use App\Models\{
     Administrator,
+    Option,    
 };
 
 use PragmaRX\Google2FAQRCode\Google2FA;
@@ -35,4 +36,14 @@ class SettingService {
             'status' => true,
         ] );
     }
+
+    public static function settings() {
+
+        $settings = Option::whereIn( 'option_name', [
+            'TAX_METHOD',
+        ] )->get();
+
+        return $settings;
+    }
+
 }

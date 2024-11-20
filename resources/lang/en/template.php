@@ -112,4 +112,9 @@ return [
     'parents' => 'Parents',
     'warehouse_products' => 'Warehouse Products',
     'stock_info' => 'Stock Info',
+    'bundle_products' => 'Bundle Products',
+
+    'tax_methods' => 'Tax Methods',
+    'workmanships' => 'Workmanships',
+    'measurement_units' => 'Measurement Units',
 ];

@@ -21,11 +21,5 @@ return [
     'thumbnail' => 'Thumbnail',
     'url_slug' => 'URL Slug',
     'structure' => 'Structure',
-    'sort' => 'Sort Order',
-    
-    'promotion_enabled' => 'Promotion Enabled',
-    'promotion_start' => 'Promotion Start',
-    'promotion_end' => 'Promotion End',
-    'price' => 'Price',
-    'promotion_price' => 'Promotion Price',
+    'tax_percentage' => 'Tax Percentage',
 ];

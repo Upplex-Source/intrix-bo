@@ -23,6 +23,9 @@ class Product extends Model
         'brand_id',
         'supplier_id',
         'unit_id',
+        'tax_method_id',
+        'workmanship_id',
+        'measurement_unit_id',
         'title',
         'description',
         'product_code',
@@ -105,6 +108,21 @@ public static function getPredefinedUnits()
                 'Meter (m)',
             ]
         ];
+    }
+
+    public function workmanship()
+    {
+        return $this->belongsTo(Workmanship::class, 'workmanship_id');
+    }
+
+    public function taxMethod()
+    {
+        return $this->belongsTo(TaxMethod::class, 'tax_method_id');
+    }
+
+    public function measurementUnit()
+    {
+        return $this->belongsTo(MeasurementUnit::class, 'measurement_unit_id');
     }
 
     public function bundles()
@@ -209,6 +227,9 @@ public static function getPredefinedUnits()
         'brand_id',
         'supplier_id',
         'unit_id',
+        'tax_method_id',
+        'workmanship_id',
+        'measurement_unit_id',
         'title',
         'description',
         'product_code',

@@ -14,7 +14,7 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class Bundle extends Model
+class TaxMethod extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
@@ -26,19 +26,14 @@ class Bundle extends Model
         'url_slug',
         'strucuture',
         'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
         'status',
+        'tax_percentage',
     ];
 
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'products_bundles')
-        ->withPivot('quantity', 'price');
-    }
+    // public function products()
+    // {
+    //     return $this->hasMany(Product::class, 'tax_method_id');
+    // }
 
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
@@ -66,15 +61,11 @@ class Bundle extends Model
         'url_slug',
         'strucuture',
         'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
         'status',
+        'tax_percentage',
     ];
 
-    protected static $logName = 'bundles';
+    protected static $logName = 'tax_methods';
 
     protected static $logOnlyDirty = true;
 
@@ -83,6 +74,6 @@ class Bundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} bundle";
+        return "{$eventName} tax_method";
     }
 }

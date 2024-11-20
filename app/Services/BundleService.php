@@ -14,7 +14,7 @@ use Helper;
 use App\Models\{
     Company,
     Customer,
-    Category,
+    Bundle,
     Booking,
     FileManager,
 };
@@ -23,30 +23,44 @@ use App\Models\{
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
-class CategoryService
+class BundleService
 {
 
-    public static function createCategory( $request ) {
-        
+    public static function createBundle( $request ) {
+
         $validator = Validator::make( $request->all(), [
-            'parent_id' => [ 'nullable', 'exists:categories,id' ],
+            'products' => [ 'nullable',  function ($attribute, $value, $fail) {
+                $ids = explode(',', $value);
+                $invalidIds = array_filter($ids, function ($id) {
+                    return !\DB::table('products')->where('id', $id)->exists();
+                });
+                
+                if (!empty($invalidIds)) {
+                    $fail("The $attribute contains invalid IDs: " . implode(', ', $invalidIds));
+                }
+            }, ],
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'image' => [ 'nullable' ],
-            'thumbnail' => [ 'nullable' ],
+            
+            'promotion_start' => [ 'nullable' ],
+            'promotion_end' => [ 'nullable' ],
+            'promotion_enabled' => [ 'nullable' ],
+            'promotion_price' => [ 'nullable', 'numeric', 'min:0' ],
+            'price' => [ 'nullable', 'numeric', 'min:0' ],
         ] );
 
         $attributeName = [
-            'parent_id' => __( 'category.parent_id' ),
-            'title' => __( 'category.title' ),
-            'description' => __( 'category.description' ),
-            'image' => __( 'category.image' ),
-            'thumbnail' => __( 'category.thumbnail' ),
-            'url_slug' => __( 'category.url_slug' ),
-            'structure' => __( 'category.structure' ),
-            'size' => __( 'category.size' ),
-            'phone_number' => __( 'category.phone_number' ),
-            'sort' => __( 'category.sort' ),
+            'parent_id' => __( 'bundle.parent_id' ),
+            'title' => __( 'bundle.title' ),
+            'description' => __( 'bundle.description' ),
+            'image' => __( 'bundle.image' ),
+            'thumbnail' => __( 'bundle.thumbnail' ),
+            'url_slug' => __( 'bundle.url_slug' ),
+            'structure' => __( 'bundle.structure' ),
+            'size' => __( 'bundle.size' ),
+            'phone_number' => __( 'bundle.phone_number' ),
+            'sort' => __( 'bundle.sort' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -58,17 +72,19 @@ class CategoryService
         DB::beginTransaction();
         
         try {
-            $categoryCreate = Category::create([
-                'parent_id' => $request->parent_id,
+            $bundleCreate = Bundle::create([
                 'title' => $request->title,
                 'description' => $request->description,
+                'promotion_start' => $request->promotion_start,
+                'promotion_end' => $request->promotion_end,
+                'promotion_enabled' => $request->promotion_enabled,
+                'promotion_price' => $request->promotion_price,
+                'price' => $request->price,
             ]);
 
             $image = explode( ',', $request->image );
-            $thumbnail = explode( ',', $request->thumbnail );
 
             $imageFiles = FileManager::whereIn( 'id', $image )->get();
-            $thumbnailFiles = FileManager::whereIn( 'id', $thumbnail )->get();
 
             if ( $imageFiles ) {
                 foreach ( $imageFiles as $imageFile ) {
@@ -76,11 +92,11 @@ class CategoryService
                     $fileName = explode( '/', $imageFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'category/' . $categoryCreate->id . '/' . $fileName[1];
+                    $target = 'bundle/' . $bundleCreate->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $imageFile->file, $target );
 
-                   $categoryCreate->image = $target;
-                   $categoryCreate->save();
+                   $bundleCreate->image = $target;
+                   $bundleCreate->save();
 
                     $imageFile->status = 10;
                     $imageFile->save();
@@ -88,21 +104,19 @@ class CategoryService
                 }
             }
 
-            if ( $thumbnailFiles ) {
-                foreach ( $thumbnailFiles as $thumbnailFile ) {
+            if ( $request->products ) {
+                $products = explode( ',', $request->products );
 
-                    $fileName = explode( '/', $thumbnailFile->file );
-                    $fileExtention = pathinfo($fileName[1])['extension'];
-
-                    $target = 'category/' . $categoryCreate->id . '/' . $fileName[1];
-                    Storage::disk( 'public' )->move( $thumbnailFile->file, $target );
-
-                   $categoryCreate->thumbnail = $target;
-                   $categoryCreate->save();
-
-                    $thumbnailFile->status = 10;
-                    $thumbnailFile->save();
-
+                if( $products != null ) {
+                    if( is_array( $products ) ) {
+                        foreach ( $products as $product ) {
+                            if (!$bundleCreate->products()->where('product_id', $product)->exists()) {
+                                $bundleCreate->products()->attach($product);
+                            }
+                        }
+                    }else{
+                        $bundleCreate->products()->attach($request->product);
+                    }
                 }
             }
 
@@ -118,11 +132,11 @@ class CategoryService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.categories' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.bundles' ) ) ] ),
         ] );
     }
     
-    public static function updateCategory( $request ) {
+    public static function updateBundle( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -130,24 +144,37 @@ class CategoryService
 
          
         $validator = Validator::make( $request->all(), [
-            'parent_id' => [ 'nullable', 'exists:categories,id' ],
+           'products' => [ 'nullable',  function ($attribute, $value, $fail) {
+                $ids = explode(',', $value);
+                $invalidIds = array_filter($ids, function ($id) {
+                    return !\DB::table('products')->where('id', $id)->exists();
+                });
+                
+                if (!empty($invalidIds)) {
+                    $fail("The $attribute contains invalid IDs: " . implode(', ', $invalidIds));
+                }
+            }, ],
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'image' => [ 'nullable' ],
-            'thumbnail' => [ 'nullable' ],
+            
+            'promotion_start' => [ 'nullable' ],
+            'promotion_end' => [ 'nullable' ],
+            'promotion_enabled' => [ 'nullable' ],
+            'promotion_price' => [ 'nullable', 'numeric', 'min:0' ],
+            'price' => [ 'nullable', 'numeric', 'min:0' ],
         ] );
 
         $attributeName = [
-            'parent_id' => __( 'category.parent_id' ),
-            'title' => __( 'category.title' ),
-            'description' => __( 'category.description' ),
-            'image' => __( 'category.image' ),
-            'thumbnail' => __( 'category.thumbnail' ),
-            'url_slug' => __( 'category.url_slug' ),
-            'structure' => __( 'category.structure' ),
-            'size' => __( 'category.size' ),
-            'phone_number' => __( 'category.phone_number' ),
-            'sort' => __( 'category.sort' ),
+            'title' => __( 'bundle.title' ),
+            'description' => __( 'bundle.description' ),
+            'image' => __( 'bundle.image' ),
+            'thumbnail' => __( 'bundle.thumbnail' ),
+            'url_slug' => __( 'bundle.url_slug' ),
+            'structure' => __( 'bundle.structure' ),
+            'size' => __( 'bundle.size' ),
+            'phone_number' => __( 'bundle.phone_number' ),
+            'sort' => __( 'bundle.sort' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -159,17 +186,19 @@ class CategoryService
         DB::beginTransaction();
 
         try {
-            $updateCategory = Category::find( $request->id );
+            $updateBundle = Bundle::find( $request->id );
     
-            $updateCategory->parent_id = $request->parent_id;
-            $updateCategory->title = $request->title;
-            $updateCategory->description = $request->description;
+            $updateBundle->title = $request->title;
+            $updateBundle->description = $request->description;
+            $updateBundle->promotion_start = $request->promotion_start;
+            $updateBundle->promotion_end = $request->promotion_end;
+            $updateBundle->promotion_enabled = $request->promotion_enabled;
+            $updateBundle->promotion_price = $request->promotion_price;
+            $updateBundle->price = $request->price;
 
             $image = explode( ',', $request->image );
-            $thumbnail = explode( ',', $request->thumbnail );
 
             $imageFiles = FileManager::whereIn( 'id', $image )->get();
-            $thumbnailFiles = FileManager::whereIn( 'id', $thumbnail )->get();
 
             if ( $imageFiles ) {
                 foreach ( $imageFiles as $imageFile ) {
@@ -177,19 +206,36 @@ class CategoryService
                     $fileName = explode( '/', $imageFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'category/' . $updateCategory->id . '/' . $fileName[1];
+                    $target = 'bundle/' . $updateBundle->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $imageFile->file, $target );
 
-                   $updateCategory->image = $target;
-                   $updateCategory->save();
+                   $updateBundle->image = $target;
+                   $updateBundle->save();
 
                     $imageFile->status = 10;
                     $imageFile->save();
 
                 }
             }
+            if( $request->products ) {
 
-            $updateCategory->save();
+                $products = explode( ',', $request->products );
+
+                if( $products != null ) {
+                    $updateBundle->products()->detach();
+                    if( is_array( $products ) ) {
+                        foreach ( $products as $product ) {
+                            if (!$updateBundle->products()->where('product_id', $product)->exists()) {
+                                $updateBundle->products()->attach($product);
+                            }
+                        }
+                    }else{
+                        $updateBundle->products()->attach($request->product);
+                    }
+                }
+            }
+
+            $updateBundle->save();
 
             DB::commit();
 
@@ -203,57 +249,56 @@ class CategoryService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.categories' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.bundles' ) ) ] ),
         ] );
     }
 
-     public static function allCategories( $request ) {
+     public static function allBundles( $request ) {
 
-        $categories = Category::with(['children', 'parent']);
+        $bundles = Bundle::with(['products']);
 
-        $filterObject = self::filter( $request, $categories );
-        $category = $filterObject['model'];
+        $filterObject = self::filter( $request, $bundles );
+        $bundle = $filterObject['model'];
         $filter = $filterObject['filter'];
 
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 1:
-                    $category->orderBy( 'categories.created_at', $dir );
+                    $bundle->orderBy( 'bundles.created_at', $dir );
                     break;
                 case 2:
-                    $category->orderBy( 'categories.parent_id', $dir );
+                    $bundle->orderBy( 'bundles.created_at', $dir );
                     break;
                 case 3:
-                    $category->orderBy( 'categories.title', $dir );
+                    $bundle->orderBy( 'bundles.title', $dir );
                     break;
                 case 4:
-                    $category->orderBy( 'categories.description', $dir );
+                    $bundle->orderBy( 'bundles.description', $dir );
                     break;
             }
         }
 
-            $categoryCount = $category->count();
+            $bundleCount = $bundle->count();
 
             $limit = $request->length;
             $offset = $request->start;
 
-            $categories = $category->skip( $offset )->take( $limit )->get();
+            $bundles = $bundle->skip( $offset )->take( $limit )->get();
 
-            if ( $categories ) {
-                $categories->append( [
+            if ( $bundles ) {
+                $bundles->append( [
                     'encrypted_id',
                     'image_path',
-                    'thumbnail_path',
                 ] );
             }
 
-            $totalRecord = Category::count();
+            $totalRecord = Bundle::count();
 
             $data = [
-                'categories' => $categories,
+                'bundles' => $bundles,
                 'draw' => $request->draw,
-                'recordsFiltered' => $filter ? $categoryCount : $totalRecord,
+                'recordsFiltered' => $filter ? $bundleCount : $totalRecord,
                 'recordsTotal' => $totalRecord,
             ];
 
@@ -267,22 +312,22 @@ class CategoryService
         $filter = false;
 
         if ( !empty( $request->title ) ) {
-            $model->where( 'categories.title', 'LIKE', '%' . $request->title . '%' );
+            $model->where( 'bundles.title', 'LIKE', '%' . $request->title . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->custom_search ) ) {
-            $model->where( 'categories.title', 'LIKE', '%' . $request->custom_search . '%' );
+            $model->where( 'bundles.title', 'LIKE', '%' . $request->custom_search . '%' );
             $filter = true;
         }
         if ( !empty( $request->id ) ) {
-            $model->where( 'categories.id', '!=', Helper::decode($request->id) );
+            $model->where( 'bundles.id', '!=', Helper::decode($request->id) );
             $filter = true;
         }
 
-        if (!empty($request->parent_category)) {
+        if (!empty($request->parent_bundle)) {
             $model->whereHas('parent', function ($query) use ($request) {
-                $query->where('title', 'LIKE', '%' . $request->parent_category . '%');
+                $query->where('title', 'LIKE', '%' . $request->parent_bundle . '%');
             });
             $filter = true;
         }
@@ -293,22 +338,22 @@ class CategoryService
         ];
     }
 
-    public static function oneCategory( $request ) {
+    public static function oneBundle( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $category = Category::with( [
-            'children', 'parent',
+        $bundle = Bundle::with( [
+            'products',
         ] )->find( $request->id );
 
-        $category->append( ['encrypted_id','image_path'] );
+        $bundle->append( ['encrypted_id','image_path'] );
         
-        return response()->json( $category );
+        return response()->json( $bundle );
     }
 
-    public static function deleteCategory( $request ){
+    public static function deleteBundle( $request ){
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
@@ -318,7 +363,7 @@ class CategoryService
         ] );
             
         $attributeName = [
-            'id' => __( 'category.id' ),
+            'id' => __( 'bundle.id' ),
         ];
             
         foreach( $attributeName as $key => $aName ) {
@@ -330,7 +375,7 @@ class CategoryService
         DB::beginTransaction();
 
         try {
-            Category::find($request->id)->delete($request->id);
+            Bundle::find($request->id)->delete($request->id);
             
             DB::commit();
         } catch ( \Throwable $th ) {
@@ -343,11 +388,11 @@ class CategoryService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.categories' ) ) ] ),
+            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.bundles' ) ) ] ),
         ] );
     }
 
-    public static function updateCategoryStatus( $request ) {
+    public static function updateBundleStatus( $request ) {
         
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -357,16 +402,16 @@ class CategoryService
 
         try {
 
-            $updateCategory = Category::find( $request->id );
-            $updateCategory->status = $updateCategory->status == 10 ? 20 : 10;
+            $updateBundle = Bundle::find( $request->id );
+            $updateBundle->status = $updateBundle->status == 10 ? 20 : 10;
 
-            $updateCategory->save();
+            $updateBundle->save();
             DB::commit();
 
             return response()->json( [
                 'data' => [
-                    'category' => $updateCategory,
-                    'message_key' => 'update_category_success',
+                    'bundle' => $updateBundle,
+                    'message_key' => 'update_bundle_success',
                 ]
             ] );
 
@@ -374,14 +419,14 @@ class CategoryService
 
             return response()->json( [
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
-                'message_key' => 'create_category_failed',
+                'message_key' => 'create_bundle_failed',
             ], 500 );
         }
     }
 
-    public static function removeCategoryGalleryImage( $request ) {
+    public static function removeBundleGalleryImage( $request ) {
 
-        $updateFarm = Category::find( Helper::decode($request->id) );
+        $updateFarm = Bundle::find( Helper::decode($request->id) );
         $updateFarm->image = null;
         $updateFarm->save();
 

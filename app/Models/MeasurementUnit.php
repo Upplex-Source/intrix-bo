@@ -14,7 +14,7 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class Bundle extends Model
+class MeasurementUnit extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
@@ -25,19 +25,13 @@ class Bundle extends Model
         'thumbnail',
         'url_slug',
         'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'tax_percentage',
         'status',
     ];
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'products_bundles')
-        ->withPivot('quantity', 'price');
+        return $this->hasMany(Product::class, 'measurement_unit_id');
     }
 
     public function getImagePathAttribute() {
@@ -65,16 +59,11 @@ class Bundle extends Model
         'thumbnail',
         'url_slug',
         'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'tax_percentage',
         'status',
     ];
 
-    protected static $logName = 'bundles';
+    protected static $logName = 'measurement_units';
 
     protected static $logOnlyDirty = true;
 
@@ -83,6 +72,6 @@ class Bundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} bundle";
+        return "{$eventName} measurement_unit";
     }
 }
