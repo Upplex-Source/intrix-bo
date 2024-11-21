@@ -891,37 +891,37 @@ window.cke_element1 = 'product_create_description';
             },
             success: function( response ) {
 
-                if ( response.brand.title ) {
+                if ( response.brand ) {
                     let option1 = new Option( response.brand.title, response.brand.id, true, true );
                     brandSelect2.append( option1 );
                     brandSelect2.trigger( 'change' );
                 }
 
-                if ( response.categories[0].title ) {
+                if ( response.categories[0] ) {
                     let option1 = new Option( response.categories[0].title, response.categories[0].id, true, true );
                     categorySelect2.append( option1 );
                     categorySelect2.trigger( 'change' );
                 }
 
-                if ( response.supplier.title ) {
+                if ( response.supplier ) {
                     let option1 = new Option( response.supplier.title, response.supplier.id, true, true );
                     supplierSelect2.append( option1 );
                     supplierSelect2.trigger( 'change' );
                 }
 
-                if ( response.unit.title ) {
+                if ( response.unit ) {
                     let option1 = new Option( response.unit.title, response.unit.id, true, true );
                     unitSelect2.append( option1 );
                     unitSelect2.trigger( 'change' );
                 }
 
-                if ( response.workmanship.fullname ) {
+                if ( response.workmanship ) {
                     let option1 = new Option( response.workmanship.fullname, response.workmanship.id, true, true );
                     workmanShipSelect2.append( option1 );
                     workmanShipSelect2.trigger( 'change' );
                 }
 
-                if ( response.tax_method.title ) {
+                if ( response.tax_method ) {
                     let option1 = new Option( response.tax_method.title, response.tax_method.id, true, true );
                     taxMethodSelect2.append( option1 );
                     taxMethodSelect2.trigger( 'change' );
