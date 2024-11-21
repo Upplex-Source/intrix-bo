@@ -117,6 +117,7 @@
                                     </li>
                                 @endcan
                                 
+                                @if( 1 == 2 )
                                 @can( 'view MeasurementUnits' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\MeasurementUnitController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.measurement_unit.index' ) }}" class="nk-menu-link">
@@ -125,6 +126,7 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @endif
 
                                 @if( 1 == 2 )
                                 @can( 'view Services' )
