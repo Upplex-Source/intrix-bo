@@ -31,6 +31,8 @@ use App\Http\Controllers\Admin\{
     TaxMethodController,
     WorkmanshipController,
     MeasurementUnitController,
+    AdjustmentController,
+    ProductInventoryController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -333,6 +335,9 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:edit products' ] ], function() {
                     Route::get( 'edit', [ ProductController::class, 'edit' ] )->name( 'admin.product.edit' );
                 } );
+                Route::group( [ 'middleware' => [ 'permission:edit products' ] ], function() {
+                    Route::get( 'print-barcodes', [ ProductController::class, 'printBarcodes' ] )->name( 'admin.product.printBarcodes' );
+                } );
 
                 Route::post( 'all-products', [ ProductController::class, 'allProducts' ] )->name( 'admin.product.allProducts' );
                 Route::post( 'one-product', [ ProductController::class, 'oneProduct' ] )->name( 'admin.product.oneProduct' );
@@ -343,6 +348,49 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 
                 Route::post( 'ckeUpload', [ ProductController::class, 'ckeUpload' ] )->name( 'admin.product.ckeUpload' );
                 Route::post( 'generate-product-code', [ ProductController::class, 'generateProductCode' ] )->name( 'admin.product.generateProductCode' );
+                Route::post( 'generate-barcode', [ ProductController::class, 'generateBarcode' ] )->name( 'admin.product.generateBarcode' );
+                Route::post( 'generate-barcodes', [ ProductController::class, 'generateBarcodes' ] )->name( 'admin.product.generateBarcodes' );
+                Route::post( 'preview-barcode', [ ProductController::class, 'previewBarcode' ] )->name( 'admin.product.previewBarcode' );
+            } );
+
+            // new routes
+            Route::prefix( 'adjustments' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view adjustments' ] ], function() {
+                    Route::get( '/', [ AdjustmentController::class, 'index' ] )->name( 'admin.module_parent.adjustment.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add adjustments' ] ], function() {
+                    Route::get( 'add', [ AdjustmentController::class, 'add' ] )->name( 'admin.adjustment.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit adjustments' ] ], function() {
+                    Route::get( 'edit', [ AdjustmentController::class, 'edit' ] )->name( 'admin.adjustment.edit' );
+                } );
+
+                Route::post( 'all-adjustments', [ AdjustmentController::class, 'allAdjustments' ] )->name( 'admin.adjustment.allAdjustments' );
+                Route::post( 'one-adjustment', [ AdjustmentController::class, 'oneAdjustment' ] )->name( 'admin.adjustment.oneAdjustment' );
+                Route::post( 'create-adjustment', [ AdjustmentController::class, 'createAdjustment' ] )->name( 'admin.adjustment.createAdjustment' );
+                Route::post( 'update-adjustment', [ AdjustmentController::class, 'updateAdjustment' ] )->name( 'admin.adjustment.updateAdjustment' );
+                Route::post( 'update-adjustment-status', [ AdjustmentController::class, 'updateAdjustmentStatus' ] )->name( 'admin.adjustment.updateAdjustmentStatus' );
+
+            } );
+
+             // new routes
+             Route::prefix( 'product-inventories' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view product-inventories' ] ], function() {
+                    Route::get( '/', [ ProductInventoryController::class, 'index' ] )->name( 'admin.module_parent.product_inventory.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add product-inventories' ] ], function() {
+                    Route::get( 'add', [ ProductInventoryController::class, 'add' ] )->name( 'admin.product_inventory.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit product-inventories' ] ], function() {
+                    Route::get( 'edit', [ ProductInventoryController::class, 'edit' ] )->name( 'admin.product_inventory.edit' );
+                } );
+
+                Route::post( 'all-product-inventories', [ ProductInventoryController::class, 'allProductInventories' ] )->name( 'admin.product_inventory.allProductInventories' );
+                Route::post( 'one-product-inventory', [ ProductInventoryController::class, 'oneProductInventory' ] )->name( 'admin.product_inventory.oneProductInventory' );
+                Route::post( 'create-product-inventory', [ ProductInventoryController::class, 'createProductInventory' ] )->name( 'admin.product_inventory.createProductInventory' );
+                Route::post( 'update-product-inventory', [ ProductInventoryController::class, 'updateProductInventory' ] )->name( 'admin.product_inventory.updateProductInventory' );
+                Route::post( 'update-product-inventory-status', [ ProductInventoryController::class, 'updateProductInventoryStatus' ] )->name( 'admin.product_inventory.updateProductInventoryStatus' );
+
             } );
 
             // new routes

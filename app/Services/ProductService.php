@@ -22,6 +22,8 @@ use App\Models\{
 };
 
 use Barryvdh\DomPDF\Facade\Pdf;
+use Milon\Barcode\DNS1D;
+use Milon\Barcode\DNS2D;
 use Carbon\Carbon;
 
 class ProductService
@@ -398,7 +400,7 @@ class ProductService
             if( $request->workmanship == 'null' ){
                 $request->merge( ['workmanship' => null] );
             }
-            
+
             if( $request->tax_method == 'null' ){
                 $request->merge( ['tax_method' => null] );
             }
@@ -784,4 +786,143 @@ class ProductService
     {
         return response()->json(['product_code' => Carbon::now()->timestamp]);
     }
+
+    public static function generateBarcode($request)
+    {
+        $request->merge([
+            'id' => Helper::decode($request->id),
+        ]);
+    
+        // Fetch the product
+        $product = Product::select('products.*')->find($request->id);
+    
+        // Handle invalid product
+        if (!$product) {
+            return response()->json(['error' => 'Product not found.'], 404);
+        }
+    
+        // Ensure that product_code and name are not empty before generating barcodes
+        $barcodeGenerator = new \Milon\Barcode\DNS1D();
+        
+        // Get optional size parameters or set defaults
+        $width = $request->get('width', 2); // Default width
+        $height = $request->get('height', 30); // Default height
+    
+        // Prepare barcodes for multiple labels, only if the product code is valid
+        $barcodes = [];
+
+        if (!empty($product->product_code)) {
+            $barcodes[$product->id]['barcode'] = $barcodeGenerator->getBarcodeHTML($product->product_code, 'C128', $width, $height);
+            $barcodes[$product->id]['product_code'] = $product->product_code;
+            $barcodes[$product->id]['product_name'] = $product->title;
+            $barcodes[$product->id]['product_price'] = $product->price;
+        }
+        // Generate the PDF
+        $pdf = Pdf::loadView('admin.product.barcode', compact('barcodes', 'width', 'height'));
+    
+        // Return the PDF as a binary response
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="barcodes.pdf"');
+    }
+    
+    public static function generateBarcodes($request)
+    {
+         
+        $validator = Validator::make( $request->all(), [
+            'product' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'product' => __( 'bundle.product' ),
+        ];
+
+        foreach( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        $productArrays = explode( ',', $request->product );
+
+        // Fetch the product
+        $products = Product::select('products.*')->whereIn( 'id', $productArrays)->get();
+
+        // Handle invalid product
+        if (!$products) {
+            return response()->json(['error' => 'Product not found.'], 404);
+        }
+    
+        // Ensure that product_code and name are not empty before generating barcodes
+        $barcodeGenerator = new \Milon\Barcode\DNS1D();
+        
+        // Get optional size parameters or set defaults
+        $width = $request->get('width', 2); // Default width
+        $height = $request->get('height', 30); // Default height
+    
+        // Prepare barcodes for multiple labels, only if the product code is valid
+        $barcodes = [];
+
+        foreach ($products as $product) {
+            if (!empty($product->product_code)) {
+                $barcodes[$product->id]['barcode'] = $barcodeGenerator->getBarcodeHTML($product->product_code, 'C128', $width, $height);
+                $barcodes[$product->id]['product_code'] = $product->product_code;
+                $barcodes[$product->id]['product_name'] = $product->title;
+                $barcodes[$product->id]['product_price'] = 'RM ' . $product->price;
+            }
+        }
+
+        // Generate the PDF
+        $pdf = Pdf::loadView('admin.product.barcode', compact('barcodes', 'width', 'height'));
+    
+        // Return the PDF as a binary response
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="barcodes.pdf"');
+    }
+
+    public static function previewBarcode($request)
+    {
+        // Validate the request inputs
+        $validated = Validator::make($request->all(), [
+            'product' => ['required', 'array'], // Ensure `product` is an array
+            'width' => 'nullable|numeric|min:1',
+            'height' => 'nullable|numeric|min:1',
+        ])->validate();
+    
+        // Fetch the products
+        $products = Product::select('products.*')->whereIn('id', $validated['product'])->get();
+    
+        // Handle invalid products
+        if ($products->isEmpty()) {
+            return response()->json(['error' => 'Product not found.'], 404);
+        }
+    
+        // Set default width and height if not provided
+        $width = $validated['width'] ?? 2; // Default width
+        $height = $validated['height'] ?? 30; // Default height
+    
+        // Generate the barcode HTML for each product
+        $barcodes = [];
+        $barcodeGenerator = new \Milon\Barcode\DNS1D();
+        $barcodeGenerator->setStorPath(public_path('barcode/')); // Optional: Set storage path if needed
+    
+        foreach ($products as $product) {
+            if (!empty($product->product_code)) {
+                $barcodes[] = [
+                    'product_id' => $product->id,
+                    'product_name' => $product->title,
+                    'product_price' => 'RM ' . $product->price, // Add price to response
+                    'product_code' => $product->product_code,
+                    'barcodeHtml' => $barcodeGenerator->getBarcodeHTML($product->product_code, 'C128', $width, $height),
+                ];
+            }
+        }
+    
+        // Return the previews as JSON
+        return response()->json(['barcodes' => $barcodes]);
+    }
+    
+    
+
 }

@@ -287,6 +287,10 @@ var statusMapper = @json( $data['status'] ),
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
+                    @can( 'edit products' )
+                    edit += '<li class="dt-print-barcode" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.print_barcode' ) }}</span></a></li>';
+                    @endcan
+
                     @can( 'delete products' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
@@ -330,6 +334,35 @@ var statusMapper = @json( $data['status'] ),
         $( document ).on( 'click', '.dt-edit', function() {
             window.location.href = '{{ route( 'admin.product.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
+
+        $( document ).on( 'click', '.dt-print-barcode', function() {
+
+            let formData = {
+                id: $( this ).data( 'id' ),
+                _token: '{{ csrf_token() }}',
+            };
+
+            $.ajax({
+                url: '{{ route( 'admin.product.generateBarcode' ) }}',
+                method: 'POST',
+                data: formData,
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data) {
+                    // Create a blob and trigger download
+                    const blob = new Blob([data], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'barcode.pdf';
+                    link.click();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error generating barcode PDF:', error);
+                    alert('Failed to generate PDF. Please try again.');
+                }
+            });
+        });
 
         $( document ).on( 'click', '.dt-status', function() {
 

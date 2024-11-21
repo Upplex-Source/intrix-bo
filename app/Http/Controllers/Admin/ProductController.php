@@ -102,6 +102,26 @@ class ProductController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
+    public function printBarcodes( Request $request ) {
+
+        $this->data['header']['title'] = __( 'template.generate_barcodes' );
+        $this->data['content'] = 'admin.product.print_barcode';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.products' ),
+                'class' => 'active',
+            ],
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
+
     public function allProducts( Request $request ) {
 
         return ProductService::allProducts( $request );
@@ -139,5 +159,20 @@ class ProductController extends Controller
     public function generateProductCode( Request $request ) {
 
         return ProductService::generateProductCode( $request );
+    }
+
+    public function generateBarcode( Request $request ) {
+
+        return ProductService::generateBarcode( $request );
+    }
+
+    public function generateBarcodes( Request $request ) {
+
+        return ProductService::generateBarcodes( $request );
+    }
+    
+    public function previewBarcode( Request $request ) {
+
+        return ProductService::previewBarcode( $request );
     }
 }

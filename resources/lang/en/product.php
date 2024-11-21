@@ -70,4 +70,7 @@ return [
     'variant_quantity' => 'Variant Quantity',
     'promotion_price' => 'Promotion Price',
 
+    'adjustment' => 'Adjustment',
+
+
 ];
