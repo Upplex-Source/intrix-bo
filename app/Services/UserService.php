@@ -1,0 +1,1121 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\{
+    DB,
+    Hash,
+    Validator,
+};
+use App\Mail\OtpEmail;
+
+use Illuminate\Support\Facades\{
+    Crypt,
+    Mail,
+};
+
+use Illuminate\Validation\Rules\Password;
+
+use App\Models\{
+    User,
+    OtpAction,
+    TmpUser,
+};
+
+use App\Rules\CheckASCIICharacter;
+
+use Helper;
+
+use Carbon\Carbon;
+
+use PragmaRX\Google2FAQRCode\Google2FA;
+
+class UserService
+{
+    public static function allUsers( $request ) {
+
+        $user = User::select( 'users.*' )->orderBy( 'created_at', 'DESC' );
+
+        $filterObject = self::filter( $request, $user );
+        $user = $filterObject['model'];
+        $filter = $filterObject['filter'];
+
+        if ( $request->input( 'order.0.column' ) != 0 ) {
+            $dir = $request->input( 'order.0.dir' );
+            switch ( $request->input( 'order.0.column' ) ) {
+                case 1:
+                    $user->orderBy( 'created_at', $dir );
+                    break;
+                case 2:
+                    $user->orderBy( 'username', $dir );
+                    break;
+                case 3:
+                    $user->orderBy( 'email', $dir );
+                    break;
+            }
+        }
+
+        $userCount = $user->count();
+
+        $limit = $request->length;
+        $offset = $request->start;
+
+        $users = $user->skip( $offset )->take( $limit )->get();
+
+        if ( $users ) {
+            $users->append( [
+                'encrypted_id',
+            ] );
+        }
+
+        $totalRecord = User::count();
+
+        $data = [
+            'users' => $users,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $userCount : $totalRecord,
+            'recordsTotal' => $totalRecord,
+        ];
+
+        return response()->json( $data );
+    }
+
+    private static function filter( $request, $model ) {
+
+        $filter = false;
+
+        if ( !empty( $request->registered_date ) ) {
+            if ( str_contains( $request->registered_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->registered_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'users.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->registered_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'users.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->username ) ) {
+            $model->where( 'username', 'LIKE', '%' . $request->username . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->email ) ) {
+            $model->where( 'email', 'LIKE', '%' . $request->email . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->phone_number ) ) {
+            $model->where( 'phone_number', 'LIKE', '%' . $request->phone_number . '%' );
+            $filter = true;
+        }
+
+        return [
+            'filter' => $filter,
+            'model' => $model,
+        ];
+    }
+
+    public static function oneUser( $request ) {
+
+        $user = User::find( Helper::decode( $request->id ) );
+
+        return response()->json( $user );
+    }
+
+    public static function createUser( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'username' => [ 'required', 'alpha_dash', 'unique:users,username', new CheckASCIICharacter ],
+            'email' => [ 'required', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'nullable' ],
+            'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
+
+                $exist = User::where( 'phone_number', $value )
+                    ->first();
+
+                if ( $exist ) {
+                    $fail( __( 'validation.exists' ) );
+                    return false;
+                }
+            } ],
+            'password' => [ 'required', Password::min( 8 ) ],
+        ] );
+
+        $attributeName = [
+            'username' => __( 'user.username' ),
+            'email' => __( 'user.email' ),
+            'fullname' => __( 'user.fullname' ),
+            'password' => __( 'user.password' ),
+            'phone_number' => __( 'user.phone_number' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createUserObject = [
+                'fullname' => $request->fullname,
+                'email' => strtolower( $request->email ),
+                'phone_number' => $request->phone_number,
+                'calling_code' => '+60',
+                'password' => Hash::make( $request->password ),
+                'address_1' => $request->address_1,
+                'address_2' => $request->address_2,
+                'state' => $request->state,
+                'city' => $request->city,
+                'postcode' => $request->postcode,
+                'status' => 10,
+            ];
+
+            $createUser = User::create( $createUserObject );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.users' ) ) ] ),
+        ] );
+    }
+
+    public static function updateUser( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'username' => [ 'required', 'alpha_dash', 'unique:users,username,' . $request->id, new CheckASCIICharacter ],
+            'email' => [ 'required', 'bail', 'unique:users,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'required' ],
+            'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
+                
+                $exist = User::where( 'phone_number', $value )
+                    ->where( 'id', '!=', $request->id )
+                    ->first();
+
+                if ( $exist ) {
+                    $fail( __( 'validation.exists' ) );
+                    return false;
+                }
+            } ],
+            'password' => [ 'nullable', Password::min( 8 ) ],
+        ] );
+
+        $attributeName = [
+            'username' => __( 'user.username' ),
+            'email' => __( 'user.email' ),
+            'fullname' => __( 'user.fullname' ),
+            'password' => __( 'user.password' ),
+            'phone_number' => __( 'user.phone_number' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateUser = User::find( $request->id );
+            $updateUser->username = strtolower( $request->username );
+            $updateUser->email = strtolower( $request->email );
+            $updateUser->phone_number = $request->phone_number;
+            $updateUser->address_1 = $request->address_1 ?? $updateUser->address_1;
+            $updateUser->address_2 = $request->address_2 ?? $updateUser->address_2;
+            $updateUser->state = $request->state ?? $updateUser->state;
+            $updateUser->city = $request->city ?? $updateUser->city;
+            $updateUser->postcode = $request->postcode ?? $updateUser->postcode;
+            $updateUser->calling_code = '+60';
+            $updateUser->fullname = $request->fullname;
+
+            if ( !empty( $request->password ) ) {
+                $updateUser->password = Hash::make( $request->password );
+            }
+
+            $updateUser->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.users' ) ) ] ),
+        ] );
+    }
+
+    public static function updateUserStatus( $request ) {
+        
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $updateUser = User::find( $request->id );
+        $updateUser->status = $request->status;
+        $updateUser->save();
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.users' ) ) ] ),
+        ] );
+    }
+
+    public static function createUserClient( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'email' => [ 'required', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'required' ],
+            'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
+
+                $exist = User::where( 'phone_number', $value )
+                    ->first();
+
+                if ( $exist ) {
+                    $fail( __( 'validation.exists' ) );
+                    return false;
+                }
+            } ],
+            'password' => [ 'required', 'confirmed', Password::min( 8 ) ],
+        ] );
+
+        $attributeName = [
+            'email' => __( 'user.email' ),
+            'fullname' => __( 'user.fullname' ),
+            'password' => __( 'user.password' ),
+            'phone_number' => __( 'user.phone_number' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createUserObject = [
+                'name' => strtolower( $request->fullname ),
+                'fullname' => $request->fullname,
+                'email' => strtolower( $request->email ),
+                'phone_number' => $request->phone_number,
+                'password' => Hash::make( $request->password ),
+                'status' => 10,
+            ];
+
+            $createUser = User::create( $createUserObject );
+            
+            $createUser->save();
+            
+            $createUser = User::create( [
+                'user_id' => $createUser->id,
+                'fullname' => $request->fullname,
+                'user_name' => $request->fullname,
+                'feedback_email' => $createUser->email,
+                'calling_code' => '+60',
+                'phone_number' => $createUser->phone_number,
+            ] );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.users' ) ) ] ),
+        ] );
+    }
+
+    public static function updateProfile( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            // 'name' => [ 'required', 'alpha_dash', 'unique:users,name,' . $request->id, new CheckASCIICharacter ],
+            'email' => [ 'required', 'bail', 'unique:users,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'required' ],
+            'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
+                
+                $exist = User::where( 'phone_number', $value )
+                    ->where( 'id', '!=', $request->id )
+                    ->first();
+
+                if ( $exist ) {
+                    $fail( __( 'validation.exists' ) );
+                    return false;
+                }
+            } ],
+            'password' => [ 'nullable', Password::min( 8 ) ],
+            'address_1' => [ 'nullable' ],
+            'address_2' => [ 'nullable' ],
+            'city' => [ 'nullable' ],
+            'state' => [ 'nullable' ],
+            'postcode' => [ 'nullable' ],
+        ] );
+
+        $attributeName = [
+            'username' => __( 'user.username' ),
+            'email' => __( 'user.email' ),
+            'fullname' => __( 'user.fullname' ),
+            'password' => __( 'user.password' ),
+            'phone_number' => __( 'user.phone_number' ),
+            'address_1' => __( 'user.address_1' ),
+            'address_2' => __( 'user.address_2' ),
+            'city' => __( 'user.city' ),
+            'state' => __( 'user.state' ),
+            'postcode' => __( 'user.postcode' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateUser = User::find( $request->id );
+            // $updateUser->name = strtolower( $request->name );
+            $updateUser->email = strtolower( $request->email );
+            $updateUser->phone_number = $request->phone_number;
+            $updateUser->fullname = $request->fullname;
+
+            $updateUser = User::find( $request->id );
+            $updateUser->address_1 = $request->address_1;
+            $updateUser->address_2 = $request->address_2;
+            $updateUser->city = $request->city;
+            $updateUser->state = $request->state;
+            $updateUser->postcode = $request->postcode;
+
+            if ( !empty( $request->password ) ) {
+                $updateUser->password = Hash::make( $request->password );
+            }
+
+            $updateUser->save();
+            $updateUser->save();
+
+            DB::commit();
+
+            return redirect()->route('web.profile')->with('success', __('template.x_updated', ['title' => Str::singular(__('template.users'))]));
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.users' ) ) ] ),
+        ] );
+    }
+    
+    public static function updateUserProfile( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'user_name' => [ 'nullable' ],
+            'user_fullname' => [ 'nullable' ],
+            'feedback_email' => [ 'nullable' ],
+            'user_phone_number' => [ 'nullable' ],
+            'address_1' => [ 'nullable' ],
+            'address_2' => [ 'nullable' ],
+            'city' => [ 'nullable' ],
+            'state' => [ 'nullable' ],
+            'postcode' => [ 'nullable' ],
+        ] );
+
+        $attributeName = [
+            'user_name' => __( 'user.user_name' ),
+            'user_fullname' => __( 'user.fullname' ),
+            'feedback_email' => __( 'user.feedback_email' ),
+            'user_phone_number' => __( 'user.phone_number' ),
+            'address_1' => __( 'user.address_1' ),
+            'address_2' => __( 'user.address_2' ),
+            'city' => __( 'user.city' ),
+            'state' => __( 'user.state' ),
+            'postcode' => __( 'user.postcode' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateUser = User::find( $request->id );
+            $updateUser->user->user_name = $request->user_name;
+            $updateUser->user->fullname = $request->fullname;
+            $updateUser->user->feedback_email = $request->feedback_email;
+            $updateUser->user->phone_number = $request->user_phone_number;
+            $updateUser->user->address_1 = $request->address_1;
+            $updateUser->user->address_2 = $request->address_2;
+            $updateUser->user->postcode = $request->postcode;
+            $updateUser->user->state = $request->state;
+            $updateUser->user->city = $request->city;
+            $updateUser->user->save();
+
+            DB::commit();
+
+            return redirect()->route('web.profile')->with('success', __('template.x_updated', ['title' => Str::singular(__('template.users'))]));
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.users' ) ) ] ),
+        ] );
+    }
+
+    public static function forgotPasswordOtp( $request ) {
+
+        DB::beginTransaction();
+
+        $validator = Validator::make( $request->all(), [
+            'email' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'email' => __( 'user.email' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        try {
+
+            $data['otp_code'] = '';
+            $data['identifier'] = '';
+
+            $existingUser = User::where( 'email', $request->email )->first();
+            if ( $existingUser ) {
+                $forgotPassword = Helper::requestOtp( 'forgot_password', [
+                    'id' => $existingUser->id,
+                    'email' => $existingUser->email,
+                ] );
+                
+                DB::commit();
+
+                Mail::to( $existingUser->email )->send(new OtpEmail( $forgotPassword ));
+    
+                if (Mail::failures() != 0) {
+                    
+                    $response = [
+                        'data' => [
+                            'title' => $forgotPassword ? __( 'user.otp_email_success' ) : '',
+                            'note' => $forgotPassword ? __( 'user.otp_email_success_note', [ 'title' => $existingUser->email ] ) : '',
+                            'identifier' => $forgotPassword['identifier'],
+                        ]
+                    ];
+    
+                    return $response;
+                }
+
+                return "Oops! There was some error sending the email.";
+            } else {
+                return response()->json( [
+                    'message' => $th->getMessage() . ' in line: ' . $th->getLine()
+                ], 500 );
+            }
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollBack();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine()
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message_key' => 'request_otp_success',
+            'data' => [
+                'title' => $data['title'],
+                'note' => $data['note'],
+                'otp_code' => $data['otp_code'],
+                'identifier' => $data['identifier'],
+            ],
+        ] );
+    }
+
+    public static function verifyForgotPassword( $request ) {
+        
+        try {
+            $request->merge( [
+                'identifier' => Crypt::decryptString( $request->identifier ),
+            ] );
+        } catch ( \Throwable $th ) {
+            return response()->json( [
+                'message' =>  __( 'user.invalid_otp' ),
+            ], 500 );
+        }
+
+        DB::beginTransaction();
+
+        $validator = Validator::make( $request->all(), [
+            'identifier' => [ 'required', function( $attribute, $value, $fail ) use ( $request, &$currentOtpAction ) {
+
+                $currentOtpAction = OtpAction::lockForUpdate()
+                    ->find( $value );
+
+                if ( !$currentOtpAction ) {
+                    $fail( __( 'user.invalid_otp_2' ) );
+                    return false;
+                }
+
+                if ( $currentOtpAction->status != 1 ) {
+                    $fail( __( 'user.invalid_otp_2' ) );
+                    return false;
+                }
+
+                if ( $currentOtpAction->otp_code != $request->otp_code ) {
+                    $fail( __( 'user.invalid_otp_2' ) );
+                    return false;
+                }
+
+                if ( Carbon::parse( $currentOtpAction->expire_on )->isPast() ) {
+                    $fail( __( 'user.invalid_otp_2' ) );
+                    return false;
+                }
+            } ],
+        ] )->validate();
+
+        return response()->json( [
+            'message_key' => 'verify_success',
+            'data' => [
+                'redirect_url' => route( 'web.resetPassword' ) . '?token=' . Crypt::encryptString( $request->identifier ),
+            ]
+        ] );
+    }
+
+    public static function resetPassword( $request ) {
+
+        DB::beginTransaction();
+
+        try {
+            $request->merge( [
+                'identifier' => Crypt::decryptString( $request->identifier ),
+            ] );
+        } catch ( \Throwable $th ) {
+            return response()->json( [
+                'message' =>  __( 'user.invalid_otp' ),
+            ], 500 );
+        }
+
+        $validator = Validator::make( $request->all(), [
+            'identifier' => [ 'required', function( $attribute, $value, $fail ) use ( $request, &$currentOtpAction ) {
+
+                $currentOtpAction = OtpAction::lockForUpdate()
+                    ->find( $value );
+
+                if ( !$currentOtpAction ) {
+                    $fail( __( 'user.invalid_otp' ) );
+                    return false;
+                }
+
+                if ( $currentOtpAction->status != 1 ) {
+                    $fail( __( 'user.invalid_otp' ) );
+                    return false;
+                }
+
+                if ( Carbon::parse( $currentOtpAction->expire_on )->isPast() ) {
+                    $fail( __( 'user.invalid_otp' ) );
+                    return false;
+                }
+            } ],
+            'password' => [ 'required', Password::min( 8 ) ],
+            'repeat_password' => [ 'required_with:password', function( $attribute, $value, $fail ) use ( $request ) {
+                if ( !empty( $value ) ) {
+                    if ( $value != $request->password ) {
+                        $fail( __( 'user.repeat_password_not_match' ) );
+                        return false;
+                    }
+                }
+            } ],
+        ] );
+
+        $attributeName = [
+            'password' => __( 'user.password' ),
+            'repeat_password' => __( 'user.repeat_password' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        try {
+
+            $updateUser = User::find( $currentOtpAction->user_id );
+            $updateUser->password = Hash::make( $request->password );
+            $updateUser->save();
+
+            $currentOtpAction->status = 10;
+            $currentOtpAction->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollBack();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine()
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message_key' => 'reset_success',
+            'data' => [],
+        ] );
+    }
+
+    // Api
+    public static function registerUser( $request ) {
+
+        try {
+            $request->merge( [
+                'tmp_user' => Crypt::decryptString( $request->tmp_user ),
+            ] );
+        } catch ( \Throwable $th ) {
+            return response()->json( [
+                'message' => __( 'validation.header_message' ),
+                'errors' => [
+                    'tmp_user' => [
+                        __( 'user.invalid_otp' ),
+                    ],
+                ]
+            ], 422 );
+        }
+
+        $validator = Validator::make( $request->all(), [
+            'otp_code' => [ 'required' ],
+            'tmp_user' => [ 'required', function( $attribute, $value, $fail ) use ( $request, &$currentTmpUser ) {
+
+                $currentTmpUser = TmpUser::lockForUpdate()->find( $value );
+
+                if ( !$currentTmpUser ) {
+                    $fail( __( 'user.invalid_otp' ) );
+                    return false;
+                }
+
+                if ( $currentTmpUser->status != 1 ) {
+                    $fail( __( 'user.invalid_otp' ) );
+                    return false;
+                }
+
+                if ( $currentTmpUser->otp_code != $request->otp_code ) {
+                    $fail( __( 'user.invalid_otp' ) );
+                    return false;
+                }
+            } ],
+            'email' => [ 'required', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'nullable' ],
+            'calling_code' => [ 'nullable', 'exists:countries,calling_code' ],
+            'phone_number' => [ 'nullable', 'digits_between:8,15', function( $attribute, $value, $fail ) {
+                $exist = User::where( 'calling_code', request( 'calling_code' ) )->where( 'phone_number', $value )->where( 'status', 10 )->first();
+                if ( $exist ) {
+                    $fail( __( 'validation.exists' ) );
+                    return false;
+                }
+            } ],
+            'password' => [ 'required', 'confirmed', Password::min( 8 ) ],
+        ] );
+
+        $attributeName = [
+            'email' => __( 'user.email' ),
+            'fullname' => __( 'user.fullname' ),
+            'password' => __( 'user.password' ),
+            'phone_number' => __( 'user.phone_number' ),
+            'calling_code' => __( 'user.calling_code' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createUserObject = [
+                'fullname' => strtolower( $request->fullname ),
+                'username' => strtolower( $request->email ),
+                'email' => strtolower( $request->email ),
+                'phone_number' => $request->phone_number,
+                'calling_code' => $request->calling_code,
+                'password' => Hash::make( $request->password ),
+                'status' => 10,
+            ];
+
+            $createUser = User::create( $createUserObject );
+
+            $currentTmpUser = TmpUser::find( $request->tmp_user );
+            $currentTmpUser->status = 10;
+            $currentTmpUser->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'data' => [ 
+                'message' => __( 'user.register_success' ),
+                'message_key' => 'register_success',
+                'user' => $createUser,
+                'token' => $createUser->createToken( 'user_token' )->plainTextToken
+            ],
+        ] );
+
+    }
+
+    public static function loginUser( $request ) {
+
+        $request->merge( [ 'account' => 'test' ] );
+
+        $request->validate( [
+            'email' => 'required',
+            'password' => 'required',
+            'account' => [ 'sometimes', function( $attributes, $value, $fail ) {
+
+                $user = User::where( 'email', request( 'email' ) )->first();
+                if ( !$user ) {
+                    $fail( __( 'user.user_wrong_user_password' ) );
+                    return 0;
+                }
+
+                if ( !Hash::check( request( 'password' ), $user->password ) ) {
+                    $fail( __( 'user.user_wrong_user_password' ) );
+                    return 0;
+                }
+            } ],
+        ] );
+
+        $user = User::where( 'email', $request->email )->first();
+
+        // Register OneSignal
+        if ( !empty( $request->register_token ) ) {
+            self::registerOneSignal( $user->id, $request->device_type, $request->register_token );
+        }
+
+        return response()->json( [
+            'data' => [ 
+                'message' => __( 'user.login_success' ),
+                'message_key' => 'login_success',
+                'user' => $user,
+                'token' => $user->createToken( 'user_token' )->plainTextToken
+            ],
+        ] );
+    }
+
+    public static function getUser( $request, $filterClientCode ) {
+
+        $user = User::find( auth()->user()->id );
+    
+        // If user not found, return early with error response
+        if (!$user) {
+            return response()->json([
+                'message' => __('user.user_not_found'),
+                'message_key' => 'get_user_failed',
+                'data' => null,
+            ]);
+        }
+    
+        // Success response
+        return response()->json([
+            'message' => '',
+            'message_key' => 'get_user_success',
+            'data' => $user,
+        ]);
+    }
+
+    public static function updateUserApi( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            // 'country' => 'required|exists:countries,id',
+            'fullname' => [ 'required', 'min:6' ],
+            'email' => [ 'required', 'unique:users,email,' . auth()->user()->id, 'min:8', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'calling_code' => [ 'required', 'exists:countries,calling_code' ],
+            'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) {
+                $user = User::where( 'calling_code', request( 'calling_code' ) )->where( 'phone_number', $value )->first();
+                if ( $user ) {
+                    if ( $user->id != auth()->user()->id ) {
+                        $fail( __( 'validation.unique' ) );
+                    }
+                }
+            } ],
+            'date_of_birth' => 'required',
+        ] );
+
+        $attributeName = [
+            'fullname' => __( 'user.fullname' ),
+            'email' => __( 'user.email' ),
+            'calling_code' => __( 'user.calling_code' ),
+            'phone_number' => __( 'user.phone_number' ),
+            'date_of_birth' => __( 'user.date_of_birth' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        $updateUser = User::find( auth()->user()->id );
+        $updateUser->fullname = $request->fullname;
+        $updateUser->email = $request->email;
+        $updateUser->calling_code = $request->calling_code;
+        $updateUser->phone_number = $request->phone_number;
+        $updateUser->save();
+
+        return response()->json( [
+            'message' => __( 'user.user_updated' ),
+            'message_key' => 'update_user_success',
+        ] );
+    }
+
+    public static function updateUserPassword( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'old_password' => [ 'required', Password::min( 8 ), function( $attribute, $value, $fail ) {
+                if ( !Hash::check( $value, auth()->user()->password ) ) {
+                    $fail( __( 'user.old_password_not_match' ) );
+                }
+            } ],
+            'password' => [ 'required', Password::min( 8 ), 'confirmed' ],
+        ] );
+
+        $attributeName = [
+            'old_password' => __( 'user.old_password' ),
+            'password' => __( 'user.password' ),
+            'password_confirmation' => __( 'user.password_confirmation' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        $updateUser = User::find( auth()->user()->id );
+        $updateUser->password = Hash::make( $request->password );
+        $updateUser->save();
+
+        return response()->json( [
+            'message' => __( 'user.user_password_updated' ),
+            'message_key' => 'update_user_password_success',
+        ] );
+    }
+
+    public static function requestOtp( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'request_type' => [ 'required', 'in:1,2' ],
+        ] );
+
+        $attributeName = [
+            'request_type' => __( 'user.request_type' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        if ( $request->request_type == 1 ) {
+            
+            $validator = Validator::make( $request->all(), [
+                'email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', function ($attribute, $value, $fail) use ($request) {
+                        $user = User::where('email', $value)->first();
+
+                    if ($user) {
+                        $fail(__('validation.unique'));
+                    }
+                }],
+                'request_type' => [ 'required', 'in:1' ],
+            ] );
+    
+            $attributeName = [
+                'phone_number' => __( 'user.phone_number' ),
+                'request_type' => __( 'user.request_type' ),
+            ];
+    
+            foreach ( $attributeName as $key => $aName ) {
+                $attributeName[$key] = strtolower( $aName );
+            }
+    
+            $validator->setAttributeNames( $attributeName )->validate();
+    
+            $expireOn = Carbon::now()->addMinutes( '10' );
+
+            try {
+
+                $createTmpUser = Helper::requestOtp( 'register', [
+                    'calling_code' => $request->calling_code,
+                    'phone_number' => $request->phone_number,
+                    'email' => $request->email,
+                ] );
+    
+                DB::commit();
+                $phoneNumber  = $request->calling_code . $request->phone_number;
+    
+                return response()->json( [
+                    'message' => $request->calling_code . $request->phone_number,
+                    'message_key' => 'request_otp_success',
+                    'data' => [
+                        'otp_code' => '#DEBUG - ' . $createTmpUser['otp_code'],
+                        'tmp_user' => $createTmpUser['identifier'],
+                        'title' => $createTmpUser ? __( 'user.otp_email_success' ) : '',
+                        'note' => $createTmpUser ? __( 'user.otp_email_success_note', [ 'title' => $phoneNumber ] ) : ''
+                    ]
+                ] );
+    
+            } catch ( \Throwable $th ) {
+    
+                \DB::rollBack();
+                abort( 500, $th->getMessage() . ' in line: ' . $th->getLine() );
+            }
+        } else { // Resend
+
+            try {
+                $request->merge( [
+                    'tmp_user' => Crypt::decryptString( $request->tmp_user ),
+                ] );
+            } catch ( \Throwable $th ) {
+                return response()->json( [
+                    'message' => __( 'validation.header_message' ),
+                    'errors' => [
+                        'tmp_user' => [
+                            __( 'user.invalid_otp' ),
+                        ],
+                    ]
+                ], 422 );
+            }
+
+            $validator = Validator::make( $request->all(), [
+                'tmp_user' => [ 'required', function( $attribute, $value, $fail ) {
+    
+                    $current = TmpUser::find( $value );
+                    if ( !$current ) {
+                        $fail( __( 'user.invalid_request' ) );
+                        return false;
+                    }
+    
+                    $exist = TmpUser::where( 'phone_number', $current->phone_number )->where( 'status', 1 )->count();
+                    if ( $exist == 0 ) {
+                        $fail( __( 'user.invalid_request' ) );
+                        return false;
+                    }
+                } ],
+
+            ] );
+
+            $attributeName = [
+                'tmp_user' => __( 'user.email' ),
+            ];
+    
+            foreach ( $attributeName as $key => $aName ) {
+                $attributeName[$key] = strtolower( $aName );
+            }
+    
+            $validator->setAttributeNames( $attributeName )->validate();
+            $phoneNumber  = $request->calling_code . $request->phone_number;
+            $updateTmpUser = Helper::requestOtp( 'resend', [
+                'calling_code' => $request->calling_code,
+                'tmp_user' => $request->tmp_user,
+                'title' => __( 'user.otp_email_success' ),
+                'note' =>  __( 'user.otp_email_success_note', [ 'title' => $phoneNumber ] )
+            ] );
+
+            DB::commit();
+
+            return response()->json( [
+                'message' => 'resend_otp_success',
+                'message_key' => 'resend_otp_success',
+                'data' => [
+                    'otp_code' => '#DEBUG - ' . $updateTmpUser['otp_code'],
+                    'tmp_user' => $updateTmpUser['identifier'],
+                ]
+            ] );
+        }
+    }
+}

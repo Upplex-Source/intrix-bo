@@ -78,7 +78,7 @@ $generate_barcodes = 'generate_barcodes';
                         const previewHtml = `
                             <div style="margin-bottom: 20px;">
                                 <h3>${barcode.product_name}</h3>
-                                <p><strong>Price:</strong> RM ${parseFloat(barcode.product_price).toFixed(2)}</p>
+                                <p><strong>Price:</strong> ${barcode.product_price}</p>
                                 <div>${barcode.barcodeHtml}</div>
                             </div>
                         `;

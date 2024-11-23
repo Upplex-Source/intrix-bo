@@ -370,6 +370,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-adjustment', [ AdjustmentController::class, 'createAdjustment' ] )->name( 'admin.adjustment.createAdjustment' );
                 Route::post( 'update-adjustment', [ AdjustmentController::class, 'updateAdjustment' ] )->name( 'admin.adjustment.updateAdjustment' );
                 Route::post( 'update-adjustment-status', [ AdjustmentController::class, 'updateAdjustmentStatus' ] )->name( 'admin.adjustment.updateAdjustmentStatus' );
+                Route::post( 'remove-adjustment-attachment', [ AdjustmentController::class, 'removeAdjustmentAttachment' ] )->name( 'admin.adjustment.removeAdjustmentAttachment' );
 
             } );
 
@@ -511,8 +512,26 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-measurement-unit-status', [ MeasurementUnitController::class, 'updateMeasurementUnit-Status' ] )->name( 'admin.measurement_unit.updateMeasurementUnitStatus' );
                 Route::post( 'remove-measurement-unit-gallery-image', [ MeasurementUnitController::class, 'removeMeasurementUnit-GalleryImage' ] )->name( 'admin.measurement_unit.removeMeasurementUnitGalleryImage' );
             } );
-
         } );
+
+        Route::prefix( 'users' )->group( function() {
+            Route::group( [ 'middleware' => [ 'permission:view users' ] ], function() {
+                Route::get( '/', [ UserController::class, 'index' ] )->name( 'admin.module_parent.user.index' );
+            } );
+            Route::group( [ 'middleware' => [ 'permission:add users' ] ], function() {
+                Route::get( 'add', [ UserController::class, 'add' ] )->name( 'admin.user.add' );
+            } );
+            Route::group( [ 'middleware' => [ 'permission:edit users' ] ], function() {
+                Route::get( 'edit', [ UserController::class, 'edit' ] )->name( 'admin.user.edit' );
+            } );
+
+            Route::post( 'all-users', [ UserController::class, 'allUsers' ] )->name( 'admin.user.allUsers' );
+            Route::post( 'one-user', [ UserController::class, 'oneUser' ] )->name( 'admin.user.oneUser' );
+            Route::post( 'create-user', [ UserController::class, 'createUser' ] )->name( 'admin.user.createUser' );
+            Route::post( 'update-user', [ UserController::class, 'updateUser' ] )->name( 'admin.user.updateUser' );
+            Route::post( 'update-user-status', [ UserController::class, 'updateUserStatus' ] )->name( 'admin.user.updateUserStatus' );
+        } );
+        
     } );
 
     // Public Route

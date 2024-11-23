@@ -32,7 +32,7 @@ $measurement_unit_create = 'measurement_unit_create';
                 <div class="mb-3 row">
                     <label for="{{ $measurement_unit_create }}_tax_percentage" class="col-sm-5 col-form-label">{{ __( 'measurement_unit.tax_percentage' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $measurement_unit_create }}_tax_percentage">
+                        <input type="number" class="form-control" id="{{ $measurement_unit_create }}_tax_percentage">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@ $measurement_unit_create = 'measurement_unit_create';
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.measurement_unit.createBrand' ) }}',
+                url: '{{ route( 'admin.measurement_unit.createMeasurementUnit' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,

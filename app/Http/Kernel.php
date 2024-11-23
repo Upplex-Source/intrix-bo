@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
         'checkAdminIsMFA' => \App\Http\Middleware\CheckAdminIsMFA::class,
+        'api_version' => \App\Http\Middleware\APIVersion::class,
         'checkMFA' => \App\Http\Middleware\CheckMFA::class,
     ];
 }

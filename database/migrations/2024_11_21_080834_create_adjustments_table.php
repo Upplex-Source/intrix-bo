@@ -18,6 +18,7 @@ class CreateAdjustmentsTable extends Migration
             $table->foreignId( 'causer_id' )->nullable()->constrained( 'administrators' )->onUpdate( 'restrict' )->onDelete( 'cascade' );
             $table->foreignId( 'warehouse_id' )->nullable()->constrained( 'warehouses' )->onUpdate( 'restrict' )->onDelete( 'cascade' );
             $table->string('attachment')->nullable();
+            $table->string('reference')->nullable();
             $table->text('remarks')->nullable();
             $table->tinyInteger('status')->default(10);
             $table->timestamps();

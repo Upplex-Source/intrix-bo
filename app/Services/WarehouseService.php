@@ -237,6 +237,12 @@ class WarehouseService
                     'image_path',
                     'thumbnail_path',
                 ] );
+
+                $warehouses->each(function ($warehouse) {
+                    $warehouse->total_quantity = $warehouse->totalQuantity();
+                    $warehouse->total_price = $warehouse->totalPrice();
+                });
+            
             }
 
             $totalRecord = Warehouse::count();

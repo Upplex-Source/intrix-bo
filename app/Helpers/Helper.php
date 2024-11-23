@@ -5,6 +5,17 @@ namespace App\Helpers;
 use Hashids\Hashids;
 use Carbon\Carbon;
 
+use App\Models\{
+    OtpAction,
+    TmpUser,
+    Option,
+    Order,
+};
+
+use Illuminate\Support\Facades\{
+    Crypt
+};
+
 class Helper {
 
     public static function websiteName() {
@@ -195,4 +206,100 @@ class Helper {
             return $created->format( 'H:i' );
         }
     }   
+    public static function requestOtp( $action, $data = [] ) {
+
+        $expireOn = Carbon::now()->addMinutes( '10' );
+
+        if ( $action == 'register' ) {
+
+            $callingCode = $data['calling_code'];
+            $phoneNumber = $data['phone_number'];
+            $email = $data['email'];
+
+            $createOtp = TmpUser::create( [
+                'calling_code' => $data['calling_code'],
+                'phone_number' => $data['phone_number'],
+                'email' => $data['email'],
+                'otp_code' => mt_rand( 100000, 999999 ),
+                'status' => 1,
+                'expire_on' => $expireOn,
+            ] );
+
+            $body = 'Your OTP for Infinite Design ' . $action . ' is ' . $createOtp->otp_code;
+
+        } 
+        else if ( $action == 'resend' ) {
+
+            $callingCode = $data['calling_code'];
+            $tmpUser = $data['tmp_user'];
+
+            $createOtp = TmpUser::find( $tmpUser );
+            $createOtp->otp_code = mt_rand( 100000, 999999 );
+            $createOtp->expire_on = $expireOn;
+            $createOtp->save();
+
+            $phoneNumber = $createOtp->phone_number;
+
+            $body = 'Your OTP for Infinite Design ' . $action . ' is ' . $createOtp->otp_code;
+
+        } 
+        else if ( $action == 'forgot_password' ) {
+
+            $callingCode = $data['calling_code'];
+            $phoneNumber = $data['phone_number'];
+            $email = $data['email'];      
+            
+            $createOtp = OtpAction::create( [
+                'user_id' => $data['id'],
+                'action' => $action,
+                'otp_code' => mt_rand( 100000, 999999 ),
+                'expire_on' => $expireOn,
+            ] );
+
+            $body = 'Your OTP for Infinite Design forgot password is ' . $createOtp->otp_code;
+
+        }else if ( $action == 'update_account' ) {
+
+            $callingCode = $data['calling_code'];
+            $phoneNumber = $data['phone_number'];
+            $email = $data['email'];      
+            
+            $createOtp = OtpAction::create( [
+                'user_id' => $data['id'],
+                'action' => $action,
+                'otp_code' => mt_rand( 100000, 999999 ),
+                'expire_on' => $expireOn,
+            ] );
+
+            $body = 'Your OTP for Infinite Design update account is ' . $createOtp->otp_code;
+
+        }else {
+
+            $currentUser = auth()->user();
+
+            $callingCode = $currentUser->calling_code;
+            $phoneNumber = $currentUser->phone_number;
+
+            $createOtp = OtpAction::create( [
+                'user_id' => $currentUser->id,
+                'action' => $action,
+                'otp_code' => mt_rand( 100000, 999999 ),
+                'expire_on' => $expireOn,
+            ] );
+
+            $body = 'Your OTP for Infinite Design ' . $action . ' is ' . $createOtp->otp_code;
+        }
+
+        // SMS JOB
+        if ( config( 'services.sms.enabled' ) ) {
+            SendOTP::dispatch( $callingCode . $phoneNumber, $body );
+        }
+
+        return [
+            'identifier' => Crypt::encryptString( $createOtp->id ),
+            'otp_code' => $createOtp->otp_code,
+        ];
+    }
+
+    
 }

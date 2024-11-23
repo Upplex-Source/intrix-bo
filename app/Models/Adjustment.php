@@ -23,6 +23,7 @@ class Adjustment extends Model
         'warehouse_id',
         'attachment',
         'remarks',
+        'reference',
         'status',
     ];
 
@@ -34,9 +35,9 @@ class Adjustment extends Model
         return $this->belongsTo( Warehouse::class, 'warehouse_id' );
     }
 
-    public function Adjustment()
+    public function AdjustmentMeta()
     {
-        return $this->belongsToMany(AdjustmentMeta::class, 'adjustment_id');
+        return $this->hasMany(AdjustmentMeta::class, 'adjustment_id');
     }
 
     public function getPathAttribute() {
@@ -56,6 +57,7 @@ class Adjustment extends Model
         'warehouse_id',
         'attachment',
         'remarks',
+        'reference',
         'status',
     ];
 

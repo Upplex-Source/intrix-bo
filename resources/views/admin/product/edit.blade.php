@@ -1,5 +1,5 @@
 <?php
-$product_create = 'product_create';
+$product_edit = 'product_edit';
 $barcodes = $data['barcodes'];
 $productTypes = $data['product_types'];
 $salesUnits = $data['unit_types']['sale_unit'];
@@ -48,8 +48,8 @@ $warehouses = $data['warehouses'];
             
                 <div class="row mb-3">
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_product_type" class="form-label">{{ __( 'product.product_type' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_product_type" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.product_type' ) ] ) }}">
+                        <label for="{{ $product_edit }}_product_type" class="form-label">{{ __( 'product.product_type' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_product_type" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.product_type' ) ] ) }}">
                             <option value="">{{ __('Select Product Type') }}</option>
                             @foreach ($productTypes as $key => $productType)
                                 <option value="{{ $key }}">{{ $productType }}</option>
@@ -58,14 +58,14 @@ $warehouses = $data['warehouses'];
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_title" class="form-label">{{ __( 'product.title' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_title">
+                        <label for="{{ $product_edit }}_title" class="form-label">{{ __( 'product.title' ) }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_title">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_product_code" class="form-label">{{ __( 'product.product_code' ) }}</label>
+                        <label for="{{ $product_edit }}_product_code" class="form-label">{{ __( 'product.product_code' ) }}</label>
                         <div class="d-flex">
-                            <input type="text" class="form-control" id="{{ $product_create }}_product_code">
+                            <input type="text" class="form-control" id="{{ $product_edit }}_product_code">
                             <div class="invalid-feedback"></div>
                             <button type="button" class="btn btn-outline-secondary ms-1" id="generate_product_code">
                                 <i class="fas fa-sync-alt"></i> {{ __('Generate') }}
@@ -76,8 +76,8 @@ $warehouses = $data['warehouses'];
             
                 <div class="row mb-3">
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_barcode" class="form-label">{{ __( 'product.barcode' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_barcode" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.barcode' ) ] ) }}">
+                        <label for="{{ $product_edit }}_barcode" class="form-label">{{ __( 'product.barcode' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_barcode" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.barcode' ) ] ) }}">
                             <option value="">{{ __('Select Barcode Type') }}</option>
                             @foreach ($barcodes as $barcode)
                                 <option value="{{ $barcode }}">{{ $barcode }}</option>
@@ -86,14 +86,14 @@ $warehouses = $data['warehouses'];
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_brand" class="form-label">{{ __( 'product.brand' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_brand" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.brand' ) ] ) }}">
+                        <label for="{{ $product_edit }}_brand" class="form-label">{{ __( 'product.brand' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_brand" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.brand' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_category" class="form-label">{{ __( 'product.category' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_category" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.category' ) ] ) }}">
+                        <label for="{{ $product_edit }}_category" class="form-label">{{ __( 'product.category' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_category" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.category' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -101,20 +101,20 @@ $warehouses = $data['warehouses'];
             
                 <div class="row mb-3">
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_supplier" class="form-label">{{ __( 'product.supplier' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.supplier' ) ] ) }}">
+                        <label for="{{ $product_edit }}_supplier" class="form-label">{{ __( 'product.supplier' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.supplier' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_unit" class="form-label">{{ __( 'product.unit' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.unit' ) ] ) }}">
+                        <label for="{{ $product_edit }}_unit" class="form-label">{{ __( 'product.unit' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.unit' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_workmanship" class="form-label">{{ __( 'product.workmanship' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_workmanship" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.workmanship' ) ] ) }}">
+                        <label for="{{ $product_edit }}_workmanship" class="form-label">{{ __( 'product.workmanship' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_workmanship" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.workmanship' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -125,19 +125,19 @@ $warehouses = $data['warehouses'];
                 <div class="row mb-3">
                     
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_address_1" class="form-label">{{ __( 'product.address_1' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_address_1">
+                        <label for="{{ $product_edit }}_address_1" class="form-label">{{ __( 'product.address_1' ) }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_address_1">
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_address_2" class="form-label">{{ __( 'product.address_2' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_address_2">
+                        <label for="{{ $product_edit }}_address_2" class="form-label">{{ __( 'product.address_2' ) }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_address_2">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_city" class="form-label">{{ __( 'product.city' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_city">
+                        <label for="{{ $product_edit }}_city" class="form-label">{{ __( 'product.city' ) }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_city">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -145,18 +145,18 @@ $warehouses = $data['warehouses'];
                 <div class="row mb-3">
                     
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_state" class="form-label">{{ __( 'product.state' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_state">
+                        <label for="{{ $product_edit }}_state" class="form-label">{{ __( 'product.state' ) }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_state">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_postcode" class="form-label">{{ __( 'product.postcode' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_postcode">
+                        <label for="{{ $product_edit }}_postcode" class="form-label">{{ __( 'product.postcode' ) }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_postcode">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_sale_unit" class="form-label">{{ __( 'product.sale_unit' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_sale_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.sale_unit' ) ] ) }}">
+                        <label for="{{ $product_edit }}_sale_unit" class="form-label">{{ __( 'product.sale_unit' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_sale_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.sale_unit' ) ] ) }}">
                             <option value="">{{ __('Select Sales Units Type') }}</option>
                             @foreach ($salesUnits as $salesUnit)
                                 <option value="{{ $salesUnit }}">{{ $salesUnit }}</option>
@@ -169,8 +169,8 @@ $warehouses = $data['warehouses'];
                 <div class="row mb-3">
                     
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_purchase_unit" class="form-label">{{ __( 'product.purchase_unit' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_purchase_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.purchase_unit' ) ] ) }}">
+                        <label for="{{ $product_edit }}_purchase_unit" class="form-label">{{ __( 'product.purchase_unit' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_purchase_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.purchase_unit' ) ] ) }}">
                             <option value="">{{ __('Select Purchase Units Type') }}</option>
                             @foreach ($purchaseUnits as $purchaseUnit)
                                 <option value="{{ $purchaseUnit }}">{{ $purchaseUnit }}</option>
@@ -179,13 +179,13 @@ $warehouses = $data['warehouses'];
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_cost" class="form-label">{{ __( 'product.cost' ) }}</label>
-                        <input type="number" class="form-control" id="{{ $product_create }}_cost">
+                        <label for="{{ $product_edit }}_cost" class="form-label">{{ __( 'product.cost' ) }}</label>
+                        <input type="number" class="form-control" id="{{ $product_edit }}_cost">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_price" class="form-label">{{ __( 'product.price' ) }}</label>
-                        <input type="number" class="form-control" id="{{ $product_create }}_price">
+                        <label for="{{ $product_edit }}_price" class="form-label">{{ __( 'product.price' ) }}</label>
+                        <input type="number" class="form-control" id="{{ $product_edit }}_price">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -193,19 +193,19 @@ $warehouses = $data['warehouses'];
                 <div class="row mb-3">
                     
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_alert_quantity" class="form-label">{{ __( 'product.alert_quantity' ) }}</label>
-                        <input type="number" class="form-control" id="{{ $product_create }}_alert_quantity">
+                        <label for="{{ $product_edit }}_alert_quantity" class="form-label">{{ __( 'product.alert_quantity' ) }}</label>
+                        <input type="number" class="form-control" id="{{ $product_edit }}_alert_quantity">
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_quantity" class="form-label">{{ __( 'product.quantity' ) }}</label>
-                        <input type="number" class="form-control" id="{{ $product_create }}_quantity">
+                        <label for="{{ $product_edit }}_quantity" class="form-label">{{ __( 'product.quantity' ) }}</label>
+                        <input type="number" class="form-control" id="{{ $product_edit }}_quantity">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_tax_method" class="form-label">{{ __( 'product.tax_method' ) }}</label>
-                        <select class="form-select" id="{{ $product_create }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
+                        <label for="{{ $product_edit }}_tax_method" class="form-label">{{ __( 'product.tax_method' ) }}</label>
+                        <select class="form-select" id="{{ $product_edit }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -213,7 +213,7 @@ $warehouses = $data['warehouses'];
             
                 <div class="mb-3">
                     <label>{{ __( 'product.image' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $product_create }}_image" style="min-height: 0px;">
+                    <div class="dropzone mb-3" id="{{ $product_edit }}_image" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
@@ -222,100 +222,105 @@ $warehouses = $data['warehouses'];
                 </div>
                 
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_description" class="col-sm-3 col-form-label">{{ __( 'product.description' ) }}</label>
+                    <label for="{{ $product_edit }}_description" class="col-sm-3 col-form-label">{{ __( 'product.description' ) }}</label>
                     <div class="col-sm-9">
-                        <textarea class="form-control" id="{{ $product_create }}_description" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
+                        <textarea class="form-control" id="{{ $product_edit }}_description" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="i\nvalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_featured" class="col-sm-5 col-form-label">{{ __( 'product.featured' ) }}</label>
+                    <label for="{{ $product_edit }}_featured" class="col-sm-5 col-form-label">{{ __( 'product.featured' ) }}</label>
                     <div class="col-sm-7">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="{{ $product_create }}_featured" name="{{ $product_create }}_featured" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
-                            <label class="form-check-label" for="{{ $product_create }}_featured">{{ __('Disabled') }}</label>
+                            <input class="form-check-input" type="checkbox" id="{{ $product_edit }}_featured" name="{{ $product_edit }}_featured" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
+                            <label class="form-check-label" for="{{ $product_edit }}_featured">{{ __('Disabled') }}</label>
                         </div>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_has_warehouse" class="col-sm-5 col-form-label">{{ __( 'product.has_warehouse' ) }}</label>
+                    <label for="{{ $product_edit }}_has_warehouse" class="col-sm-5 col-form-label">{{ __( 'product.has_warehouse' ) }}</label>
                     <div class="col-sm-7">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="{{ $product_create }}_has_warehouse" name="{{ $product_create }}_has_warehouse" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
-                            <label class="form-check-label" for="{{ $product_create }}_has_warehouse">{{ __('Disabled') }}</label>
+                            <input class="form-check-input" type="checkbox" id="{{ $product_edit }}_has_warehouse" name="{{ $product_edit }}_has_warehouse" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
+                            <label class="form-check-label" for="{{ $product_edit }}_has_warehouse">{{ __('Disabled') }}</label>
                         </div>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 
-                <div class="mb-3 row d-none" id="{{ $product_create }}_has_warehouse_input">
+                <div class="mb-3 row d-none" id="{{ $product_edit }}_has_warehouse_input">
                     @foreach ($warehouses as $warehouse)
                         <div class="col-sm-4 warehouse-group">
-                            <label for="{{ $product_create }}_warehouse_title_{{ $warehouse->id }}" class="form-label">{{ $warehouse->title }} Price:</label>
-                            <input type="text" class="form-control" id="{{ $product_create }}_warehouse_title_{{ $warehouse->id }}" name="{{ $product_create }}_warehouse_price[]">
+                            <label for="{{ $product_edit }}_warehouse_title_{{ $warehouse->id }}" class="form-label">{{ $warehouse->title }} Price:</label>
+                            <input type="text" class="form-control" id="{{ $product_edit }}_warehouse_title_{{ $warehouse->id }}" name="{{ $product_edit }}_warehouse_price[]">
                             <div class="invalid-feedback"></div>
                         </div>
                     @endforeach
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_has_imei" class="col-sm-5 col-form-label">{{ __( 'product.has_imei' ) }}</label>
+                    <label for="{{ $product_edit }}_has_imei" class="col-sm-5 col-form-label">{{ __( 'product.has_imei' ) }}</label>
                     <div class="col-sm-7">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="{{ $product_create }}_has_imei" name="{{ $product_create }}_has_imei" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
-                            <label class="form-check-label" for="{{ $product_create }}_has_imei">{{ __('Disabled') }}</label>
+                            <input class="form-check-input" type="checkbox" id="{{ $product_edit }}_has_imei" name="{{ $product_edit }}_has_imei" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
+                            <label class="form-check-label" for="{{ $product_edit }}_has_imei">{{ __('Disabled') }}</label>
                         </div>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
-                <div class="mb-3 row d-none"id="{{ $product_create }}_has_imei_input">
+                <div class="mb-3 row d-none"id="{{ $product_edit }}_has_imei_input">
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_imei" class="form-label">{{ __( 'product.imei' ) }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_imei">
+                        <label for="{{ $product_edit }}_imei" class="form-label">{{ __( 'product.imei' ) }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_imei">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-4">
-                        <label for="{{ $product_create }}_serial_number" class="form-label">{{ __('product.serial_number') }}</label>
-                        <input type="text" class="form-control" id="{{ $product_create }}_serial_number">
+                        <label for="{{ $product_edit }}_serial_number" class="form-label">{{ __('product.serial_number') }}</label>
+                        <input type="text" class="form-control" id="{{ $product_edit }}_serial_number">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_has_variant" class="col-sm-5 col-form-label">{{ __( 'product.has_variant' ) }}</label>
+                    <label for="{{ $product_edit }}_has_variant" class="col-sm-5 col-form-label">{{ __( 'product.has_variant' ) }}</label>
                     <div class="col-sm-7">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="{{ $product_create }}_has_variant" name="{{ $product_create }}_has_variant" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
-                            <label class="form-check-label" for="{{ $product_create }}_has_variant">{{ __('Disabled') }}</label>
+                            <input class="form-check-input" type="checkbox" id="{{ $product_edit }}_has_variant" name="{{ $product_edit }}_has_variant" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
+                            <label class="form-check-label" for="{{ $product_edit }}_has_variant">{{ __('Disabled') }}</label>
                         </div>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <!-- Variant Input Section -->
-                <div class="mb-3 row d-none" id="{{ $product_create }}_has_variant_input">
+                <div class="mb-3 row d-none" id="{{ $product_edit }}_has_variant_input">
                     <div class="variant-container">
                         <div class="variant-input-group row mb-2">
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <label class="form-label">{{ __('product.variant_name') }}</label>
-                                <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]">
+                                <input type="text" class="form-control" name="{{ $product_edit }}_variant_name[]">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <label class="form-label">{{ __('product.variant_price') }}</label>
-                                <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]">
+                                <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                                <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]">
+                                <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-sm-3 d-flex align-items-end">
+                            <div class="col-sm-6 mb-2">
+                                <label class="form-label">{{ __('product.sku') }}</label>
+                                <input type="number" class="form-control" name="{{ $product_edit }}_sku[]">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-sm-6 d-flex align-items-end">
                                 <button type="button" class="variant_add btn btn-success me-2">+</button>
                                 <button type="button" class="variant_remove btn btn-danger">-</button>
                             </div>
@@ -324,39 +329,39 @@ $warehouses = $data['warehouses'];
                 </div>
                 
                 <div class="mb-3 row">
-                    <label for="{{ $product_create }}_has_promotion" class="col-sm-5 col-form-label">{{ __( 'product.has_promotion' ) }}</label>
+                    <label for="{{ $product_edit }}_has_promotion" class="col-sm-5 col-form-label">{{ __( 'product.has_promotion' ) }}</label>
                     <div class="col-sm-7">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="{{ $product_create }}_has_promotion" name="{{ $product_create }}_has_promotion" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
-                            <label class="form-check-label" for="{{ $product_create }}_has_promotion">{{ __('Disabled') }}</label>
+                            <input class="form-check-input" type="checkbox" id="{{ $product_edit }}_has_promotion" name="{{ $product_edit }}_has_promotion" value="1" onchange="this.nextElementSibling.textContent = this.checked ? '{{ __('Enabled') }}' : '{{ __('Disabled') }}';">
+                            <label class="form-check-label" for="{{ $product_edit }}_has_promotion">{{ __('Disabled') }}</label>
                         </div>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
-                <div class="mb-3 row d-none" id="{{ $product_create }}_has_promotion_input">
+                <div class="mb-3 row d-none" id="{{ $product_edit }}_has_promotion_input">
                     <div class="col-sm-3">
                         <label class="form-label">{{ __('product.promotion_start') }}</label>
-                        <input type="text" class="form-control" name="{{ $product_create }}_promotion_start" id="{{ $product_create }}_promotion_start">
+                        <input type="text" class="form-control" name="{{ $product_edit }}_promotion_start" id="{{ $product_edit }}_promotion_start">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-3">
                         <label class="form-label">{{ __('product.promotion_end') }}</label>
-                        <input type="text" class="form-control" name="{{ $product_create }}_promotion_end" id="{{ $product_create }}_promotion_end">
+                        <input type="text" class="form-control" name="{{ $product_edit }}_promotion_end" id="{{ $product_edit }}_promotion_end">
                         <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-3">
                         <label class="form-label">{{ __('product.promotion_price') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_promotion_price" id="{{ $product_create }}_promotion_price">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_promotion_price" id="{{ $product_edit }}_promotion_price">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 
                 
                 <div class="text-end">
-                    <button id="{{ $product_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $product_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $product_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $product_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -370,7 +375,7 @@ $warehouses = $data['warehouses'];
 <script>
 window.ckeupload_path = '{{ route( 'admin.product.ckeUpload' ) }}';
 window.csrf_token = '{{ csrf_token() }}';
-window.cke_element1 = 'product_create_description';
+window.cke_element1 = 'product_edit_description';
 </script>
 
 <script src="{{ asset( 'admin/js/ckeditor/ckeditor-init.js' ) }}"></script>
@@ -379,7 +384,7 @@ window.cke_element1 = 'product_create_description';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let fe = '#{{ $product_create }}',
+        let fe = '#{{ $product_edit }}',
                 fileID = '';
 
         $( fe + '_cancel' ).click( function() {
@@ -440,7 +445,8 @@ window.cke_element1 = 'product_create_description';
             formData.append( 'alert_quantity', $( fe + '_alert_quantity' ).val() );
             formData.append( 'quantity', $( fe + '_quantity' ).val() );
             formData.append( 'tax_method', $( fe + '_tax_method' ).val() );
-            formData.append( 'description', JSON.stringify(editor.getData()) );
+
+            formData.append( 'description', editor.getData() );
             console.log(JSON.stringify(editor.getData()))
             console.log(editor.getData())
             formData.append( 'featured', $(fe + '_featured').is(':checked') ? 1 : 0);
@@ -471,15 +477,17 @@ window.cke_element1 = 'product_create_description';
                 $('.variant-input-group').each(function(index, element) {
                     // Get values from the current variant input group
 
-                    var variantName = $(element).find('input[name="{{ $product_create }}_variant_name[]"]').val();
-                    var variantPrice = $(element).find('input[name="{{ $product_create }}_variant_price[]"]').val();
-                    var variantQuantity = $(element).find('input[name="{{ $product_create }}_variant_quantity[]"]').val();
-                    var variantId = $(element).find('input[name="{{ $product_create }}_variant_id[]"]').val() ?? 0;
+                    var variantName = $(element).find('input[name="{{ $product_edit }}_variant_name[]"]').val();
+                    var variantPrice = $(element).find('input[name="{{ $product_edit }}_variant_price[]"]').val();
+                    var variantQuantity = $(element).find('input[name="{{ $product_edit }}_variant_quantity[]"]').val();
+                    var variantSku = $(element).find('input[name="{{ $product_edit }}_sku[]"]').val();
+                    var variantId = $(element).find('input[name="{{ $product_edit }}_variant_id[]"]').val() ?? 0;
                     
                     // Append them to formData with a structured key
                     formData.append(`variants[${index}][name]`, variantName);
                     formData.append(`variants[${index}][price]`, variantPrice);
                     formData.append(`variants[${index}][quantity]`, variantQuantity);
+                    formData.append(`variants[${index}][sku]`, variantSku);
                     formData.append(`variants[${index}][id]`, variantId);
                 });
             }
@@ -792,17 +800,21 @@ window.cke_element1 = 'product_create_description';
                 const newGroup = document.createElement('div');
                 newGroup.className = 'variant-input-group row mb-2';
                 newGroup.innerHTML = `
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_name') }}</label>
-                        <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]">
+                        <input type="text" class="form-control" name="{{ $product_edit }}_variant_name[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">{{ __('product.sku') }}</label>
+                        <input type="number" class="form-control" name="{{ $product_edit }}_sku[]">
                     </div>
                     <div class="col-sm-3 d-flex align-items-end">
                         <button type="button" class="btn btn-success me-2 variant_add">+</button>
@@ -831,17 +843,21 @@ window.cke_element1 = 'product_create_description';
                 const newGroup = document.createElement('div');
                 newGroup.className = 'variant-input-group row mb-2';
                 newGroup.innerHTML = `
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_name') }}</label>
-                        <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]">
+                        <input type="text" class="form-control" name="{{ $product_edit }}_variant_name[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">{{ __('product.sku') }}</label>
+                        <input type="number" class="form-control" name="{{ $product_edit }}_sku[]">
                     </div>
                     <div class="col-sm-3 d-flex align-items-end">
                         <button type="button" class="btn btn-success me-2 variant_add">+</button>
@@ -957,7 +973,7 @@ window.cke_element1 = 'product_create_description';
 
                     response.warehouses.forEach(warehouse => {
                         // Find the corresponding input field for the warehouse
-                        const warehouseInput = document.querySelector(`#product_create_warehouse_title_${warehouse.id}`);
+                        const warehouseInput = document.querySelector(`#product_edit_warehouse_title_${warehouse.id}`);
 
                         if (warehouseInput) {
                             // Set the price from the response into the input field
@@ -1066,19 +1082,23 @@ window.cke_element1 = 'product_create_description';
                 const newGroup = document.createElement('div');
                 newGroup.className = 'variant-input-group row mb-2';
                 newGroup.innerHTML = `
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_name') }}</label>
-                        <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]" value="${variant.title}">
+                        <input type="text" class="form-control" name="{{ $product_edit }}_variant_name[]" value="${variant.title}">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]" value="${variant.price}">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]" value="${variant.price}">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]" value="${variant.quantity}">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]" value="${variant.quantity}">
                     </div>
-                        <input type="hidden" class="form-control" name="{{ $product_create }}_variant_id[]" value="${variant.id}">
+                    <div class="col-sm-6">
+                        <label class="form-label">{{ __('product.sku') }}</label>
+                        <input type="number" class="form-control" name="{{ $product_edit }}_sku[]" value="${variant.sku}">
+                    </div>
+                        <input type="hidden" class="form-control" name="{{ $product_edit }}_variant_id[]" value="${variant.id}">
                     <div class="col-sm-3 d-flex align-items-end">
                         <button type="button" class="btn btn-success me-2 variant_add">+</button>
                         <button type="button" class="btn btn-danger variant_remove">-</button>
@@ -1100,17 +1120,21 @@ window.cke_element1 = 'product_create_description';
                 const newGroup = document.createElement('div');
                 newGroup.className = 'variant-input-group row mb-2';
                 newGroup.innerHTML = `
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_name') }}</label>
-                        <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]">
+                        <input type="text" class="form-control" name="{{ $product_edit }}_variant_name[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]">
+                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">{{ __('product.sku') }}</label>
+                        <input type="number" class="form-control" name="{{ $product_edit }}_sku[]">
                     </div>
                     <div class="col-sm-3 d-flex align-items-end">
                         <button type="button" class="btn btn-success me-2 variant_add">+</button>

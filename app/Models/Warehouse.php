@@ -36,6 +36,22 @@ class Warehouse extends Model
                     ->withTimestamps();
     }
 
+    // Function to calculate total quantity
+    public function totalQuantity()
+    {
+        return $this->products->sum(function ($product) {
+            return $product->pivot->quantity;
+        });
+    }
+
+    // Function to calculate total price
+    public function totalPrice()
+    {
+        return $this->products->sum(function ($product) {
+            return $product->pivot->quantity * $product->pivot->price;
+        });
+    }
+
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
     }

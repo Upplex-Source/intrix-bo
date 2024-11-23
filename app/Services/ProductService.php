@@ -59,6 +59,7 @@ class ProductService
             'variants.*.name' => [ 'required' ],
             'variants.*.price' => [ 'nullable', 'numeric', 'min:0' ],
             'variants.*.quantity' => [ 'nullable', 'numeric', 'min:0' ],
+            'variants.*.sku' => [ 'nullable' ],
             'has_promotion' => [ 'nullable' ],
             'promotion_start' => [ 'nullable' ],
             'promotion_end' => [ 'nullable' ],
@@ -248,6 +249,7 @@ class ProductService
                         'title' => $variant['name'],
                         'price' => $variant['price'],
                         'quantity' => $variant['quantity'],
+                        'sku' => $variant['sku'],
                         'status' => 10,
                     ]);
                 }
@@ -302,6 +304,7 @@ class ProductService
             'variants.*.name' => [ 'required' ],
             'variants.*.price' => [ 'nullable', 'numeric', 'min:0' ],
             'variants.*.quantity' => [ 'nullable', 'numeric', 'min:0' ],
+            'variants.*.sku' => [ 'nullable' ],
             'has_promotion' => [ 'nullable' ],
             'promotion_start' => [ 'nullable' ],
             'promotion_end' => [ 'nullable' ],
@@ -406,7 +409,7 @@ class ProductService
             }
             
             $updateProduct = Product::find( $request->id );
-
+  
             $updateProduct->brand_id = $request->brand ?? $updateProduct->brand_id;
             $updateProduct->supplier_id = $request->supplier ?? $updateProduct->supplier_id;
             $updateProduct->unit_id = $request->unit ?? $updateProduct->unit_id;
@@ -514,6 +517,7 @@ class ProductService
                             'title' => $variant['name'],
                             'price' => $variant['price'],
                             'quantity' => $variant['quantity'],
+                            'sku' => $variant['sku'],
                             'status' => 10,
                         ]);
                     }else {
@@ -521,6 +525,7 @@ class ProductService
                         $updateProductVariant->title = $variant['name'];
                         $updateProductVariant->price = $variant['price'];
                         $updateProductVariant->quantity = $variant['quantity'];
+                        $updateProductVariant->sku = $variant['sku'];
                         $updateProductVariant->save();
                     }
 

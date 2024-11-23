@@ -32,7 +32,7 @@ $measurement_unit_edit = 'measurement_unit_edit';
                 <div class="mb-3 row">
                     <label for="{{ $measurement_unit_edit }}_tax_percentage" class="col-sm-5 col-form-label">{{ __( 'measurement_unit.tax_percentage' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $measurement_unit_edit }}_tax_percentage">
+                        <input type="number" class="form-control" id="{{ $measurement_unit_edit }}_tax_percentage">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ $measurement_unit_edit = 'measurement_unit_edit';
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'title', $( fe + '_title' ).val() );
             formData.append( 'description', $( fe + '_description' ).val() );
-            formData.append( 'tax_percentage', $( fc + '_tax_percentage' ).val() );
+            formData.append( 'tax_percentage', $( fe + '_tax_percentage' ).val() );
             formData.append( 'image', fileID );
             formData.append( '_token', '{{ csrf_token() }}' );
 
@@ -132,6 +132,7 @@ $measurement_unit_edit = 'measurement_unit_edit';
                     
                     $( fe + '_title' ).val( response.title );
                     $( fe + '_description' ).val( response.description );
+                    $( fe + '_tax_percentage' ).val( response.tax_percentage );
 
                     const dropzone = new Dropzone( fe + '_image', {
                         url: '{{ route( 'admin.file.upload' ) }}',

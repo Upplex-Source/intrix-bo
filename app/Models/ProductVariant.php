@@ -24,6 +24,7 @@ class ProductVariant extends Model
         'title',
         'description',
         'price',
+        'sku',
         'quantity',
         'status',
     ];
@@ -50,6 +51,7 @@ class ProductVariant extends Model
         'title',
         'description',
         'price',
+        'sku',
         'quantity',
         'status',
     ];

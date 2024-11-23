@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: Laravel
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+paths:
+  /api/v1/users:
+    post:
+      summary: '1. Create an user'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'User API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tmp_user:
+                  type: string
+                  description: 'The temporary user ID during request OTP.'
+                  example: eyJpdiI...
+                fullname:
+                  type: string
+                  description: 'The fullname for register.'
+                  example: 'John Wick'
+                email:
+                  type: string
+                  description: 'The email for register.'
+                  example: johnwick@gmail.com
+                calling_code:
+                  type: string
+                  description: 'The calling code for register.'
+                  example: '+60'
+                phone_number:
+                  type: integer
+                  description: 'The phone number for register.'
+                  example: 123344212
+                password:
+                  type: string
+                  description: 'The password for register.'
+                  example: abcd1234
+                password_confirmation:
+                  type: string
+                  description: 'The confirmation password.'
+                  example: abcd1234
+              required:
+                - tmp_user
+                - fullname
+                - email
+                - calling_code
+                - phone_number
+                - password
+                - password_confirmation
+      security: []
+    get:
+      summary: '5. Get user'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - 'User API'
+  /api/v1/users/login:
+    post:
+      summary: '2. Login an user - Email'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'User API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'The email for login.'
+                  example: johnwick@mail.com
+                password:
+                  type: string
+                  description: 'The password for login.'
+                  example: abcd1234
+              required:
+                - email
+                - password
+      security: []
+  /api/v1/otp:
+    post:
+      summary: '3. Request an OTP'
+      description: "<strong>request_type</strong><br>\n1: Register<br>"
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'User API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'The email for login.'
+                  example: johnwick@mail.com
+                type:
+                  type: integer
+                  description: 'The request type for OTP.'
+                  example: 1
+              required:
+                - email
+                - type
+      security: []
+  /api/v1/otp/resend:
+    post:
+      summary: '4. Resend an OTP'
+      description: "<strong>request_type</strong><br>\n2: Resend<br>"
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'User API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tmp_user:
+                  type: string
+                  description: 'The temporary user ID during request OTP.'
+                  example: eyJpdiI...
+                email:
+                  type: string
+                  description: 'The email for login.'
+                  example: johnwick@mail.com
+                type:
+                  type: integer
+                  description: 'The request type for OTP.'
+                  example: 2
+              required:
+                - tmp_user
+                - email
+                - type
+      security: []
+tags:
+  -
+    name: 'User API'
+    description: ''

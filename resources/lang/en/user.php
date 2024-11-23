@@ -1,0 +1,48 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Module Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used during User Module for various
+    | messages that we need to display to the user. You are free to modify
+    | these language lines according to your application's requirements.
+    |
+    */
+
+    'name' => 'Name',
+    'fullname' => 'Fullname',
+    'username' => 'Username',
+    'password' => 'Password',
+    'calling_code' => 'Calling Code',
+    'phone_number' => 'Phone Number',
+    'email' => 'Email',
+    'address' => 'Address',
+    'address_1' => 'Address 1',
+    'address_2' => 'Address 2',
+    'postcode' => 'Postcode',
+    'state' => 'State',
+    'city' => 'City',
+    'remarks' => 'Remarks',
+    'account_type' => 'Account Type',
+    'company_name' => 'Company Name',
+    'company' => 'Company',
+    'personal' => 'Personal',
+    'otp_email_success' => 'Otp request success',
+    'otp_email_success_note' => 'Otp request success',
+    'register_success' => 'Register Success',
+    'login_success' => 'Login Success',
+    'user_not_found' => 'User Not Found',
+    'user_updated' => 'User Updated',
+    'old_password_not_match' => 'User old password does not match',
+    'user_password_updated' => 'User password update success',
+    'user_wrong_user_password' => 'Wrong username or password',
+    
+
+    'invalid_otp' => 'Invalid_otp',
+    'repeat_password_not_match' => 'Repeat Password does not match',
+    
+];

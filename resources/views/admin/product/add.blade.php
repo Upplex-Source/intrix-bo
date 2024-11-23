@@ -295,24 +295,28 @@ $warehouses = $data['warehouses'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-
                 <!-- Variant Input Section -->
                 <div class="mb-3 row d-none" id="{{ $product_create }}_has_variant_input">
                     <div class="variant-container">
                         <div class="variant-input-group row mb-2">
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <label class="form-label">{{ __('product.variant_name') }}</label>
                                 <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <label class="form-label">{{ __('product.variant_price') }}</label>
                                 <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]">
                                 <div class="invalid-feedback"></div>
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-6">
                                 <label class="form-label">{{ __('product.variant_quantity') }}</label>
                                 <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <label class="form-label">{{ __('product.sku') }}</label>
+                                <input type="number" class="form-control" name="{{ $product_create }}_sku[]">
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-sm-3 d-flex align-items-end">
@@ -335,17 +339,17 @@ $warehouses = $data['warehouses'];
                 </div>
 
                 <div class="mb-3 row d-none" id="{{ $product_create }}_has_promotion_input">
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.promotion_start') }}</label>
                         <input type="text" class="form-control" name="{{ $product_create }}_promotion_start" id="{{ $product_create }}_promotion_start">
                         <div class="invalid-feedback"></div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.promotion_end') }}</label>
                         <input type="text" class="form-control" name="{{ $product_create }}_promotion_end" id="{{ $product_create }}_promotion_end">
                         <div class="invalid-feedback"></div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.promotion_price') }}</label>
                         <input type="number" class="form-control" name="{{ $product_create }}_promotion_price" id="{{ $product_create }}_promotion_price">
                         <div class="invalid-feedback"></div>
@@ -438,7 +442,7 @@ window.cke_element1 = 'product_create_description';
             formData.append( 'alert_quantity', $( fc + '_alert_quantity' ).val() );
             formData.append( 'quantity', $( fc + '_quantity' ).val() );
             formData.append( 'tax_method', $( fc + '_tax_method' ).val() );
-            formData.append( 'description', JSON.stringify(editor.getData()) );
+            formData.append( 'description', editor.getData() );
             console.log(editor.getData)
             formData.append( 'featured', $(fc + '_featured').is(':checked') ? 1 : 0);
 
@@ -470,11 +474,13 @@ window.cke_element1 = 'product_create_description';
                     var variantName = $(element).find('input[name="{{ $product_create }}_variant_name[]"]').val();
                     var variantPrice = $(element).find('input[name="{{ $product_create }}_variant_price[]"]').val();
                     var variantQuantity = $(element).find('input[name="{{ $product_create }}_variant_quantity[]"]').val();
+                    var variantSku = $(element).find('input[name="{{ $product_create }})_sku[]"]').val();
                     
                     // Append them to formData with a structured key
                     formData.append(`variants[${index}][name]`, variantName);
                     formData.append(`variants[${index}][price]`, variantPrice);
                     formData.append(`variants[${index}][quantity]`, variantQuantity);
+                    formData.append(`variants[${index}][sku]`, variantSku);
                 });
             }
 
@@ -820,17 +826,25 @@ window.cke_element1 = 'product_create_description';
                 const newGroup = document.createElement('div');
                 newGroup.className = 'variant-input-group row mb-2';
                 newGroup.innerHTML = `
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_name') }}</label>
                         <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]">
+                        <div class="invalid-feedback"></div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
                         <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]">
+                        <div class="invalid-feedback"></div>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_quantity') }}</label>
                         <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="col-sm-6 mb-2">
+                        <label class="form-label">{{ __('product.sku') }}</label>
+                        <input type="number" class="form-control" name="{{ $product_create }}_sku[]">
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-3 d-flex align-items-end">
                         <button type="button" class="btn btn-success me-2 variant_add">+</button>
@@ -859,17 +873,22 @@ window.cke_element1 = 'product_create_description';
                 const newGroup = document.createElement('div');
                 newGroup.className = 'variant-input-group row mb-2';
                 newGroup.innerHTML = `
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_name') }}</label>
                         <input type="text" class="form-control" name="{{ $product_create }}_variant_name[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
                         <input type="number" class="form-control" name="{{ $product_create }}_variant_price[]">
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_quantity') }}</label>
                         <input type="number" class="form-control" name="{{ $product_create }}_variant_quantity[]">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">{{ __('product.sku') }}</label>
+                        <input type="number" class="form-control" name="{{ $product_create }}_sku[]">
+                        <div class="invalid-feedback"></div>
                     </div>
                     <div class="col-sm-3 d-flex align-items-end">
                         <button type="button" class="btn btn-success me-2 variant_add">+</button>

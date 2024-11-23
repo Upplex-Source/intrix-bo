@@ -6,6 +6,7 @@ use DateTimeInterface;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -16,15 +17,26 @@ use Carbon\Carbon;
 
 class User extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasApiTokens;
 
     protected $fillable = [
-        'name',
+        'username',
         'fullname',
         'email',
         'email_verified_at',
         'password',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
+        'address_1',
+        'address_2',
+        'city',
+        'state',
+        'postcode',
+        'calling_code',
         'status',
+        'phone_number',
+        'account_type',
     ];
 
     public function getEncryptedIdAttribute() {
@@ -36,12 +48,23 @@ class User extends Model
     }
 
     protected static $logAttributes = [
-        'name',
+        'username',
         'fullname',
         'email',
         'email_verified_at',
         'password',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
+        'address_1',
+        'address_2',
+        'city',
+        'state',
+        'postcode',
+        'calling_code',
         'status',
+        'phone_number',
+        'account_type',
     ];
 
     protected static $logName = 'users';
