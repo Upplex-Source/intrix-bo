@@ -176,6 +176,7 @@ class UserService
 
             $createUserObject = [
                 'fullname' => $request->fullname,
+                'username' => $request->username,
                 'email' => strtolower( $request->email ),
                 'phone_number' => $request->phone_number,
                 'calling_code' => '+60',
