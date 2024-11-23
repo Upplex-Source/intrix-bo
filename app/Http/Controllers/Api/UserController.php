@@ -72,7 +72,7 @@ class UserController extends Controller {
      * @group User API
      * 
      * @bodyParam email string required The email for login. Example: johnwick@mail.com
-     * @bodyParam type integer required The request type for OTP. Example: 1
+     * @bodyParam request_type integer required The request type for OTP. Example: 1
      * 
      */
     public function requestOtp( Request $request ) {
@@ -90,7 +90,7 @@ class UserController extends Controller {
      * 
      * @bodyParam tmp_user string required The temporary user ID during request OTP. Example: eyJpdiI...
      * @bodyParam email string required The email for login. Example: johnwick@mail.com
-     * @bodyParam type integer required The request type for OTP. Example: 2
+     * @bodyParam request_type integer required The request type for OTP. Example: 2
      * 
      */
     public function resendOtp( Request $request ) {

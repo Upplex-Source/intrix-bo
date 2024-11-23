@@ -291,9 +291,9 @@ class Helper {
         }
 
         // SMS JOB
-        if ( config( 'services.sms.enabled' ) ) {
-            SendOTP::dispatch( $callingCode . $phoneNumber, $body );
-        }
+        // if ( config( 'services.sms.enabled' ) ) {
+        //     SendOTP::dispatch( $callingCode . $phoneNumber, $body );
+        // }
 
         return [
             'identifier' => Crypt::encryptString( $createOtp->id ),
