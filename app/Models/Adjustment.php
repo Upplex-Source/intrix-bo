@@ -24,6 +24,7 @@ class Adjustment extends Model
         'attachment',
         'remarks',
         'reference',
+        'adjustment_date',
         'status',
     ];
 
@@ -35,13 +36,13 @@ class Adjustment extends Model
         return $this->belongsTo( Warehouse::class, 'warehouse_id' );
     }
 
-    public function AdjustmentMeta()
+    public function AdjustmentMetas()
     {
         return $this->hasMany(AdjustmentMeta::class, 'adjustment_id');
     }
 
-    public function getPathAttribute() {
-        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : null;
+    public function getAttachmentPathAttribute() {
+        return $this->attributes['attachment'] ? asset( 'storage/' . $this->attributes['attachment'] ) : null;
     }
 
     public function getEncryptedIdAttribute() {
@@ -58,6 +59,7 @@ class Adjustment extends Model
         'attachment',
         'remarks',
         'reference',
+        'adjustment_date',
         'status',
     ];
 

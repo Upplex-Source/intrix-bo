@@ -122,8 +122,6 @@ class UserController extends Controller {
      * @bodyParam fullname string required The fullname to update. Example: John Wick
      * @bodyParam fullname string required The fullname to update. Example: John Wick
      * @bodyParam email string required The email to update. Example: jphnwick@gmail.com
-     * @bodyParam calling_code string required The calling code for register. Example: +60
-     * @bodyParam phone_number integer required The phone number to update. Example: 123344212
      * @bodyParam date_of_birth string required The date of birth to update. Example: 2022-01-01
      * 
      */
