@@ -110,8 +110,8 @@ class AdjustmentController extends Controller
         return AdjustmentService::updateAdjustmentStatus( $request );
     }
 
-    public function removeAdjustmentGalleryImage( Request $request ) {
+    public function removeAdjustmentAttachment( Request $request ) {
 
-        return AdjustmentService::removeAdjustmentGalleryImage( $request );
+        return AdjustmentService::removeAdjustmentAttachment( $request );
     }
 }

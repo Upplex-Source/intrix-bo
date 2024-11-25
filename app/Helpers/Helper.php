@@ -10,6 +10,7 @@ use App\Models\{
     TmpUser,
     Option,
     Order,
+    Adjustment,
 };
 
 use Illuminate\Support\Facades\{
@@ -299,6 +300,11 @@ class Helper {
             'identifier' => Crypt::encryptString( $createOtp->id ),
             'otp_code' => $createOtp->otp_code,
         ];
+    }
+
+    public static function generateAdjustmentNumber()
+    {
+        return now()->format('YmdHis');
     }
 
     

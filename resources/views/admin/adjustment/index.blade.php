@@ -34,34 +34,22 @@ $columns = [
         'title' => __( 'datatables.created_date' ),
     ],
     [
-        'type' => 'default',
-        'id' => 'image',
-        'title' => __( 'adjustment.image' ),
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'adjustment.reference' ) ] ),
+        'id' => 'reference',
+        'title' => __( 'adjustment.reference' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'adjustment.title' ) ] ),
-        'id' => 'title',
-        'title' => __( 'adjustment.title' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'adjustment.warehouse' ) ] ),
+        'id' => 'warehouse',
+        'title' => __( 'adjustment.warehouse' ),
     ],
-    // [
-    //     'type' => 'default',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'adjustment.number_of_product' ) ] ),
-    //     'id' => 'number_of_product',
-    //     'title' => __( 'adjustment.number_of_product' ),
-    // ],
-    // [
-    //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'adjustment.stock_quantity' ) ] ),
-    //     'id' => 'stock_quantity',
-    //     'title' => __( 'adjustment.stock_quantity' ),
-    // ],
-    // [
-    //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'adjustment.stock_worth' ) ] ),
-    //     'id' => 'stock_worth',
-    //     'title' => __( 'adjustment.stock_worth' ),
-    // ],
+    [
+        'type' => 'default',
+        'id' => 'remarks',
+        'title' => __( 'adjustment.remarks' ),
+    ],
     [
         'type' => 'select',
         'options' => $data['status'],
@@ -115,8 +103,9 @@ var statusMapper = @json( $data['status'] ),
         columns: [
             { data: null },
             { data: 'created_at' },
-            { data: 'image_path' },
-            { data: 'title' },
+            { data: 'reference' },
+            { data: 'warehouse' },
+            { data: 'remarks' },
             // { data: 'number_of_product' },
             // { data: 'stock_quantity' },
             // { data: 'stock_worth' },
@@ -155,7 +144,14 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "parent_adjustment" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "warehouse" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data ? data.title : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "reference" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-' ;

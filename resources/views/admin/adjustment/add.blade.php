@@ -13,31 +13,64 @@ $adjustment_create = 'adjustment_create';
 <div class="card">
     <div class="card-inner">
         <div class="row">
-            <div class="col-md-12 col-lg-6">
+            <div class="col-md-12 col-lg-12">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $adjustment_create }}_title" class="col-sm-5 col-form-label">{{ __( 'adjustment.title' ) }}</label>
+                    <label for="{{ $adjustment_create }}_adjustment_date" class="col-sm-5 col-form-label">{{ __( 'adjustment.adjustment_date' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $adjustment_create }}_title">
+                        <input type="text" class="form-control" id="{{ $adjustment_create }}_adjustment_date">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $adjustment_create }}_description" class="col-sm-5 col-form-label">{{ __( 'adjustment.description' ) }}</label>
+                    <label for="{{ $adjustment_create }}_warehouse" class="col-sm-5 form-label">{{ __( 'template.warehouses' ) }}</label>
+                        <div class="col-sm-7">
+                            <select class="form-select" id="{{ $adjustment_create }}_warehouse" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.warehouses' ) ] ) }}">
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $adjustment_create }}_product" class="col-sm-5 form-label">{{ __( 'template.products' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $adjustment_create }}_description"></textarea>
+
+                        <select class="form-select" id="{{ $adjustment_create }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.products' ) ] ) }}" multiple="multiple">
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $adjustment_create }}_remarks" class="col-sm-5 col-form-label">{{ __( 'adjustment.remarks' ) }}</label>
+                    <div class="col-sm-7">
+                        <textarea class="form-control" id="{{ $adjustment_create }}_remarks"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label>{{ __( 'adjustment.image' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $adjustment_create }}_image" style="min-height: 0px;">
+                    <label>{{ __( 'adjustment.attachment' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $adjustment_create }}_attachment" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
                     </div>
                     <div class="invalid-feedback"></div>
                 </div>
+            
+                <label class="mb-3" >{{ __( 'template.products' ) }}</label>
+                <table class="table table-bordered mb-3" id="product-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will be added here -->
+                    </tbody>
+                </table>
+
                 <div class="text-end">
                     <button id="{{ $adjustment_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -54,6 +87,10 @@ $adjustment_create = 'adjustment_create';
         let fc = '#{{ $adjustment_create }}',
                 fileID = '';
 
+        $( fc + '_adjustment_date' ).flatpickr( {
+            disableMobile: true,
+        } );
+
         $( fc + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.adjustment.index' ) }}';
         } );
@@ -67,10 +104,20 @@ $adjustment_create = 'adjustment_create';
             } );
 
             let formData = new FormData();
-            formData.append( 'title', $( fc + '_title' ).val() );
-            formData.append( 'description', $( fc + '_description' ).val() );
-            formData.append( 'image', fileID );
+            formData.append( 'adjustment_date', $( fc + '_adjustment_date' ).val() );
+            formData.append( 'remarks', $( fc + '_remarks' ).val() );
+            formData.append( 'attachment', fileID );
+            formData.append( 'products', $(fc + '_product').val() );
+            formData.append( 'warehouse', $(fc + '_warehouse').val() );
             formData.append( '_token', '{{ csrf_token() }}' );
+            let selectedProducts = $(fc + '_product').val();
+
+            selectedProducts.forEach(function(productId,index) {
+                let quantityInput = $(`#product-${productId} .product-quantity`).val();
+
+                formData.append(`products[${index}][id]`, productId);
+                formData.append(`products[${index}][quantity]`, quantityInput);
+            });
 
             $.ajax( {
                 url: '{{ route( 'admin.adjustment.createAdjustment' ) }}',
@@ -104,7 +151,7 @@ $adjustment_create = 'adjustment_create';
         } );
 
         Dropzone.autoDiscover = false;
-        const dropzone = new Dropzone( fc + '_image', { 
+        const dropzone = new Dropzone( fc + '_attachment', { 
             url: '{{ route( 'admin.file.upload' ) }}',
             maxFiles: 1,
             acceptedFiles: 'image/jpg,image/jpeg,image/png',
@@ -136,6 +183,155 @@ $adjustment_create = 'adjustment_create';
                 }
             }
         } );
+
+        $( fc + '_warehouse' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.warehouse.allWarehouses' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.warehouses.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.title,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
+        let productSelect = $(fc + '_product');
+        let quantityInputContainer = $('#quantity-input-container');
+
+        // Clear all select2 selections
+        productSelect.val(null).trigger('change');
+
+        // Clear all quantity input fields
+        quantityInputContainer.empty();
+
+        $(fc + '_product').select2({
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            closeOnSelect: true, // Auto close after selection
+            ajax: {
+                method: 'POST',
+                url: '{{ route('admin.product.allProducts') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        name: params.term, // search term
+                        status: 10,
+                        start: ((params.page ? params.page : 1) - 1) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.products.map(function(v, i) {
+                        processedResult.push({
+                            id: v.id,
+                            text: v.title,
+                        });
+                    });
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: (params.page * 10) < data.recordsFiltered
+                        }
+                    };
+                }
+            }
+        });
+        let productCount = 0; // Counter for product rows
+        $(fc + '_product').on('select2:select', function (e) {
+            let selectedProduct = e.params.data;
+
+            // Check if the product is already in the table
+            if ($('#product-' + selectedProduct.id).length === 0) {
+                productCount++;
+
+                // Append a new row to the table
+                $('#product-table tbody').append(`
+                    <tr id="product-${selectedProduct.id}">
+                        <td>${productCount}</td>
+                        <td>${selectedProduct.text}</td>
+                        <td>
+                            <input type="number" class="form-control product-quantity" 
+                                style="width: 100px;" min="1" 
+                                data-product-id="${selectedProduct.id}">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-product" 
+                                    data-product-id="${selectedProduct.id}">
+                                <i class="fa fa-trash"></i> Remove
+                            </button>
+                        </td>
+                    </tr>
+                `);
+
+                console.log(selectedProduct);
+            }
+        });
+
+        $(document).on('click', '.remove-product', function () {
+            let productId = $(this).data('product-id');
+            $('#product-' + productId).remove();
+
+            // Re-index the table rows
+            productCount = 0;
+            $('#product-table tbody tr').each(function () {
+                productCount++;
+                $(this).find('td:first').text(productCount);
+            });
+        });
+
+        $(fc + '_product').on('select2:unselect', function (e) {
+            var categoryId = e.params.data.id; 
+            $('$product-' + categoryId).remove();
+        });
+
+        $(fc + '_product').on("select2:select", function (evt) {
+            var element = evt.params.data.element;
+            var $element = $(element);
+            
+            $element.detach();
+            $(this).append($element);
+            $(this).trigger("change");
+        });
 
     } );
 </script>

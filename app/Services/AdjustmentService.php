@@ -15,6 +15,7 @@ use App\Models\{
     Company,
     Customer,
     Adjustment,
+    AdjustmentMeta,
     Booking,
     FileManager,
 };
@@ -27,12 +28,15 @@ class AdjustmentService
 {
 
     public static function createAdjustment( $request ) {
-        
+
         $validator = Validator::make( $request->all(), [
-            'title' => [ 'required' ],
-            'description' => [ 'nullable' ],
-            'image' => [ 'nullable' ],
-            'thumbnail' => [ 'nullable' ],
+            'adjustment_date' => [ 'nullable' ],
+            'remarks' => [ 'nullable' ],
+            'attachment' => [ 'nullable' ],
+            'products' => [ 'nullable' ],
+            'products.*.id' => [ 'nullable', 'exists:products,id' ],
+            'products.*.quantity' => [ 'nullable' ],
+            'warehouse' => [ 'nullable', 'exists:warehouses,id' ],
         ] );
 
         $attributeName = [
@@ -54,53 +58,50 @@ class AdjustmentService
         $validator->setAttributeNames( $attributeName )->validate();
 
         DB::beginTransaction();
-        
+
         try {
             $adjustmentCreate = Adjustment::create([
-                'title' => $request->title,
-                'description' => $request->description,
+                'causer_id' => auth()->user()->id,
+                'warehouse_id' => $request->warehouse,
+                'remarks' => $request->remarks,
+                'reference' => Helper::generateAdjustmentNumber(),
+                'adjustment_date' => $request->adjustment_date,
             ]);
 
-            $image = explode( ',', $request->image );
-            $thumbnail = explode( ',', $request->thumbnail );
+            $attachment = explode( ',', $request->attachment );
+            $attachmentFiles = FileManager::whereIn( 'id', $attachment )->get();
 
-            $imageFiles = FileManager::whereIn( 'id', $image )->get();
-            $thumbnailFiles = FileManager::whereIn( 'id', $thumbnail )->get();
+            if ( $attachmentFiles ) {
+                foreach ( $attachmentFiles as $attachmentFile ) {
 
-            if ( $imageFiles ) {
-                foreach ( $imageFiles as $imageFile ) {
-
-                    $fileName = explode( '/', $imageFile->file );
+                    $fileName = explode( '/', $attachmentFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
                     $target = 'adjustment/' . $adjustmentCreate->id . '/' . $fileName[1];
-                    Storage::disk( 'public' )->move( $imageFile->file, $target );
+                    Storage::disk( 'public' )->move( $attachmentFile->file, $target );
 
-                   $adjustmentCreate->image = $target;
+                   $adjustmentCreate->attachment = $target;
                    $adjustmentCreate->save();
 
-                    $imageFile->status = 10;
-                    $imageFile->save();
+                    $attachmentFile->status = 10;
+                    $attachmentFile->save();
 
                 }
             }
 
-            if ( $thumbnailFiles ) {
-                foreach ( $thumbnailFiles as $thumbnailFile ) {
+            $products = $request->products;
 
-                    $fileName = explode( '/', $thumbnailFile->file );
-                    $fileExtention = pathinfo($fileName[1])['extension'];
-
-                    $target = 'adjustment/' . $adjustmentCreate->id . '/' . $fileName[1];
-                    Storage::disk( 'public' )->move( $thumbnailFile->file, $target );
-
-                   $adjustmentCreate->thumbnail = $target;
-                   $adjustmentCreate->save();
-
-                    $thumbnailFile->status = 10;
-                    $thumbnailFile->save();
-
-                }
+            foreach( $products as $product ){
+                $adjustmentMetaCreate = AdjustmentMeta::create([
+                    'adjustment_id' => $adjustmentCreate->id,
+                    'product_id' => $product['id'],
+                    // 'variant_id' => $product['variant_id'],
+                    'amount' => $product['quantity'],
+                    // 'variant_id' => $product['variant_id'],
+                    // 'original_amount' => $product['quantity'],
+                    // 'final_amount' => $product['quantity'],
+                    'status' => 10,
+                ]);
             }
 
             DB::commit();
@@ -203,7 +204,7 @@ class AdjustmentService
 
      public static function allAdjustments( $request ) {
 
-        $adjustments = Adjustment::select( 'adjustments.*');
+        $adjustments = Adjustment::with( ['AdjustmentMetas','warehouse'] )->select( 'adjustments.*');
 
         $filterObject = self::filter( $request, $adjustments );
         $adjustment = $filterObject['model'];
@@ -234,8 +235,7 @@ class AdjustmentService
             if ( $adjustments ) {
                 $adjustments->append( [
                     'encrypted_id',
-                    'image_path',
-                    'thumbnail_path',
+                    'attachment_path',
                 ] );
             }
 
@@ -296,9 +296,9 @@ class AdjustmentService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $adjustment = Adjustment::find( $request->id );
+        $adjustment = Adjustment::with( ['AdjustmentMetas.product','warehouse'] )->find( $request->id );
 
-        $adjustment->append( ['encrypted_id','image_path'] );
+        $adjustment->append( ['encrypted_id','attachment_path'] );
         
         return response()->json( $adjustment );
     }
@@ -377,7 +377,7 @@ class AdjustmentService
     public static function removeAdjustmentGalleryImage( $request ) {
 
         $updateFarm = Adjustment::find( Helper::decode($request->id) );
-        $updateFarm->image = null;
+        $updateFarm->attachment = null;
         $updateFarm->save();
 
         return response()->json( [

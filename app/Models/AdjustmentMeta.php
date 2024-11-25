@@ -14,7 +14,7 @@ use Helper;
 
 use Carbon\Carbon;
 
-class Adjustment extends Model
+class AdjustmentMeta extends Model
 {
     use HasFactory, LogsActivity;
 

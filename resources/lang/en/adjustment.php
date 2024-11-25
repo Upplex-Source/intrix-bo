@@ -19,6 +19,7 @@ return [
     'reference' => 'reference',
     'remarks' => 'remarks',
     'status' => 'status',
+    'adjustment_date' => 'Adjustment Date',
 
     'adjustment' => 'Adjustment',
     'product' => 'Product Variant',

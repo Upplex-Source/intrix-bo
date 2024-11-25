@@ -135,6 +135,16 @@
                                     </ul>
                                 </li>
                                 @endcan
+                                @if( 1 == 2 )
+                                @can( 'view Adjustments' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AdjustmentController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.adjustment.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-slack"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.adjustments' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @endif
 
                                 @if( 1 == 2 )
                                 @can( 'view Services' )
