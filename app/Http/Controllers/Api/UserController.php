@@ -36,7 +36,7 @@ class UserController extends Controller {
      * @bodyParam tmp_user string required The temporary user ID during request OTP. Example: eyJpdiI...
      * @bodyParam fullname string required The fullname for register. Example: John Wick
      * @bodyParam email string required The email for register. Example: johnwick@gmail.com
-     * @bodyParam otp string required The otp for register. Example: 123456
+     * @bodyParam otp_code string required The otp for register. Example: 123456
      * @bodyParam password string required The password for register. Example: abcd1234
      * @bodyParam password_confirmation string required The confirmation password. Example: abcd1234
      * 
