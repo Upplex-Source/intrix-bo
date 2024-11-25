@@ -1123,14 +1123,14 @@ class UserService
             'fullname' => [ 'nullable' ],
             'email' => [ 'required' ],
             'phone_number' => [ 'required' ],
-            'remarks' => [ 'required' ],
+            'message' => [ 'nullable' ],
         ] );
 
         $attributeName = [
             'fullname' => __( 'user.fullname' ),
             'email' => __( 'user.email' ),
             'phone_number' => __( 'user.phone_number' ),
-            'remarks' => __( 'user.remarks' ),
+            'message' => __( 'user.message' ),
         ];
         
         foreach ( $attributeName as $key => $aName ) {
