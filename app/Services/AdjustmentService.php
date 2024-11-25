@@ -18,6 +18,7 @@ use App\Models\{
     AdjustmentMeta,
     Booking,
     FileManager,
+    Warehouse,
 };
 
 
@@ -60,6 +61,7 @@ class AdjustmentService
         DB::beginTransaction();
 
         try {
+
             $adjustmentCreate = Adjustment::create([
                 'causer_id' => auth()->user()->id,
                 'warehouse_id' => $request->warehouse,
@@ -91,17 +93,23 @@ class AdjustmentService
 
             $products = $request->products;
 
-            foreach( $products as $product ){
-                $adjustmentMetaCreate = AdjustmentMeta::create([
-                    'adjustment_id' => $adjustmentCreate->id,
-                    'product_id' => $product['id'],
-                    // 'variant_id' => $product['variant_id'],
-                    'amount' => $product['quantity'],
-                    // 'variant_id' => $product['variant_id'],
-                    // 'original_amount' => $product['quantity'],
-                    // 'final_amount' => $product['quantity'],
-                    'status' => 10,
-                ]);
+            if( $products ){
+                foreach( $products as $product ){
+
+                    $warehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, $product['id'], $product['quantity'] );
+
+                    $adjustmentMetaCreate = AdjustmentMeta::create([
+                        'adjustment_id' => $adjustmentCreate->id,
+                        'product_id' => $product['id'],
+                        // 'variant_id' => $product['variant_id'],
+                        'amount' => $product['quantity'],
+                        // 'variant_id' => $product['variant_id'],
+                        'original_amount' => $warehouseAdjustment['original_quantity'],
+                        'final_amount' => $warehouseAdjustment['updated_quantity'],
+                        'status' => 10,
+                    ]);
+
+                }
             }
 
             DB::commit();
@@ -128,10 +136,13 @@ class AdjustmentService
 
          
         $validator = Validator::make( $request->all(), [
-            'title' => [ 'required' ],
-            'description' => [ 'nullable' ],
-            'image' => [ 'nullable' ],
-            'thumbnail' => [ 'nullable' ],
+            'adjustment_date' => [ 'nullable' ],
+            'remarks' => [ 'nullable' ],
+            'attachment' => [ 'nullable' ],
+            'products' => [ 'nullable' ],
+            'products.*.id' => [ 'nullable', 'exists:products,id' ],
+            'products.*.quantity' => [ 'nullable' ],
+            'warehouse' => [ 'nullable', 'exists:warehouses,id' ],
         ] );
 
         $attributeName = [
@@ -156,31 +167,79 @@ class AdjustmentService
 
         try {
             $updateAdjustment = Adjustment::find( $request->id );
-    
-            $updateAdjustment->title = $request->title;
-            $updateAdjustment->description = $request->description;
 
-            $image = explode( ',', $request->image );
-            $thumbnail = explode( ',', $request->thumbnail );
+            $updateAdjustment->remarks = $request->remarks ?? $updateAdjustment->remarks;
+            $updateAdjustment->causer_id = auth()->user()->id;
+            $updateAdjustment->warehouse_id = $request->warehouse ?? $updateAdjustment->warehouse_id;
+            $updateAdjustment->adjustment_date = $request->adjustment_date ?? $updateAdjustment->adjustment_date;
 
-            $imageFiles = FileManager::whereIn( 'id', $image )->get();
-            $thumbnailFiles = FileManager::whereIn( 'id', $thumbnail )->get();
+            $attachment = explode( ',', $request->attachment );
 
-            if ( $imageFiles ) {
-                foreach ( $imageFiles as $imageFile ) {
+            $attachmentFiles = FileManager::whereIn( 'id', $attachment )->get();
 
-                    $fileName = explode( '/', $imageFile->file );
+            if ( $attachmentFiles ) {
+                foreach ( $attachmentFiles as $attachmentFile ) {
+
+                    $fileName = explode( '/', $attachmentFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
                     $target = 'adjustment/' . $updateAdjustment->id . '/' . $fileName[1];
-                    Storage::disk( 'public' )->move( $imageFile->file, $target );
+                    Storage::disk( 'public' )->move( $attachmentFile->file, $target );
 
-                   $updateAdjustment->image = $target;
+                   $updateAdjustment->attachment = $target;
                    $updateAdjustment->save();
 
-                    $imageFile->status = 10;
-                    $imageFile->save();
+                    $attachmentFile->status = 10;
+                    $attachmentFile->save();
 
+                }
+            }
+
+            $oldAdjustmentMetas = $updateAdjustment->adjustmentMetas;
+            $oldAdjustmentMetasArray = $oldAdjustmentMetas->pluck('id')->toArray();
+            $products = $request->products;
+
+            if( $products ) {
+
+                $incomingProductIds = array_column($products, 'metaId');
+    
+                $incomingProductIds = array_filter($incomingProductIds, function ($id) {
+                    return $id !== null && $id !== 'null';
+                });
+
+                $idsToDelete = array_diff($oldAdjustmentMetasArray, $incomingProductIds);
+
+                AdjustmentMeta::whereIn('id', $idsToDelete)->delete();
+                
+                foreach( $products as $product ){
+
+                    if( in_array( $product['metaId'], $oldAdjustmentMetasArray ) ){
+                        $removeAdjustmentMeta = AdjustmentMeta::find( $product['metaId'] );
+                        $removeAdjustmentMeta->adjustment_id = $updateAdjustment->id;
+                        $removeAdjustmentMeta->amount = $product['quantity'];
+                    } else {
+
+                        if( $product['metaId'] == 'null' ){
+                            $adjustmentMetaCreate = AdjustmentMeta::create([
+                                'adjustment_id' => $updateAdjustment->id,
+                                'product_id' => $product['id'],
+                                // 'variant_id' => $product['variant_id'],
+                                'amount' => $product['quantity'],
+                                // 'variant_id' => $product['variant_id'],
+                                // 'original_amount' => $product['quantity'],
+                                // 'final_amount' => $product['quantity'],
+                                'status' => 10,
+                            ]);
+                        } else{
+                            $removeAdjustmentMeta = AdjustmentMeta::find( $product['metaId'] );
+                            $removeAdjustmentMeta->delete();
+                        }
+                    }
+    
+                }
+            } else {
+                foreach ($oldAdjustmentMetas as $meta) {
+                    $meta->delete();
                 }
             }
 
@@ -204,7 +263,7 @@ class AdjustmentService
 
      public static function allAdjustments( $request ) {
 
-        $adjustments = Adjustment::with( ['AdjustmentMetas','warehouse'] )->select( 'adjustments.*');
+        $adjustments = Adjustment::with( ['AdjustmentMetas.product','warehouse'] )->select( 'adjustments.*');
 
         $filterObject = self::filter( $request, $adjustments );
         $adjustment = $filterObject['model'];
@@ -257,20 +316,13 @@ class AdjustmentService
 
         $filter = false;
 
-        if ( !empty( $request->title ) ) {
-            $model->where( 'adjustments.title', 'LIKE', '%' . $request->title . '%' );
+        if ( !empty( $request->reference ) ) {
+            $model->where( 'adjustments.reference', 'LIKE', '%' . $request->reference . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->id ) ) {
             $model->where( 'adjustments.id', '!=', Helper::decode($request->id) );
-            $filter = true;
-        }
-
-        if (!empty($request->parent_adjustment)) {
-            $model->whereHas('parent', function ($query) use ($request) {
-                $query->where('title', 'LIKE', '%' . $request->parent_adjustment . '%');
-            });
             $filter = true;
         }
 
@@ -281,6 +333,22 @@ class AdjustmentService
 
         if ( !empty( $request->custom_search ) ) {
             $model->where( 'adjustment.title', 'LIKE', '%' . $request->custom_search . '%' );
+            $filter = true;
+        }
+
+        if (!empty($request->warehouse)) {
+            $model->whereHas('warehouse', function ($query) use ($request) {
+                $query->where('title', 'LIKE', '%' . $request->warehouse . '%');
+            });
+            $filter = true;
+        }
+
+        if (!empty($request->product)) {
+            $model->whereHas('adjustmentMetas', function ($query) use ($request) {
+                $query->whereHas('product', function ($query) use ($request) {
+                    $query->where('title', 'LIKE', '%' . $request->product . '%');
+                });
+            });
             $filter = true;
         }
         
@@ -374,14 +442,69 @@ class AdjustmentService
         }
     }
 
-    public static function removeAdjustmentGalleryImage( $request ) {
+    public static function removeAdjustmentAttachment( $request ) {
 
         $updateFarm = Adjustment::find( Helper::decode($request->id) );
         $updateFarm->attachment = null;
         $updateFarm->save();
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'farm.galleries' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'adjustment.attachment' ) ) ] ),
         ] );
     }
+
+    public static function adjustWarehouseQuantity($warehouseId, $productId, $quantity)
+    {
+        // Find the warehouse
+        $warehouse = Warehouse::find($warehouseId);
+
+        if (!$warehouse) {
+            throw new \Exception("Warehouse not found.");
+        }
+
+        // Initialize original quantity as 0 (default for new relation)
+        $originalQuantity = 0;
+
+        // Check if the product already exists in the warehouse
+        $existingProduct = $warehouse->products()->where('product_id', $productId)->first();
+
+        if ($existingProduct) {
+            // Get the current quantity
+            $originalQuantity = $existingProduct->pivot->quantity;
+
+            // Calculate the new quantity
+            $newQuantity = $originalQuantity + $quantity;
+
+            // Ensure quantity doesn't go below zero
+            if ($newQuantity < 0) {
+                throw new \Exception("Insufficient quantity in warehouse for this product.");
+            }
+
+            // Update the pivot table
+            $warehouse->products()->updateExistingPivot($productId, [
+                'quantity' => $newQuantity,
+            ]);
+        } else {
+            // If no relation exists, set original quantity to 0
+            if ($quantity < 0) {
+                throw new \Exception("Cannot deduct quantity for a product not in this warehouse.");
+            }
+
+            // Create a new pivot relation
+            $newQuantity = $quantity;
+            $warehouse->products()->attach($productId, [
+                'quantity' => $newQuantity,
+                'price' => 0, // Default price
+                'status' => 1, // Active by default
+            ]);
+        }
+
+        // Return the original and updated quantities
+        return [
+            'original_quantity' => $originalQuantity,
+            'updated_quantity' => $newQuantity,
+        ];
+    }
+
+    
 }

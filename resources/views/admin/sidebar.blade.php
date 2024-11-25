@@ -135,7 +135,7 @@
                                     </ul>
                                 </li>
                                 @endcan
-                                @if( 1 == 2 )
+                                {{-- @if( 1 == 2 ) --}}
                                 @can( 'view Adjustments' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AdjustmentController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.adjustment.index' ) }}" class="nk-menu-link">
@@ -144,7 +144,7 @@
                                         </a>
                                     </li>
                                 @endcan
-                                @endif
+                                {{-- @endif --}}
 
                                 @if( 1 == 2 )
                                 @can( 'view Services' )

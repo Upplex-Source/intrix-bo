@@ -13,7 +13,7 @@ $adjustment_edit = 'adjustment_edit';
 <div class="card">
     <div class="card-inner">
         <div class="row">
-            <div class="col-md-12 col-lg-6">
+            <div class="col-md-12 col-lg-12">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
                     <label for="{{ $adjustment_edit }}_adjustment_date" class="col-sm-5 col-form-label">{{ __( 'adjustment.adjustment_date' ) }}</label>
@@ -71,7 +71,7 @@ $adjustment_edit = 'adjustment_edit';
                     </tbody>
                 </table>
 
-                <div class="text-end">
+                <div class="text-end mt-3">
                     <button id="{{ $adjustment_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
                     <button id="{{ $adjustment_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
@@ -115,7 +115,9 @@ $adjustment_edit = 'adjustment_edit';
 
             selectedProducts.forEach(function(productId,index) {
                 let quantityInput = $(`#product-${productId} .product-quantity`).val();
+                let IdInput = $(`#product-${productId} .meta-id`).val();
 
+                formData.append(`products[${index}][metaId]`, IdInput == undefined ? null : IdInput );
                 formData.append(`products[${index}][id]`, productId);
                 formData.append(`products[${index}][quantity]`, quantityInput);
             });
@@ -266,31 +268,50 @@ $adjustment_edit = 'adjustment_edit';
                         wareHouseSelect2.trigger( 'change' );
                     }
 
-                    response.adjustment_metas.forEach(product => {
-                    
-                        let option = new Option(product.title, product.id, true, true); 
-                        productSelect2.append(option);
-                        console.log(product)
-                        
-                        // Check if an input field already exists for this product
-                        if ($('#product-' + product.id).length === 0) {
-                            // Append an input field for the selected product
-                            console.log(response.menu_type)
-                            quantityInputContainer.append(
-                                `<div class="mb-2" id="product-${product.id}">
-                                    <label>${product.name} Category dishes maximum quantity:</label>
-                                    <input type="number" class="form-control product-quantity"
-                                    style="width: 100px; display: inline;" min="1"
-                                    data-product-id="${product.id}">
-                                    <button type="button" class="btn btn-danger btn-sm remove-product" 
-                                    data-product-id="${product.id}">Remove</button>
-                                </div>`
-                            );
+                    response.adjustment_metas.forEach((product, index) => {
 
+                        let option = new Option(product.product.title, product.product.id, true, true); 
+                        productSelect2.append(option);
+
+                        let productTable = $('#product-table tbody');
+                        if (!productTable.length) {
+                            console.error("Product table body not found.");
+                            return;
+                        }
+                        if ($(`#product-${product.id}`).length === 0) {
+                            productCount++;
+                            productTable.append(`
+                                <tr id="product-${product.product.id}">
+                                    <td>${index + 1}</td>
+                                    <td>${product.product.title}</td>
+                                    <td>
+                                        <input type="hidden" class="form-control meta-id" value="${product.id}"> 
+                                        <input type="number" class="form-control product-quantity" 
+                                            style="width: 100px;" min="1" 
+                                            data-product-id="${product.product.id}" value="${product.amount}">
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm remove-product" 
+                                                data-product-id="${product.product.id}">
+                                            <i class="fa fa-trash"></i> Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            `);
                         }
 
-                    });
+                        $(document).on('click', '.remove-product', function () {
+                            let productId = $(this).data('product-id');
+                            $('#product-' + productId).remove();
 
+                            // Re-index the table rows
+                            productCount = 0;
+                            $('#product-table tbody tr').each(function () {
+                                productCount++;
+                                $(this).find('td:first').text(productCount);
+                            });
+                        });
+                    });
                     const dropzone = new Dropzone( fe + '_attachment', {
                         url: '{{ route( 'admin.file.upload' ) }}',
                         maxFiles: 10,
@@ -299,7 +320,6 @@ $adjustment_edit = 'adjustment_edit';
                         init: function() {
 
                             let that = this;
-                            console.log(response)
                             if ( response.attachment_path != 0 ) {
                                 let myDropzone = that
                                     cat_id = '{{ request('id') }}',
@@ -343,6 +363,70 @@ $adjustment_edit = 'adjustment_edit';
                 },
             } );
         }
+
+        let productCount = 0; // Counter for product rows
+        $(fe + '_product').on('select2:select', function (e) {
+            let selectedProduct = e.params.data;
+
+            // Check if the product is already in the table
+            if ($('#product-' + selectedProduct.id).length === 0) {
+                productCount++;
+
+                // Append a new row to the table
+                $('#product-table tbody').append(`
+                    <tr id="product-${selectedProduct.id}">
+                        <td>${productCount}</td>
+                        <td>${selectedProduct.text}</td>
+                        <td>
+                            <input type="number" class="form-control product-quantity" 
+                                style="width: 100px;" min="1" 
+                                data-product-id="${selectedProduct.id}">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm remove-product" 
+                                    data-product-id="${selectedProduct.id}">
+                                <i class="fa fa-trash"></i> Remove
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            }
+        });
+
+        $(document).on('click', '.remove-product', function () {
+            let productId = $(this).data('product-id');
+            
+            // Remove from table
+            $('#product-' + productId).remove();
+            
+            // Remove from Select2
+            let selectElement = $(fe + '_product'); // Replace with your Select2 element ID
+            let selectedValues = selectElement.val();
+            if (selectedValues) {
+                selectedValues = selectedValues.filter(value => value !== productId.toString());
+                selectElement.val(selectedValues).trigger('change');
+            }
+
+            // Re-index the table rows
+            let productCount = 0;
+            $('#product-table tbody tr').each(function () {
+                productCount++;
+                $(this).find('td:first').text(productCount);
+            });
+        });
+        $(fe + '_product').on('select2:unselect', function (e) {
+            var categoryId = e.params.data.id; 
+            $('#product-' + categoryId).remove();
+        });
+
+        $(fe + '_product').on("select2:select", function (evt) {
+            var element = evt.params.data.element;
+            var $element = $(element);
+            
+            $element.detach();
+            $(this).append($element);
+            $(this).trigger("change");
+        });
 
         function removeGallery( gallery ) {
 

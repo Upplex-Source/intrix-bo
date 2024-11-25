@@ -325,9 +325,9 @@ class BundleService
             $filter = true;
         }
 
-        if (!empty($request->parent_bundle)) {
-            $model->whereHas('parent', function ($query) use ($request) {
-                $query->where('title', 'LIKE', '%' . $request->parent_bundle . '%');
+        if (!empty($request->product)) {
+            $model->whereHas('products', function ($query) use ($request) {
+                $query->where('title', 'LIKE', '%' . $request->product . '%');
             });
             $filter = true;
         }

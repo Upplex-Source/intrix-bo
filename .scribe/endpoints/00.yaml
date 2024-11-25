@@ -1,12 +1,12 @@
-name: 'User API'
+name: 'Contact-Us API'
 description: ''
 endpoints:
   -
     httpMethods:
       - POST
-    uri: api/v1/users
+    uri: api/v1/contact-us
     metadata:
-      title: '1. Create an user'
+      title: '1. Enquiry Mail'
       description: ''
       authenticated: false
       custom: []
@@ -16,183 +16,33 @@ endpoints:
     urlParameters: []
     queryParameters: []
     bodyParameters:
-      tmp_user:
-        name: tmp_user
-        description: 'The temporary user ID during request OTP.'
-        required: true
-        example: eyJpdiI...
-        type: string
-        custom: []
       fullname:
         name: fullname
-        description: 'The fullname for register.'
-        required: true
+        description: 'The fullname for contact us enquiry.'
+        required: false
         example: 'John Wick'
         type: string
         custom: []
       email:
         name: email
-        description: 'The email for register.'
+        description: 'The email for contact us enquiry.'
         required: true
         example: johnwick@gmail.com
         type: string
         custom: []
-      calling_code:
-        name: calling_code
-        description: 'The calling code for register.'
-        required: true
-        example: '+60'
-        type: string
-        custom: []
       phone_number:
         name: phone_number
-        description: 'The phone number for register.'
+        description: 'The phone_number for contact us enquiry.'
         required: true
-        example: 123344212
-        type: integer
-        custom: []
-      password:
-        name: password
-        description: 'The password for register.'
-        required: true
-        example: abcd1234
+        example: '012342123'
         type: string
         custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'The confirmation password.'
+      message:
+        name: message
+        description: 'The message for contact us enquiry.'
         required: true
-        example: abcd1234
+        example: 'lorem ipsum..'
         type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/login
-    metadata:
-      title: '2. Login an user - Email'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      email:
-        name: email
-        description: 'The email for login.'
-        required: true
-        example: johnwick@mail.com
-        type: string
-        custom: []
-      password:
-        name: password
-        description: 'The password for login.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - GET
-    uri: api/v1/users
-    metadata:
-      title: '5. Get user'
-      description: ''
-      authenticated: true
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters: []
-    responses:
-      -
-        status: 401
-        content: '{"message":"Unauthenticated."}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/otp
-    metadata:
-      title: '3. Request an OTP'
-      description: |-
-        <strong>request_type</strong><br>
-        1: Register<br>
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      email:
-        name: email
-        description: 'The email for login.'
-        required: true
-        example: johnwick@mail.com
-        type: string
-        custom: []
-      type:
-        name: type
-        description: 'The request type for OTP.'
-        required: true
-        example: 1
-        type: integer
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/otp/resend
-    metadata:
-      title: '4. Resend an OTP'
-      description: |-
-        <strong>request_type</strong><br>
-        2: Resend<br>
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      tmp_user:
-        name: tmp_user
-        description: 'The temporary user ID during request OTP.'
-        required: true
-        example: eyJpdiI...
-        type: string
-        custom: []
-      email:
-        name: email
-        description: 'The email for login.'
-        required: true
-        example: johnwick@mail.com
-        type: string
-        custom: []
-      type:
-        name: type
-        description: 'The request type for OTP.'
-        required: true
-        example: 2
-        type: integer
         custom: []
     responses: []
     responseFields: []

@@ -5,16 +5,53 @@
             "key": "baseUrl",
             "type": "string",
             "name": "string",
-            "value": "http:\/\/localhost"
+            "value": "http:\/\/localhost\/infinite-design\/api\/v1"
         }
     ],
     "info": {
         "name": "Laravel",
-        "_postman_id": "db932add-0307-4aa2-9df0-ccbc161cf202",
+        "_postman_id": "b44b9721-1a44-45ff-8bcc-58abe5a6cd28",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
     "item": [
+        {
+            "name": "Contact-Us API",
+            "description": "",
+            "item": [
+                {
+                    "name": "1. Enquiry Mail",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/contact-us",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/contact-us"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullname\":\"John Wick\",\"email\":\"johnwick@gmail.com\",\"phone_number\":\"012342123\",\"message\":\"lorem ipsum..\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
         {
             "name": "User API",
             "description": "",
@@ -41,7 +78,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"tmp_user\":\"eyJpdiI...\",\"fullname\":\"John Wick\",\"email\":\"johnwick@gmail.com\",\"calling_code\":\"+60\",\"phone_number\":123344212,\"password\":\"abcd1234\",\"password_confirmation\":\"abcd1234\"}"
+                            "raw": "{\"tmp_user\":\"eyJpdiI...\",\"fullname\":\"John Wick\",\"email\":\"johnwick@gmail.com\",\"otp_code\":\"123456\",\"password\":\"abcd1234\",\"password_confirmation\":\"abcd1234\"}"
                         },
                         "description": "",
                         "auth": {
@@ -148,7 +185,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"johnwick@mail.com\",\"type\":1}"
+                            "raw": "{\"email\":\"johnwick@mail.com\",\"request_type\":1}"
                         },
                         "description": "<strong>request_type<\/strong><br>\n1: Register<br>",
                         "auth": {
@@ -179,7 +216,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"tmp_user\":\"eyJpdiI...\",\"email\":\"johnwick@mail.com\",\"type\":2}"
+                            "raw": "{\"tmp_user\":\"eyJpdiI...\",\"email\":\"johnwick@mail.com\",\"request_type\":2}"
                         },
                         "description": "<strong>request_type<\/strong><br>\n2: Resend<br>",
                         "auth": {

@@ -43,5 +43,9 @@ return [
 
     'app' => [
         'name' => env( 'APP_NAME' ),
+    ],
+
+    'mail' => [
+        'receiver' => env( 'MAIL_RECEIVER' )
     ]
 ];

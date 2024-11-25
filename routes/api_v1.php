@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\{
     UserController,
+    MailContentController,
 };
 
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,10 @@ use Illuminate\Support\Facades\Auth;
 */
 
 /* Start Public route */
+
+Route::prefix( 'contact-us' )->group( function() {
+    Route::post('/', [MailContentController::class, 'createEnquiryMail']);
+} );
 
 Route::post( 'otp', [ UserController::class, 'requestOtp' ] );
 Route::post( 'otp/resend', [ UserController::class, 'resendOtp' ] );

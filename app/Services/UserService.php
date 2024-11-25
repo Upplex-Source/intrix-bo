@@ -8,13 +8,9 @@ use Illuminate\Support\Facades\{
     DB,
     Hash,
     Validator,
-};
-use App\Mail\OtpEmail;
-
-use Illuminate\Support\Facades\{
-    Crypt,
     Mail,
 };
+use App\Mail\EnquiryEmail;
 
 use Illuminate\Validation\Rules\Password;
 
@@ -22,6 +18,7 @@ use App\Models\{
     User,
     OtpAction,
     TmpUser,
+    MailContent,
 };
 
 use App\Rules\CheckASCIICharacter;
@@ -42,9 +39,9 @@ class UserService
         $user = $filterObject['model'];
         $filter = $filterObject['filter'];
 
-        if ( $request->input( 'order.0.column' ) != 0 ) {
-            $dir = $request->input( 'order.0.dir' );
-            switch ( $request->input( 'order.0.column' ) ) {
+        if ( $request->input( 'user.0.column' ) != 0 ) {
+            $dir = $request->input( 'user.0.dir' );
+            switch ( $request->input( 'user.0.column' ) ) {
                 case 1:
                     $user->orderBy( 'created_at', $dir );
                     break;
@@ -1117,6 +1114,59 @@ class UserService
                     'tmp_user' => $updateTmpUser['identifier'],
                 ]
             ] );
+        }
+    }
+
+    public static function createEnquiryMail( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'fullname' => [ 'nullable' ],
+            'email' => [ 'required' ],
+            'phone_number' => [ 'required' ],
+            'remarks' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'fullname' => __( 'user.fullname' ),
+            'email' => __( 'user.email' ),
+            'phone_number' => __( 'user.phone_number' ),
+            'remarks' => __( 'user.remarks' ),
+        ];
+        
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $mailContent = MailContent::create( [
+                'fullname' => $request->fullname,
+                'email' => $request->email,
+                'phone_number' => $request->phone_number,
+                'remarks' =>$request->message,
+            ] );
+            
+            DB::commit();
+
+            Mail::to( config( 'services.mail.receiver' ) )->send(new EnquiryEmail( $mailContent ));
+            
+            return response()->json( [
+                'data' => [
+                    'message_key' => 'Enquiry Received!',
+                    'message_key' => 'enquiry_received',
+                ]
+            ] );
+
+        } catch ( \Throwable $th ) {
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+                'message_key' => 'create_enquiry_failed',
+            ], 500 );
         }
     }
 }

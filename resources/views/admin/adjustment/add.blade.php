@@ -114,7 +114,6 @@ $adjustment_create = 'adjustment_create';
 
             selectedProducts.forEach(function(productId,index) {
                 let quantityInput = $(`#product-${productId} .product-quantity`).val();
-
                 formData.append(`products[${index}][id]`, productId);
                 formData.append(`products[${index}][quantity]`, quantityInput);
             });
@@ -309,10 +308,20 @@ $adjustment_create = 'adjustment_create';
 
         $(document).on('click', '.remove-product', function () {
             let productId = $(this).data('product-id');
+            
+            // Remove from table
             $('#product-' + productId).remove();
+            
+            // Remove from Select2
+            let selectElement = $(fc + '_product'); // Replace with your Select2 element ID
+            let selectedValues = selectElement.val();
+            if (selectedValues) {
+                selectedValues = selectedValues.filter(value => value !== productId.toString());
+                selectElement.val(selectedValues).trigger('change');
+            }
 
             // Re-index the table rows
-            productCount = 0;
+            let productCount = 0;
             $('#product-table tbody tr').each(function () {
                 productCount++;
                 $(this).find('td:first').text(productCount);
@@ -321,7 +330,7 @@ $adjustment_create = 'adjustment_create';
 
         $(fc + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
-            $('$product-' + categoryId).remove();
+            $('#product-' + categoryId).remove();
         });
 
         $(fc + '_product').on("select2:select", function (evt) {

@@ -22,7 +22,9 @@ return [
     'adjustment_date' => 'Adjustment Date',
 
     'adjustment' => 'Adjustment',
-    'product' => 'Product Variant',
+    'product' => 'Product',
+    'product_variant' => 'Product Variant',
     'amount' => 'Amount',
+    'quantity' => 'Quantity',
     'original_amount' => 'Original Amount',
 ];

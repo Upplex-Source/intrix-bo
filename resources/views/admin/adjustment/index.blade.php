@@ -46,9 +46,15 @@ $columns = [
         'title' => __( 'adjustment.warehouse' ),
     ],
     [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'adjustment.product' ) ] ),
+        'id' => 'product',
+        'title' => __( 'adjustment.product' ),
+    ],
+    [
         'type' => 'default',
-        'id' => 'remarks',
-        'title' => __( 'adjustment.remarks' ),
+        'id' => 'quantity',
+        'title' => __( 'adjustment.quantity' ),
     ],
     [
         'type' => 'select',
@@ -105,7 +111,8 @@ var statusMapper = @json( $data['status'] ),
             { data: 'created_at' },
             { data: 'reference' },
             { data: 'warehouse' },
-            { data: 'remarks' },
+            { data: 'adjustment_metas' },
+            { data: 'adjustment_metas' },
             // { data: 'number_of_product' },
             // { data: 'stock_quantity' },
             // { data: 'stock_worth' },
@@ -144,6 +151,18 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "product" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    if (Array.isArray(data)) {
+                        return data
+                            .map(item => item.product?.title || '-') 
+                            .join('<br>'); 
+                    }
+                    return '-'; // Return '-' if no valid data
+                },
+            },
+            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "warehouse" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
@@ -158,10 +177,15 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "remarks" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "quantity" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
+                    if (Array.isArray(data)) {
+                        return data
+                            .map(item => item?.amount || '-') 
+                            .join('<br>'); 
+                    }
+                    return '-'; // Return '-' if no valid data
                 },
             },
             {
