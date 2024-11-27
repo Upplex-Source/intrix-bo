@@ -32,6 +32,7 @@ Route::post( 'otp/resend', [ UserController::class, 'resendOtp' ] );
 Route::prefix( 'users' )->group( function() {
     Route::post( '/', [ UserController::class, 'registerUser' ] );
     Route::post( 'login', [ UserController::class, 'loginUser' ] );
+    Route::post( 'check-email', [ UserController::class, 'checkEmail' ] );
     Route::post( 'forgot-password', [ UserController::class, 'forgotPasswordOtp' ] );
     Route::post( 'reset-password', [ UserController::class, 'resetPassword' ] );
 
@@ -45,7 +46,9 @@ Route::middleware( 'auth:user' )->group( function() {
 
     Route::prefix( 'users' )->group( function() {
         Route::get( '/', [ UserController::class, 'getUser' ] );
-        Route::get( '/update', [ UserController::class, 'updateUser' ] );
-        Route::get( '/update-password', [ UserController::class, 'updateUserPassword' ] );
+        if( 1 == 2 ){
+            Route::get( '/update', [ UserController::class, 'updateUser' ] );
+            Route::get( '/update-password', [ UserController::class, 'updateUserPassword' ] );
+        }
     } );
 });

@@ -266,6 +266,9 @@ class Helper {
             // $callingCode = $data['calling_code'];
             // $phoneNumber = $data['phone_number'];
             $email = $data['email'];      
+
+            // set previous to status 10
+            $resetOtps = OtpAction::where( 'user_id', $data['id'] )->where( 'status', 1 )->update(['status' => 10]);
             
             $createOtp = OtpAction::create( [
                 'user_id' => $data['id'],

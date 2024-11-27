@@ -608,6 +608,60 @@ class UserService
         ] );
     }
 
+    public static function checkEmail( $request ) {
+
+        DB::beginTransaction();
+
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'exists:users,email'],
+        ], [
+            'email.required' => __('The email field is required.'),
+            'email.exists' => __('The email does not exist in our records.'),
+        ]);
+
+        $attributeName = [
+            'email' => __( 'user.email' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        try {
+
+            $existingUser = User::where( 'email', $request->email )->first();
+            if ( $existingUser ) {
+               
+                $response = [
+                    'data' => [
+                        'message_key' => 'user_exist',
+                        'message' => __('user.user_exist'),
+                        'data' => null,
+                    ]
+                ];
+
+                return $response;
+
+            } else {
+                return response()->json([
+                    'message' => __('user.user_not_found'),
+                    'message_key' => __('user.get_user_failed'),
+                    'data' => null,
+                ], 422 );
+            }
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollBack();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine()
+            ], 500 );
+        }
+    }
+
     public static function resetPassword( $request ) {
 
         DB::beginTransaction();
@@ -677,8 +731,9 @@ class UserService
         }
 
         return response()->json( [
+            'message' => 'reset_success',
             'message_key' => 'reset_success',
-            'data' => [],
+            'data' => null,
         ] );
     }
 
