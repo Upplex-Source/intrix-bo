@@ -146,7 +146,7 @@ class UserController extends Controller {
     }
 
  /**
-     * 6. Forgot Password
+     * 8. Forgot Password (Request Otp)
      * 
      * Request an unique identifier to reset password.
      * 
@@ -161,7 +161,7 @@ class UserController extends Controller {
     }
 
     /**
-     * 7. Reset Password
+     * 9. Reset Password
      * 
      * There are 2 steps here,<br>
      * 1. Enter <strong>identifier</strong>, <strong>password</strong> and <strong>password_confirmation</strong> to verify
