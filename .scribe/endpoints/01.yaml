@@ -189,3 +189,143 @@ endpoints:
         custom: []
     responses: []
     responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/users/reset-password
+    metadata:
+      title: '7. Reset Password'
+      description: |-
+        There are 2 steps here,<br>
+        1. Enter <strong>identifier</strong>, <strong>password</strong> and <strong>password_confirmation</strong> to verify
+        2. Enter <strong>identifier</strong>, <strong>password</strong>, <strong>password_confirmation</strong> and <strong>otp_code</strong> to reset password
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      identifier:
+        name: identifier
+        description: 'The unique_identifier from forgot password.'
+        required: true
+        example: WLnvrJw6YYK
+        type: string
+        custom: []
+      otp_code:
+        name: otp_code
+        description: 'The otp code to verify password reset.'
+        required: false
+        example: '123456'
+        type: string
+        custom: []
+      password:
+        name: password
+        description: 'The new password to perform password reset.'
+        required: true
+        example: abcd1234
+        type: string
+        custom: []
+      password_confirmation:
+        name: password_confirmation
+        description: 'The new password confirmation to perform password reset.'
+        required: true
+        example: abcd1234
+        type: string
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/users/update
+    metadata:
+      title: '6. Update user'
+      description: ''
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      fullname:
+        name: fullname
+        description: 'The fullname to update.'
+        required: true
+        example: 'John Wick'
+        type: string
+        custom: []
+      email:
+        name: email
+        description: 'The email to update.'
+        required: true
+        example: jphnwick@gmail.com
+        type: string
+        custom: []
+      date_of_birth:
+        name: date_of_birth
+        description: 'The date of birth to update.'
+        required: true
+        example: '2022-01-01'
+        type: string
+        custom: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/users/update-password
+    metadata:
+      title: '7. Update user password'
+      description: ''
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      old_password:
+        name: old_password
+        description: 'The old password of current user.'
+        required: true
+        example: 1234abcd
+        type: string
+        custom: []
+      password:
+        name: password
+        description: 'The new password to change.'
+        required: true
+        example: abcd1234
+        type: string
+        custom: []
+      password_confirmation:
+        name: password_confirmation
+        description: 'The confirm password of new password to change.'
+        required: true
+        example: abcd1234
+        type: string
+        custom: []
+    responses:
+      -
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []

@@ -5,12 +5,12 @@
             "key": "baseUrl",
             "type": "string",
             "name": "string",
-            "value": "http:\/\/localhost\/infinite-design\/api\/v1"
+            "value": "http:\/\/localhost"
         }
     ],
     "info": {
         "name": "Laravel",
-        "_postman_id": "b44b9721-1a44-45ff-8bcc-58abe5a6cd28",
+        "_postman_id": "5a7106a7-0d1d-41b3-8864-da7b42f49cce",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -224,6 +224,133 @@
                         }
                     },
                     "response": []
+                },
+                {
+                    "name": "7. Reset Password",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/users\/reset-password",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/users\/reset-password"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"identifier\":\"WLnvrJw6YYK\",\"otp_code\":\"123456\",\"password\":\"abcd1234\",\"password_confirmation\":\"abcd1234\"}"
+                        },
+                        "description": "There are 2 steps here,<br>\n1. Enter <strong>identifier<\/strong>, <strong>password<\/strong> and <strong>password_confirmation<\/strong> to verify\n2. Enter <strong>identifier<\/strong>, <strong>password<\/strong>, <strong>password_confirmation<\/strong> and <strong>otp_code<\/strong> to reset password",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "6. Update user",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/users\/update",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/users\/update"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullname\":\"John Wick\",\"email\":\"jphnwick@gmail.com\",\"date_of_birth\":\"2022-01-01\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "7. Update user password",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/users\/update-password",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/users\/update-password"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"old_password\":\"1234abcd\",\"password\":\"abcd1234\",\"password_confirmation\":\"abcd1234\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 401,
+                            "body": "{\"message\":\"Unauthenticated.\"}",
+                            "name": ""
+                        }
+                    ]
                 }
             ]
         }

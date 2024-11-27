@@ -31,6 +31,14 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can( 'view roles' )
+                                <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\RoleController' ? 'active current-page' : '' }}">
+                                    <a href="{{ route( 'admin.module_parent.role.index' ) }}" class="nk-menu-link">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-user-list-fill"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.roles' ) }}</span>
+                                    </a>
+                                </li>
+                                @endcan
                                 @can( 'view audits' )
                                 <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AuditController' ? 'active current-page' : '' }}">
                                     <a href="{{ route( 'admin.module_parent.audit.index' ) }}" class="nk-menu-link">
@@ -135,7 +143,6 @@
                                     </ul>
                                 </li>
                                 @endcan
-                                {{-- @if( 1 == 2 ) --}}
                                 @can( 'view Adjustments' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AdjustmentController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.adjustment.index' ) }}" class="nk-menu-link">
@@ -144,7 +151,15 @@
                                         </a>
                                     </li>
                                 @endcan
-                                {{-- @endif --}}
+
+                                @can( 'view Purchases' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\PurchaseController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.purchase.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-slack"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.purchases' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
 
                                 @if( 1 == 2 )
                                 @can( 'view Services' )

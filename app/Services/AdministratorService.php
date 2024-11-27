@@ -144,6 +144,7 @@ class AdministratorService
             'username' => [ 'required', 'alpha_dash', 'unique:administrators,name', new CheckASCIICharacter ],
             'email' => [ 'required', 'bail', 'unique:administrators,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'fullname' => [ 'required' ],
+            'phone_number' => [ 'required' ],
             'password' => [ 'required', Password::min( 8 ) ],
             'role' => [ 'required' ],
         ] );
@@ -152,6 +153,7 @@ class AdministratorService
             'username' => __( 'administrator.username' ),
             'email' => __( 'administrator.email' ),
             'fullname' => __( 'administrator.fullname' ),
+            'phone_number' => __( 'administrator.phone_number' ),
             'password' => __( 'administrator.password' ),
             'role' => __( 'administrator.role' ),
         ];
@@ -169,6 +171,7 @@ class AdministratorService
             $basicAttribute = [
                 'name' => strtolower( $request->username ),
                 'email' => strtolower( $request->email ),
+                'phone_number' => $request->phone_number,
                 'fullname' => $request->fullname,
                 'role' => $request->role,
                 'password' => Hash::make( $request->password ),
@@ -221,6 +224,7 @@ class AdministratorService
             'username' => [ 'required', 'alpha_dash', 'unique:administrators,name,' . $request->id, new CheckASCIICharacter ],
             'email' => [ 'required', 'bail', 'unique:administrators,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'fullname' => [ 'required' ],
+            'phone_number' => [ 'required' ],
             'password' => [ 'nullable', Password::min( 8 ) ],
             'role' => [ 'required' ],
         ] );
@@ -230,6 +234,7 @@ class AdministratorService
             'email' => __( 'administrator.email' ),
             'fullname' => __( 'administrator.fullname' ),
             'password' => __( 'administrator.password' ),
+            'phone_number' => __( 'administrator.phone_number' ),
             'role' => __( 'administrator.role' ),
         ];
 
@@ -246,6 +251,7 @@ class AdministratorService
             $updateAdministrator = Administrator::find( $request->id );
             $updateAdministrator->name = strtolower( $request->username );
             $updateAdministrator->email = strtolower( $request->email );
+            $updateAdministrator->phone_number = $request->phone_number;
             $updateAdministrator->fullname = $request->fullname;
             $updateAdministrator->role = $request->role;
 

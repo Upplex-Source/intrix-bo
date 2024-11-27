@@ -22,6 +22,8 @@ return [
     'previous' => 'Prev',
     'next' => 'Next',
     'last' => 'Last',
+    'paid' => 'Paid',
+    'due' => 'Due',
 
     'search_x' => 'Search :title',
     'select_x' => 'Select :title',

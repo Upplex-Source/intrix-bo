@@ -37,6 +37,23 @@ class Helper {
         ];
     }
 
+    public static function taxTypes() {
+        return [
+            1 => [
+                'title' => 'SST',
+                'description' => 'Sales and Service Tax',
+                'percentage' => 6,
+                'type' => 'service',
+            ],
+            2 => [
+                'title' => 'Sales Tax',
+                'description' => 'Tax on goods',
+                'percentage' => 10,
+                'type' => 'sales',
+            ],
+        ];
+    }
+
     public static function numberFormat( $number, $decimal, $isRound = false ) {
         if ( $isRound ) {
             return number_format( $number, $decimal );    
@@ -246,8 +263,8 @@ class Helper {
         } 
         else if ( $action == 'forgot_password' ) {
 
-            $callingCode = $data['calling_code'];
-            $phoneNumber = $data['phone_number'];
+            // $callingCode = $data['calling_code'];
+            // $phoneNumber = $data['phone_number'];
             $email = $data['email'];      
             
             $createOtp = OtpAction::create( [
@@ -261,8 +278,8 @@ class Helper {
 
         }else if ( $action == 'update_account' ) {
 
-            $callingCode = $data['calling_code'];
-            $phoneNumber = $data['phone_number'];
+            // $callingCode = $data['calling_code'];
+            // $phoneNumber = $data['phone_number'];
             $email = $data['email'];      
             
             $createOtp = OtpAction::create( [
@@ -278,8 +295,9 @@ class Helper {
 
             $currentUser = auth()->user();
 
-            $callingCode = $currentUser->calling_code;
-            $phoneNumber = $currentUser->phone_number;
+            // $callingCode = $currentUser->calling_code;
+            // $phoneNumber = $currentUser->phone_number;
+            $email = $data['email'];      
 
             $createOtp = OtpAction::create( [
                 'user_id' => $currentUser->id,
@@ -291,12 +309,8 @@ class Helper {
             $body = 'Your OTP for Infinite Design ' . $action . ' is ' . $createOtp->otp_code;
         }
 
-        // SMS JOB
-        // if ( config( 'services.sms.enabled' ) ) {
-        //     SendOTP::dispatch( $callingCode . $phoneNumber, $body );
-        // }
-
         return [
+            'action' => $action,
             'identifier' => Crypt::encryptString( $createOtp->id ),
             'otp_code' => $createOtp->otp_code,
         ];
@@ -305,6 +319,11 @@ class Helper {
     public static function generateAdjustmentNumber()
     {
         return now()->format('YmdHis');
+    }
+
+    public static function generatePurchaseNumber()
+    {
+        return 'PCR' . now()->format('YmdHis');
     }
 
     

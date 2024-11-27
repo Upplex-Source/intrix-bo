@@ -145,5 +145,40 @@ class UserController extends Controller {
         return UserService::updateUserPassword( $request );
     }
 
+ /**
+     * 6. Forgot Password
+     * 
+     * Request an unique identifier to reset password.
+     * 
+     * @group User API
+     * 
+     * @bodyParam email string required Can be email, to perform password reset. Example: johnwick@gmail.com
+     * 
+     */
+    public function forgotPasswordOtp( Request $request ) {
+
+        return UserService::forgotPasswordOtp( $request );
+    }
+
+    /**
+     * 7. Reset Password
+     * 
+     * There are 2 steps here,<br>
+     * 1. Enter <strong>identifier</strong>, <strong>password</strong> and <strong>password_confirmation</strong> to verify
+     * 2. Enter <strong>identifier</strong>, <strong>password</strong>, <strong>password_confirmation</strong> and <strong>otp_code</strong> to reset password
+     * 
+     * @group User API
+     * 
+     * @bodyParam email string required Can be email or phone number, to perform password reset. Example: johnwick@gmail.com
+     * @bodyParam identifier string required The unique_identifier from forgot password. Example: WLnvrJw6YYK
+     * @bodyParam otp_code string The otp code to verify password reset. Example: 123456 
+     * @bodyParam password string required The new password to perform password reset. Example: abcd1234
+     * @bodyParam password_confirmation string required The new password confirmation to perform password reset. Example: abcd1234
+     * 
+     */
+    public function resetPassword( Request $request ) {
+
+        return UserService::resetPassword( $request );
+    }
 
 }

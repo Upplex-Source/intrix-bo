@@ -4,6 +4,7 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 use App\Http\Controllers\Admin\{
     AdministratorController,
+    RoleController,
     AuditController,
     BookingController,
     CoreController,
@@ -33,6 +34,7 @@ use App\Http\Controllers\Admin\{
     MeasurementUnitController,
     AdjustmentController,
     ProductInventoryController,
+    PurchaseController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -530,6 +532,25 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
             Route::post( 'create-user', [ UserController::class, 'createUser' ] )->name( 'admin.user.createUser' );
             Route::post( 'update-user', [ UserController::class, 'updateUser' ] )->name( 'admin.user.updateUser' );
             Route::post( 'update-user-status', [ UserController::class, 'updateUserStatus' ] )->name( 'admin.user.updateUserStatus' );
+        } );
+
+        Route::prefix( 'purchases' )->group( function() {
+            Route::group( [ 'middleware' => [ 'permission:view purchases' ] ], function() {
+                Route::get( '/', [ PurchaseController::class, 'index' ] )->name( 'admin.module_parent.purchase.index' );
+            } );
+            Route::group( [ 'middleware' => [ 'permission:add purchases' ] ], function() {
+                Route::get( 'add', [ PurchaseController::class, 'add' ] )->name( 'admin.purchase.add' );
+            } );
+            Route::group( [ 'middleware' => [ 'permission:edit purchases' ] ], function() {
+                Route::get( 'edit', [ PurchaseController::class, 'edit' ] )->name( 'admin.purchase.edit' );
+            } );
+    
+            Route::post( 'all-purchases', [ PurchaseController::class, 'allPurchases' ] )->name( 'admin.purchase.allPurchases' );
+            Route::post( 'one-purchase', [ PurchaseController::class, 'onePurchase' ] )->name( 'admin.purchase.onePurchase' );
+            Route::post( 'create-purchase', [ PurchaseController::class, 'createPurchase' ] )->name( 'admin.purchase.createPurchase' );
+            Route::post( 'update-purchase', [ PurchaseController::class, 'updatePurchase' ] )->name( 'admin.purchase.updatePurchase' );
+            Route::post( 'update-purchase-status', [ PurchaseController::class, 'updatePurchaseStatus' ] )->name( 'admin.purchase.updatePurchaseStatus' );
+            Route::post( 'remove-purchase-attachment', [ PurchaseController::class, 'removePurchaseAttachment' ] )->name( 'admin.purchase.removePurchaseAttachment' );
         } );
         
     } );

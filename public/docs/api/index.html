@@ -99,6 +99,15 @@
                                     <li class="tocify-item level-2" data-unique="user-api-POSTapi-v1-otp-resend">
                         <a href="#user-api-POSTapi-v1-otp-resend">4. Resend an OTP</a>
                     </li>
+                                    <li class="tocify-item level-2" data-unique="user-api-POSTapi-v1-users-reset-password">
+                        <a href="#user-api-POSTapi-v1-users-reset-password">7. Reset Password</a>
+                    </li>
+                                    <li class="tocify-item level-2" data-unique="user-api-GETapi-v1-users-update">
+                        <a href="#user-api-GETapi-v1-users-update">6. Update user</a>
+                    </li>
+                                    <li class="tocify-item level-2" data-unique="user-api-GETapi-v1-users-update-password">
+                        <a href="#user-api-GETapi-v1-users-update-password">7. Update user password</a>
+                    </li>
                                                     </ul>
                             </ul>
         
@@ -111,7 +120,7 @@
                             <li><a href="http://github.com/knuckleswtf/scribe">Documentation powered by Scribe ✍</a></li>
                     </ul>
         <ul class="toc-footer" id="last-updated">
-        <li>Last updated: November 25 2024</li>
+        <li>Last updated: November 27 2024</li>
     </ul>
 </div>
 
@@ -125,7 +134,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 <blockquote>
 <p>Base URL</p>
 </blockquote>
-<pre><code class="language-yaml">http://localhost/infinite-design/api/v1</code></pre>
+<pre><code class="language-yaml">http://localhost</code></pre>
 
         <h1 id="authenticating-requests">Authenticating requests</h1>
 <p>This API is not authenticated.</p>
@@ -147,7 +156,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost/infinite-design/api/v1/api/v1/contact-us" \
+    "http://localhost/api/v1/contact-us" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -161,7 +170,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost/infinite-design/api/v1/api/v1/contact-us"
+    "http://localhost/api/v1/contact-us"
 );
 
 const headers = {
@@ -285,7 +294,7 @@ fetch(url, {
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost/infinite-design/api/v1/api/v1/users" \
+    "http://localhost/api/v1/users" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -301,7 +310,7 @@ fetch(url, {
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost/infinite-design/api/v1/api/v1/users"
+    "http://localhost/api/v1/users"
 );
 
 const headers = {
@@ -443,7 +452,7 @@ fetch(url, {
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost/infinite-design/api/v1/api/v1/users/login" \
+    "http://localhost/api/v1/users/login" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -455,7 +464,7 @@ fetch(url, {
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost/infinite-design/api/v1/api/v1/users/login"
+    "http://localhost/api/v1/users/login"
 );
 
 const headers = {
@@ -554,14 +563,14 @@ fetch(url, {
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost/infinite-design/api/v1/api/v1/users" \
+    --get "http://localhost/api/v1/users" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost/infinite-design/api/v1/api/v1/users"
+    "http://localhost/api/v1/users"
 );
 
 const headers = {
@@ -658,7 +667,7 @@ access-control-allow-origin: *
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost/infinite-design/api/v1/api/v1/otp" \
+    "http://localhost/api/v1/otp" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -670,7 +679,7 @@ access-control-allow-origin: *
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost/infinite-design/api/v1/api/v1/otp"
+    "http://localhost/api/v1/otp"
 );
 
 const headers = {
@@ -769,7 +778,7 @@ fetch(url, {
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost/infinite-design/api/v1/api/v1/otp/resend" \
+    "http://localhost/api/v1/otp/resend" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -782,7 +791,7 @@ fetch(url, {
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost/infinite-design/api/v1/api/v1/otp/resend"
+    "http://localhost/api/v1/otp/resend"
 );
 
 const headers = {
@@ -875,6 +884,440 @@ fetch(url, {
                data-component="body" hidden>
     <br>
 <p>The request type for OTP.</p>
+        </p>
+        </form>
+
+            <h2 id="user-api-POSTapi-v1-users-reset-password">7. Reset Password</h2>
+
+<p>
+</p>
+
+<p>There are 2 steps here,<br></p>
+<ol>
+<li>Enter <strong>identifier</strong>, <strong>password</strong> and <strong>password_confirmation</strong> to verify</li>
+<li>Enter <strong>identifier</strong>, <strong>password</strong>, <strong>password_confirmation</strong> and <strong>otp_code</strong> to reset password</li>
+</ol>
+
+<span id="example-requests-POSTapi-v1-users-reset-password">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost/api/v1/users/reset-password" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"identifier\": \"WLnvrJw6YYK\",
+    \"otp_code\": \"123456\",
+    \"password\": \"abcd1234\",
+    \"password_confirmation\": \"abcd1234\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/v1/users/reset-password"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "identifier": "WLnvrJw6YYK",
+    "otp_code": "123456",
+    "password": "abcd1234",
+    "password_confirmation": "abcd1234"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-users-reset-password">
+</span>
+<span id="execution-results-POSTapi-v1-users-reset-password" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-users-reset-password"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-users-reset-password"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-users-reset-password" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-users-reset-password"></code></pre>
+</span>
+<form id="form-POSTapi-v1-users-reset-password" data-method="POST"
+      data-path="api/v1/users/reset-password"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-users-reset-password', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-users-reset-password"
+                    onclick="tryItOut('POSTapi-v1-users-reset-password');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-users-reset-password"
+                    onclick="cancelTryOut('POSTapi-v1-users-reset-password');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-users-reset-password" hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/users/reset-password</code></b>
+        </p>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <p>
+            <b><code>identifier</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="identifier"
+               data-endpoint="POSTapi-v1-users-reset-password"
+               value="WLnvrJw6YYK"
+               data-component="body" hidden>
+    <br>
+<p>The unique_identifier from forgot password.</p>
+        </p>
+                <p>
+            <b><code>otp_code</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="otp_code"
+               data-endpoint="POSTapi-v1-users-reset-password"
+               value="123456"
+               data-component="body" hidden>
+    <br>
+<p>The otp code to verify password reset.</p>
+        </p>
+                <p>
+            <b><code>password</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="password"
+               data-endpoint="POSTapi-v1-users-reset-password"
+               value="abcd1234"
+               data-component="body" hidden>
+    <br>
+<p>The new password to perform password reset.</p>
+        </p>
+                <p>
+            <b><code>password_confirmation</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="password_confirmation"
+               data-endpoint="POSTapi-v1-users-reset-password"
+               value="abcd1234"
+               data-component="body" hidden>
+    <br>
+<p>The new password confirmation to perform password reset.</p>
+        </p>
+        </form>
+
+            <h2 id="user-api-GETapi-v1-users-update">6. Update user</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-users-update">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/v1/users/update" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"fullname\": \"John Wick\",
+    \"email\": \"jphnwick@gmail.com\",
+    \"date_of_birth\": \"2022-01-01\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/v1/users/update"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "fullname": "John Wick",
+    "email": "jphnwick@gmail.com",
+    "date_of_birth": "2022-01-01"
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-users-update">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary>
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre>
+        </details>         <pre>
+
+<code class="language-json">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-v1-users-update" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-users-update"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-users-update"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-users-update" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-users-update"></code></pre>
+</span>
+<form id="form-GETapi-v1-users-update" data-method="GET"
+      data-path="api/v1/users/update"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-users-update', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-users-update"
+                    onclick="tryItOut('GETapi-v1-users-update');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-users-update"
+                    onclick="cancelTryOut('GETapi-v1-users-update');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-users-update" hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/users/update</code></b>
+        </p>
+                <p>
+            <label id="auth-GETapi-v1-users-update" hidden>Authorization header:
+                <b><code>Bearer </code></b><input type="text"
+                                                                name="Authorization"
+                                                                data-prefix="Bearer "
+                                                                data-endpoint="GETapi-v1-users-update"
+                                                                data-component="header"></label>
+        </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <p>
+            <b><code>fullname</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="fullname"
+               data-endpoint="GETapi-v1-users-update"
+               value="John Wick"
+               data-component="body" hidden>
+    <br>
+<p>The fullname to update.</p>
+        </p>
+                <p>
+            <b><code>email</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="email"
+               data-endpoint="GETapi-v1-users-update"
+               value="jphnwick@gmail.com"
+               data-component="body" hidden>
+    <br>
+<p>The email to update.</p>
+        </p>
+                <p>
+            <b><code>date_of_birth</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="date_of_birth"
+               data-endpoint="GETapi-v1-users-update"
+               value="2022-01-01"
+               data-component="body" hidden>
+    <br>
+<p>The date of birth to update.</p>
+        </p>
+        </form>
+
+            <h2 id="user-api-GETapi-v1-users-update-password">7. Update user password</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-users-update-password">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/v1/users/update-password" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"old_password\": \"1234abcd\",
+    \"password\": \"abcd1234\",
+    \"password_confirmation\": \"abcd1234\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/v1/users/update-password"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "old_password": "1234abcd",
+    "password": "abcd1234",
+    "password_confirmation": "abcd1234"
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-users-update-password">
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary>
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre>
+        </details>         <pre>
+
+<code class="language-json">{
+    &quot;message&quot;: &quot;Unauthenticated.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-v1-users-update-password" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-users-update-password"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-users-update-password"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-users-update-password" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-users-update-password"></code></pre>
+</span>
+<form id="form-GETapi-v1-users-update-password" data-method="GET"
+      data-path="api/v1/users/update-password"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-users-update-password', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-users-update-password"
+                    onclick="tryItOut('GETapi-v1-users-update-password');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-users-update-password"
+                    onclick="cancelTryOut('GETapi-v1-users-update-password');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-users-update-password" hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/users/update-password</code></b>
+        </p>
+                <p>
+            <label id="auth-GETapi-v1-users-update-password" hidden>Authorization header:
+                <b><code>Bearer </code></b><input type="text"
+                                                                name="Authorization"
+                                                                data-prefix="Bearer "
+                                                                data-endpoint="GETapi-v1-users-update-password"
+                                                                data-component="header"></label>
+        </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <p>
+            <b><code>old_password</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="old_password"
+               data-endpoint="GETapi-v1-users-update-password"
+               value="1234abcd"
+               data-component="body" hidden>
+    <br>
+<p>The old password of current user.</p>
+        </p>
+                <p>
+            <b><code>password</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="password"
+               data-endpoint="GETapi-v1-users-update-password"
+               value="abcd1234"
+               data-component="body" hidden>
+    <br>
+<p>The new password to change.</p>
+        </p>
+                <p>
+            <b><code>password_confirmation</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="password_confirmation"
+               data-endpoint="GETapi-v1-users-update-password"
+               value="abcd1234"
+               data-component="body" hidden>
+    <br>
+<p>The confirm password of new password to change.</p>
         </p>
         </form>
 

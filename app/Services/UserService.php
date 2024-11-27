@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\{
     Hash,
     Validator,
     Mail,
+    Crypt,
 };
+
 use App\Mail\EnquiryEmail;
+use App\Mail\OtpMail;
 
 use Illuminate\Validation\Rules\Password;
 
@@ -560,7 +563,7 @@ class UserService
                 
                 DB::commit();
 
-                Mail::to( $existingUser->email )->send(new OtpEmail( $forgotPassword ));
+                Mail::to( $existingUser->email )->send(new OtpMail( $forgotPassword ));
     
                 if (Mail::failures() != 0) {
                     
@@ -569,6 +572,7 @@ class UserService
                             'title' => $forgotPassword ? __( 'user.otp_email_success' ) : '',
                             'note' => $forgotPassword ? __( 'user.otp_email_success_note', [ 'title' => $existingUser->email ] ) : '',
                             'identifier' => $forgotPassword['identifier'],
+                            'otp_code' => '#DEBUG - ' . $forgotPassword['otp_code'],
                         ]
                     ];
     
@@ -599,56 +603,6 @@ class UserService
                 'otp_code' => $data['otp_code'],
                 'identifier' => $data['identifier'],
             ],
-        ] );
-    }
-
-    public static function verifyForgotPassword( $request ) {
-        
-        try {
-            $request->merge( [
-                'identifier' => Crypt::decryptString( $request->identifier ),
-            ] );
-        } catch ( \Throwable $th ) {
-            return response()->json( [
-                'message' =>  __( 'user.invalid_otp' ),
-            ], 500 );
-        }
-
-        DB::beginTransaction();
-
-        $validator = Validator::make( $request->all(), [
-            'identifier' => [ 'required', function( $attribute, $value, $fail ) use ( $request, &$currentOtpAction ) {
-
-                $currentOtpAction = OtpAction::lockForUpdate()
-                    ->find( $value );
-
-                if ( !$currentOtpAction ) {
-                    $fail( __( 'user.invalid_otp_2' ) );
-                    return false;
-                }
-
-                if ( $currentOtpAction->status != 1 ) {
-                    $fail( __( 'user.invalid_otp_2' ) );
-                    return false;
-                }
-
-                if ( $currentOtpAction->otp_code != $request->otp_code ) {
-                    $fail( __( 'user.invalid_otp_2' ) );
-                    return false;
-                }
-
-                if ( Carbon::parse( $currentOtpAction->expire_on )->isPast() ) {
-                    $fail( __( 'user.invalid_otp_2' ) );
-                    return false;
-                }
-            } ],
-        ] )->validate();
-
-        return response()->json( [
-            'message_key' => 'verify_success',
-            'data' => [
-                'redirect_url' => route( 'web.resetPassword' ) . '?token=' . Crypt::encryptString( $request->identifier ),
-            ]
         ] );
     }
 
@@ -687,20 +641,11 @@ class UserService
                     return false;
                 }
             } ],
-            'password' => [ 'required', Password::min( 8 ) ],
-            'repeat_password' => [ 'required_with:password', function( $attribute, $value, $fail ) use ( $request ) {
-                if ( !empty( $value ) ) {
-                    if ( $value != $request->password ) {
-                        $fail( __( 'user.repeat_password_not_match' ) );
-                        return false;
-                    }
-                }
-            } ],
+            'password' => [ 'required', 'confirmed', Password::min( 8 ) ],
         ] );
 
         $attributeName = [
             'password' => __( 'user.password' ),
-            'repeat_password' => __( 'user.repeat_password' ),
         ];
 
         foreach ( $attributeName as $key => $aName ) {
@@ -1035,7 +980,9 @@ class UserService
     
                 DB::commit();
                 $phoneNumber  = $request->calling_code . $request->phone_number;
-    
+
+                Mail::to( $request->email )->send(new OtpMail( $createTmpUser ));
+                
                 return response()->json( [
                     'message' => $request->calling_code . $request->phone_number,
                     'message_key' => 'request_otp_success',
@@ -1058,6 +1005,7 @@ class UserService
                 $request->merge( [
                     'tmp_user' => Crypt::decryptString( $request->tmp_user ),
                 ] );
+
             } catch ( \Throwable $th ) {
                 return response()->json( [
                     'message' => __( 'validation.header_message' ),
@@ -1073,11 +1021,12 @@ class UserService
                 'tmp_user' => [ 'required', function( $attribute, $value, $fail ) {
     
                     $current = TmpUser::find( $value );
+
                     if ( !$current ) {
                         $fail( __( 'user.invalid_request' ) );
                         return false;
                     }
-    
+                    
                     $exist = TmpUser::where( 'phone_number', $current->phone_number )->where( 'status', 1 )->count();
                     if ( $exist == 0 ) {
                         $fail( __( 'user.invalid_request' ) );
@@ -1094,6 +1043,7 @@ class UserService
             foreach ( $attributeName as $key => $aName ) {
                 $attributeName[$key] = strtolower( $aName );
             }
+            $currentTmp = TmpUser::find( $request->tmp_user );
     
             $validator->setAttributeNames( $attributeName )->validate();
             $phoneNumber  = $request->calling_code . $request->phone_number;
@@ -1105,6 +1055,8 @@ class UserService
             ] );
 
             DB::commit();
+
+            Mail::to( $currentTmp->email )->send(new OtpMail( $updateTmpUser ));
 
             return response()->json( [
                 'message' => 'resend_otp_success',

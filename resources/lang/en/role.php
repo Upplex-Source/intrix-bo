@@ -20,6 +20,7 @@ return [
     'super_admin' => 'Super Admin',
     'admin' => 'Admin',
     'owner' => 'Owner',
+    'salesman' => 'Salesman',
 
     'no_action_found' => 'No action found',
     'no_module_found' => 'No module found',
