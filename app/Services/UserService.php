@@ -581,9 +581,11 @@ class UserService
 
                 return "Oops! There was some error sending the email.";
             } else {
-                return response()->json( [
-                    'message' => $th->getMessage() . ' in line: ' . $th->getLine()
-                ], 500 );
+                return response()->json([
+                    'message' => __('user.user_not_found'),
+                    'message_key' => 'get_user_failed',
+                    'data' => null,
+                ]);
             }
 
         } catch ( \Throwable $th ) {
