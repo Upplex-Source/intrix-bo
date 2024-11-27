@@ -146,7 +146,7 @@ class UserController extends Controller {
     }
 
     /**
-     * 8. Forgot Password (Request Otp)
+     * 8. Check Email (Pre-request Otp)
      * 
      * Validate an email
      * 
@@ -177,10 +177,6 @@ class UserController extends Controller {
 
     /**
      * 10. Reset Password
-     * 
-     * There are 2 steps here,<br>
-     * 1. Enter <strong>identifier</strong>, <strong>password</strong> and <strong>password_confirmation</strong> to verify
-     * 2. Enter <strong>identifier</strong>, <strong>password</strong>, <strong>password_confirmation</strong> and <strong>otp_code</strong> to reset password
      * 
      * @group User API
      * 
