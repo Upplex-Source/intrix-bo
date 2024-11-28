@@ -60,6 +60,15 @@
                                     </li>
                                 @endcan
 
+                                @can( 'view Salesmen' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AdministratorController' && in_array( $action, [ 'indexSalesman', 'editSalesman', 'addSalesman' ] ) ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.administrator.indexSalesman' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-user-fill"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.salesmen' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @can( 'view Categories' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\CategoryController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.category.index' ) }}" class="nk-menu-link">

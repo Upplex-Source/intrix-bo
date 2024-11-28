@@ -156,7 +156,7 @@ class AdministratorService
             'fullname' => [ 'required' ],
             'phone_number' => [ 'required' ],
             'password' => [ 'required', Password::min( 8 ) ],
-            'role' => [ 'required' ],
+            'role' => [ 'nullable' ],
         ] );
 
         $attributeName = [
@@ -183,14 +183,14 @@ class AdministratorService
                 'email' => strtolower( $request->email ),
                 'phone_number' => $request->phone_number,
                 'fullname' => $request->fullname,
-                'role' => $request->role,
+                'role' => $request->role ?? 4,
                 'password' => Hash::make( $request->password ),
                 'status' => 10,
             ];
 
             $createAdmin = Administrator::create( $basicAttribute );
     
-            $roleModel = RoleModel::find( $request->role );
+            $roleModel = RoleModel::find( $request->role ?? 4 );
     
             $createAdmin->syncRoles( [ $roleModel->name ] );
 
@@ -263,13 +263,13 @@ class AdministratorService
             $updateAdministrator->email = strtolower( $request->email );
             $updateAdministrator->phone_number = $request->phone_number;
             $updateAdministrator->fullname = $request->fullname;
-            $updateAdministrator->role = $request->role;
+            $updateAdministrator->role = $request->role ?? $updateAdministrator->role;
 
             if ( !empty( $request->password ) ) {
                 $updateAdministrator->password = Hash::make( $request->password );
             }
 
-            $roleModel = RoleModel::find( $request->role );
+            $roleModel = RoleModel::find( $request->role ?? $updateAdministrator->role  );
             $updateAdministrator->syncRoles( [ $roleModel->name ] );
 
             $updateAdministrator->save();
