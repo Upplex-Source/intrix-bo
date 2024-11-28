@@ -41,11 +41,11 @@
     <div class="container">
         <div class="header">
             <img src="{{ asset('admin/images/logo.png') }}" alt="Company Logo">
-            <h2>Invoice Reference: {{ $data->reference }}</h2>
+            <h2>Quotation Reference: {{ $data->reference }}</h2>
         </div>
         <div class="content">
             <p>Dear {{ $data->customer->email }},</p>
-            <p>Thank you for your business! Please find your invoice attached below:</p>
+            <p>Thank you for your support! Please find your quotation attached below:</p>
             <p>
                 <strong>Invoice Summary:</strong><br>
                 <strong>Amount:</strong> RM {{ number_format($data->final_amount, 2) }}<br>

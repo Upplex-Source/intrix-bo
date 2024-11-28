@@ -41,7 +41,7 @@ class QuotationMail extends Mailable
                 ->with(['data' => $this->data])
                 ->subject($this->getSubject())
                 ->view('admin.mail.quotation_response')
-                ->attachData($pdf->output(), 'payment_receipt.pdf', [
+                ->attachData($pdf->output(), 'quotation.pdf', [
                     'mime' => 'application/pdf',
                 ]);
     }
