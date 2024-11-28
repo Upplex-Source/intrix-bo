@@ -35,7 +35,7 @@ class EnquiryEmail extends Mailable
     {
         // from
         return $this->from('support@infinitedesign.my', 'Infinite Design')
-        ->subject('ENQUIRY')
+        ->subject('Enquiry')
         ->view('admin/mail/enquiry')
         ->with(['data' => $this->data]);
     }

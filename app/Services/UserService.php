@@ -36,7 +36,7 @@ class UserService
 {
     public static function allUsers( $request ) {
 
-        $user = User::select( 'users.*' )->orderBy( 'created_at', 'DESC' );
+        $user = User::select( 'users.*' )->where('username','!=', null)->orderBy( 'created_at', 'DESC' );
 
         $filterObject = self::filter( $request, $user );
         $user = $filterObject['model'];

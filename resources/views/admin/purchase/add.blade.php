@@ -332,9 +332,14 @@ $taxTypes = $data['tax_types'];
         // Clear all quantity input fields
         quantityInputContainer.empty();
 
+        $('.select2-container--default .select2-results__option[aria-selected="true"]').on('click mousedown', function(event) {
+            event.stopPropagation();
+        });
+        
         $(fc + '_product').select2({
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
+            allowClear: true,
             width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
             placeholder: $(this).data('placeholder'),
             closeOnSelect: true, // Auto close after selection
@@ -460,6 +465,10 @@ $taxTypes = $data['tax_types'];
             // Remove row from the table
             $(`#product-${productId}`).remove();
 
+            // Remove the option from the Select2 dropdown
+            $(fc + '_product').find(`option[value="${productId}"]`).remove(); // Replace 'product-select' with your Select2 element's ID
+            $(fc + '_product').trigger('change'); // Update Select2 to reflect changes
+
             // Re-index rows
             productCount = 0;
             $('#product-table tbody tr').each(function () {
@@ -473,12 +482,20 @@ $taxTypes = $data['tax_types'];
         $(fc + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
             $('#product-' + categoryId).remove();
+            updateTotals();
+            var selectedValues = $(fc + '_product').val(); // Get the current selected values
+            selectedValues = selectedValues.filter(function (id) {
+                return id != categoryId; // Remove the unselected productId
+            });
+
+            // Reassign the remaining selected values back to select2
+            $(fc + '_product').val(selectedValues).trigger('change');
         });
+
 
         $(fc + '_product').on("select2:select", function (evt) {
             var element = evt.params.data.element;
             var $element = $(element);
-            
             $element.detach();
             $(this).append($element);
             $(this).trigger("change");

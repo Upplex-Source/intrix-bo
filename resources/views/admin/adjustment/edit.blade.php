@@ -205,6 +205,7 @@ $adjustment_edit = 'adjustment_edit';
         let productSelect2 = $(fe + '_product').select2({
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
+            allowClear: true,
             width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
             placeholder: $(this).data('placeholder'),
             closeOnSelect: true, // Auto close after selection
@@ -417,6 +418,15 @@ $adjustment_edit = 'adjustment_edit';
         $(fe + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
             $('#product-' + categoryId).remove();
+            updateTotals(); 
+
+            var selectedValues = $(fe + '_product').val(); // Get the current selected values
+            selectedValues = selectedValues.filter(function (id) {
+                return id != categoryId; // Remove the unselected productId
+            });
+
+            // Reassign the remaining selected values back to select2
+            $(fe + '_product').val(selectedValues).trigger('change');
         });
 
         $(fe + '_product').on("select2:select", function (evt) {

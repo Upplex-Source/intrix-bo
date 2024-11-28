@@ -234,9 +234,10 @@ $adjustment_create = 'adjustment_create';
         // Clear all quantity input fields
         quantityInputContainer.empty();
 
-        $(fc + '_product').select2({
+                $(fc + '_product').select2({
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
+            allowClear: true,
             width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
             placeholder: $(this).data('placeholder'),
             closeOnSelect: true, // Auto close after selection
@@ -331,6 +332,15 @@ $adjustment_create = 'adjustment_create';
         $(fc + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
             $('#product-' + categoryId).remove();
+            updateTotals(); 
+
+            var selectedValues = $(fc + '_product').val(); // Get the current selected values
+            selectedValues = selectedValues.filter(function (id) {
+                return id != categoryId; // Remove the unselected productId
+            });
+
+            // Reassign the remaining selected values back to select2
+            $(fc + '_product').val(selectedValues).trigger('change');
         });
 
         $(fc + '_product').on("select2:select", function (evt) {

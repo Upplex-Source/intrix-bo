@@ -56,9 +56,9 @@ class QuotationMail extends Mailable
     {
         switch ($this->data['action']) {
             case 'quotation':
-                return 'QUOTATION';
+                return 'Quotation';
             default:
-                return 'QUOTATION';
+                return 'Quotation';
         }
     }
 }
