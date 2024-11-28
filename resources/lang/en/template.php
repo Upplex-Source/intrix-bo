@@ -21,6 +21,8 @@ return [
     'audit_logs' => 'Audit Logs',
     'operations' => 'Operations',
     'users' => 'Users',
+    'salesman' => 'Salesman',
+    'salesmen' => 'Salesmen',
     'orders' => 'Orders',
     'order_items' => 'Order Items',
     'sales_report' => 'Sales Report',
@@ -57,6 +59,7 @@ return [
     'farms' => 'Farms',
     'order_list' => 'Order List',
     'order_item_list' => 'Order Item List',
+    'orders' => 'Orders',
 
     'loading' => 'Loading...',
     'add' => 'Add',
@@ -79,6 +82,7 @@ return [
     'submit' => 'Submit',
     'export' => 'Export',
     'generate_invoice' => 'Generate Invoice',
+    'add_transaction' => 'Add Transaction',
     'preview' => 'Preview',
     'generate_and_save' => 'Generate & Save',
 
@@ -118,7 +122,12 @@ return [
     'stock_info' => 'Stock Info',
     'bundle_products' => 'Bundle Products',
     'purchases' => 'Purchases',
+    'purchase_transactions' => 'Purchases Transactions',
     'expenses' => 'Expenses',
+    'expenses_accounts' => 'Expenses Accounts',
+    'expense_accounts' => 'Expenses Accounts',
+    'expenses_categories' => 'Expenses Categories',
+    'expense_categories' => 'Expenses Categories',
     'quotations' => 'Quotations',
     'invoices' => 'Invoices',
     'sales_orders' => 'Sales Orders',
@@ -131,4 +140,5 @@ return [
     'width' => 'Width',
     'height' => 'Height',
     'adjustments' => 'Adjustments',
+    'send_quotation' => 'Send Quotation',
 ];

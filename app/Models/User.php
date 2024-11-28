@@ -19,6 +19,8 @@ class User extends Model
 {
     use HasFactory, LogsActivity, HasApiTokens;
 
+    protected $hidden = ['password'];
+
     protected $fillable = [
         'username',
         'fullname',

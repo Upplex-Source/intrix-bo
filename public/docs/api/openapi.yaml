@@ -195,7 +195,7 @@ paths:
   /api/v1/otp:
     post:
       summary: '3. Request an OTP'
-      description: "<strong>request_type</strong><br>\n1: Register<br>"
+      description: ''
       parameters:
         -
           in: header
@@ -236,7 +236,7 @@ paths:
   /api/v1/otp/resend:
     post:
       summary: '4. Resend an OTP'
-      description: "<strong>request_type</strong><br>\n2: Resend<br>"
+      description: ''
       parameters:
         -
           in: header
@@ -281,8 +281,8 @@ paths:
       security: []
   /api/v1/users/reset-password:
     post:
-      summary: '7. Reset Password'
-      description: "There are 2 steps here,<br>\n1. Enter <strong>identifier</strong>, <strong>password</strong> and <strong>password_confirmation</strong> to verify\n2. Enter <strong>identifier</strong>, <strong>password</strong>, <strong>password_confirmation</strong> and <strong>otp_code</strong> to reset password"
+      summary: '10. Reset Password'
+      description: ''
       parameters:
         -
           in: header
@@ -308,6 +308,10 @@ paths:
             schema:
               type: object
               properties:
+                email:
+                  type: string
+                  description: 'Can be email or phone number, to perform password reset.'
+                  example: johnwick@gmail.com
                 identifier:
                   type: string
                   description: 'The unique_identifier from forgot password.'
@@ -325,13 +329,14 @@ paths:
                   description: 'The new password confirmation to perform password reset.'
                   example: abcd1234
               required:
+                - email
                 - identifier
                 - password
                 - password_confirmation
       security: []
-  /api/v1/users/update:
-    get:
-      summary: '6. Update user'
+  /api/v1/users/check-email:
+    post:
+      summary: '8. Check Email (Pre-request Otp)'
       description: ''
       parameters:
         -
@@ -348,19 +353,7 @@ paths:
           example: application/json
           schema:
             type: string
-      responses:
-        401:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: Unauthenticated.
-                properties:
-                  message:
-                    type: string
-                    example: Unauthenticated.
+      responses: {  }
       tags:
         - 'User API'
       requestBody:
@@ -370,25 +363,16 @@ paths:
             schema:
               type: object
               properties:
-                fullname:
-                  type: string
-                  description: 'The fullname to update.'
-                  example: 'John Wick'
                 email:
                   type: string
-                  description: 'The email to update.'
-                  example: jphnwick@gmail.com
-                date_of_birth:
-                  type: string
-                  description: 'The date of birth to update.'
-                  example: '2022-01-01'
+                  description: 'email, to prepare for password reset.'
+                  example: johnwick@gmail.com
               required:
-                - fullname
                 - email
-                - date_of_birth
-  /api/v1/users/update-password:
-    get:
-      summary: '7. Update user password'
+      security: []
+  /api/v1/users/forgot-password:
+    post:
+      summary: '9. Forgot Password (Request Otp)'
       description: ''
       parameters:
         -
@@ -405,19 +389,7 @@ paths:
           example: application/json
           schema:
             type: string
-      responses:
-        401:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: Unauthenticated.
-                properties:
-                  message:
-                    type: string
-                    example: Unauthenticated.
+      responses: {  }
       tags:
         - 'User API'
       requestBody:
@@ -427,22 +399,13 @@ paths:
             schema:
               type: object
               properties:
-                old_password:
+                email:
                   type: string
-                  description: 'The old password of current user.'
-                  example: 1234abcd
-                password:
-                  type: string
-                  description: 'The new password to change.'
-                  example: abcd1234
-                password_confirmation:
-                  type: string
-                  description: 'The confirm password of new password to change.'
-                  example: abcd1234
+                  description: 'email, to perform password reset.'
+                  example: johnwick@gmail.com
               required:
-                - old_password
-                - password
-                - password_confirmation
+                - email
+      security: []
 tags:
   -
     name: 'Contact-Us API'

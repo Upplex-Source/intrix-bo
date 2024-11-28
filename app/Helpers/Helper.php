@@ -54,6 +54,15 @@ class Helper {
         ];
     }
 
+    public static function QuotationStatuses() {
+        return [
+            10 => 'Quotation',
+            12 => 'Sales Order',
+            13 => 'Invoice',
+            14 => 'Delivery Order',
+        ];
+    }
+
     public static function numberFormat( $number, $decimal, $isRound = false ) {
         if ( $isRound ) {
             return number_format( $number, $decimal );    
@@ -327,6 +336,26 @@ class Helper {
     public static function generatePurchaseNumber()
     {
         return 'PCR' . now()->format('YmdHis');
+    }
+
+    public static function generatePurchaseTransactionNumber()
+    {
+        return 'PCR-T-' . now()->format('YmdHis');
+    }
+
+    public static function generateExpenseNumber()
+    {
+        return 'EXP-T-' . now()->format('YmdHis');
+    }
+
+    public static function generateQuotationNumber()
+    {
+        return 'QWT-' . now()->format('YmdHis');
+    }
+
+    public static function generateSalesOrderNumber()
+    {
+        return 'SO-' . now()->format('YmdHis');
     }
 
     

@@ -315,7 +315,7 @@ $adjustment_edit = 'adjustment_edit';
                     const dropzone = new Dropzone( fe + '_attachment', {
                         url: '{{ route( 'admin.file.upload' ) }}',
                         maxFiles: 10,
-                        acceptedFiles: 'attachment/jpg,attachment/jpeg,attachment/png',
+                        acceptedFiles: 'image/jpg,image/jpeg,image/png',
                         addRemoveLinks: true,
                         init: function() {
 

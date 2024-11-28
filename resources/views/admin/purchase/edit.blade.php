@@ -412,7 +412,7 @@ $taxTypes = $data['tax_types'];
                                 </tr>
                             `);
                         }
-
+                        updateTotals()
                         $(document).on('click', '.remove-product', function () {
                             let productId = $(this).data('product-id');
                             $('#product-' + productId).remove();
@@ -446,7 +446,7 @@ $taxTypes = $data['tax_types'];
                     const dropzone = new Dropzone( fe + '_attachment', {
                         url: '{{ route( 'admin.file.upload' ) }}',
                         maxFiles: 10,
-                        acceptedFiles: 'attachment/jpg,attachment/jpeg,attachment/png',
+                        acceptedFiles: 'image/jpg,image/jpeg,image/png',
                         addRemoveLinks: true,
                         init: function() {
 

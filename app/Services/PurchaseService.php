@@ -16,6 +16,7 @@ use App\Models\{
     Customer,
     Purchase,
     PurchaseMeta,
+    PurchaseTransaction,
     Booking,
     FileManager,
     Product,
@@ -39,8 +40,8 @@ class PurchaseService
             'products.*.quantity' => [ 'nullable' ],
             'warehouse' => [ 'nullable', 'exists:warehouses,id' ],
             'supplier' => [ 'nullable', 'exists:suppliers,id' ],
-            'discount' => [ 'nullable', 'min:0' ],
-            'shipping_cost' => [ 'nullable', 'min:0' ],
+            'discount' => [ 'nullable', 'numeric' ,'min:0' ],
+            'shipping_cost' => [ 'nullable', 'numeric' ,'min:0' ],
             'tax_type' => [ 'nullable', 'in:1,2' ],
 
         ] );
@@ -92,7 +93,7 @@ class PurchaseService
                 }
             }
 
-            $taxAmount = $amount * Helper::taxTypes()[$request->tax_type]['percentage'];
+            $taxAmount = $amount * Helper::taxTypes()[$request->tax_type ?? 1]['percentage'];
             $finalAmount = $amount - $request->discount + $taxAmount;
 
             $purchaseCreate = Purchase::create([
@@ -102,7 +103,7 @@ class PurchaseService
                 'remarks' => $request->remarks,
                 'reference' => Helper::generatePurchaseNumber(),
                 'purchase_date' => $request->purchase_date,
-                'tax_type' => $request->tax_type,
+                'tax_type' => $request->tax_type ?? 1,
                 'amount' => $amount,
                 'original_amount' => $amount,
                 'paid_amount' => $paidAmount,
@@ -184,8 +185,8 @@ class PurchaseService
             'products.*.quantity' => [ 'nullable' ],
             'warehouse' => [ 'nullable', 'exists:warehouses,id' ],
             'supplier' => [ 'nullable', 'exists:suppliers,id' ],
-            'discount' => [ 'nullable', 'min:0' ],
-            'shipping_cost' => [ 'nullable', 'min:0' ],
+            'discount' => [ 'nullable', 'numeric' ,'min:0' ],
+            'shipping_cost' => [ 'nullable', 'numeric' ,'min:0' ],
             'tax_type' => [ 'nullable', 'in:1,2' ],
         ] );
 
@@ -236,7 +237,7 @@ class PurchaseService
                 }
             }
             
-            $taxAmount = $amount * Helper::taxTypes()[$request->tax_type]['percentage'];
+            $taxAmount = $amount * Helper::taxTypes()[$request->tax_type ?? 1]['percentage'];
             $finalAmount = $amount - $request->discount + $taxAmount;
 
             $updatePurchase = Purchase::find( $request->id );
@@ -245,7 +246,7 @@ class PurchaseService
             $updatePurchase->causer_id = auth()->user()->id;
             $updatePurchase->warehouse_id = $request->warehouse ?? $updatePurchase->warehouse_id;
             $updatePurchase->purchase_date = $request->purchase_date ?? $updatePurchase->purchase_date;
-            $updatePurchase->tax_type = $request->tax_type ?? $updatePurchase->tax_type;
+            $updatePurchase->tax_type = $request->tax_type ?? 1 ?? $updatePurchase->tax_type;
             $updatePurchase->amount = $amount;
             $updatePurchase->original_amount = $amount;
             $updatePurchase->paid_amount = $paidAmount;
@@ -544,5 +545,122 @@ class PurchaseService
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'purchase.attachment' ) ) ] ),
         ] );
+    }
+
+    public static function onePurchaseTransaction( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $purchase = PurchaseTransaction::with( [ 'purchase', 'account'] )->find( $request->id );
+
+        $purchase->append( [
+            'encrypted_id',
+        ] );
+        
+        return response()->json( $purchase );
+    }
+
+    public static function createPurchaseTransaction( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'purchase' => [ 'nullable', 'exists:purchases,id' ],
+            'account' => [ 'nullable', 'exists:expenses_accounts,id' ],
+            'paid_amount' => [ 'nullable', 'numeric' ,'min:0' ],
+            'paid_by' => [ 'nullable' ],
+
+        ] );
+
+        $attributeName = [
+            'title' => __( 'purchase.title' ),
+            'description' => __( 'purchase.description' ),
+            'image' => __( 'purchase.image' ),
+            'thumbnail' => __( 'purchase.thumbnail' ),
+            'url_slug' => __( 'purchase.url_slug' ),
+            'structure' => __( 'purchase.structure' ),
+            'size' => __( 'purchase.size' ),
+            'phone_number' => __( 'purchase.phone_number' ),
+            'sort' => __( 'purchase.sort' ),
+        ];
+
+        foreach( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $purchaseCreate = PurchaseTransaction::create([
+                'purchase_id' => $request->purchase,
+                'account_id' => $request->account,
+                'reference' => Helper::generatePurchaseTransactionNumber(),
+                'remarks' => $request->remarks,
+                'paid_amount' => $request->paid_amount,
+                'paid_by' => $request->paid_by,
+                'status' => 10,
+            ]);
+
+            $purchase = Purchase::find($request->purchase);
+            $purchase->paid_amount += $request->paid_amount;
+            $purchase->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.purchase_transactions' ) ) ] ),
+        ] );
+    }
+
+    public static function updatePurchaseTransactionStatus( $request ) {
+        
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        DB::beginTransaction();
+
+        try {
+
+            $updatePurchaseTransaction = PurchaseTransaction::find( $request->id );
+            $updatePurchaseTransaction->status = $updatePurchase->status == 10 ? 20 : 10;
+            $updatePurchaseTransaction->save();
+
+            $purchase = Purchase::find($updatePurchase->purchase_id);
+            if( $updatePurchaseTransaction->status == 10 ) {
+                $purchase->paid_amount += $updatePurchaseTransaction->paid_amount;
+            }else{
+                $purchase->paid_amount -= $updatePurchaseTransaction->paid_amount;
+            }
+            $purchase->save();
+
+            DB::commit();
+
+            return response()->json( [
+                'data' => [
+                    'purchase' => $updatePurchase,
+                    'message_key' => 'update_purchase_success',
+                ]
+            ] );
+
+        } catch ( \Throwable $th ) {
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+                'message_key' => 'update_purchase_success',
+            ], 500 );
+        }
     }
 }

@@ -13,19 +13,24 @@ return [
     |
     */
 
-    'parent_id' => 'Parent Category',
-    'parent_category' => 'Parent Category',
+    'expenses_account_id' => 'Expenses Account',
+    'expenses_account' => 'Expenses Account',
+    'expenses_category_id' => 'Expenses Category',
+    'expenses_category' => 'Expenses Category',
+    'causer_id' => 'Administrator',
+    'causer' => 'Administrator',
+    'amount' => 'Amount',
+    'original_amount' => 'Original Amount',
+    'final_amount' => 'Final Amount',
+    'attachment' => 'Attachment',
+    'reference' => 'Reference',
+    'remarks' => 'Remarks',
+    'expense_date' => 'Expenses Date',
+    'expenses_date' => 'Expenses Date',
+    
     'title' => 'Title',
     'description' => 'Description',
     'image' => 'Image',
     'thumbnail' => 'Thumbnail',
-    'url_slug' => 'URL Slug',
-    'structure' => 'Structure',
-    'sort' => 'Sort Order',
-    
-    'promotion_enabled' => 'Promotion Enabled',
-    'promotion_start' => 'Promotion Start',
-    'promotion_end' => 'Promotion End',
-    'price' => 'Price',
-    'promotion_price' => 'Promotion Price',
+    'sort' => 'Sort',
 ];

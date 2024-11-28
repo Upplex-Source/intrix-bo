@@ -124,9 +124,7 @@ endpoints:
     uri: api/v1/otp
     metadata:
       title: '3. Request an OTP'
-      description: |-
-        <strong>request_type</strong><br>
-        1: Register<br>
+      description: ''
       authenticated: false
       custom: []
     headers:
@@ -157,9 +155,7 @@ endpoints:
     uri: api/v1/otp/resend
     metadata:
       title: '4. Resend an OTP'
-      description: |-
-        <strong>request_type</strong><br>
-        2: Resend<br>
+      description: ''
       authenticated: false
       custom: []
     headers:
@@ -196,11 +192,8 @@ endpoints:
       - POST
     uri: api/v1/users/reset-password
     metadata:
-      title: '7. Reset Password'
-      description: |-
-        There are 2 steps here,<br>
-        1. Enter <strong>identifier</strong>, <strong>password</strong> and <strong>password_confirmation</strong> to verify
-        2. Enter <strong>identifier</strong>, <strong>password</strong>, <strong>password_confirmation</strong> and <strong>otp_code</strong> to reset password
+      title: '10. Reset Password'
+      description: ''
       authenticated: false
       custom: []
     headers:
@@ -209,6 +202,13 @@ endpoints:
     urlParameters: []
     queryParameters: []
     bodyParameters:
+      email:
+        name: email
+        description: 'Can be email or phone number, to perform password reset.'
+        required: true
+        example: johnwick@gmail.com
+        type: string
+        custom: []
       identifier:
         name: identifier
         description: 'The unique_identifier from forgot password.'
@@ -241,12 +241,12 @@ endpoints:
     responseFields: []
   -
     httpMethods:
-      - GET
-    uri: api/v1/users/update
+      - POST
+    uri: api/v1/users/check-email
     metadata:
-      title: '6. Update user'
+      title: '8. Check Email (Pre-request Otp)'
       description: ''
-      authenticated: true
+      authenticated: false
       custom: []
     headers:
       Content-Type: application/json
@@ -254,45 +254,23 @@ endpoints:
     urlParameters: []
     queryParameters: []
     bodyParameters:
-      fullname:
-        name: fullname
-        description: 'The fullname to update.'
-        required: true
-        example: 'John Wick'
-        type: string
-        custom: []
       email:
         name: email
-        description: 'The email to update.'
+        description: 'email, to prepare for password reset.'
         required: true
-        example: jphnwick@gmail.com
+        example: johnwick@gmail.com
         type: string
         custom: []
-      date_of_birth:
-        name: date_of_birth
-        description: 'The date of birth to update.'
-        required: true
-        example: '2022-01-01'
-        type: string
-        custom: []
-    responses:
-      -
-        status: 401
-        content: '{"message":"Unauthenticated."}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
+    responses: []
     responseFields: []
   -
     httpMethods:
-      - GET
-    uri: api/v1/users/update-password
+      - POST
+    uri: api/v1/users/forgot-password
     metadata:
-      title: '7. Update user password'
+      title: '9. Forgot Password (Request Otp)'
       description: ''
-      authenticated: true
+      authenticated: false
       custom: []
     headers:
       Content-Type: application/json
@@ -300,34 +278,12 @@ endpoints:
     urlParameters: []
     queryParameters: []
     bodyParameters:
-      old_password:
-        name: old_password
-        description: 'The old password of current user.'
+      email:
+        name: email
+        description: 'email, to perform password reset.'
         required: true
-        example: 1234abcd
+        example: johnwick@gmail.com
         type: string
         custom: []
-      password:
-        name: password
-        description: 'The new password to change.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'The confirm password of new password to change.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-    responses:
-      -
-        status: 401
-        content: '{"message":"Unauthenticated."}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          access-control-allow-origin: '*'
-        description: null
+    responses: []
     responseFields: []

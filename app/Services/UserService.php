@@ -124,6 +124,11 @@ class UserService
             $filter = true;
         }
 
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( 'email', 'LIKE', '%' . $request->custom_search . '%' );
+            $filter = true;
+        }
+
         return [
             'filter' => $filter,
             'model' => $model,

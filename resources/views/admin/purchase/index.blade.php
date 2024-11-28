@@ -17,6 +17,7 @@
             </div>
         </div><!-- .nk-block-head-content -->
         @endcan
+
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 

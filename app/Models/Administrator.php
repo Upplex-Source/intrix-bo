@@ -17,6 +17,8 @@ class Administrator extends Authenticatable
 {
     use HasFactory, LogsActivity, HasRoles;
 
+    protected $hidden = ['password'];
+
     protected $fillable = [
         'name',
         'user_id',

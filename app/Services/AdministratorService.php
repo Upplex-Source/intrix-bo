@@ -125,6 +125,16 @@ class AdministratorService
             $filter = true;
         }
 
+        if (!empty($request->role_key)) {
+            $model->role($request->role_key);
+            $filter = true;
+        }
+
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( 'name', 'LIKE', '%' . $request->custom_search . '%' );
+            $filter = true;
+        }
+
         return [
             'filter' => $filter,
             'model' => $model,

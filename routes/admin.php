@@ -12,7 +12,6 @@ use App\Http\Controllers\Admin\{
     DashboardController,
     EmployeeController,
     FileController,
-    InvoiceController,
     ModuleController,
     SettingController,
     FarmController,
@@ -35,6 +34,13 @@ use App\Http\Controllers\Admin\{
     AdjustmentController,
     ProductInventoryController,
     PurchaseController,
+    ExpenseController,
+    ExpenseCategoryController,
+    ExpenseAccountController,
+    QuotationController,
+    SalesOrderController,
+    InvoiceController,
+    DeliveryOrderController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -81,6 +87,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                     Route::get( 'edit', [ AdministratorController::class, 'edit' ] )->name( 'admin.administrator.edit' );
                 } );
 
+                Route::post( 'all-salesmen', [ AdministratorController::class, 'allSalesmen' ] )->name( 'admin.administrator.allSalesmen' );
                 Route::post( 'all-administrators', [ AdministratorController::class, 'allAdministrators' ] )->name( 'admin.administrator.allAdministrators' );
                 Route::post( 'one-administrator', [ AdministratorController::class, 'oneAdministrator' ] )->name( 'admin.administrator.oneAdministrator' );
                 Route::post( 'create-administrator', [ AdministratorController::class, 'createAdministrator' ] )->name( 'admin.administrator.createAdministrator' );
@@ -120,151 +127,6 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'all-audits', [ AuditController::class, 'allAudits' ] )->name( 'admin.audit.allAudits' );
                 Route::post( 'one-audit', [ AuditController::class, 'oneAudit' ] )->name( 'admin.audit.oneAudit' );
             } );
-
-            Route::prefix( 'farms' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view farms' ] ], function() {
-                    Route::get( '/', [ FarmController::class, 'index' ] )->name( 'admin.module_parent.farm.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add farms' ] ], function() {
-                    Route::get( 'add', [ FarmController::class, 'add' ] )->name( 'admin.farm.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit farms' ] ], function() {
-                    Route::get( 'edit', [ FarmController::class, 'edit' ] )->name( 'admin.farm.edit' );
-                } );
-
-                Route::post( 'all-farms', [ FarmController::class, 'allFarms' ] )->name( 'admin.farm.allFarms' );
-                Route::post( 'one-farm', [ FarmController::class, 'oneFarm' ] )->name( 'admin.farm.oneFarm' );
-                Route::post( 'create-farm', [ FarmController::class, 'createFarm' ] )->name( 'admin.farm.createFarm' );
-                Route::post( 'update-farm', [ FarmController::class, 'updateFarm' ] )->name( 'admin.farm.updateFarm' );
-                Route::post( 'update-farm-status', [ FarmController::class, 'updateFarmStatus' ] )->name( 'admin.farm.updateFarmStatus' );
-                Route::post( 'remove-farm-gallery-image', [ FarmController::class, 'removeFarmGalleryImage' ] )->name( 'admin.farm.removeFarmGalleryImage' );
-            } );
-
-            Route::prefix( 'workers' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view employees' ] ], function() {
-                    Route::get( '/', [ EmployeeController::class, 'index' ] )->name( 'admin.module_parent.worker.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add employees' ] ], function() {
-                    Route::get( 'add', [ EmployeeController::class, 'add' ] )->name( 'admin.worker.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit employees' ] ], function() {
-                    Route::get( 'edit', [ EmployeeController::class, 'edit' ] )->name( 'admin.worker.edit' );
-                } );
-
-                Route::post( 'all-workers', [ EmployeeController::class, 'allWorkers' ] )->name( 'admin.worker.allWorkers' );
-                Route::post( 'one-worker', [ EmployeeController::class, 'oneWorker' ] )->name( 'admin.worker.oneWorker' );
-                Route::post( 'create-worker', [ EmployeeController::class, 'createWorker' ] )->name( 'admin.worker.createWorker' );
-                Route::post( 'update-worker', [ EmployeeController::class, 'updateWorker' ] )->name( 'admin.worker.updateWorker' );
-                Route::post( 'update-worker-status', [ EmployeeController::class, 'updateWorkerStatus' ] )->name( 'admin.worker.updateWorkerStatus' );
-                Route::post( 'calculate-birthday', [ EmployeeController::class, 'calculateBirthday' ] )->name( 'admin.worker.calculateBirthday' );
-            } );
-
-            Route::prefix( 'customers' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view customers' ] ], function() {
-                    Route::get( '/', [ CustomerController::class, 'index' ] )->name( 'admin.module_parent.customer.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add customers' ] ], function() {
-                    Route::get( 'add', [ CustomerController::class, 'add' ] )->name( 'admin.customer.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit customers' ] ], function() {
-                    Route::get( 'edit', [ CustomerController::class, 'edit' ] )->name( 'admin.customer.edit' );
-                } );
-
-                Route::post( 'all-customers', [ CustomerController::class, 'allCustomers' ] )->name( 'admin.customer.allCustomers' );
-                Route::post( 'one-customer', [ CustomerController::class, 'oneCustomer' ] )->name( 'admin.customer.oneCustomer' );
-                Route::post( 'create-customer', [ CustomerController::class, 'createCustomer' ] )->name( 'admin.customer.createCustomer' );
-                Route::post( 'update-customer', [ CustomerController::class, 'updateCustomer' ] )->name( 'admin.customer.updateCustomer' );
-                Route::post( 'update-customer-status', [ CustomerController::class, 'updateCustomerStatus' ] )->name( 'admin.customer.updateCustomerStatus' );
-            } );
-
-            Route::prefix( 'owners' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view owners' ] ], function() {
-                    Route::get( '/', [ OwnerController::class, 'index' ] )->name( 'admin.module_parent.owner.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add owners' ] ], function() {
-                    Route::get( 'add', [ OwnerController::class, 'add' ] )->name( 'admin.owner.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit owners' ] ], function() {
-                    Route::get( 'edit', [ OwnerController::class, 'edit' ] )->name( 'admin.owner.edit' );
-                } );
-                
-                Route::post( 'all-owners', [ OwnerController::class, 'allOwners' ] )->name( 'admin.owner.allOwners' );
-                Route::post( 'one-owner', [ OwnerController::class, 'oneOwner' ] )->name( 'admin.owner.oneOwner' );
-                Route::post( 'create-owner', [ OwnerController::class, 'createOwner' ] )->name( 'admin.owner.createOwner' );
-                Route::post( 'update-owner', [ OwnerController::class, 'updateOwner' ] )->name( 'admin.owner.updateOwner' );
-            } );
-
-            Route::prefix( 'buyers' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view buyers' ] ], function() {
-                    Route::get( '/', [ BuyerController::class, 'index' ] )->name( 'admin.module_parent.buyer.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add buyers' ] ], function() {
-                    Route::get( 'add', [ BuyerController::class, 'add' ] )->name( 'admin.buyer.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit buyers' ] ], function() {
-                    Route::get( 'edit', [ BuyerController::class, 'edit' ] )->name( 'admin.buyer.edit' );
-                } );
-                
-                Route::post( 'all-buyers', [ BuyerController::class, 'allBuyers' ] )->name( 'admin.buyer.allBuyers' );
-                Route::post( 'one-buyer', [ BuyerController::class, 'oneBuyer' ] )->name( 'admin.buyer.oneBuyer' );
-                Route::post( 'create-buyer', [ BuyerController::class, 'createBuyer' ] )->name( 'admin.buyer.createBuyer' );
-                Route::post( 'update-buyer', [ BuyerController::class, 'updateBuyer' ] )->name( 'admin.buyer.updateBuyer' );
-            } );
-            
-            Route::prefix( 'orders' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view orders' ] ], function() {
-                    Route::get( '/', [ OrderController::class, 'index' ] )->name( 'admin.module_parent.order.index' );
-                } );
-
-                Route::group( [ 'middleware' => [ 'permission:add orders' ] ], function() {
-                    Route::get( 'add', [ OrderController::class, 'add' ] )->name( 'admin.order.add' );
-                } );
-
-                Route::group( [ 'middleware' => [ 'permission:edit orders' ] ], function() {
-                    Route::get( 'edit', [ OrderController::class, 'edit' ] )->name( 'admin.order.edit' );
-                } );
-
-                Route::group( [ 'middleware' => [ 'permission:view orders' ] ], function() {
-                    Route::get( 'sales-report', [ OrderController::class, 'salesReport' ] )->name( 'admin.order.salesReport' );
-                } );
-                
-                Route::group( [ 'middleware' => [ 'permission:view orders' ] ], function() {
-                    Route::get( 'export', [ OrderController::class, 'export' ] )->name( 'admin.order.export' );
-                } );
-                
-                Route::post( 'all-orders', [ OrderController::class, 'allOrders' ] )->name( 'admin.order.allOrders' );
-                Route::post( 'one-order', [ OrderController::class, 'oneOrder' ] )->name( 'admin.order.oneOrder' );
-                Route::post( 'create-order', [ OrderController::class, 'createOrder' ] )->name( 'admin.order.createOrder' );
-                Route::post( 'update-order', [ OrderController::class, 'updateOrder' ] )->name( 'admin.order.updateOrder' );
-                Route::post( 'update-order-status', [ OrderController::class, 'updateOrderStatus' ] )->name( 'admin.order.updateOrderStatus' );
-                Route::get( 'all-sales-report', [ OrderController::class, 'allSalesReport' ] )->name( 'admin.order.allSalesReport' );
-            } );
-
-            Route::prefix( 'order-items' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view order-items' ] ], function() {
-                    Route::get( '/', [ OrderItemController::class, 'index' ] )->name( 'admin.module_parent.order_items.index' );
-                } );
-                
-                Route::post( 'all-order-items', [ OrderItemController::class, 'allOrderItems' ] )->name( 'admin.order.allOrderItems' );
-                Route::post( 'one-order-item', [ OrderItemController::class, 'oneOrderItem' ] )->name( 'admin.order.oneOrderItem' );
-            } );
-
-            Route::prefix( 'invoices' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view invoices' ] ], function() {
-                    Route::get( '/', [ InvoiceController::class, 'index' ] )->name( 'admin.module_parent.invoice.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit invoices' ] ], function() {
-                    Route::get( 'edit', [ InvoiceController::class, 'edit' ] )->name( 'admin.invoice.edit' );
-                } );
-                
-                Route::post( 'all-invoices', [ InvoiceController::class, 'allInvoices' ] )->name( 'admin.invoice.allInvoices' );
-                Route::post( 'one-invoice', [ InvoiceController::class, 'oneInvoice' ] )->name( 'admin.invoice.oneInvoice' );
-                Route::post( 'create-invoice', [ InvoiceController::class, 'createInvoice' ] )->name( 'admin.invoice.createInvoice' );
-                Route::post( 'delete-invoice', [ InvoiceController::class, 'deleteInvoice' ] )->name( 'admin.invoice.deleteInvoice' );
-                Route::post( 'update-invoice', [ InvoiceController::class, 'updateInvoice' ] )->name( 'admin.invoice.updateInvoice' );
-                Route::get( 'download-invoice', [ InvoiceController::class, 'downloadInvoice' ] )->name( 'admin.invoice.downloadInvoice' );
-                Route::get( 'preview-invoice', [ InvoiceController::class, 'previewInvoice' ] )->name( 'admin.invoice.previewInvoice' );
-            });
 
             // new routes
             Route::prefix( 'categories' )->group( function() {
@@ -514,43 +376,196 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-measurement-unit-status', [ MeasurementUnitController::class, 'updateMeasurementUnit-Status' ] )->name( 'admin.measurement_unit.updateMeasurementUnitStatus' );
                 Route::post( 'remove-measurement-unit-gallery-image', [ MeasurementUnitController::class, 'removeMeasurementUnit-GalleryImage' ] )->name( 'admin.measurement_unit.removeMeasurementUnitGalleryImage' );
             } );
-        } );
 
-        Route::prefix( 'users' )->group( function() {
-            Route::group( [ 'middleware' => [ 'permission:view users' ] ], function() {
-                Route::get( '/', [ UserController::class, 'index' ] )->name( 'admin.module_parent.user.index' );
-            } );
-            Route::group( [ 'middleware' => [ 'permission:add users' ] ], function() {
-                Route::get( 'add', [ UserController::class, 'add' ] )->name( 'admin.user.add' );
-            } );
-            Route::group( [ 'middleware' => [ 'permission:edit users' ] ], function() {
-                Route::get( 'edit', [ UserController::class, 'edit' ] )->name( 'admin.user.edit' );
+            Route::prefix( 'users' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view users' ] ], function() {
+                    Route::get( '/', [ UserController::class, 'index' ] )->name( 'admin.module_parent.user.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add users' ] ], function() {
+                    Route::get( 'add', [ UserController::class, 'add' ] )->name( 'admin.user.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit users' ] ], function() {
+                    Route::get( 'edit', [ UserController::class, 'edit' ] )->name( 'admin.user.edit' );
+                } );
+
+                Route::post( 'all-users', [ UserController::class, 'allUsers' ] )->name( 'admin.user.allUsers' );
+                Route::post( 'one-user', [ UserController::class, 'oneUser' ] )->name( 'admin.user.oneUser' );
+                Route::post( 'create-user', [ UserController::class, 'createUser' ] )->name( 'admin.user.createUser' );
+                Route::post( 'update-user', [ UserController::class, 'updateUser' ] )->name( 'admin.user.updateUser' );
+                Route::post( 'update-user-status', [ UserController::class, 'updateUserStatus' ] )->name( 'admin.user.updateUserStatus' );
             } );
 
-            Route::post( 'all-users', [ UserController::class, 'allUsers' ] )->name( 'admin.user.allUsers' );
-            Route::post( 'one-user', [ UserController::class, 'oneUser' ] )->name( 'admin.user.oneUser' );
-            Route::post( 'create-user', [ UserController::class, 'createUser' ] )->name( 'admin.user.createUser' );
-            Route::post( 'update-user', [ UserController::class, 'updateUser' ] )->name( 'admin.user.updateUser' );
-            Route::post( 'update-user-status', [ UserController::class, 'updateUserStatus' ] )->name( 'admin.user.updateUserStatus' );
-        } );
+            Route::prefix( 'purchases' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view purchases' ] ], function() {
+                    Route::get( '/', [ PurchaseController::class, 'index' ] )->name( 'admin.module_parent.purchase.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add purchases' ] ], function() {
+                    Route::get( 'add', [ PurchaseController::class, 'add' ] )->name( 'admin.purchase.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit purchases' ] ], function() {
+                    Route::get( 'edit', [ PurchaseController::class, 'edit' ] )->name( 'admin.purchase.edit' );
+                } );
+        
+                Route::post( 'all-purchases', [ PurchaseController::class, 'allPurchases' ] )->name( 'admin.purchase.allPurchases' );
+                Route::post( 'one-purchase', [ PurchaseController::class, 'onePurchase' ] )->name( 'admin.purchase.onePurchase' );
+                Route::post( 'create-purchase', [ PurchaseController::class, 'createPurchase' ] )->name( 'admin.purchase.createPurchase' );
+                Route::post( 'update-purchase', [ PurchaseController::class, 'updatePurchase' ] )->name( 'admin.purchase.updatePurchase' );
+                Route::post( 'update-purchase-status', [ PurchaseController::class, 'updatePurchaseStatus' ] )->name( 'admin.purchase.updatePurchaseStatus' );
+                Route::post( 'remove-purchase-attachment', [ PurchaseController::class, 'removePurchaseAttachment' ] )->name( 'admin.purchase.removePurchaseAttachment' );
 
-        Route::prefix( 'purchases' )->group( function() {
-            Route::group( [ 'middleware' => [ 'permission:view purchases' ] ], function() {
-                Route::get( '/', [ PurchaseController::class, 'index' ] )->name( 'admin.module_parent.purchase.index' );
+                Route::post( 'one-purchase-transactions', [ PurchaseController::class, 'onePurchaseTransaction' ] )->name( 'admin.purchase.onePurchaseTransaction' );
+                Route::post( 'create-purchase-transaction', [ PurchaseController::class, 'createPurchaseTransaction' ] )->name( 'admin.purchase.createPurchaseTransaction' );
+                Route::post( 'update-purchase-transaction', [ PurchaseController::class, 'updatePurchaseTransaction' ] )->name( 'admin.purchase.updatePurchaseTransaction' );
             } );
-            Route::group( [ 'middleware' => [ 'permission:add purchases' ] ], function() {
-                Route::get( 'add', [ PurchaseController::class, 'add' ] )->name( 'admin.purchase.add' );
+            
+            Route::prefix( 'expenses' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view expenses' ] ], function() {
+                    Route::get( '/', [ ExpenseController::class, 'index' ] )->name( 'admin.module_parent.expense.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add expenses' ] ], function() {
+                    Route::get( 'add', [ ExpenseController::class, 'add' ] )->name( 'admin.expense.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit expenses' ] ], function() {
+                    Route::get( 'edit', [ ExpenseController::class, 'edit' ] )->name( 'admin.expense.edit' );
+                } );
+        
+                Route::post( 'all-expenses', [ ExpenseController::class, 'allExpenses' ] )->name( 'admin.expense.allExpenses' );
+                Route::post( 'one-expense', [ ExpenseController::class, 'oneExpense' ] )->name( 'admin.expense.oneExpense' );
+                Route::post( 'create-expense', [ ExpenseController::class, 'createExpense' ] )->name( 'admin.expense.createExpense' );
+                Route::post( 'update-expense', [ ExpenseController::class, 'updateExpense' ] )->name( 'admin.expense.updateExpense' );
+                Route::post( 'update-expense-status', [ ExpenseController::class, 'updateExpenseStatus' ] )->name( 'admin.expense.updateExpenseStatus' );
+                Route::post( 'remove-expense-attachment', [ ExpenseController::class, 'removeExpenseAttachment' ] )->name( 'admin.expense.removeExpenseAttachment' );
             } );
-            Route::group( [ 'middleware' => [ 'permission:edit purchases' ] ], function() {
-                Route::get( 'edit', [ PurchaseController::class, 'edit' ] )->name( 'admin.purchase.edit' );
+
+            Route::prefix( 'expenses-categories' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view expenses-categories' ] ], function() {
+                    Route::get( '/', [ ExpenseCategoryController::class, 'index' ] )->name( 'admin.module_parent.expense_category.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add expenses-categories' ] ], function() {
+                    Route::get( 'add', [ ExpenseCategoryController::class, 'add' ] )->name( 'admin.expense_category.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit expenses-categories' ] ], function() {
+                    Route::get( 'edit', [ ExpenseCategoryController::class, 'edit' ] )->name( 'admin.expense_category.edit' );
+                } );
+
+                Route::post( 'all-expenses-categories', [ ExpenseCategoryController::class, 'allExpenseCategories' ] )->name( 'admin.expense_category.allExpenseCategories' );
+                Route::post( 'one-expenses-category', [ ExpenseCategoryController::class, 'oneExpenseCategory' ] )->name( 'admin.expense_category.oneExpenseCategory' );
+                Route::post( 'create-expenses-category', [ ExpenseCategoryController::class, 'createExpenseCategory' ] )->name( 'admin.expense_category.createExpenseCategory' );
+                Route::post( 'update-expenses-category', [ ExpenseCategoryController::class, 'updateExpenseCategory' ] )->name( 'admin.expense_category.updateExpenseCategory' );
+                Route::post( 'update-expense-category-status', [ ExpenseCategoryController::class, 'updateExpenseCategoryStatus' ] )->name( 'admin.expense_category.updateExpenseCategoryStatus' );
+                Route::post( 'remove-expense-category-image', [ ExpenseCategoryController::class, 'removeExpenseCategoryGalleryImage' ] )->name( 'admin.expense_category.removeExpenseCategoryGalleryImage' );
             } );
-    
-            Route::post( 'all-purchases', [ PurchaseController::class, 'allPurchases' ] )->name( 'admin.purchase.allPurchases' );
-            Route::post( 'one-purchase', [ PurchaseController::class, 'onePurchase' ] )->name( 'admin.purchase.onePurchase' );
-            Route::post( 'create-purchase', [ PurchaseController::class, 'createPurchase' ] )->name( 'admin.purchase.createPurchase' );
-            Route::post( 'update-purchase', [ PurchaseController::class, 'updatePurchase' ] )->name( 'admin.purchase.updatePurchase' );
-            Route::post( 'update-purchase-status', [ PurchaseController::class, 'updatePurchaseStatus' ] )->name( 'admin.purchase.updatePurchaseStatus' );
-            Route::post( 'remove-purchase-attachment', [ PurchaseController::class, 'removePurchaseAttachment' ] )->name( 'admin.purchase.removePurchaseAttachment' );
+
+            Route::prefix( 'expenses-accounts' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view expenses-accounts' ] ], function() {
+                    Route::get( '/', [ ExpenseAccountController::class, 'index' ] )->name( 'admin.module_parent.expense_account.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add expenses-accounts' ] ], function() {
+                    Route::get( 'add', [ ExpenseAccountController::class, 'add' ] )->name( 'admin.expense_account.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit expenses-accounts' ] ], function() {
+                    Route::get( 'edit', [ ExpenseAccountController::class, 'edit' ] )->name( 'admin.expense_account.edit' );
+                } );
+
+                Route::post( 'all-expenses-accounts', [ ExpenseAccountController::class, 'allExpenseAccounts' ] )->name( 'admin.expense_account.allExpenseAccounts' );
+                Route::post( 'one-expenses-account', [ ExpenseAccountController::class, 'oneExpenseAccount' ] )->name( 'admin.expense_account.oneExpenseAccount' );
+                Route::post( 'create-expenses-account', [ ExpenseAccountController::class, 'createExpenseAccount' ] )->name( 'admin.expense_account.createExpenseAccount' );
+                Route::post( 'update-expenses-account', [ ExpenseAccountController::class, 'updateExpenseAccount' ] )->name( 'admin.expense_account.updateExpenseAccount' );
+                Route::post( 'update-expense-account-status', [ ExpenseAccountController::class, 'updateExpenseAccountStatus' ] )->name( 'admin.expense_account.updateExpenseAccountStatus' );
+                Route::post( 'remove-expense-account-image', [ ExpenseAccountController::class, 'removeExpenseAccountGalleryImage' ] )->name( 'admin.expense_account.removeExpenseAccountGalleryImage' );
+            } );
+
+            Route::prefix( 'quotations' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view quotations' ] ], function() {
+                    Route::get( '/', [ QuotationController::class, 'index' ] )->name( 'admin.module_parent.quotation.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add quotations' ] ], function() {
+                    Route::get( 'add', [ QuotationController::class, 'add' ] )->name( 'admin.quotation.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit quotations' ] ], function() {
+                    Route::get( 'edit', [ QuotationController::class, 'edit' ] )->name( 'admin.quotation.edit' );
+                } );
+        
+                Route::post( 'all-quotations', [ QuotationController::class, 'allQuotations' ] )->name( 'admin.quotation.allQuotations' );
+                Route::post( 'one-quotation', [ QuotationController::class, 'oneQuotation' ] )->name( 'admin.quotation.oneQuotation' );
+                Route::post( 'create-quotation', [ QuotationController::class, 'createQuotation' ] )->name( 'admin.quotation.createQuotation' );
+                Route::post( 'update-quotation', [ QuotationController::class, 'updateQuotation' ] )->name( 'admin.quotation.updateQuotation' );
+                Route::post( 'update-quotation-status', [ QuotationController::class, 'updateQuotationStatus' ] )->name( 'admin.quotation.updateQuotationStatus' );
+                Route::post( 'remove-quotation-attachment', [ QuotationController::class, 'removeQuotationAttachment' ] )->name( 'admin.quotation.removeQuotationAttachment' );
+
+                Route::post( 'convert-sales-order', [ QuotationController::class, 'convertSalesOrder' ] )->name( 'admin.quotation.convertSalesOrder' );
+                Route::post( 'send-email', [ QuotationController::class, 'sendEmail' ] )->name( 'admin.quotation.sendEmail' );
+
+            } );
+
+            Route::prefix( 'sales-orders' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view sales-orders' ] ], function() {
+                    Route::get( '/', [ SalesOrderController::class, 'index' ] )->name( 'admin.module_parent.sales_order.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add sales-orders' ] ], function() {
+                    Route::get( 'add', [ SalesOrderController::class, 'add' ] )->name( 'admin.sales_order.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit sales-orders' ] ], function() {
+                    Route::get( 'edit', [ SalesOrderController::class, 'edit' ] )->name( 'admin.sales_order.edit' );
+                } );
+        
+                Route::post( 'all-sales-orders', [ SalesOrderController::class, 'allSalesOrders' ] )->name( 'admin.sales_order.allSalesOrders' );
+                Route::post( 'one-sales-order', [ SalesOrderController::class, 'oneSalesOrder' ] )->name( 'admin.sales_order.oneSalesOrder' );
+                Route::post( 'create-sales-order', [ SalesOrderController::class, 'createSalesOrder' ] )->name( 'admin.sales_order.createSalesOrder' );
+                Route::post( 'update-sales-order', [ SalesOrderController::class, 'updateSalesOrder' ] )->name( 'admin.sales_order.updateSalesOrder' );
+                Route::post( 'update-sales-order-status', [ SalesOrderController::class, 'updateSalesOrderStatus' ] )->name( 'admin.sales_order.updateSalesOrderStatus' );
+                Route::post( 'remove-sales-order-attachment', [ SalesOrderController::class, 'removeSalesOrderAttachment' ] )->name( 'admin.sales_order.removeSalesOrderAttachment' );
+
+                Route::post( 'convert-invoice', [ SalesOrderController::class, 'convertInvoice' ] )->name( 'admin.sales_order.convertInvoice' );
+                Route::post( 'send-email', [ SalesOrderController::class, 'sendEmail' ] )->name( 'admin.sales_order.sendEmail' );
+
+            } );
+
+            Route::prefix( 'invoices' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view invoices' ] ], function() {
+                    Route::get( '/', [ InvoiceController::class, 'index' ] )->name( 'admin.module_parent.invoice.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add invoices' ] ], function() {
+                    Route::get( 'add', [ InvoiceController::class, 'add' ] )->name( 'admin.invoice.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit invoices' ] ], function() {
+                    Route::get( 'edit', [ InvoiceController::class, 'edit' ] )->name( 'admin.invoice.edit' );
+                } );
+        
+                Route::post( 'all-invoices', [ InvoiceController::class, 'allInvoices' ] )->name( 'admin.invoice.allInvoices' );
+                Route::post( 'one-invoice', [ InvoiceController::class, 'oneInvoice' ] )->name( 'admin.invoice.oneInvoice' );
+                Route::post( 'create-invoice', [ InvoiceController::class, 'createInvoice' ] )->name( 'admin.invoice.createInvoice' );
+                Route::post( 'update-invoice', [ InvoiceController::class, 'updateInvoice' ] )->name( 'admin.invoice.updateInvoice' );
+                Route::post( 'update-invoice-status', [ InvoiceController::class, 'updateInvoiceStatus' ] )->name( 'admin.invoice.updateInvoiceStatus' );
+                Route::post( 'remove-invoice-attachment', [ InvoiceController::class, 'removeInvoiceAttachment' ] )->name( 'admin.invoice.removeInvoiceAttachment' );
+
+                Route::post( 'convert-delivery-order', [ InvoiceController::class, 'convertDeliveryOrder' ] )->name( 'admin.invoice.convertDeliveryOrder' );
+                Route::post( 'send-email', [ InvoiceController::class, 'sendEmail' ] )->name( 'admin.invoice.sendEmail' );
+
+            } );
+
+            Route::prefix( 'delivery-orders' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view delivery-orders' ] ], function() {
+                    Route::get( '/', [ DeliveryOrderController::class, 'index' ] )->name( 'admin.module_parent.delivery_order.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add delivery-orders' ] ], function() {
+                    Route::get( 'add', [ DeliveryOrderController::class, 'add' ] )->name( 'admin.delivery_order.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit delivery-orders' ] ], function() {
+                    Route::get( 'edit', [ DeliveryOrderController::class, 'edit' ] )->name( 'admin.delivery_order.edit' );
+                } );
+        
+                Route::post( 'all-delivery-orders', [ DeliveryOrderController::class, 'allDeliveryOrders' ] )->name( 'admin.delivery_order.allDeliveryOrders' );
+                Route::post( 'one-delivery-order', [ DeliveryOrderController::class, 'oneDeliveryOrder' ] )->name( 'admin.delivery_order.oneDeliveryOrder' );
+                Route::post( 'create-delivery-order', [ DeliveryOrderController::class, 'createDeliveryOrder' ] )->name( 'admin.delivery_order.createDeliveryOrder' );
+                Route::post( 'update-delivery-order', [ DeliveryOrderController::class, 'updateDeliveryOrder' ] )->name( 'admin.delivery_order.updateDeliveryOrder' );
+                Route::post( 'update-delivery-order-status', [ DeliveryOrderController::class, 'updateDeliveryOrderStatus' ] )->name( 'admin.delivery_order.updateDeliveryOrderStatus' );
+                Route::post( 'remove-delivery-order-attachment', [ DeliveryOrderController::class, 'removeDeliveryOrderAttachment' ] )->name( 'admin.delivery_order.removeDeliveryOrderAttachment' );
+
+                Route::post( 'send-email', [ DeliveryOrderController::class, 'sendEmail' ] )->name( 'admin.delivery_order.sendEmail' );
+
+            } );
+
         } );
         
     } );

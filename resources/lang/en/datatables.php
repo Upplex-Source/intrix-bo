@@ -45,6 +45,13 @@ return [
     'activated' => 'Activated',
     'suspend' => 'Suspend',
     'suspended' => 'Suspended',
+    'to_x' => 'To :title',
+    'to_sales_order' => 'To: Sales Order',
+    'to_invoice' => 'To: Invoice',
+    'to_delivery_order' => 'To: Delivery Order',
+    'convert_sales_order' => 'Current: Sales Order',
+    'convert_invoice' => 'Current: Invoice',
+    'convert_delivery_order' => 'Current: Delivery Order',
 
     'sub_total' => 'Sub Total',
     'grand_total' => 'Grand Total',

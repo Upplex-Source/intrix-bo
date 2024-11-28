@@ -6,20 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\{
-    BundleService,
+    QuotationService,
     WarehouseService,
 };
 
 use App\Models\{
-    Bundle,
+    Quotation,
 };
 
-class BundleController extends Controller
+use Helper;
+
+class QuotationController extends Controller
 {
     public function index( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.bundles' );
-        $this->data['content'] = 'admin.bundle.index';
+        $this->data['header']['title'] = __( 'template.quotations' );
+        $this->data['content'] = 'admin.quotation.index';
         $this->data['breadcrumb'] = [
             [
             'url' => route( 'admin.dashboard' ),
@@ -28,13 +30,16 @@ class BundleController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.bundles' ),
+                'text' => __( 'template.quotations' ),
                 'class' => 'active',
             ],
         ];
         $this->data['data']['status'] = [
             '10' => __( 'datatables.activated' ),
             '20' => __( 'datatables.suspended' ),
+            '12' => __( 'datatables.convert_sales_order' ),
+            '13' => __( 'datatables.convert_invoice' ),
+            '14' => __( 'datatables.convert_delivery_order' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -42,8 +47,8 @@ class BundleController extends Controller
 
     public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] );
-        $this->data['content'] = 'admin.bundle.add';
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.quotations' ) ) ] );
+        $this->data['content'] = 'admin.quotation.add';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -51,24 +56,26 @@ class BundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.bundle.index' ),
-                'text' => __( 'template.bundles' ),
+                'url' => route( 'admin.module_parent.quotation.index' ),
+                'text' => __( 'template.quotations' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.quotations' ) ) ] ),
                 'class' => 'active',
             ],
         ];
+
+        $this->data['data']['tax_types'] = Helper::taxTypes();
 
         return view( 'admin.main' )->with( $this->data );
     }
 
     public function edit( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] );
-        $this->data['content'] = 'admin.bundle.edit';
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.quotations' ) ) ] );
+        $this->data['content'] = 'admin.quotation.edit';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -76,56 +83,63 @@ class BundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.bundle.index' ),
-                'text' => __( 'template.bundles' ),
+                'url' => route( 'admin.module_parent.quotation.index' ),
+                'text' => __( 'template.quotations' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.quotations' ) ) ] ),
                 'class' => 'active',
             ],
         ];
 
+        $this->data['data']['tax_types'] = Helper::taxTypes();
+
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function allBundles( Request $request ) {
+    public function allQuotations( Request $request ) {
 
-        return BundleService::allBundles( $request );
+        return QuotationService::allQuotations( $request );
     }
 
-    public function oneBundle( Request $request ) {
+    public function oneQuotation( Request $request ) {
 
-        return BundleService::oneBundle( $request );
+        return QuotationService::oneQuotation( $request );
     }
 
-    public function createBundle( Request $request ) {
+    public function createQuotation( Request $request ) {
 
-        return BundleService::createBundle( $request );
+        return QuotationService::createQuotation( $request );
     }
 
-    public function updateBundle( Request $request ) {
-        return BundleService::updateBundle( $request );
+    public function updateQuotation( Request $request ) {
+        return QuotationService::updateQuotation( $request );
     }
 
-    public function updateBundleStatus( Request $request ) {
+    public function updateQuotationStatus( Request $request ) {
 
-        return BundleService::updateBundleStatus( $request );
+        return QuotationService::updateQuotationStatus( $request );
     }
 
-    public function removeBundleGalleryImage( Request $request ) {
+    public function removeQuotationAttachment( Request $request ) {
 
-        return BundleService::removeBundleGalleryImage( $request );
+        return QuotationService::removeQuotationAttachment( $request );
     }
 
     public function ckeUpload( Request $request ) {
 
-        return BundleService::ckeUpload( $request );
+        return QuotationService::ckeUpload( $request );
     }
 
-    public function generateBundleCode( Request $request ) {
+    public function convertSalesOrder( Request $request ) {
 
-        return BundleService::generateBundleCode( $request );
+        return QuotationService::convertSalesOrder( $request );
     }
+
+    public function sendEmail( Request $request ) {
+
+        return QuotationService::sendEmail( $request );
+    } 
 }

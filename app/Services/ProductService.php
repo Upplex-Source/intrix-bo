@@ -662,7 +662,10 @@ class ProductService
             $filter = true;
         }
 
-        
+        if ( !empty( $request->custom_search ) ) {
+            $model->where( 'title', 'LIKE', '%' . $request->custom_search . '%' );
+            $filter = true;
+        }
 
         return [
             'filter' => $filter,

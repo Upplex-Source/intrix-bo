@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Laravel",
-        "_postman_id": "5a7106a7-0d1d-41b3-8864-da7b42f49cce",
+        "_postman_id": "767d6d86-be26-4d20-99f3-0e439e4ff128",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -187,7 +187,7 @@
                             "mode": "raw",
                             "raw": "{\"email\":\"johnwick@mail.com\",\"request_type\":1}"
                         },
-                        "description": "<strong>request_type<\/strong><br>\n1: Register<br>",
+                        "description": "",
                         "auth": {
                             "type": "noauth"
                         }
@@ -218,7 +218,7 @@
                             "mode": "raw",
                             "raw": "{\"tmp_user\":\"eyJpdiI...\",\"email\":\"johnwick@mail.com\",\"request_type\":2}"
                         },
-                        "description": "<strong>request_type<\/strong><br>\n2: Resend<br>",
+                        "description": "",
                         "auth": {
                             "type": "noauth"
                         }
@@ -226,7 +226,7 @@
                     "response": []
                 },
                 {
-                    "name": "7. Reset Password",
+                    "name": "10. Reset Password",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
@@ -247,9 +247,9 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"identifier\":\"WLnvrJw6YYK\",\"otp_code\":\"123456\",\"password\":\"abcd1234\",\"password_confirmation\":\"abcd1234\"}"
+                            "raw": "{\"email\":\"johnwick@gmail.com\",\"identifier\":\"WLnvrJw6YYK\",\"otp_code\":\"123456\",\"password\":\"abcd1234\",\"password_confirmation\":\"abcd1234\"}"
                         },
-                        "description": "There are 2 steps here,<br>\n1. Enter <strong>identifier<\/strong>, <strong>password<\/strong> and <strong>password_confirmation<\/strong> to verify\n2. Enter <strong>identifier<\/strong>, <strong>password<\/strong>, <strong>password_confirmation<\/strong> and <strong>otp_code<\/strong> to reset password",
+                        "description": "",
                         "auth": {
                             "type": "noauth"
                         }
@@ -257,15 +257,15 @@
                     "response": []
                 },
                 {
-                    "name": "6. Update user",
+                    "name": "8. Check Email (Pre-request Otp)",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/users\/update",
+                            "path": "api\/v1\/users\/check-email",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/users\/update"
+                            "raw": "{{baseUrl}}\/api\/v1\/users\/check-email"
                         },
-                        "method": "GET",
+                        "method": "POST",
                         "header": [
                             {
                                 "key": "Content-Type",
@@ -278,42 +278,25 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"fullname\":\"John Wick\",\"email\":\"jphnwick@gmail.com\",\"date_of_birth\":\"2022-01-01\"}"
+                            "raw": "{\"email\":\"johnwick@gmail.com\"}"
                         },
-                        "description": ""
-                    },
-                    "response": [
-                        {
-                            "header": [
-                                {
-                                    "key": "cache-control",
-                                    "value": "no-cache, private"
-                                },
-                                {
-                                    "key": "content-type",
-                                    "value": "application\/json"
-                                },
-                                {
-                                    "key": "access-control-allow-origin",
-                                    "value": "*"
-                                }
-                            ],
-                            "code": 401,
-                            "body": "{\"message\":\"Unauthenticated.\"}",
-                            "name": ""
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
                         }
-                    ]
+                    },
+                    "response": []
                 },
                 {
-                    "name": "7. Update user password",
+                    "name": "9. Forgot Password (Request Otp)",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
-                            "path": "api\/v1\/users\/update-password",
+                            "path": "api\/v1\/users\/forgot-password",
                             "query": [],
-                            "raw": "{{baseUrl}}\/api\/v1\/users\/update-password"
+                            "raw": "{{baseUrl}}\/api\/v1\/users\/forgot-password"
                         },
-                        "method": "GET",
+                        "method": "POST",
                         "header": [
                             {
                                 "key": "Content-Type",
@@ -326,31 +309,14 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"old_password\":\"1234abcd\",\"password\":\"abcd1234\",\"password_confirmation\":\"abcd1234\"}"
+                            "raw": "{\"email\":\"johnwick@gmail.com\"}"
                         },
-                        "description": ""
-                    },
-                    "response": [
-                        {
-                            "header": [
-                                {
-                                    "key": "cache-control",
-                                    "value": "no-cache, private"
-                                },
-                                {
-                                    "key": "content-type",
-                                    "value": "application\/json"
-                                },
-                                {
-                                    "key": "access-control-allow-origin",
-                                    "value": "*"
-                                }
-                            ],
-                            "code": 401,
-                            "body": "{\"message\":\"Unauthenticated.\"}",
-                            "name": ""
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
                         }
-                    ]
+                    },
+                    "response": []
                 }
             ]
         }

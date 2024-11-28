@@ -120,4 +120,15 @@ class PurchaseController extends Controller
 
         return PurchaseService::removePurchaseGalleryImage( $request );
     }
+
+    public function onePurchaseTransaction( Request $request ) {
+
+        return PurchaseService::onePurchaseTransaction( $request );
+    }
+
+    public function createPurchaseTransaction( Request $request ) {
+
+        return PurchaseService::createPurchaseTransaction( $request );
+    }
+    
 }

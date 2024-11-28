@@ -108,6 +108,15 @@ class AdministratorController extends Controller
         return AdministratorService::allAdministrators( $request );
     }
 
+    public function allSalesmen( Request $request ) {
+
+        $request->merge( [
+            'role_key' => 'salesman' 
+        ] );
+
+        return AdministratorService::allAdministrators( $request );
+    }
+
     public function oneAdministrator( Request $request ) {
         return AdministratorService::oneAdministrator( $request );
     }

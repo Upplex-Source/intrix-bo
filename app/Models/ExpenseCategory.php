@@ -14,34 +14,28 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class Bundle extends Model
+class ExpenseCategory extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
+
+    protected $table = 'expenses_categories';
 
     protected $fillable = [
         'title',
         'description',
         'image',
         'thumbnail',
-        'url_slug',
-        'strucuture',
         'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
         'status',
     ];
 
-    public function products()
+    public function expenses()
     {
-        return $this->belongsToMany(Product::class, 'products_bundles')
-        ->withPivot('quantity', 'price');
+        return $this->hasMany(Expense::class, 'expenses_category_id');
     }
 
     public function getImagePathAttribute() {
-        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
+        return $this->attributes['image'] ? asset( 'storage/'.$this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
     }
 
     public function getThumbnailPathAttribute() {
@@ -63,18 +57,11 @@ class Bundle extends Model
         'description',
         'image',
         'thumbnail',
-        'url_slug',
-        'strucuture',
         'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
         'status',
     ];
 
-    protected static $logName = 'bundles';
+    protected static $logName = 'expenses_categories';
 
     protected static $logOnlyDirty = true;
 
@@ -83,6 +70,6 @@ class Bundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} bundle";
+        return "{$eventName} expense category";
     }
 }

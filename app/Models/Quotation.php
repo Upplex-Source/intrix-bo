@@ -14,38 +14,56 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class Bundle extends Model
+class Quotation extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
     protected $fillable = [
-        'title',
-        'description',
-        'image',
-        'thumbnail',
-        'url_slug',
-        'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'salesman_id',
+        'customer_id',
+        'warehouse_id',
+        'supplier_id',
+        'order_tax',
+        'order_discount',
+        'shipping_cost',
+        'attachment',
+        'remarks',
+        'reference',
+        'tax_type',
         'status',
+        'amount',
+        'original_amount',
+        'paid_amount',
+        'final_amount',
     ];
 
-    public function products()
+    public function quotationMetas()
     {
-        return $this->belongsToMany(Product::class, 'products_bundles')
-        ->withPivot('quantity', 'price');
+        return $this->hasMany(QuotationMeta::class, 'quotation_id');
     }
 
-    public function getImagePathAttribute() {
-        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
+    public function salesman()
+    {
+        return $this->belongsTo(Administrator::class, 'salesman_id');
     }
 
-    public function getThumbnailPathAttribute() {
-        return $this->attributes['thumbnail'] ? asset( 'storage/'.$this->attributes['thumbnail'] ) : asset( 'admin/images/placeholder.png' );
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_id');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
+
+    public function getAttachmentPathAttribute() {
+        return $this->attributes['attachment'] ? asset( 'storage/' . $this->attributes['attachment'] ) : asset( 'admin/images/placeholder.png' );
     }
     
     public function getEncryptedIdAttribute() {
@@ -59,22 +77,25 @@ class Bundle extends Model
     }
 
     protected static $logAttributes = [
-        'title',
-        'description',
-        'image',
-        'thumbnail',
-        'url_slug',
-        'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'salesman_id',
+        'customer_id',
+        'warehouse_id',
+        'supplier_id',
+        'order_tax',
+        'order_discount',
+        'shipping_cost',
+        'attachment',
+        'remarks',
+        'reference',
+        'tax_type',
         'status',
+        'amount',
+        'original_amount',
+        'paid_amount',
+        'final_amount',
     ];
 
-    protected static $logName = 'bundles';
+    protected static $logName = 'quotations';
 
     protected static $logOnlyDirty = true;
 
@@ -83,6 +104,6 @@ class Bundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} bundle";
+        return "{$eventName} quotation";
     }
 }

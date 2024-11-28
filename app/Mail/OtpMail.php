@@ -34,7 +34,7 @@ class OtpMail extends Mailable
     public function build()
     {
         // from
-        return $this->from('support@infinitedesign.my')
+        return $this->from('support@infinitedesign.my', 'Infinite Design')
         ->subject($this->getSubject())
         ->view('admin/mail/otp')
         ->with(['data' => $this->data]);
@@ -50,9 +50,9 @@ class OtpMail extends Mailable
     {
         switch ($this->data['action']) {
             case 'forgot_password':
-                return 'request password reset';
+                return 'REQUEST PASSWORD RESET';
             default:
-                return 'register';
+                return 'REGISTER';
         }
     }
 }

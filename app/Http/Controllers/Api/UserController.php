@@ -28,6 +28,7 @@ class UserController extends Controller {
 
     /**
      * 1. Create an user
+     * @sort 1
      * 
      * 
      * 
@@ -48,6 +49,7 @@ class UserController extends Controller {
 
     /**
      * 2. Login an user - Email
+     * @sort 2
      * 
      * 
      * @group User API
@@ -63,6 +65,7 @@ class UserController extends Controller {
 
     /**
      * 3. Request an OTP
+     * @sort 3
      * 
      * <strong>request_type</strong><br>
      * 1: Register<br>
@@ -80,6 +83,7 @@ class UserController extends Controller {
 
     /**
      * 4. Resend an OTP
+     * @sort 4
      * 
      * <strong>request_type</strong><br>
      * 2: Resend<br>
@@ -98,6 +102,7 @@ class UserController extends Controller {
 
     /**
      * 5. Get user
+     * @sort 5
      * 
      * @group User API
      * 
@@ -112,6 +117,7 @@ class UserController extends Controller {
 
     /**
      * 6. Update user
+     * @sort 6
      * 
      * @group User API
      * 
@@ -130,6 +136,7 @@ class UserController extends Controller {
 
     /**
      * 7. Update user password
+     * @sort 7
      * 
      * @group User API
      * 
@@ -147,6 +154,7 @@ class UserController extends Controller {
 
     /**
      * 8. Check Email (Pre-request Otp)
+     * @sort 8
      * 
      * Validate an email
      * 
@@ -162,6 +170,7 @@ class UserController extends Controller {
 
     /**
      * 9. Forgot Password (Request Otp)
+     * @sort 9
      * 
      * Request an unique identifier to reset password.
      * 
@@ -177,7 +186,7 @@ class UserController extends Controller {
 
     /**
      * 10. Reset Password
-     * 
+     * @sort 10
      * @group User API
      * 
      * @bodyParam email string required Can be email or phone number, to perform password reset. Example: johnwick@gmail.com

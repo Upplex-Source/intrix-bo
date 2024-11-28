@@ -6,20 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\{
-    BundleService,
+    SalesOrderService,
     WarehouseService,
 };
 
 use App\Models\{
-    Bundle,
+    SalesOrder,
 };
 
-class BundleController extends Controller
+use Helper;
+
+class SalesOrderController extends Controller
 {
     public function index( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.bundles' );
-        $this->data['content'] = 'admin.bundle.index';
+        $this->data['header']['title'] = __( 'template.sales_orders' );
+        $this->data['content'] = 'admin.sales_order.index';
         $this->data['breadcrumb'] = [
             [
             'url' => route( 'admin.dashboard' ),
@@ -28,13 +30,15 @@ class BundleController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.bundles' ),
+                'text' => __( 'template.sales_orders' ),
                 'class' => 'active',
             ],
         ];
         $this->data['data']['status'] = [
             '10' => __( 'datatables.activated' ),
             '20' => __( 'datatables.suspended' ),
+            '13' => __( 'datatables.convert_invoice' ),
+            '14' => __( 'datatables.convert_delivery_order' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -42,8 +46,8 @@ class BundleController extends Controller
 
     public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] );
-        $this->data['content'] = 'admin.bundle.add';
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.sales_orders' ) ) ] );
+        $this->data['content'] = 'admin.sales_order.add';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -51,24 +55,26 @@ class BundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.bundle.index' ),
-                'text' => __( 'template.bundles' ),
+                'url' => route( 'admin.module_parent.sales_order.index' ),
+                'text' => __( 'template.sales_orders' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.sales_orders' ) ) ] ),
                 'class' => 'active',
             ],
         ];
+
+        $this->data['data']['tax_types'] = Helper::taxTypes();
 
         return view( 'admin.main' )->with( $this->data );
     }
 
     public function edit( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] );
-        $this->data['content'] = 'admin.bundle.edit';
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.sales_orders' ) ) ] );
+        $this->data['content'] = 'admin.sales_order.edit';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -76,56 +82,58 @@ class BundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.bundle.index' ),
-                'text' => __( 'template.bundles' ),
+                'url' => route( 'admin.module_parent.sales_order.index' ),
+                'text' => __( 'template.sales_orders' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.sales_orders' ) ) ] ),
                 'class' => 'active',
             ],
         ];
 
+        $this->data['data']['tax_types'] = Helper::taxTypes();
+
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function allBundles( Request $request ) {
+    public function allSalesOrders( Request $request ) {
 
-        return BundleService::allBundles( $request );
+        return SalesOrderService::allSalesOrders( $request );
     }
 
-    public function oneBundle( Request $request ) {
+    public function oneSalesOrder( Request $request ) {
 
-        return BundleService::oneBundle( $request );
+        return SalesOrderService::oneSalesOrder( $request );
     }
 
-    public function createBundle( Request $request ) {
+    public function createSalesOrder( Request $request ) {
 
-        return BundleService::createBundle( $request );
+        return SalesOrderService::createSalesOrder( $request );
     }
 
-    public function updateBundle( Request $request ) {
-        return BundleService::updateBundle( $request );
+    public function updateSalesOrder( Request $request ) {
+        return SalesOrderService::updateSalesOrder( $request );
     }
 
-    public function updateBundleStatus( Request $request ) {
+    public function updateSalesOrderStatus( Request $request ) {
 
-        return BundleService::updateBundleStatus( $request );
+        return SalesOrderService::updateSalesOrderStatus( $request );
     }
 
-    public function removeBundleGalleryImage( Request $request ) {
+    public function removeSalesOrderAttachment( Request $request ) {
 
-        return BundleService::removeBundleGalleryImage( $request );
+        return SalesOrderService::removeSalesOrderAttachment( $request );
     }
 
     public function ckeUpload( Request $request ) {
 
-        return BundleService::ckeUpload( $request );
+        return SalesOrderService::ckeUpload( $request );
     }
 
-    public function generateBundleCode( Request $request ) {
+    public function convertInvoice( Request $request ) {
 
-        return BundleService::generateBundleCode( $request );
+        return SalesOrderService::convertInvoice( $request );
     }
 }
