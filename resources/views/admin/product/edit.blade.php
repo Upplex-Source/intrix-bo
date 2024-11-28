@@ -157,7 +157,7 @@ $warehouses = $data['warehouses'];
                     <div class="col-sm-4">
                         <label for="{{ $product_edit }}_sale_unit" class="form-label">{{ __( 'product.sale_unit' ) }}</label>
                         <select class="form-select" id="{{ $product_edit }}_sale_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.sale_unit' ) ] ) }}">
-                            <option value="">{{ __('Select Sales Units Type') }}</option>
+                            
                             @foreach ($salesUnits as $salesUnit)
                                 <option value="{{ $salesUnit }}">{{ $salesUnit }}</option>
                             @endforeach

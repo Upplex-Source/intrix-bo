@@ -96,7 +96,7 @@ $taxTypes = $data['tax_types'];
                     <label for="{{ $quotation_create}}_tax_type" class="col-sm-5 col-form-label">{{ __( 'quotation.tax_type' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $quotation_create}}_tax_type" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'quotation.tax_type' ) ] ) }}">
-                            <option value="">{{ __('Select Sales Units Type') }}</option>
+                            
                             @foreach ($taxTypes as $taxType => $content)
                                 <option value="{{ $taxType }}">{{ $content['title'] }}</option>
                             @endforeach
@@ -147,6 +147,7 @@ $taxTypes = $data['tax_types'];
 
         $( fc + '_quotation_date' ).flatpickr( {
             disableMobile: true,
+            defaultDate: 'today',
         } );
 
         $( fc + '_cancel' ).click( function() {

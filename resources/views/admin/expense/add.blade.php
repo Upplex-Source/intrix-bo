@@ -90,6 +90,7 @@ $expense_create = 'expense_create';
 
         $( fc + '_expense_date' ).flatpickr( {
             disableMobile: true,
+            defaultDate: 'today',
         } );
 
         $( fc + '_cancel' ).click( function() {

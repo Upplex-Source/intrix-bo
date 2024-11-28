@@ -616,6 +616,11 @@ class ProductService
 
         $filter = false;
 
+        if ( !empty( $request->name ) ) {
+            $model->where( 'products.title', 'LIKE', '%' . $request->name . '%' );
+            $filter = true;
+        }
+
         if ( !empty( $request->title ) ) {
             $model->where( 'products.title', 'LIKE', '%' . $request->title . '%' );
             $filter = true;
