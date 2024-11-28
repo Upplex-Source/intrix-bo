@@ -701,6 +701,12 @@ class UserService
                     $fail( __( 'user.invalid_otp' ) );
                     return false;
                 }
+
+                if ( $currentOtpAction->otp_code != $request->otp_code ) {
+                    $fail( __( 'user.invalid_otp' ) );
+                    return false;
+                }
+
             } ],
             'password' => [ 'required', 'confirmed', Password::min( 8 ) ],
         ] );
