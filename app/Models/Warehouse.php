@@ -36,6 +36,20 @@ class Warehouse extends Model
                     ->withTimestamps();
     }
 
+    public function variants()
+    {
+        return $this->belongsToMany(ProductVariant::class, 'warehouses_variants', 'warehouse_id', 'variant_id')
+                    ->withPivot('quantity', 'price', 'status')
+                    ->withTimestamps();
+    }
+
+    public function bundles()
+    {
+        return $this->belongsToMany(Bundle::class, 'warehouses_bundles')
+                    ->withPivot('quantity', 'price', 'status')
+                    ->withTimestamps();
+    }
+
     // Function to calculate total quantity
     public function totalQuantity()
     {

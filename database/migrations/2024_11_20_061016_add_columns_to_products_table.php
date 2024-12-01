@@ -29,7 +29,12 @@ class AddColumnsToProductsTable extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            //
+            $table->dropForeign(['workmanship_id']);
+            $table->dropColumn('workmanship_id');
+            $table->dropForeign(['tax_method_id']);
+            $table->dropColumn('tax_method_id');
+            $table->dropForeign(['measurement_unit_id']);
+            $table->dropColumn('measurement_unit_id');
         });
     }
 }

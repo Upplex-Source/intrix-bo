@@ -156,9 +156,10 @@ var statusMapper = @json( $data['status'] ),
                 render: function( data, type, row, meta ) {
                     if (Array.isArray(data)) {
                         return data
-                            .map(item => item.product?.title || '-') 
-                            .join('<br>'); 
+                            .map(item => item.variant?.title || item.bundle?.title || item.product?.title || '-')
+                            .join('<br>');
                     }
+
                     return '-'; // Return '-' if no valid data
                 },
             },

@@ -229,6 +229,10 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'generate-barcode', [ ProductController::class, 'generateBarcode' ] )->name( 'admin.product.generateBarcode' );
                 Route::post( 'generate-barcodes', [ ProductController::class, 'generateBarcodes' ] )->name( 'admin.product.generateBarcodes' );
                 Route::post( 'preview-barcode', [ ProductController::class, 'previewBarcode' ] )->name( 'admin.product.previewBarcode' );
+
+                // for select2
+                Route::post( 'all-products-bundles', [ ProductController::class, 'allProductsBundles' ] )->name( 'admin.product.allProductsBundles' );
+
             } );
 
             // new routes

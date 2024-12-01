@@ -84,6 +84,18 @@ $taxTypes = $data['tax_types'];
                     </tbody>
                     <tfoot>
                         <tr>
+                            <th colspan="3" class="text-end">Total Shipping:</th>
+                            <th id="total-shipping">0.00</th>
+                            <th ></th>
+                            <th ></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Total Discount:</th>
+                            <th id="total-discount">0.00</th>
+                            <th ></th>
+                            <th ></th>
+                        </tr>
+                        <tr>
                             <th colspan="3" class="text-end">Total:</th>
                             <th id="total-subtotal">0.00</th>
                             <th id="total-tax">0.00</th>
@@ -93,13 +105,9 @@ $taxTypes = $data['tax_types'];
                 </table>
 
                 <div class="mb-3 row">
-                    <label for="{{ $quotation_create}}_tax_type" class="col-sm-5 col-form-label">{{ __( 'quotation.tax_type' ) }}</label>
+                    <label for="{{ $quotation_create }}_tax_method" class="col-sm-5 col-form-label">{{ __( 'product.tax_method' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $quotation_create}}_tax_type" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'quotation.tax_type' ) ] ) }}">
-                            
-                            @foreach ($taxTypes as $taxType => $content)
-                                <option value="{{ $taxType }}">{{ $content['title'] }}</option>
-                            @endforeach
+                        <select class="form-select" id="{{ $quotation_create }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -171,6 +179,7 @@ $taxTypes = $data['tax_types'];
             formData.append( 'customer', $(fc + '_customer').val() );
             formData.append( 'salesman', $(fc + '_salesman').val() );
             formData.append( 'tax_type', $(fc + '_tax_type').val() );
+            formData.append( 'tax_method', $(fc + '_tax_method').val() );
             formData.append( 'discount', $(fc + '_discount').val() );
             formData.append( 'shipping_cost', $(fc + '_shipping_cost').val() );
             formData.append( '_token', '{{ csrf_token() }}' );
@@ -202,12 +211,32 @@ $taxTypes = $data['tax_types'];
                 },
                 error: function( error ) {
                     $( 'body' ).loading( 'stop' );
-
+                    $('#product-table tbody tr').each(function () {
+                        $(this).find('.error-message').remove();
+                    });
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
-                            $( fc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            let match = key.match(/^products\.(\d+)\.quantity$/);
+                            if (match) {
+                                let index = match[1];
+                                let productRow = $(`#product-table tbody tr:eq(${index})`);
+                                
+                                if (productRow.length > 0) {
+                                    // Add error message below the quantity input
+                                    console.log(productRow)
+                                    console.log(productRow.find('.product-quantity').closest('td')[0].outerHTML);
+
+                                    // Append error message below the quantity input
+                                    $(productRow.find('.product-quantity').closest('td')[0]).append(`
+                                        <div class="text-danger error-message">${value[0]}</div>
+                                    `);
+                                }
+                            }else{
+                                $( fc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            }
                         } );
+
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
                         modalDanger.toggle();
@@ -248,6 +277,49 @@ $taxTypes = $data['tax_types'];
                     file.previewElement.id = response.data.id;
                 }
             }
+        } );
+
+        $( fc + '_tax_method' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.tax_method.allTaxMethods' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.tax_methods.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.title,
+                            formatted_tax: v.formatted_tax,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
         } );
 
         $( fc + '_warehouse' ).select2( {
@@ -427,7 +499,16 @@ $taxTypes = $data['tax_types'];
         // Clear all quantity input fields
         quantityInputContainer.empty();
 
-                $(fc + '_product').select2({
+        $(fc + '_product').prop('disabled', true);
+
+        $(fc + '_warehouse').on('select2:select', function () {
+            $(fc + '_product').prop('disabled', false);
+            $(fc + '_product').val(null).trigger('change');
+            $('#product-table tbody').empty();
+            productCount = 0;
+        });
+
+        $(fc + '_product').select2({
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             allowClear: true,
@@ -442,6 +523,7 @@ $taxTypes = $data['tax_types'];
                 data: function(params) {
                     return {
                         name: params.term, // search term
+                        warehouse: $( fc + '_warehouse' ).val(), // search term
                         status: 10,
                         start: ((params.page ? params.page : 1) - 1) * 10,
                         length: 10,
@@ -452,13 +534,55 @@ $taxTypes = $data['tax_types'];
                     params.page = params.page || 1;
 
                     let processedResult = [];
+                    let addedBundles = new Set(); // Track unique bundles
+                    let addedVariants = new Set(); // Track unique bundles
 
-                    data.products.map(function(v, i) {
+                    // Process products and bundles with indicators
+                    data.products.forEach(function(product) {
+                        // Add the main product with a unique prefixed ID
+
+                        let productPrice = product.price;
+
+                        // Check for warehouses and apply warehouse-specific price
+                        if (Array.isArray(product.warehouses) && product.warehouses.length > 0) {
+                            let matchingWarehouse = product.warehouses.find(warehouse => warehouse.id === parseInt($(fc + '_warehouse').val(), 10));
+                            if (matchingWarehouse) {
+                                productPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.price;
+                            }
+                        }
+
                         processedResult.push({
-                            id: v.id,
-                            text: v.title,
-                            price: v.price
+                            id: `product-${product.id}`, 
+                            text: `Product: ${product.title}`,
+                            price: productPrice,
                         });
+
+                        // Add bundles associated with the product, ensuring uniqueness
+                        if (product.bundles && Array.isArray(product.bundles)) {
+                            product.bundles.forEach(function(bundle) {
+                                if (!addedBundles.has(bundle.id)) { 
+                                    processedResult.push({
+                                        id: `bundle-${bundle.id}`,
+                                        text: `Bundle: ${bundle.title}`,
+                                        price: product.price,
+                                    });
+                                    addedBundles.add(bundle.id);
+                                }
+                            });
+                        }
+
+                        if (product.variants && Array.isArray(product.variants)) {
+                            product.variants.forEach(function(variant) {
+                                if (!addedVariants.has(variant.id)) { 
+                                    processedResult.push({
+                                        id: `variant-${variant.id}`,
+                                        text: `Variant: ${variant.title}`,
+                                        price: variant.price,
+                                    });
+                                    addedVariants.add(variant.id);
+                                }
+                            });
+                        }
                     });
 
                     return {
@@ -486,10 +610,26 @@ $taxTypes = $data['tax_types'];
                 totalTax += tax;
             });
 
+            
+            let shipping = parseFloat($(fc + '_shipping_cost').val()) || 0;
+            let discount = parseFloat($(fc + '_discount').val()) || 0;
+            totalSubtotal += shipping - discount;
+
             // Update the footer totals
             $('#total-subtotal').text(totalSubtotal.toFixed(2));
             $('#total-tax').text(totalTax.toFixed(2));
+
+            $('#total-shipping').text(shipping.toFixed(2));
+            $('#total-discount').text(discount.toFixed(2));
         }
+
+        $(fc + '_discount').on('keyup', function (e) {
+            updateTotals();
+        });
+
+        $(fc + '_shipping_cost').on('keyup', function (e) {
+            updateTotals();
+        });
 
         // Add product row logic (adjusted)
         $(fc + '_product').on('select2:select', function (e) {
@@ -501,10 +641,10 @@ $taxTypes = $data['tax_types'];
 
                 // Mock values for demo purposes
                 let price = e.params.data.price; // Example price
-                let taxRate = 0.06; // Example tax rate
+                let taxRate = $(fc + '_tax_method').select2('data').length > 0 ?  $(fc + '_tax_method').select2('data')[0]['formatted_tax'] : 0.06; // Example tax rate
                 let subtotal = price * 1; // Quantity starts at 1
                 let tax = subtotal * taxRate;
-                
+
                 // Append a new row to the table
                 $('#product-table tbody').append(`
                     <tr id="product-${selectedProduct.id}">
@@ -538,10 +678,9 @@ $taxTypes = $data['tax_types'];
 
             // Update subtotal and tax
             let price =  $(this).data('product-price'); // Example price, replace with real data
-            let taxRate = 0.06; // Example tax rate
+            let taxRate = $(fc + '_tax_method').select2('data').length > 0 ?  $(fc + '_tax_method').select2('data')[0]['formatted_tax'] : 0.06; // Example tax rate
             let subtotal = price * quantity;
             let tax = subtotal * taxRate;
-
             // Update the respective row
             $(`#product-${productId}`).find('.product-subtotal').text(subtotal.toFixed(2));
             $(`#product-${productId}`).find('.product-tax').text(tax.toFixed(2));
@@ -555,6 +694,11 @@ $taxTypes = $data['tax_types'];
 
             // Remove row from the table
             $(`#product-${productId}`).remove();
+            var selectedValues = $(fc + '_product').val(); // Get the current selected values
+            selectedValues = selectedValues.filter(function (id) {
+                return id != productId; // Remove the unselected productId
+            });
+            $(fc + '_product').val(selectedValues).trigger('change');
 
             // Re-index rows
             productCount = 0;
@@ -569,15 +713,17 @@ $taxTypes = $data['tax_types'];
         $(fc + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
             $('#product-' + categoryId).remove();
-updateTotals(); 
+            updateTotals(); 
 
-var selectedValues = $(fc + '_product').val(); // Get the current selected values
+            var selectedValues = $(fc + '_product').val(); // Get the current selected values
             selectedValues = selectedValues.filter(function (id) {
                 return id != categoryId; // Remove the unselected productId
             });
 
             // Reassign the remaining selected values back to select2
             $(fc + '_product').val(selectedValues).trigger('change');
+            productCount = 0;
+
         });
 
         $(fc + '_product').on("select2:select", function (evt) {
@@ -589,6 +735,31 @@ var selectedValues = $(fc + '_product').val(); // Get the current selected value
             $(this).trigger("change");
         });
 
+        $(fc + '_tax_method').on('select2:select', function (e) {
+            let selectedTax = e.params.data;
+        });
+
+        $(fc + '_tax_method').on('select2:select', function (e) {
+
+            let selectedTax = e.params.data; // Get the selected tax method
+            let newTaxRate = selectedTax.formatted_tax; // Convert percentage to a decimal
+
+            // Loop through each product row and recalculate tax
+            $('#product-table tbody tr').each(function () {
+                let quantity = parseFloat($(this).find('.product-quantity').val()) || 0; // Get the quantity
+                let price = $(this).find('.product-quantity').data('product-price') || 0; // Get the price
+
+                // Recalculate subtotal and tax
+                let subtotal = price * quantity;
+                let tax = subtotal * newTaxRate;
+
+                // Update the respective row
+                $(this).find('.product-subtotal').text(subtotal.toFixed(2));
+                $(this).find('.product-tax').text(tax.toFixed(2));
+            });
+
+            updateTotals(); // Recalculate the totals for all products
+        });
 
     } );
 </script>

@@ -42,7 +42,7 @@ class Adjustment extends Model
     }
 
     public function getAttachmentPathAttribute() {
-        return $this->attributes['attachment'] ? asset( 'storage/' . $this->attributes['attachment'] ) : null;
+        return $this->attributes['attachment'] ? asset( 'storage/' . $this->attributes['attachment'] ) : asset( 'admin/images/placeholder.png' );
     }
 
     public function getEncryptedIdAttribute() {

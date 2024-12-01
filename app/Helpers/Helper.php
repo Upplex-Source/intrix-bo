@@ -24,7 +24,7 @@ class Helper {
     }
 
     public static function assetVersion() {
-        return '?v=1.01';
+        return '?v=1.02';
     }
 
     public static function moduleActions() {
@@ -358,5 +358,14 @@ class Helper {
         return 'SO-' . now()->format('YmdHis');
     }
 
+    public static function generateInvoiceNumber()
+    {
+        return 'INV-' . now()->format('YmdHis');
+    }
+
+    public static function generateDeliveryOrderNumber()
+    {
+        return 'DLV-' . now()->format('YmdHis');
+    }
     
 }

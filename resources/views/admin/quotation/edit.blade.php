@@ -84,6 +84,18 @@ $taxTypes = $data['tax_types'];
                     </tbody>
                     <tfoot>
                         <tr>
+                            <th colspan="3" class="text-end">Total Shipping:</th>
+                            <th id="total-shipping">0.00</th>
+                            <th ></th>
+                            <th ></th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" class="text-end">Total Discount:</th>
+                            <th id="total-discount">0.00</th>
+                            <th ></th>
+                            <th ></th>
+                        </tr>
+                        <tr>
                             <th colspan="3" class="text-end">Total:</th>
                             <th id="total-subtotal">0.00</th>
                             <th id="total-tax">0.00</th>
@@ -93,13 +105,9 @@ $taxTypes = $data['tax_types'];
                 </table>
 
                 <div class="mb-3 row">
-                    <label for="{{ $quotation_edit}}_tax_type" class="col-sm-5 col-form-label">{{ __( 'quotation.tax_type' ) }}</label>
+                    <label for="{{ $quotation_edit }}_tax_method" class="col-sm-5 col-form-label">{{ __( 'product.tax_method' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $quotation_edit}}_tax_type" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'quotation.tax_type' ) ] ) }}">
-                            
-                            @foreach ($taxTypes as $taxType => $content)
-                                <option value="{{ $taxType }}">{{ $content['title'] }}</option>
-                            @endforeach
+                        <select class="form-select" id="{{ $quotation_edit }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
@@ -170,7 +178,7 @@ $taxTypes = $data['tax_types'];
             formData.append( 'supplier', $(fe + '_supplier').val() );
             formData.append( 'customer', $(fe + '_customer').val() );
             formData.append( 'salesman', $(fe + '_salesman').val() );
-            formData.append( 'tax_type', $(fe + '_tax_type').val() );
+            formData.append( 'tax_method', $(fe + '_tax_method').val() );
             formData.append( 'discount', $(fe + '_discount').val() );
             formData.append( 'shipping_cost', $(fe + '_shipping_cost').val() );
             formData.append( '_token', '{{ csrf_token() }}' );
@@ -290,13 +298,55 @@ $taxTypes = $data['tax_types'];
                     params.page = params.page || 1;
 
                     let processedResult = [];
+                    let addedBundles = new Set(); // Track unique bundles
+                    let addedVariants = new Set(); // Track unique bundles
 
-                    data.products.map(function(v, i) {
+                    // Process products and bundles with indicators
+                    data.products.forEach(function(product) {
+                        // Add the main product with a unique prefixed ID
+
+                        let productPrice = product.price;
+
+                        // Check for warehouses and apply warehouse-specific price
+                        if (Array.isArray(product.warehouses) && product.warehouses.length > 0) {
+                            let matchingWarehouse = product.warehouses.find(warehouse => warehouse.id === parseInt($(fe + '_warehouse').val(), 10));
+                            if (matchingWarehouse) {
+                                productPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.price;
+                            }
+                        }
+
                         processedResult.push({
-                            id: v.id,
-                            text: v.title,
-                            price: v.price
+                            id: `product-${product.id}`, 
+                            text: `Product: ${product.title}`,
+                            price: productPrice,
                         });
+
+                        // Add bundles associated with the product, ensuring uniqueness
+                        if (product.bundles && Array.isArray(product.bundles)) {
+                            product.bundles.forEach(function(bundle) {
+                                if (!addedBundles.has(bundle.id)) { 
+                                    processedResult.push({
+                                        id: `bundle-${bundle.id}`,
+                                        text: `Bundle: ${bundle.title}`,
+                                        price: product.price,
+                                    });
+                                    addedBundles.add(bundle.id);
+                                }
+                            });
+                        }
+
+                        if (product.variants && Array.isArray(product.variants)) {
+                            product.variants.forEach(function(variant) {
+                                if (!addedVariants.has(variant.id)) { 
+                                    processedResult.push({
+                                        id: `variant-${variant.id}`,
+                                        text: `Variant: ${variant.title}`,
+                                        price: variant.price,
+                                    });
+                                    addedVariants.add(variant.id);
+                                }
+                            });
+                        }
                     });
 
                     return {
@@ -435,6 +485,49 @@ $taxTypes = $data['tax_types'];
             },
         } );
 
+        let taxMethodSelect2 = $( fe + '_tax_method' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.tax_method.allTaxMethods' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.tax_methods.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.title,
+                            formatted_tax: v.formatted_tax,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+
         function getQuotation() {
 
             $( 'body' ).loading( {
@@ -479,49 +572,86 @@ $taxTypes = $data['tax_types'];
                         salesmanSelect2.trigger( 'change' );
                     }
 
-                    response.quotation_metas.forEach((product, index) => {
+                    if ( response.tax_method ) {
+                        let option1 = new Option( response.tax_method.title, response.tax_method.id, true, true );
+                        $(option1).data('formatted_tax', response.tax_method.formatted_tax);
+                        taxMethodSelect2.append( option1 );
+                        taxMethodSelect2.trigger( 'change' );
+                    }
 
-                        let option = new Option(product.product.title, product.product.id, true, true); 
-                        productSelect2.append(option);
+                    response.quotation_metas.forEach((product, index) => {
 
                         let productTable = $('#product-table tbody');
                         if (!productTable.length) {
                             console.error("Product table body not found.");
                             return;
                         }
+
+                        if( product.product && product.variant == null ){
+
+                            let matchingWarehouse = product.product.warehouses.find(warehouse => warehouse.id === parseInt(response.warehouse_id, 10))
+
+                            formattedId = 'product-' + product.product.id
+                            formattedPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.product.price;
+                            formattedTitle = 'Product: ' + product.product.title
+
+                        } else if( product.variant ){
+                            let matchingWarehouse = product.variant.product.warehouses.find(warehouse => warehouse.id === parseInt(response.warehouse_id, 10))
+
+                            formattedId = 'variant-' + product.variant.id
+                            formattedPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.variant.product.price;
+                            formattedTitle = 'Variant: ' + product.variant.title
+
+                        } else {
+                            formattedId = 'bundle-' + product.bundle.id
+                            formattedPrice = 'bundle-' + product.bundle.price
+                            formattedTitle = 'Bundle: ' + product.bundle.title
+                        }
+                        
+                        let option = new Option(formattedTitle, formattedId, true, true); 
+                        productSelect2.append(option);
+                        
                         if ($(`#product-${product.id}`).length === 0) {
                             productCount++
-                            let taxRate = 0.06;
-                            let subtotal = product.product.price * product.quantity;
+                            let taxRate = response.tax_method.formatted_tax;
+                            let subtotal = formattedPrice * product.quantity;
                             let tax = subtotal * taxRate;
-                ;
+
                             productTable.append(`
-                                <tr id="product-${product.product.id}">
+                                <tr id="product-${formattedId}">
                                     <td>${index + 1}</td>
-                                    <td>${product.product.title}</td>
+                                    <td>${formattedTitle}</td>
                                     <td>
                                         <input type="hidden" class="form-control meta-id" value="${product.id}"> 
                                         <input type="number" class="form-control product-quantity" 
                                             style="width: 100px;" min="1" 
-                                            data-product-id="${product.product.id}"
-                                            data-product-price="${product.product.price}"
+                                            data-product-id="${formattedId}"
+                                            data-product-price="${formattedPrice}"
                                             value="${product.quantity}">
                                     </td>
                                     <td class="product-subtotal">${subtotal.toFixed(2)}</td>
                                     <td class="product-tax">${tax.toFixed(2)}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm remove-product" 
-                                                data-product-id="${product.product.id}">
+                                                data-product-id="${formattedId}">
                                             <i class="fa fa-trash"></i> Remove
                                         </button>
                                     </td>
                                 </tr>
                             `);
                         }
-                        updateTotals()
+                        
+                        updateTotals();
+
                         $(document).on('click', '.remove-product', function () {
                             let productId = $(this).data('product-id');
-                            $('#product-' + productId).remove();
+                             // Remove row from the table
+                            $(`#product-${productId}`).remove();
+                            var selectedValues = $(fe + '_product').val(); // Get the current selected values
+                            selectedValues = selectedValues.filter(function (id) {
+                                return id != productId; // Remove the unselected productId
+                            });
+                            $(fe + '_product').val(selectedValues).trigger('change');
 
                             // Re-index the table rows
                             productCount = 0;
@@ -529,6 +659,9 @@ $taxTypes = $data['tax_types'];
                                 productCount++;
                                 $(this).find('td:first').text(productCount);
                             });
+
+                            updateTotals(); 
+
                         });
 
                         $(document).on('input', '.product-quantity', function () {
@@ -602,6 +735,42 @@ $taxTypes = $data['tax_types'];
         }
 
         let productCount = 0; // Counter for product rows
+        function updateTotals() {
+            let totalSubtotal = 0;
+            let totalTax = 0;
+
+            // Loop through each row to calculate totals
+            $('#product-table tbody tr').each(function () {
+                let quantity = parseFloat($(this).find('.product-quantity').val()) || 0;
+                let subtotal = parseFloat($(this).find('.product-subtotal').text()) || 0;
+                let tax = parseFloat($(this).find('.product-tax').text()) || 0;
+
+                totalSubtotal += subtotal;
+                totalTax += tax;
+            });
+
+            
+            let shipping = parseFloat($(fe + '_shipping_cost').val()) || 0;
+            let discount = parseFloat($(fe + '_discount').val()) || 0;
+            totalSubtotal += shipping - discount;
+
+            // Update the footer totals
+            $('#total-subtotal').text(totalSubtotal.toFixed(2));
+            $('#total-tax').text(totalTax.toFixed(2));
+
+            $('#total-shipping').text(shipping.toFixed(2));
+            $('#total-discount').text(discount.toFixed(2));
+        }
+
+        $(fe + '_discount').on('keyup', function (e) {
+            updateTotals();
+        });
+
+        $(fe + '_shipping_cost').on('keyup', function (e) {
+            updateTotals();
+        });
+
+        // Add product row logic (adjusted)
         $(fe + '_product').on('select2:select', function (e) {
             let selectedProduct = e.params.data;
 
@@ -610,11 +779,14 @@ $taxTypes = $data['tax_types'];
                 productCount++;
 
                 // Mock values for demo purposes
+                
+                let selectedOption = taxMethodSelect2.find(':selected');
+                let formattedTax = selectedOption.data('formatted_tax');
+
                 let price = e.params.data.price; // Example price
-                let taxRate = 0.06; // Example tax rate
+                let taxRate = formattedTax == undefined ? $(fe + '_tax_method').select2('data').length > 0 ?  $(fe + '_tax_method').select2('data')[0]['formatted_tax'] : 0.06 : formattedTax ;
                 let subtotal = price * 1; // Quantity starts at 1
                 let tax = subtotal * taxRate;
-                
                 // Append a new row to the table
                 $('#product-table tbody').append(`
                     <tr id="product-${selectedProduct.id}">
@@ -641,25 +813,6 @@ $taxTypes = $data['tax_types'];
             }
         });
 
-        function updateTotals() {
-            let totalSubtotal = 0;
-            let totalTax = 0;
-
-            // Loop through each row to calculate totals
-            $('#product-table tbody tr').each(function () {
-                let quantity = parseFloat($(this).find('.product-quantity').val()) || 0;
-                let subtotal = parseFloat($(this).find('.product-subtotal').text()) || 0;
-                let tax = parseFloat($(this).find('.product-tax').text()) || 0;
-
-                totalSubtotal += subtotal;
-                totalTax += tax;
-            });
-
-            // Update the footer totals
-            $('#total-subtotal').text(totalSubtotal.toFixed(2));
-            $('#total-tax').text(totalTax.toFixed(2));
-        }
-
         // Handle quantity change
         $(document).on('input', '.product-quantity', function () {
             let quantity = parseFloat($(this).val()) || 0;
@@ -667,10 +820,9 @@ $taxTypes = $data['tax_types'];
 
             // Update subtotal and tax
             let price =  $(this).data('product-price'); // Example price, replace with real data
-            let taxRate = 0.06; // Example tax rate
+            let taxRate = $(fe + '_tax_method').select2('data').length > 0 ?  $(fe + '_tax_method').select2('data')[0]['formatted_tax'] : 0.06; // Example tax rate
             let subtotal = price * quantity;
             let tax = subtotal * taxRate;
-
             // Update the respective row
             $(`#product-${productId}`).find('.product-subtotal').text(subtotal.toFixed(2));
             $(`#product-${productId}`).find('.product-tax').text(tax.toFixed(2));
@@ -684,6 +836,11 @@ $taxTypes = $data['tax_types'];
 
             // Remove row from the table
             $(`#product-${productId}`).remove();
+            var selectedValues = $(fe + '_product').val(); // Get the current selected values
+            selectedValues = selectedValues.filter(function (id) {
+                return id != productId; // Remove the unselected productId
+            });
+            $(fe + '_product').val(selectedValues).trigger('change');
 
             // Re-index rows
             productCount = 0;
@@ -695,19 +852,20 @@ $taxTypes = $data['tax_types'];
             updateTotals(); 
         });
 
-
         $(fe + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
             $('#product-' + categoryId).remove();
-updateTotals(); 
+            updateTotals(); 
 
-var selectedValues = $(fc + '_product').val(); // Get the current selected values
+            var selectedValues = $(fe + '_product').val(); // Get the current selected values
             selectedValues = selectedValues.filter(function (id) {
                 return id != categoryId; // Remove the unselected productId
             });
 
             // Reassign the remaining selected values back to select2
-            $(fc + '_product').val(selectedValues).trigger('change');
+            $(fe + '_product').val(selectedValues).trigger('change');
+            productCount = 0;
+
         });
 
         $(fe + '_product').on("select2:select", function (evt) {
@@ -719,44 +877,32 @@ var selectedValues = $(fc + '_product').val(); // Get the current selected value
             $(this).trigger("change");
         });
 
-        function removeGallery( gallery ) {
+        $(fe + '_tax_method').on('select2:select', function (e) {
+            let selectedTax = e.params.data;
+        });
 
-            resetInputValidation();
+        $(fe + '_tax_method').on('select2:select', function (e) {
 
-            $( 'body' ).loading( {
-                message: '{{ __( 'template.loading' ) }}'
-            } );
+            let selectedTax = e.params.data; // Get the selected tax method
+            let newTaxRate = selectedTax.formatted_tax; // Convert percentage to a decimal
 
-            let formData = new FormData();
-            formData.append( 'id', gallery );
-            formData.append( '_token', '{{ csrf_token() }}' );
+            // Loop through each product row and recalculate tax
+            $('#product-table tbody tr').each(function () {
+                let quantity = parseFloat($(this).find('.product-quantity').val()) || 0; // Get the quantity
+                let price = $(this).find('.product-quantity').data('product-price') || 0; // Get the price
 
-            $.ajax( {
-                url: '{{ route( 'admin.quotation.removeQuotationAttachment' ) }}',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType:   false,
-                success: function( response ) {
-                    $( 'body' ).loading( 'stop' );
-                    $( '#modal_success .caption-text' ).html( response.message );
-                    modalSuccess.toggle();
-                },
-                error: function( error ) {
-                    $( 'body' ).loading( 'stop' );
+                // Recalculate subtotal and tax
+                let subtotal = price * quantity;
+                let tax = subtotal * newTaxRate;
 
-                    if ( error.status === 422 ) {
-                        let errors = error.responseJSON.errors;
-                        $.each( errors, function( key, value ) {
-                            $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-                        } );
-                    } else {
-                        $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
-                        modalDanger.toggle();
-                    }
-                }
-            } );
-        }
+                // Update the respective row
+                $(this).find('.product-subtotal').text(subtotal.toFixed(2));
+                $(this).find('.product-tax').text(tax.toFixed(2));
+            });
+
+            updateTotals(); // Recalculate the totals for all products
+        });
+
 
     } );
 </script>

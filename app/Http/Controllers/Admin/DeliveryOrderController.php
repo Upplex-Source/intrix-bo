@@ -6,20 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\{
-    BundleService,
+    DeliveryOrderService,
     WarehouseService,
 };
 
 use App\Models\{
-    Bundle,
+    DeliveryOrder,
 };
 
-class BundleController extends Controller
+use Helper;
+
+class DeliveryOrderController extends Controller
 {
     public function index( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.bundles' );
-        $this->data['content'] = 'admin.bundle.index';
+        $this->data['header']['title'] = __( 'template.delivery_orders' );
+        $this->data['content'] = 'admin.delivery_order.index';
         $this->data['breadcrumb'] = [
             [
             'url' => route( 'admin.dashboard' ),
@@ -28,13 +30,15 @@ class BundleController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.bundles' ),
+                'text' => __( 'template.delivery_orders' ),
                 'class' => 'active',
             ],
         ];
         $this->data['data']['status'] = [
             '10' => __( 'datatables.activated' ),
             '20' => __( 'datatables.suspended' ),
+            '13' => __( 'datatables.convert_invoice' ),
+            '14' => __( 'datatables.convert_delivery_order' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -42,8 +46,8 @@ class BundleController extends Controller
 
     public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] );
-        $this->data['content'] = 'admin.bundle.add';
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.delivery_orders' ) ) ] );
+        $this->data['content'] = 'admin.delivery_order.add';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -51,24 +55,26 @@ class BundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.bundle.index' ),
-                'text' => __( 'template.bundles' ),
+                'url' => route( 'admin.module_parent.delivery_order.index' ),
+                'text' => __( 'template.delivery_orders' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.delivery_orders' ) ) ] ),
                 'class' => 'active',
             ],
         ];
+
+        $this->data['data']['tax_types'] = Helper::taxTypes();
 
         return view( 'admin.main' )->with( $this->data );
     }
 
     public function edit( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] );
-        $this->data['content'] = 'admin.bundle.edit';
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.delivery_orders' ) ) ] );
+        $this->data['content'] = 'admin.delivery_order.edit';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -76,56 +82,58 @@ class BundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.bundle.index' ),
-                'text' => __( 'template.bundles' ),
+                'url' => route( 'admin.module_parent.delivery_order.index' ),
+                'text' => __( 'template.delivery_orders' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.bundles' ) ) ] ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.delivery_orders' ) ) ] ),
                 'class' => 'active',
             ],
         ];
 
+        $this->data['data']['tax_types'] = Helper::taxTypes();
+
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function allBundles( Request $request ) {
+    public function allDeliveryOrders( Request $request ) {
 
-        return BundleService::allBundles( $request );
+        return DeliveryOrderService::allDeliveryOrders( $request );
     }
 
-    public function oneBundle( Request $request ) {
+    public function oneDeliveryOrder( Request $request ) {
 
-        return BundleService::oneBundle( $request );
+        return DeliveryOrderService::oneDeliveryOrder( $request );
     }
 
-    public function createBundle( Request $request ) {
+    public function createDeliveryOrder( Request $request ) {
 
-        return BundleService::createBundle( $request );
+        return DeliveryOrderService::createDeliveryOrder( $request );
     }
 
-    public function updateBundle( Request $request ) {
-        return BundleService::updateBundle( $request );
+    public function updateDeliveryOrder( Request $request ) {
+        return DeliveryOrderService::updateDeliveryOrder( $request );
     }
 
-    public function updateBundleStatus( Request $request ) {
+    public function updateDeliveryOrderStatus( Request $request ) {
 
-        return BundleService::updateBundleStatus( $request );
+        return DeliveryOrderService::updateDeliveryOrderStatus( $request );
     }
 
-    public function removeBundleGalleryImage( Request $request ) {
+    public function removeDeliveryOrderAttachment( Request $request ) {
 
-        return BundleService::removeBundleGalleryImage( $request );
+        return DeliveryOrderService::removeDeliveryOrderAttachment( $request );
     }
 
     public function ckeUpload( Request $request ) {
 
-        return BundleService::ckeUpload( $request );
+        return DeliveryOrderService::ckeUpload( $request );
     }
 
-    public function generateBundleCode( Request $request ) {
+    public function convertDeliveryOrder( Request $request ) {
 
-        return BundleService::generateBundleCode( $request );
+        return DeliveryOrderService::convertDeliveryOrder( $request );
     }
 }

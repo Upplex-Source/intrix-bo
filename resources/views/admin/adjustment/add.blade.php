@@ -89,6 +89,7 @@ $adjustment_create = 'adjustment_create';
 
         $( fc + '_adjustment_date' ).flatpickr( {
             disableMobile: true,
+            defaultDate: 'today',
         } );
 
         $( fc + '_cancel' ).click( function() {
@@ -116,6 +117,16 @@ $adjustment_create = 'adjustment_create';
                 let quantityInput = $(`#product-${productId} .product-quantity`).val();
                 formData.append(`products[${index}][id]`, productId);
                 formData.append(`products[${index}][quantity]`, quantityInput);
+
+                $(`.variant-row[data-parent-id="product-${productId}"]`).each(function (variantIndex, variantRow) {
+                    let variantId = $(variantRow).attr('id').replace('variant-', '');
+                    let variantQuantity = $(variantRow).find('.variant-quantity').val();
+
+                    // Append variant details under the corresponding product
+                    formData.append(`products[${index}][variants][${variantIndex}][id]`, variantId);
+                    formData.append(`products[${index}][variants][${variantIndex}][quantity]`, variantQuantity);
+                });
+
             });
 
             $.ajax( {
@@ -234,13 +245,13 @@ $adjustment_create = 'adjustment_create';
         // Clear all quantity input fields
         quantityInputContainer.empty();
 
-                $(fc + '_product').select2({
+        $(fc + '_product').select2({
             language: '{{ App::getLocale() }}',
             theme: 'bootstrap-5',
             allowClear: true,
             width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
             placeholder: $(this).data('placeholder'),
-            closeOnSelect: true, // Auto close after selection
+            closeOnSelect: true,
             ajax: {
                 method: 'POST',
                 url: '{{ route('admin.product.allProducts') }}',
@@ -248,7 +259,7 @@ $adjustment_create = 'adjustment_create';
                 delay: 250,
                 data: function(params) {
                     return {
-                        name: params.term, // search term
+                        name: params.term,
                         status: 10,
                         start: ((params.page ? params.page : 1) - 1) * 10,
                         length: 10,
@@ -259,14 +270,32 @@ $adjustment_create = 'adjustment_create';
                     params.page = params.page || 1;
 
                     let processedResult = [];
+                    let addedBundles = new Set(); // Track unique bundles
 
-                    data.products.map(function(v, i) {
+                    // Process products and bundles with indicators
+                    data.products.forEach(function(product) {
+                        // Add the main product with a unique prefixed ID
                         processedResult.push({
-                            id: v.id,
-                            text: v.title,
+                            id: `product-${product.id}`, 
+                            text: `Product: ${product.title}`,
+                            variants: product.variants
                         });
-                    });
 
+                        // Add bundles associated with the product, ensuring uniqueness
+                        if (product.bundles && Array.isArray(product.bundles)) {
+                            product.bundles.forEach(function(bundle) {
+                                if (!addedBundles.has(bundle.id)) { // Check if the bundle is already added
+                                    processedResult.push({
+                                        id: `bundle-${bundle.id}`, // Prefix with "bundle-"
+                                        text: `Bundle: ${bundle.title}`, // Prefix with "Bundle:"
+                                        variants: null
+                                    });
+                                    addedBundles.add(bundle.id); // Mark this bundle as added
+                                }
+                            });
+                        }
+                    });
+                    
                     return {
                         results: processedResult,
                         pagination: {
@@ -274,8 +303,23 @@ $adjustment_create = 'adjustment_create';
                         }
                     };
                 }
+            },
+            templateResult: function(data) {
+                if (!data.id) {
+                    return data.text;
+                }
+                if (data.type === 'product') {
+                    return `<strong>Product:</strong> ${data.text}`;
+                } else if (data.type === 'bundle') {
+                    return `<em>Bundle:</em> ${data.text}`;
+                }
+                return data.text;
+            },
+            escapeMarkup: function(markup) {
+                return markup; // Let Select2 render HTML
             }
         });
+
         let productCount = 0; // Counter for product rows
         $(fc + '_product').on('select2:select', function (e) {
             let selectedProduct = e.params.data;
@@ -283,10 +327,11 @@ $adjustment_create = 'adjustment_create';
             // Check if the product is already in the table
             if ($('#product-' + selectedProduct.id).length === 0) {
                 productCount++;
+                console.log(productCount)
 
-                // Append a new row to the table
+                // Append a main row for the selected product
                 $('#product-table tbody').append(`
-                    <tr id="product-${selectedProduct.id}">
+                    <tr id="product-${selectedProduct.id}" class="product-row">
                         <td>${productCount}</td>
                         <td>${selectedProduct.text}</td>
                         <td>
@@ -302,8 +347,25 @@ $adjustment_create = 'adjustment_create';
                         </td>
                     </tr>
                 `);
+                // Append rows for each variant of the selected product
 
-                console.log(selectedProduct);
+
+                if(selectedProduct.variants != null) {
+                    selectedProduct.variants.forEach((variant, index) => {
+                        $('#product-table tbody').append(`
+                            <tr id="variant-${variant.id}" class="variant-row" data-parent-id="product-${selectedProduct.id}">
+                                <td>${productCount}.${index + 1}</td>
+                                <td>Variant: ${variant.title}</td>
+                                <td>
+                                    <input type="number" class="form-control variant-quantity" 
+                                        style="width: 100px;" min="1" 
+                                        data-variant-id="${variant.id}" data-product-id="${selectedProduct.id}">
+                                </td>
+                                <td></td>
+                            </tr>
+                        `);
+                    });
+                }
             }
         });
 
@@ -312,7 +374,8 @@ $adjustment_create = 'adjustment_create';
             
             // Remove from table
             $('#product-' + productId).remove();
-            
+            $(`.variant-row[data-parent-id="product-${productId}"]`).remove();
+
             // Remove from Select2
             let selectElement = $(fc + '_product'); // Replace with your Select2 element ID
             let selectedValues = selectElement.val();
@@ -322,7 +385,7 @@ $adjustment_create = 'adjustment_create';
             }
 
             // Re-index the table rows
-            let productCount = 0;
+            productCount = 0;
             $('#product-table tbody tr').each(function () {
                 productCount++;
                 $(this).find('td:first').text(productCount);
@@ -332,7 +395,7 @@ $adjustment_create = 'adjustment_create';
         $(fc + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
             $('#product-' + categoryId).remove();
-            updateTotals(); 
+            $(`.variant-row[data-parent-id="product-${categoryId}"]`).remove();
 
             var selectedValues = $(fc + '_product').val(); // Get the current selected values
             selectedValues = selectedValues.filter(function (id) {
@@ -341,6 +404,14 @@ $adjustment_create = 'adjustment_create';
 
             // Reassign the remaining selected values back to select2
             $(fc + '_product').val(selectedValues).trigger('change');
+
+            // Re-index the table rows
+            productCount = 0;
+            $('#product-table tbody tr').each(function () {
+                productCount++;
+                $(this).find('td:first').text(productCount);
+            });
+
         });
 
         $(fc + '_product').on("select2:select", function (evt) {

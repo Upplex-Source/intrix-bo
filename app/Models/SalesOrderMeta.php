@@ -23,6 +23,8 @@ class SalesOrderMeta extends Model
     protected $fillable = [
         'sales_order_id',
         'product_id',
+        'product_id',
+        'variant_id',
         'custom_discount',
         'custom_tax',
         'custom_shipping_cost',
@@ -36,9 +38,16 @@ class SalesOrderMeta extends Model
         return $this->belongsTo(SalesOrder::class, 'sales_order_id');
     }
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
+    public function variant() {
+        return $this->belongsTo( ProductVariant::class, 'variant_id' );
+    }
+
+    public function product() {
+        return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function bundle() {
+        return $this->belongsTo( Bundle::class, 'bundle_id' );
     }
     
     public function getEncryptedIdAttribute() {
@@ -54,6 +63,8 @@ class SalesOrderMeta extends Model
     protected static $logAttributes = [
         'sales_order_id',
         'product_id',
+        'variant_id',
+        'bundle_id',
         'custom_discount',
         'custom_tax',
         'custom_shipping_cost',

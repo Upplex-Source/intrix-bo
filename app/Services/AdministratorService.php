@@ -183,14 +183,14 @@ class AdministratorService
                 'email' => strtolower( $request->email ),
                 'phone_number' => $request->phone_number,
                 'fullname' => $request->fullname,
-                'role' => $request->role ?? 4,
+                'role' => $request->role ?? 3,
                 'password' => Hash::make( $request->password ),
                 'status' => 10,
             ];
 
             $createAdmin = Administrator::create( $basicAttribute );
     
-            $roleModel = RoleModel::find( $request->role ?? 4 );
+            $roleModel = RoleModel::find( $request->role ?? 3 );
     
             $createAdmin->syncRoles( [ $roleModel->name ] );
 

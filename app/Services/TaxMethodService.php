@@ -212,6 +212,7 @@ class TaxMethodService
                 $taxMethods->append( [
                     'encrypted_id',
                     'image_path',
+                    'formatted_tax'
                 ] );
             }
 

@@ -36,6 +36,7 @@ class SalesOrder extends Model
         'original_amount',
         'paid_amount',
         'final_amount',
+        'tax_method_id',
     ];
     
     public function quotation()
@@ -43,7 +44,7 @@ class SalesOrder extends Model
         return $this->belongsTo(Quotation::class, 'quotation_id');
     }
 
-    public function salesorderMetas()
+    public function salesOrderMetas()
     {
         return $this->hasMany(SalesOrderMeta::class, 'sales_order_id');
     }
@@ -66,6 +67,11 @@ class SalesOrder extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
+
+    public function taxMethod()
+    {
+        return $this->belongsTo(TaxMethod::class, 'tax_method_id');
     }
 
     public function getAttachmentPathAttribute() {
@@ -99,6 +105,7 @@ class SalesOrder extends Model
         'original_amount',
         'paid_amount',
         'final_amount',
+        'tax_method_id',
     ];
 
     protected static $logName = 'salesorders';

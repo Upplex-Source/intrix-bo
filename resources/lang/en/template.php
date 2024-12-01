@@ -141,4 +141,5 @@ return [
     'height' => 'Height',
     'adjustments' => 'Adjustments',
     'send_quotation' => 'Send Quotation',
+    'view_inventories' => 'View Inventories'
 ];

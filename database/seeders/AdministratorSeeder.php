@@ -76,7 +76,6 @@ class AdministratorSeeder extends Seeder
         ] );
 
         $user = DB::table( 'users' )->insertGetId( [
-            'name' => 'owner',
             'fullname' => 'Owner',
             'email' => 'owner@gmail.com',
             'phone_number' => null,
@@ -101,6 +100,41 @@ class AdministratorSeeder extends Seeder
             'role_id' => $ownerRole,
             'model_type' => 'App\Models\Administrator',
             'model_id' => $owner,
+        ] );
+
+        // Salesman
+        $salesmanRole = DB::table( 'roles' )->insertGetId( [
+            'name' => 'salesman',
+            'guard_name' => 'admin',
+            'created_at' => date( 'Y-m-d H:i:s' ),
+            'updated_at' => date( 'Y-m-d H:i:s' ),
+        ] );
+
+        $user = DB::table( 'users' )->insertGetId( [
+            'fullname' => 'Salesman',
+            'email' => 'salesman@gmail.com',
+            'phone_number' => null,
+            'password' => Hash::make( 'Abcd1234!' ),
+            'status' => 10,
+        ] );
+
+        $salesman = DB::table( 'administrators' )->insertGetId( [
+            'name' => 'salesman',
+            'email' => 'salesman@gmail.com',
+            'user_id' => $user,
+            'password' => Hash::make( 'Abcd1234!' ),
+            'fullname' => 'Salesman',
+            'phone_number' => '123412345',
+            'role' => $salesmanRole,
+            'status' => 10,
+            'created_at' => date( 'Y-m-d H:i:s' ),
+            'updated_at' => date( 'Y-m-d H:i:s' ),
+        ] );
+
+        DB::table( 'model_has_roles' )->insert( [
+            'role_id' => $salesmanRole,
+            'model_type' => 'App\Models\Administrator',
+            'model_id' => $salesman,
         ] );
     }
 }

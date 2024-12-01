@@ -3,8 +3,8 @@
                 <div class="nk-sidebar-element nk-sidebar-head">
                     <div class="nk-sidebar-brand">
                         <a href="{{ route( 'admin.home' ) }}" class="logo-link nk-sidebar-logo">
-                            <img class="logo-dark logo-img" src="{{ asset( 'admin/images/logo.png' ) }}" srcset="{{ asset( 'admin/images/logo.png' ) }} 2x" alt="logo-dark">
-                            <img class="logo-small logo-img logo-img-small" src="{{ asset( 'admin/images/logo.png' ) }}" srcset="{{ asset( 'admin/images/logo.png' ) }} 2x" alt="logo-small">
+                            <img class="logo-dark logo-img" src="{{ asset( 'admin/images/logo.png' ) . Helper::assetVersion() }}" srcset="{{ asset( 'admin/images/logo.png' ) . Helper::assetVersion() }} 2x" alt="logo-dark">
+                            <img class="logo-small logo-img logo-img-small" src="{{ asset( 'admin/images/logo.png' ) . Helper::assetVersion() }}" srcset="{{ asset( 'admin/images/logo.png' ) . Helper::assetVersion() }} 2x" alt="logo-small">
                         </a>
                     </div>
                     <div class="nk-menu-trigger me-n2">
@@ -206,6 +206,24 @@
                                         <a href="{{ route( 'admin.module_parent.sales_order.index' ) }}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-property"></em></span>
                                             <span class="nk-menu-text">{{ __( 'template.sales_orders' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                
+                                @can( 'view Invoices' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\InvoiceController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.invoice.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-property"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.invoices' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                
+                                @can( 'view DeliveryOrders' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\DeliveryOrderController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.delivery_order.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-property"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.delivery_orders' ) }}</span>
                                         </a>
                                     </li>
                                 @endcan

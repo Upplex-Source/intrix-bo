@@ -78,7 +78,7 @@ $warehouses = $data['warehouses'];
                     <div class="col-sm-4">
                         <label for="{{ $product_edit }}_barcode" class="form-label">{{ __( 'product.barcode' ) }}</label>
                         <select class="form-select" id="{{ $product_edit }}_barcode" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.barcode' ) ] ) }}">
-                            <option value="">{{ __('Select Barcode Type') }}</option>
+
                             @foreach ($barcodes as $barcode)
                                 <option value="{{ $barcode }}">{{ $barcode }}</option>
                             @endforeach
@@ -171,7 +171,6 @@ $warehouses = $data['warehouses'];
                     <div class="col-sm-4">
                         <label for="{{ $product_edit }}_purchase_unit" class="form-label">{{ __( 'product.purchase_unit' ) }}</label>
                         <select class="form-select" id="{{ $product_edit }}_purchase_unit" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.purchase_unit' ) ] ) }}">
-                            <option value="">{{ __('Select Purchase Units Type') }}</option>
                             @foreach ($purchaseUnits as $purchaseUnit)
                                 <option value="{{ $purchaseUnit }}">{{ $purchaseUnit }}</option>
                             @endforeach
@@ -308,11 +307,6 @@ $warehouses = $data['warehouses'];
                             <div class="col-sm-6">
                                 <label class="form-label">{{ __('product.variant_price') }}</label>
                                 <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                            <div class="col-sm-6">
-                                <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                                <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
                                 <div class="invalid-feedback"></div>
                             </div>
                             <div class="col-sm-6 mb-2">
@@ -479,14 +473,12 @@ window.cke_element1 = 'product_edit_description';
 
                     var variantName = $(element).find('input[name="{{ $product_edit }}_variant_name[]"]').val();
                     var variantPrice = $(element).find('input[name="{{ $product_edit }}_variant_price[]"]').val();
-                    var variantQuantity = $(element).find('input[name="{{ $product_edit }}_variant_quantity[]"]').val();
                     var variantSku = $(element).find('input[name="{{ $product_edit }}_sku[]"]').val();
                     var variantId = $(element).find('input[name="{{ $product_edit }}_variant_id[]"]').val() ?? 0;
                     
                     // Append them to formData with a structured key
                     formData.append(`variants[${index}][name]`, variantName);
                     formData.append(`variants[${index}][price]`, variantPrice);
-                    formData.append(`variants[${index}][quantity]`, variantQuantity);
                     formData.append(`variants[${index}][sku]`, variantSku);
                     formData.append(`variants[${index}][id]`, variantId);
                 });
@@ -809,10 +801,6 @@ window.cke_element1 = 'product_edit_description';
                         <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
                     </div>
                     <div class="col-sm-6">
-                        <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
-                    </div>
-                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.sku') }}</label>
                         <input type="number" class="form-control" name="{{ $product_edit }}_sku[]">
                     </div>
@@ -850,10 +838,6 @@ window.cke_element1 = 'product_edit_description';
                     <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
                         <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
                     </div>
                     <div class="col-sm-6">
                         <label class="form-label">{{ __('product.sku') }}</label>
@@ -1091,10 +1075,6 @@ window.cke_element1 = 'product_edit_description';
                         <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]" value="${variant.price}">
                     </div>
                     <div class="col-sm-6">
-                        <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]" value="${variant.quantity}">
-                    </div>
-                    <div class="col-sm-6">
                         <label class="form-label">{{ __('product.sku') }}</label>
                         <input type="number" class="form-control" name="{{ $product_edit }}_sku[]" value="${variant.sku}">
                     </div>
@@ -1127,10 +1107,6 @@ window.cke_element1 = 'product_edit_description';
                     <div class="col-sm-6">
                         <label class="form-label">{{ __('product.variant_price') }}</label>
                         <input type="number" class="form-control" name="{{ $product_edit }}_variant_price[]">
-                    </div>
-                    <div class="col-sm-6">
-                        <label class="form-label">{{ __('product.variant_quantity') }}</label>
-                        <input type="number" class="form-control" name="{{ $product_edit }}_variant_quantity[]">
                     </div>
                     <div class="col-sm-6">
                         <label class="form-label">{{ __('product.sku') }}</label>

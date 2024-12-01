@@ -58,7 +58,6 @@ class ProductService
             'variants' => [ 'nullable' ],
             'variants.*.name' => [ 'required' ],
             'variants.*.price' => [ 'nullable', 'numeric', 'min:0' ],
-            'variants.*.quantity' => [ 'nullable', 'numeric', 'min:0' ],
             'variants.*.sku' => [ 'nullable' ],
             'has_promotion' => [ 'nullable' ],
             'promotion_start' => [ 'nullable' ],
@@ -248,7 +247,6 @@ class ProductService
                         'product_id' => $productCreate->id,
                         'title' => $variant['name'],
                         'price' => $variant['price'],
-                        'quantity' => $variant['quantity'],
                         'sku' => $variant['sku'],
                         'status' => 10,
                     ]);
@@ -303,7 +301,6 @@ class ProductService
             'variants' => [ 'nullable' ],
             'variants.*.name' => [ 'required' ],
             'variants.*.price' => [ 'nullable', 'numeric', 'min:0' ],
-            'variants.*.quantity' => [ 'nullable', 'numeric', 'min:0' ],
             'variants.*.sku' => [ 'nullable' ],
             'has_promotion' => [ 'nullable' ],
             'promotion_start' => [ 'nullable' ],
@@ -417,7 +414,6 @@ class ProductService
             $updateProduct->description = $request->description ?? $updateProduct->description;
             $updateProduct->product_code = $request->product_code ?? $updateProduct->product_code;
             $updateProduct->barcode_symbology = $request->barcode ?? $updateProduct->barcode_symbology;
-            $updateProduct->workmanship = $request->workmanship ?? $updateProduct->workmanship;
             $updateProduct->address_1 = $request->address_1 ?? $updateProduct->address_1;
             $updateProduct->address_2 = $request->address_2 ?? $updateProduct->address_2;
             $updateProduct->city = $request->city ?? $updateProduct->city;
@@ -438,7 +434,7 @@ class ProductService
             $updateProduct->imei = $request->imei ?? $updateProduct->imei;
             $updateProduct->serial_number = $request->serial_number ?? $updateProduct->serial_number;
             $updateProduct->tax_method_id = $request->tax_method ?? $updateProduct->tax_method_id;
-            $updateProduct->workmanship_id = $request->tax_method ?? $updateProduct->workmanship_id;
+            $updateProduct->workmanship_id = $request->workmanship ?? $updateProduct->workmanship;
 
             $image = explode( ',', $request->image );
 
@@ -475,6 +471,7 @@ class ProductService
                     }
                 }
             }
+
 
             if( $request->category != null ) {
 
@@ -516,7 +513,6 @@ class ProductService
                             'product_id' => $updateProduct->id,
                             'title' => $variant['name'],
                             'price' => $variant['price'],
-                            'quantity' => $variant['quantity'],
                             'sku' => $variant['sku'],
                             'status' => 10,
                         ]);
@@ -524,7 +520,6 @@ class ProductService
                         $updateProductVariant = ProductVariant::find( $variant['id'] );
                         $updateProductVariant->title = $variant['name'];
                         $updateProductVariant->price = $variant['price'];
-                        $updateProductVariant->quantity = $variant['quantity'];
                         $updateProductVariant->sku = $variant['sku'];
                         $updateProductVariant->save();
                     }
@@ -533,7 +528,6 @@ class ProductService
             }
 
             $updateProduct->save();
-
             DB::commit();
 
         } catch ( \Throwable $th ) {
@@ -550,7 +544,69 @@ class ProductService
         ] );
     }
 
-     public static function allProducts( $request ) {
+    public static function allProducts( $request ) {
+
+        $products = Product::select( 'products.*' )->with(['variants','bundles', 'categories', 'warehouses', 'galleries','brand','supplier', 'unit']);
+
+        $filterObject = self::filter( $request, $products );
+        $product = $filterObject['model'];
+        $filter = $filterObject['filter'];
+
+        if ( $request->input( 'order.0.column' ) != 0 ) {
+            $dir = $request->input( 'order.0.dir' );
+            switch ( $request->input( 'order.0.column' ) ) {
+                case 2:
+                    $product->orderBy( 'products.created_at', $dir );
+                    break;
+                case 1:
+                    $product->orderBy( 'products.id', $dir );
+                    break;
+                case 3:
+                    $product->orderBy( 'products.title', $dir );
+                    break;
+                case 4:
+                    $product->orderBy( 'products.description', $dir );
+                    break;
+            }
+        }
+
+            $productCount = $product->count();
+
+            $limit = $request->length;
+            $offset = $request->start;
+
+            $products = $product->skip( $offset )->take( $limit )->get();
+
+            if ( $products ) {
+                $products->append( [
+                    'encrypted_id',
+                    'stock_worth'
+                ] );
+
+                foreach ($products as $product) {
+                    if( $product->galleries ){
+                        $product->galleries->append( [
+                            'image_path',
+                        ] );
+                    }
+                }
+            }
+
+            $totalRecord = Product::count();
+
+            $data = [
+                'products' => $products,
+                'draw' => $request->draw,
+                'recordsFiltered' => $filter ? $productCount : $totalRecord,
+                'recordsTotal' => $totalRecord,
+            ];
+
+            return response()->json( $data );
+
+              
+    }
+
+    public static function allProductsBundles( $request ) {
 
         $products = Product::select( 'products.*' )->with(['variants','bundles', 'categories', 'warehouses', 'galleries','brand','supplier', 'unit']);
 
@@ -617,7 +673,12 @@ class ProductService
         $filter = false;
 
         if ( !empty( $request->name ) ) {
-            $model->where( 'products.title', 'LIKE', '%' . $request->name . '%' );
+            $model->where('title', 'LIKE', '%' . $request->name . '%')
+            ->orWhereHas('variants', function ($query) use ($request) {
+                $query->where('title', 'LIKE', '%' . $request->name . '%');
+            })->orWhereHas('bundles', function ($query) use ($request) {
+                $query->where('title', 'LIKE', '%' . $request->name . '%');
+            });
             $filter = true;
         }
 
@@ -658,6 +719,13 @@ class ProductService
         if (!empty($request->unit)) {
             $model->whereHas('unit', function ($query) use ($request) {
                 $query->where('title', 'LIKE', '%' . $request->unit . '%');
+            });
+            $filter = true;
+        }
+        
+        if (!empty($request->warehouse)) {
+            $model->whereHas('warehouses', function ($query) use ($request) {
+                $query->where('warehouse_id', $request->warehouse);
             });
             $filter = true;
         }

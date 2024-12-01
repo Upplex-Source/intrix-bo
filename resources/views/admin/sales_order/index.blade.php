@@ -239,8 +239,8 @@ var statusMapper = @json( $data['status'] ),
 
                     @can( 'edit sales_orders' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
-                    if( row['status'] == 10 ){
-                        edit += '<li class="dt-convert" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'datatables.to_sales_order' ) }}</span></a></li>';
+                    if( row['status'] != 13 ){
+                        edit += '<li class="dt-convert" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'datatables.to_invoice' ) }}</span></a></li>';
                     }
                     @endcan
 
@@ -320,6 +320,19 @@ var statusMapper = @json( $data['status'] ),
                     $( '#modal_success .caption-text' ).html( response.message );
                     modalSuccess.toggle();
                 },
+                error: function( error ) {
+                    $( 'body' ).loading( 'stop' );
+
+                    if ( error.status === 422 ) {
+                        let errors = error.responseJSON.errors;
+                        $.each( errors, function( key, value ) {
+                            $( dc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                        } );
+                    } else {
+                        $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
+                        modalDanger.toggle();
+                    }
+                }
             } );
         } );
     } );

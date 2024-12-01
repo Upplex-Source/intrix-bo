@@ -23,6 +23,8 @@ class QuotationMeta extends Model
     protected $fillable = [
         'quotation_id',
         'product_id',
+        'variant_id',
+        'bundle_id',
         'custom_discount',
         'custom_tax',
         'custom_shipping_cost',
@@ -36,9 +38,16 @@ class QuotationMeta extends Model
         return $this->belongsTo(Quotation::class, 'quotation_id');
     }
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
+    public function variant() {
+        return $this->belongsTo( ProductVariant::class, 'variant_id' );
+    }
+
+    public function product() {
+        return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function bundle() {
+        return $this->belongsTo( Bundle::class, 'bundle_id' );
     }
     
     public function getEncryptedIdAttribute() {
@@ -54,6 +63,8 @@ class QuotationMeta extends Model
     protected static $logAttributes = [
         'quotation_id',
         'product_id',
+        'variant_id',
+        'bundle_id',
         'custom_discount',
         'custom_tax',
         'custom_shipping_cost',

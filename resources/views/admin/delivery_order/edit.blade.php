@@ -1,12 +1,12 @@
 <?php
-$invoice_edit = 'invoice_edit';
+$delivery_order_edit = 'delivery_order_edit';
 $taxTypes = $data['tax_types'];
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.invoices' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.delivery_orders' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -17,49 +17,49 @@ $taxTypes = $data['tax_types'];
             <div class="col-md-12 col-lg-12">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_warehouse" class="col-sm-5 form-label">{{ __( 'template.warehouses' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_warehouse" class="col-sm-5 form-label">{{ __( 'template.warehouses' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $invoice_edit }}_warehouse" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.warehouses' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_edit }}_warehouse" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.warehouses' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_supplier" class="col-sm-5 form-label">{{ __( 'template.suppliers' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_supplier" class="col-sm-5 form-label">{{ __( 'template.suppliers' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $invoice_edit }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.suppliers' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_edit }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.suppliers' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_customer" class="col-sm-5 form-label">{{ __( 'template.customers' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_customer" class="col-sm-5 form-label">{{ __( 'template.customers' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $invoice_edit }}_customer" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.customers' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_edit }}_customer" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.customers' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_salesman" class="col-sm-5 form-label">{{ __( 'template.salesmen' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_salesman" class="col-sm-5 form-label">{{ __( 'template.salesmen' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $invoice_edit }}_salesman" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.salesmen' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_edit }}_salesman" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.salesmen' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_product" class="col-sm-5 form-label">{{ __( 'template.products' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_product" class="col-sm-5 form-label">{{ __( 'template.products' ) }}</label>
                     <div class="col-sm-7">
 
-                        <select class="form-select" id="{{ $invoice_edit }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.products' ) ] ) }}" multiple="multiple">
+                        <select class="form-select" id="{{ $delivery_order_edit }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.products' ) ] ) }}" multiple="multiple">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label>{{ __( 'invoice.attachment' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $invoice_edit }}_attachment" style="min-height: 0px;">
+                    <label>{{ __( 'delivery_order.attachment' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $delivery_order_edit }}_attachment" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
@@ -105,42 +105,42 @@ $taxTypes = $data['tax_types'];
                 </table>
 
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_tax_method" class="col-sm-5 col-form-label">{{ __( 'product.tax_method' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_tax_method" class="col-sm-5 col-form-label">{{ __( 'product.tax_method' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $invoice_edit }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
+                        <select class="form-select" id="{{ $delivery_order_edit }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_discount" class="col-sm-5 col-form-label">{{ __( 'invoice.discount' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_discount" class="col-sm-5 col-form-label">{{ __( 'delivery_order.discount' ) }}</label>
                     <div class="col-sm-7">
-                        <input class="form-control" type="number" name="{{ $invoice_edit }}_discount" id="{{ $invoice_edit }}_discount">
+                        <input class="form-control" type="number" name="{{ $delivery_order_edit }}_discount" id="{{ $delivery_order_edit }}_discount">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_shipping_cost" class="col-sm-5 col-form-label">{{ __( 'invoice.shipping_cost' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_shipping_cost" class="col-sm-5 col-form-label">{{ __( 'delivery_order.shipping_cost' ) }}</label>
                     <div class="col-sm-7">
-                        <input class="form-control" type="number" name="{{ $invoice_edit }}_shipping_cost" id="{{ $invoice_edit }}_shipping_cost">
+                        <input class="form-control" type="number" name="{{ $delivery_order_edit }}_shipping_cost" id="{{ $delivery_order_edit }}_shipping_cost">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $invoice_edit }}_remarks" class="col-sm-5 col-form-label">{{ __( 'invoice.remarks' ) }}</label>
+                    <label for="{{ $delivery_order_edit }}_remarks" class="col-sm-5 col-form-label">{{ __( 'delivery_order.remarks' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $invoice_edit }}_remarks"></textarea>
+                        <textarea class="form-control" id="{{ $delivery_order_edit }}_remarks"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="text-end">
-                    <button id="{{ $invoice_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $delivery_order_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $invoice_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $delivery_order_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -150,15 +150,15 @@ $taxTypes = $data['tax_types'];
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let fe = '#{{ $invoice_edit }}',
+        let fe = '#{{ $delivery_order_edit }}',
                 fileID = '';
 
-        $( fe + '_invoice_date' ).flatpickr( {
+        $( fe + '_delivery_order_date' ).flatpickr( {
             disableMobile: true,
         } );
 
         $( fe + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.invoice.index' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.delivery_order.index' ) }}';
         } );
 
         $( fe + '_submit' ).click( function() {
@@ -194,7 +194,7 @@ $taxTypes = $data['tax_types'];
             });
 
             $.ajax( {
-                url: '{{ route( 'admin.invoice.updateInvoice' ) }}',
+                url: '{{ route( 'admin.delivery_order.updateDeliveryOrder' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -205,7 +205,7 @@ $taxTypes = $data['tax_types'];
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.invoice.index' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.delivery_order.index' ) }}';
                     } );
                 },
                 error: function( error ) {
@@ -224,10 +224,10 @@ $taxTypes = $data['tax_types'];
             } );
         } );
 
-        getInvoice();
+        getDeliveryOrder();
         Dropzone.autoDiscover = false;
 
-        let invoiceDate = $( fe + '_invoice_date' ).flatpickr( {
+        let delivery_orderDate = $( fe + '_delivery_order_date' ).flatpickr( {
             disableMobile: true,
         } );
 
@@ -528,14 +528,14 @@ $taxTypes = $data['tax_types'];
             },
         } );
 
-        function getInvoice() {
+        function getDeliveryOrder() {
 
             $( 'body' ).loading( {
                 message: '{{ __( 'template.loading' ) }}'
             } );
 
             $.ajax( {
-                url: '{{ route( 'admin.invoice.oneInvoice' ) }}',
+                url: '{{ route( 'admin.delivery_order.oneDeliveryOrder' ) }}',
                 type: 'POST',
                 data: {
                     'id': '{{ request( 'id' ) }}',
@@ -579,7 +579,7 @@ $taxTypes = $data['tax_types'];
                         taxMethodSelect2.trigger( 'change' );
                     }
 
-                    response.invoice_metas.forEach((product, index) => {
+                    response.delivery_order_metas.forEach((product, index) => {
 
                         let productTable = $('#product-table tbody');
                         if (!productTable.length) {

@@ -40,6 +40,13 @@ class Bundle extends Model
         ->withPivot('quantity', 'price');
     }
 
+    public function warehouses()
+    {
+        return $this->belongsToMany(Warehouse::class, 'bundles')
+                    ->withPivot('quantity', 'price', 'status')
+                    ->withTimestamps();
+    }
+
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
     }

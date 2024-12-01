@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\{
     Mail,
 };
 
-use App\Mail\QuotationMail;
+use App\Mail\DeliveryOrderMail;
 
 use Helper;
 
@@ -18,13 +18,13 @@ use App\Models\{
     Company,
     Customer,
     Administrator,
-    Quotation,
-    QuotationMeta,
+    Invoice,
+    InvoiceMeta,
     Booking,
     FileManager,
     Product,
-    SalesOrder,
-    SalesOrderMeta,
+    DeliveryOrder,
+    DeliveryOrderMeta,
     ProductVariant,
     TaxMethod,
 };
@@ -33,10 +33,10 @@ use App\Models\{
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
-class QuotationService
+class DeliveryOrderService
 {
 
-    public static function createQuotation( $request ) {
+    public static function createDeliveryOrder( $request ) {
 
         $validator = Validator::make( $request->all(), [
             'remarks' => [ 'nullable' ],
@@ -120,15 +120,15 @@ class QuotationService
         ] );
 
         $attributeName = [
-            'title' => __( 'quotation.title' ),
-            'description' => __( 'quotation.description' ),
-            'image' => __( 'quotation.image' ),
-            'thumbnail' => __( 'quotation.thumbnail' ),
-            'url_slug' => __( 'quotation.url_slug' ),
-            'structure' => __( 'quotation.structure' ),
-            'size' => __( 'quotation.size' ),
-            'phone_number' => __( 'quotation.phone_number' ),
-            'sort' => __( 'quotation.sort' ),
+            'title' => __( 'deliveryorder.title' ),
+            'description' => __( 'deliveryorder.description' ),
+            'image' => __( 'deliveryorder.image' ),
+            'thumbnail' => __( 'deliveryorder.thumbnail' ),
+            'url_slug' => __( 'deliveryorder.url_slug' ),
+            'structure' => __( 'deliveryorder.structure' ),
+            'size' => __( 'deliveryorder.size' ),
+            'phone_number' => __( 'deliveryorder.phone_number' ),
+            'sort' => __( 'deliveryorder.sort' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -206,13 +206,13 @@ class QuotationService
             $taxAmount = $amount * TaxMethod::find( $request->tax_method )->formatted_percentage;
             $finalAmount = $amount - $request->discount + $taxAmount;
 
-            $quotationCreate = Quotation::create([
+            $deliveryOrderCreate = DeliveryOrder::create([
                 'supplier_id' => $request->supplier,
                 'warehouse_id' => $request->warehouse,
                 'salesman_id' => $request->salesman,
                 'customer_id' => $request->customer,
                 'remarks' => $request->remarks,
-                'reference' => Helper::generateQuotationNumber(),
+                'reference' => Helper::generateDeliveryOrderNumber(),
                 'tax_type' => 1,
                 // 'tax_method_id' => $request->tax_method,
                 'amount' => $amount,
@@ -235,11 +235,11 @@ class QuotationService
                     $fileName = explode( '/', $attachmentFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'quotation/' . $quotationCreate->id . '/' . $fileName[1];
+                    $target = 'delivery_order/' . $deliveryOrderCreate->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $attachmentFile->file, $target );
 
-                   $quotationCreate->attachment = $target;
-                   $quotationCreate->save();
+                   $deliveryOrderCreate->attachment = $target;
+                   $deliveryOrderCreate->save();
 
                     $attachmentFile->status = 10;
                     $attachmentFile->save();
@@ -276,8 +276,8 @@ class QuotationService
                             break;
                     }
 
-                    $quotationMetaCreate = QuotationMeta::create([
-                        'quotation_id' => $quotationCreate->id,
+                    $deliveryOrderMetaCreate = DeliveryOrderMeta::create([
+                        'delivery_order_id' => $deliveryOrderCreate->id,
                         'product_id' => $type == 'product' ? $identifier : null,
                         'variant_id' => $type == 'variant' ? $identifier :null,
                         'bundle_id' => $type == 'bundle' ? $identifier :null,
@@ -301,11 +301,11 @@ class QuotationService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.quotations' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.delivery_orders' ) ) ] ),
         ] );
     }
     
-    public static function updateQuotation( $request ) {
+    public static function updateDeliveryOrder( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -392,15 +392,15 @@ class QuotationService
         ] );
 
         $attributeName = [
-            'title' => __( 'quotation.title' ),
-            'description' => __( 'quotation.description' ),
-            'image' => __( 'quotation.image' ),
-            'thumbnail' => __( 'quotation.thumbnail' ),
-            'url_slug' => __( 'quotation.url_slug' ),
-            'structure' => __( 'quotation.structure' ),
-            'size' => __( 'quotation.size' ),
-            'phone_number' => __( 'quotation.phone_number' ),
-            'sort' => __( 'quotation.sort' ),
+            'title' => __( 'deliveryorder.title' ),
+            'description' => __( 'deliveryorder.description' ),
+            'image' => __( 'deliveryorder.image' ),
+            'thumbnail' => __( 'deliveryorder.thumbnail' ),
+            'url_slug' => __( 'deliveryorder.url_slug' ),
+            'structure' => __( 'deliveryorder.structure' ),
+            'size' => __( 'deliveryorder.size' ),
+            'phone_number' => __( 'deliveryorder.phone_number' ),
+            'sort' => __( 'deliveryorder.sort' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -476,21 +476,21 @@ class QuotationService
             $taxAmount = $amount * Helper::taxTypes()[$request->tax_type ?? 1]['percentage'];
             $finalAmount = $amount - $request->discount + $taxAmount;
 
-            $updateQuotation = Quotation::find( $request->id );
+            $updateDeliveryOrder = DeliveryOrder::find( $request->id );
 
-            $updateQuotation->remarks = $request->remarks ?? $updateQuotation->remarks;
-            $updateQuotation->warehouse_id = $request->warehouse ?? $updateQuotation->warehouse_id;
-            $updateQuotation->salesman_id = $request->salesman ?? $updateQuotation->salesman_id;
-            $updateQuotation->customer_id = $request->customer ?? $updateQuotation->customer_id;
-            $updateQuotation->tax_type = $request->tax_type ?? 1 ?? $updateQuotation->tax_type;
-            $updateQuotation->amount = $amount;
-            $updateQuotation->original_amount = $amount;
-            $updateQuotation->paid_amount = $paidAmount;
-            $updateQuotation->final_amount = $amount;
-            $updateQuotation->order_tax = $taxAmount;
-            $updateQuotation->order_discount = $request->discount;
-            $updateQuotation->shipping_cost = $request->shipping_cost;
-            $updateQuotation->tax_method_id = $request->tax_method;
+            $updateDeliveryOrder->remarks = $request->remarks ?? $updateDeliveryOrder->remarks;
+            $updateDeliveryOrder->warehouse_id = $request->warehouse ?? $updateDeliveryOrder->warehouse_id;
+            $updateDeliveryOrder->salesman_id = $request->salesman ?? $updateDeliveryOrder->salesman_id;
+            $updateDeliveryOrder->customer_id = $request->customer ?? $updateDeliveryOrder->customer_id;
+            $updateDeliveryOrder->tax_type = $request->tax_type ?? 1 ?? $updateDeliveryOrder->tax_type;
+            $updateDeliveryOrder->amount = $amount;
+            $updateDeliveryOrder->original_amount = $amount;
+            $updateDeliveryOrder->paid_amount = $paidAmount;
+            $updateDeliveryOrder->final_amount = $amount;
+            $updateDeliveryOrder->order_tax = $taxAmount;
+            $updateDeliveryOrder->order_discount = $request->discount;
+            $updateDeliveryOrder->shipping_cost = $request->shipping_cost;
+            $updateDeliveryOrder->tax_method_id = $request->tax_method;
 
             $attachment = explode( ',', $request->attachment );
 
@@ -502,11 +502,11 @@ class QuotationService
                     $fileName = explode( '/', $attachmentFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'quotation/' . $updateQuotation->id . '/' . $fileName[1];
+                    $target = 'delivery_order/' . $updateDeliveryOrder->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $attachmentFile->file, $target );
 
-                   $updateQuotation->attachment = $target;
-                   $updateQuotation->save();
+                   $updateDeliveryOrder->attachment = $target;
+                   $updateDeliveryOrder->save();
 
                     $attachmentFile->status = 10;
                     $attachmentFile->save();
@@ -514,8 +514,8 @@ class QuotationService
                 }
             }
 
-            $oldQuotationMetas = $updateQuotation->quotationMetas;
-            $oldQuotationMetasArray = $oldQuotationMetas->pluck('id')->toArray();
+            $oldDeliveryOrderMetas = $updateDeliveryOrder->deliveryorderMetas;
+            $oldDeliveryOrderMetasArray = $oldDeliveryOrderMetas->pluck('id')->toArray();
             $products = $request->products;
 
             if( $products ) {
@@ -526,48 +526,48 @@ class QuotationService
                     return $id !== null && $id !== 'null';
                 });
 
-                $idsToDelete = array_diff($oldQuotationMetasArray, $incomingProductIds);
+                $idsToDelete = array_diff($oldDeliveryOrderMetasArray, $incomingProductIds);
 
                 foreach( $idsToDelete as $idToDelete ){
 
-                    $quotation = QuotationMeta::find( $idToDelete );
+                    $deliveryOrder = DeliveryOrderMeta::find( $idToDelete );
 
-                    if( $quotation->variant_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $quotation->product_id, $quotation->variant_id, -$quotation->amount, true );
+                    if( $deliveryOrder->variant_id ){
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $deliveryOrder->product_id, $deliveryOrder->variant_id, -$deliveryOrder->amount, true );
                     }
 
-                    else if( $quotation->bundle_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $quotation->product_id, -$quotation->amount, true );
+                    else if( $deliveryOrder->bundle_id ){
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $deliveryOrder->product_id, -$deliveryOrder->amount, true );
                     }
 
                     else{
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $quotation->product_id, -$quotation->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $deliveryOrder->product_id, -$deliveryOrder->amount, true );
                     }
 
                 }
 
-                QuotationMeta::whereIn('id', $idsToDelete)->delete();
+                DeliveryOrderMeta::whereIn('id', $idsToDelete)->delete();
                 
                 foreach( $products as $product ){
 
-                    if( in_array( $product['metaId'], $oldQuotationMetasArray ) ){
+                    if( in_array( $product['metaId'], $oldDeliveryOrderMetasArray ) ){
 
-                        $removeQuotationMeta = QuotationMeta::find( $product['metaId'] );
+                        $removeDeliveryOrderMeta = DeliveryOrderMeta::find( $product['metaId'] );
 
                         // Remove previous
-                        if( $removeQuotationMeta->product_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, -$removeQuotationMeta->amount, true  );
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, $product['quantity'], false );
-                        }elseif( $removeQuotationMeta->variant_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, -$removeQuotationMeta->amount, true  );
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, $product['quantity'], false  );
+                        if( $removeDeliveryOrderMeta->product_id ) {
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeDeliveryOrderMeta->product_id, -$removeDeliveryOrderMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeDeliveryOrderMeta->product_id, $product['quantity'], false );
+                        }elseif( $removeDeliveryOrderMeta->variant_id ) {
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeDeliveryOrderMeta->product_id, $removeDeliveryOrderMeta->variant_id, -$removeDeliveryOrderMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeDeliveryOrderMeta->product_id, $removeDeliveryOrderMeta->variant_id, $product['quantity'], false  );
                         }else{
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, -$removeQuotationMeta->amount, true  );
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, $product['quantity'], false );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeDeliveryOrderMeta->bundle_id, -$removeDeliveryOrderMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeDeliveryOrderMeta->bundle_id, $product['quantity'], false );
                         }
                         
-                        $removeQuotationMeta->quotation_id = $updateQuotation->id;
-                        $removeQuotationMeta->amount = $product['quantity'];
+                        $removeDeliveryOrderMeta->delivery_order_id = $updateDeliveryOrder->id;
+                        $removeDeliveryOrderMeta->amount = $product['quantity'];
                     } else {
 
                         if( $product['metaId'] == 'null' ){
@@ -596,8 +596,8 @@ class QuotationService
                                     break;
                             }
 
-                            $quotationMetaCreate = QuotationMeta::create([
-                                'quotation_id' => $updateQuotation->id,
+                            $deliveryOrderMetaCreate = DeliveryOrderMeta::create([
+                                'delivery_order_id' => $updateDeliveryOrder->id,
                                 'product_id' => $product['id'],
                                 'quantity' => $product['quantity'],
                                 'product_id' => $type == 'product' ? $identifier : null,
@@ -607,19 +607,19 @@ class QuotationService
                                 'status' => 10,
                             ]);
                         } else{
-                            $removeQuotationMeta = QuotationMeta::find( $product['metaId'] );
-                            $removeQuotationMeta->delete();
+                            $removeDeliveryOrderMeta = DeliveryOrderMeta::find( $product['metaId'] );
+                            $removeDeliveryOrderMeta->delete();
                         }
                     }
     
                 }
             } else {
-                foreach ($oldQuotationMetas as $meta) {
+                foreach ($oldDeliveryOrderMetas as $meta) {
                     $meta->delete();
                 }
             }
 
-            $updateQuotation->save();
+            $updateDeliveryOrder->save();
 
             DB::commit();
 
@@ -633,53 +633,53 @@ class QuotationService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.quotations' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.delivery_orders' ) ) ] ),
         ] );
     }
 
-     public static function allQuotations( $request ) {
+     public static function allDeliveryOrders( $request ) {
 
-        $quotations = Quotation::with( [ 'salesman', 'customer','warehouse', 'supplier'] )->select( 'quotations.*');
+        $deliveryOrders = DeliveryOrder::with( [ 'invoice', 'salesman', 'customer','warehouse', 'supplier'] )->select( 'delivery_orders.*');
 
-        $filterObject = self::filter( $request, $quotations );
-        $quotation = $filterObject['model'];
+        $filterObject = self::filter( $request, $deliveryOrders );
+        $deliveryOrder = $filterObject['model'];
         $filter = $filterObject['filter'];
 
         if ( $request->input( 'order.0.column' ) != 0 ) {
             $dir = $request->input( 'order.0.dir' );
             switch ( $request->input( 'order.0.column' ) ) {
                 case 2:
-                    $quotation->orderBy( 'quotations.created_at', $dir );
+                    $deliveryOrder->orderBy( 'delivery_orders.created_at', $dir );
                     break;
                 case 2:
-                    $quotation->orderBy( 'quotations.title', $dir );
+                    $deliveryOrder->orderBy( 'delivery_orders.title', $dir );
                     break;
                 case 3:
-                    $quotation->orderBy( 'quotations.description', $dir );
+                    $deliveryOrder->orderBy( 'delivery_orders.description', $dir );
                     break;
             }
         }
 
-            $quotationCount = $quotation->count();
+            $deliveryOrderCount = $deliveryOrder->count();
 
             $limit = $request->length;
             $offset = $request->start;
 
-            $quotations = $quotation->skip( $offset )->take( $limit )->get();
+            $deliveryOrders = $deliveryOrder->skip( $offset )->take( $limit )->get();
 
-            if ( $quotations ) {
-                $quotations->append( [
+            if ( $deliveryOrders ) {
+                $deliveryOrders->append( [
                     'encrypted_id',
                     'attachment_path',
                 ] );
             }
 
-            $totalRecord = Quotation::count();
+            $totalRecord = DeliveryOrder::count();
 
             $data = [
-                'quotations' => $quotations,
+                'delivery_orders' => $deliveryOrders,
                 'draw' => $request->draw,
-                'recordsFiltered' => $filter ? $quotationCount : $totalRecord,
+                'recordsFiltered' => $filter ? $deliveryOrderCount : $totalRecord,
                 'recordsTotal' => $totalRecord,
             ];
 
@@ -693,26 +693,26 @@ class QuotationService
         $filter = false;
 
         if ( !empty( $request->title ) ) {
-            $model->where( 'quotations.title', 'LIKE', '%' . $request->title . '%' );
+            $model->where( 'delivery_orders.title', 'LIKE', '%' . $request->title . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->reference ) ) {
-            $model->where( 'quotations.reference', 'LIKE', '%' . $request->reference . '%' );
+            $model->where( 'delivery_orders.reference', 'LIKE', '%' . $request->reference . '%' );
             $filter = true;
         }
 
         if ( !empty( $request->custom_search ) ) {
-            $model->where( 'quotations.title', 'LIKE', '%' . $request->custom_search . '%' );
+            $model->where( 'delivery_orders.title', 'LIKE', '%' . $request->custom_search . '%' );
             $filter = true;
         }
         if ( !empty( $request->id ) ) {
-            $model->where( 'quotations.id', '!=', Helper::decode($request->id) );
+            $model->where( 'delivery_orders.id', '!=', Helper::decode($request->id) );
             $filter = true;
         }
 
         if (!empty($request->product)) {
-            $model->whereHas('quotationMetas', function ($query) use ($request) {
+            $model->whereHas('deliveryorderMetas', function ($query) use ($request) {
                 $query->whereHas('product', function ($query) use ($request) {
                     $query->where('title', 'LIKE', '%' . $request->product . '%');
                 });
@@ -740,27 +740,27 @@ class QuotationService
         ];
     }
 
-    public static function oneQuotation( $request ) {
+    public static function oneDeliveryOrder( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $quotation = Quotation::with( [ 'quotationMetas.product.warehouses','quotationMetas.bundle','quotationMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
+        $deliveryOrder = DeliveryOrder::with( [ 'deliveryOrderMetas.product.warehouses','deliveryOrderMetas.bundle','deliveryOrderMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
 
-        $quotation->append( [
+        $deliveryOrder->append( [
             'encrypted_id',
             'attachment_path',
         ] );
 
-        $quotation->taxMethod->append( [
+        $deliveryOrder->taxMethod->append( [
             'formatted_tax'
         ] );
         
-        return response()->json( $quotation );
+        return response()->json( $deliveryOrder );
     }
 
-    public static function deleteQuotation( $request ){
+    public static function deleteDeliveryOrder( $request ){
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
@@ -770,7 +770,7 @@ class QuotationService
         ] );
             
         $attributeName = [
-            'id' => __( 'quotation.id' ),
+            'id' => __( 'deliveryorder.id' ),
         ];
             
         foreach( $attributeName as $key => $aName ) {
@@ -782,7 +782,7 @@ class QuotationService
         DB::beginTransaction();
 
         try {
-            Quotation::find($request->id)->delete($request->id);
+            DeliveryOrder::find($request->id)->delete($request->id);
             
             DB::commit();
         } catch ( \Throwable $th ) {
@@ -795,11 +795,11 @@ class QuotationService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.quotations' ) ) ] ),
+            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.delivery_orders' ) ) ] ),
         ] );
     }
 
-    public static function updateQuotationStatus( $request ) {
+    public static function updateDeliveryOrderStatus( $request ) {
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
@@ -808,16 +808,16 @@ class QuotationService
 
         try {
 
-            $updateQuotation = Quotation::find( $request->id );
-            $updateQuotation->status = $updateQuotation->status == 10 ? 20 : 10;
+            $updateDeliveryOrder = DeliveryOrder::find( $request->id );
+            $updateDeliveryOrder->status = $updateDeliveryOrder->status == 10 ? 20 : 10;
 
-            $updateQuotation->save();
+            $updateDeliveryOrder->save();
             DB::commit();
 
             return response()->json( [
                 'data' => [
-                    'quotation' => $updateQuotation,
-                    'message_key' => 'update_quotation_success',
+                    'delivery_order' => $updateDeliveryOrder,
+                    'message_key' => 'update_deliveryorder_success',
                 ]
             ] );
 
@@ -825,41 +825,41 @@ class QuotationService
 
             return response()->json( [
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
-                'message_key' => 'create_quotation_failed',
+                'message_key' => 'create_deliveryorder_failed',
             ], 500 );
         }
     }
 
-    public static function removeQuotationAttachment( $request ) {
+    public static function removeDeliveryOrderAttachment( $request ) {
 
-        $updateFarm = Quotation::find( Helper::decode($request->id) );
+        $updateFarm = DeliveryOrder::find( Helper::decode($request->id) );
         $updateFarm->attachment = null;
         $updateFarm->save();
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'quotation.attachment' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'deliveryorder.attachment' ) ) ] ),
         ] );
     }
 
-    public static function oneQuotationTransaction( $request ) {
+    public static function oneDeliveryOrderTransaction( $request ) {
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $quotation = QuotationTransaction::with( [ 'quotation', 'account'] )->find( $request->id );
+        $deliveryOrder = DeliveryOrderTransaction::with( [ 'delivery_order', 'account'] )->find( $request->id );
 
-        $quotation->append( [
+        $deliveryOrder->append( [
             'encrypted_id',
         ] );
         
-        return response()->json( $quotation );
+        return response()->json( $deliveryOrder );
     }
 
-    public static function createQuotationTransaction( $request ) {
+    public static function createDeliveryOrderTransaction( $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'quotation' => [ 'nullable', 'exists:quotations,id' ],
+            'delivery_order' => [ 'nullable', 'exists:delivery_orders,id' ],
             'account' => [ 'nullable', 'exists:expenses_accounts,id' ],
             'paid_amount' => [ 'nullable', 'numeric' ,'min:0' ],
             'paid_by' => [ 'nullable' ],
@@ -867,15 +867,15 @@ class QuotationService
         ] );
 
         $attributeName = [
-            'title' => __( 'quotation.title' ),
-            'description' => __( 'quotation.description' ),
-            'image' => __( 'quotation.image' ),
-            'thumbnail' => __( 'quotation.thumbnail' ),
-            'url_slug' => __( 'quotation.url_slug' ),
-            'structure' => __( 'quotation.structure' ),
-            'size' => __( 'quotation.size' ),
-            'phone_number' => __( 'quotation.phone_number' ),
-            'sort' => __( 'quotation.sort' ),
+            'title' => __( 'deliveryorder.title' ),
+            'description' => __( 'deliveryorder.description' ),
+            'image' => __( 'deliveryorder.image' ),
+            'thumbnail' => __( 'deliveryorder.thumbnail' ),
+            'url_slug' => __( 'deliveryorder.url_slug' ),
+            'structure' => __( 'deliveryorder.structure' ),
+            'size' => __( 'deliveryorder.size' ),
+            'phone_number' => __( 'deliveryorder.phone_number' ),
+            'sort' => __( 'deliveryorder.sort' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -888,19 +888,19 @@ class QuotationService
 
         try {
 
-            $quotationCreate = QuotationTransaction::create([
-                'quotation_id' => $request->quotation,
+            $deliveryOrderCreate = DeliveryOrderTransaction::create([
+                'delivery_order_id' => $request->delivery_order,
                 'account_id' => $request->account,
-                'reference' => Helper::generateQuotationTransactionNumber(),
+                'reference' => Helper::generateDeliveryOrderTransactionNumber(),
                 'remarks' => $request->remarks,
                 'paid_amount' => $request->paid_amount,
                 'paid_by' => $request->paid_by,
                 'status' => 10,
             ]);
 
-            $quotation = Quotation::find($request->quotation);
-            $quotation->paid_amount += $request->paid_amount;
-            $quotation->save();
+            $deliveryOrder = DeliveryOrder::find($request->delivery_order);
+            $deliveryOrder->paid_amount += $request->paid_amount;
+            $deliveryOrder->save();
 
             DB::commit();
 
@@ -914,11 +914,11 @@ class QuotationService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.quotation_transactions' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.deliveryorder_transactions' ) ) ] ),
         ] );
     }
 
-    public static function updateQuotationTransactionStatus( $request ) {
+    public static function updateDeliveryOrderTransactionStatus( $request ) {
         
         $request->merge( [
             'id' => Helper::decode( $request->id ),
@@ -928,24 +928,24 @@ class QuotationService
 
         try {
 
-            $updateQuotationTransaction = QuotationTransaction::find( $request->id );
-            $updateQuotationTransaction->status = $updateQuotation->status == 10 ? 20 : 10;
-            $updateQuotationTransaction->save();
+            $updateDeliveryOrderTransaction = DeliveryOrderTransaction::find( $request->id );
+            $updateDeliveryOrderTransaction->status = $updateDeliveryOrder->status == 10 ? 20 : 10;
+            $updateDeliveryOrderTransaction->save();
 
-            $quotation = Quotation::find($updateQuotation->quotation_id);
-            if( $updateQuotationTransaction->status == 10 ) {
-                $quotation->paid_amount += $updateQuotationTransaction->paid_amount;
+            $deliveryOrder = DeliveryOrder::find($updateDeliveryOrder->delivery_order_id);
+            if( $updateDeliveryOrderTransaction->status == 10 ) {
+                $deliveryOrder->paid_amount += $updateDeliveryOrderTransaction->paid_amount;
             }else{
-                $quotation->paid_amount -= $updateQuotationTransaction->paid_amount;
+                $deliveryOrder->paid_amount -= $updateDeliveryOrderTransaction->paid_amount;
             }
-            $quotation->save();
+            $deliveryOrder->save();
 
             DB::commit();
 
             return response()->json( [
                 'data' => [
-                    'quotation' => $updateQuotation,
-                    'message_key' => 'update_quotation_success',
+                    'delivery_order' => $updateDeliveryOrder,
+                    'message_key' => 'update_deliveryorder_success',
                 ]
             ] );
 
@@ -953,12 +953,12 @@ class QuotationService
 
             return response()->json( [
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
-                'message_key' => 'update_quotation_success',
+                'message_key' => 'update_deliveryorder_success',
             ], 500 );
         }
     }
 
-    public static function convertSalesOrder($request) {
+    public static function convertDeliveryOrder($request) {
         $request->merge([
             'id' => Helper::decode($request->id),
         ]);
@@ -966,62 +966,62 @@ class QuotationService
         DB::beginTransaction();
     
         try {
-            $quotation = Quotation::find($request->id);
+            $deliveryOrder = DeliveryOrder::find($request->id);
     
-            if (!$quotation) {
-                throw new \Exception('Quotation not found.');
+            if (!$deliveryOrder) {
+                throw new \Exception('Sales Order not found.');
             }
 
-            if ($quotation->status != 10) {
-                throw new \Exception('Quotation not available.');
+            if ($deliveryOrder->status != 10) {
+                throw new \Exception('Sales Order not available.');
             }
     
-            $salesOrder = new SalesOrder();
-            $salesOrder->quotation_id = $quotation->id;
-            $salesOrder->customer_id = $quotation->customer_id;
-            $salesOrder->salesman_id = $quotation->salesman_id;
-            $salesOrder->warehouse_id = $quotation->warehouse_id;
-            $salesOrder->supplier_id = $quotation->supplier_id;
-            $salesOrder->tax_method_id = $quotation->tax_method_id;
-            $salesOrder->order_tax = $quotation->order_tax;
-            $salesOrder->order_discount = $quotation->order_discount;
-            $salesOrder->shipping_cost = $quotation->shipping_cost;
-            $salesOrder->remarks = $quotation->remarks;
-            $salesOrder->attachment = $quotation->attachment;
-            $salesOrder->status = 10;
-            $salesOrder->amount = $quotation->amount;
-            $salesOrder->original_amount = $quotation->original_amount;
-            $salesOrder->final_amount = $quotation->final_amount;
-            $salesOrder->paid_amount = $quotation->paid_amount;
-            $salesOrder->reference = Helper::generateSalesOrderNumber();
-            $salesOrder->save();
+            $deliveryOrder = new DeliveryOrder();
+            $deliveryOrder->delivery_order_id = $deliveryOrder->id;
+            $deliveryOrder->customer_id = $deliveryOrder->customer_id;
+            $deliveryOrder->salesman_id = $deliveryOrder->salesman_id;
+            $deliveryOrder->warehouse_id = $deliveryOrder->warehouse_id;
+            $deliveryOrder->supplier_id = $deliveryOrder->supplier_id;
+            $deliveryOrder->tax_method_id = $deliveryOrder->tax_method_id;
+            $deliveryOrder->order_tax = $deliveryOrder->order_tax;
+            $deliveryOrder->order_discount = $deliveryOrder->order_discount;
+            $deliveryOrder->shipping_cost = $deliveryOrder->shipping_cost;
+            $deliveryOrder->remarks = $deliveryOrder->remarks;
+            $deliveryOrder->attachment = $deliveryOrder->attachment;
+            $deliveryOrder->status = 10;
+            $deliveryOrder->amount = $deliveryOrder->amount;
+            $deliveryOrder->original_amount = $deliveryOrder->original_amount;
+            $deliveryOrder->final_amount = $deliveryOrder->final_amount;
+            $deliveryOrder->paid_amount = $deliveryOrder->paid_amount;
+            $deliveryOrder->reference = Helper::generateSalesOrderNumber();
+            $deliveryOrder->save();
     
-            $quotationMetas = $quotation->quotationMetas;
-            foreach ($quotationMetas as $quotationMeta) {
-                $salesOrderMeta = new SalesOrderMeta();
-                $salesOrderMeta->sales_order_id = $salesOrder->id;
-                $salesOrderMeta->product_id = $quotationMeta->product_id;
-                $salesOrderMeta->custom_discount = $quotationMeta->custom_discount;
-                $salesOrderMeta->custom_tax = $quotationMeta->custom_tax;
-                $salesOrderMeta->custom_shipping_cost = $quotationMeta->custom_shipping_cost;
-                $salesOrderMeta->quantity = $quotationMeta->quantity;
-                $salesOrderMeta->product_id = $quotationMeta->product_id;
-                $salesOrderMeta->variant_id = $quotationMeta->variant_id;
-                $salesOrderMeta->bundle_id = $quotationMeta->bundle_id;
-                $salesOrderMeta->tax_method_id = $quotationMeta->tax_method_id;
-                $salesOrderMeta->status = 10;
-                $salesOrderMeta->save();
+            $deliveryOrderMetas = $deliveryOrder->deliveryorderMetas;
+            foreach ($deliveryOrderMetas as $deliveryOrderMeta) {
+                $deliveryOrderMeta = new DeliveryOrderMeta();
+                $deliveryOrderMeta->delivery_order_id = $deliveryOrder->id;
+                $deliveryOrderMeta->product_id = $deliveryOrderMeta->product_id;
+                $deliveryOrderMeta->custom_discount = $deliveryOrderMeta->custom_discount;
+                $deliveryOrderMeta->custom_tax = $deliveryOrderMeta->custom_tax;
+                $deliveryOrderMeta->custom_shipping_cost = $deliveryOrderMeta->custom_shipping_cost;
+                $deliveryOrderMeta->quantity = $deliveryOrderMeta->quantity;
+                $deliveryOrderMeta->product_id = $deliveryOrderMeta->product_id;
+                $deliveryOrderMeta->variant_id = $deliveryOrderMeta->variant_id;
+                $deliveryOrderMeta->bundle_id = $deliveryOrderMeta->bundle_id;
+                $deliveryOrderMeta->tax_method_id = $deliveryOrderMeta->tax_method_id;
+                $deliveryOrderMeta->status = 10;
+                $deliveryOrderMeta->save();
             }
     
-            $quotation->status = 12;
-            $quotation->save();
+            $deliveryOrder->status = 14;
+            $deliveryOrder->save();
     
             DB::commit();
     
             return response()->json([
                 'data' => [
-                    'sales_order' => $salesOrder,
-                    'message_key' => 'convert_quotation_success',
+                    'delivery_order' => $deliveryOrder,
+                    'message_key' => 'convert_delivery_order_success',
                 ]
             ]);
     
@@ -1030,7 +1030,7 @@ class QuotationService
     
             return response()->json([
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
-                'message_key' => 'convert_quotation_failure',
+                'message_key' => 'convert_delivery_order_failure',
             ], 500);
         }
     }
@@ -1045,15 +1045,15 @@ class QuotationService
 
         try {
 
-            $quotation = Quotation::with( [ 'quotationMetas.product.warehouses','quotationMetas.bundle','quotationMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
+            $deliveryOrder = DeliveryOrder::with( [ 'deliveryorderMetas.product.warehouses','deliveryorderMetas.bundle','deliveryorderMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
 
-            Mail::to( $quotation->customer->email )->send(new QuotationMail( $updateQuotation ));
+            Mail::to( $deliveryOrder->customer->email )->send(new DeliveryOrderMail( $updateDeliveryOrder ));
 
             DB::commit();
 
             return response()->json( [
                 'data' => [
-                    'quotation' => $quotation,
+                    'delivery_order' => $deliveryOrder,
                     'message_key' => 'mail_sent',
                 ]
             ] );

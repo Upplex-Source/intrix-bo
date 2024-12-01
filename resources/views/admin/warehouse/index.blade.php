@@ -17,6 +17,24 @@
             </div>
         </div><!-- .nk-block-head-content -->
         @endcan
+
+        <div class="modal fade" id="warehouse_products_modal" tabindex="-1" role="dialog" aria-labelledby="warehouseProductsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ __('template.warehouse_products') }}</h5>
+                        <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close"><em class="icon ni ni-cross"></em></a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div id="warehouse_products_list" class="mt-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>  
+
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
@@ -186,6 +204,7 @@ var statusMapper = @json( $data['status'] ),
 
                     @can( 'edit warehouses' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    edit = '<li class="dt-stock" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view_inventories' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete warehouses' )
@@ -249,6 +268,36 @@ var statusMapper = @json( $data['status'] ),
                 },
             } );
         } );
+
+        $( document ).on( 'click', '.dt-stock', function() {
+
+            $productsList.html('<p>{{ __("warehouse.loading_products") }}</p>');
+
+            $.ajax({
+                url: '{{ route( 'admin.warehouse.oneWarehouse' ) }}',
+                method: 'GET',
+                data: {
+                    'id': $( this ).data( 'id' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.products.length > 0) {
+                        let productHtml = '<ul class="list-group">';
+                        response.products.forEach(product => {
+                            productHtml += `<li class="list-group-item">${product.name} (RM ${product.price})</li>`;
+                        });
+                        productHtml += '</ul>';
+                        $productsList.html(productHtml);
+                    } else {
+                        $productsList.html('<p>{{ __("warehouse.no_products_found") }}</p>');
+                    }
+                },
+                error: function () {
+                    $productsList.html('<p>{{ __("warehouse.error_loading_products") }}</p>');
+                }
+            });
+        });
+
     } );
 </script>
 

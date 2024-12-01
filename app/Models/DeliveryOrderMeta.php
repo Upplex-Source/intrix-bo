@@ -14,38 +14,45 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class Bundle extends Model
+class DeliveryOrderMeta extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
+    protected $table = 'delivery_orders_metas';
+
     protected $fillable = [
-        'title',
-        'description',
-        'image',
-        'thumbnail',
-        'url_slug',
-        'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'delivery_order_id',
+        'product_id',
+        'variant_id',
+        'bundle_id',
+        'custom_discount',
+        'custom_tax',
+        'custom_shipping_cost',
+        'quantity',
         'status',
+
     ];
-
-    public function products()
+    
+    public function deliveryOrder()
     {
-        return $this->belongsToMany(Product::class, 'products_bundles')
-        ->withPivot('quantity', 'price');
+        return $this->belongsTo(SalesOrder::class, 'delivery_order_id');
+    }
+    
+    public function quotation()
+    {
+        return $this->belongsTo(Quotation::class, 'quotation_id');
     }
 
-    public function getImagePathAttribute() {
-        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
+    public function variant() {
+        return $this->belongsTo( ProductVariant::class, 'variant_id' );
     }
 
-    public function getThumbnailPathAttribute() {
-        return $this->attributes['thumbnail'] ? asset( 'storage/'.$this->attributes['thumbnail'] ) : asset( 'admin/images/placeholder.png' );
+    public function product() {
+        return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function bundle() {
+        return $this->belongsTo( Bundle::class, 'bundle_id' );
     }
     
     public function getEncryptedIdAttribute() {
@@ -59,22 +66,18 @@ class Bundle extends Model
     }
 
     protected static $logAttributes = [
-        'title',
-        'description',
-        'image',
-        'thumbnail',
-        'url_slug',
-        'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'delivery_order_id',
+        'product_id',
+        'variant_id',
+        'bundle_id',
+        'custom_discount',
+        'custom_tax',
+        'custom_shipping_cost',
+        'quantity',
         'status',
     ];
 
-    protected static $logName = 'bundles';
+    protected static $logName = 'delivery_order_metas';
 
     protected static $logOnlyDirty = true;
 
@@ -83,6 +86,6 @@ class Bundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} bundle";
+        return "{$eventName} delivery_order_meta";
     }
 }

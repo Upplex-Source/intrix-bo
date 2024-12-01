@@ -1,12 +1,12 @@
 <?php
-$sales_order_create = 'sales_order_create';
+$delivery_order_create = 'delivery_order_create';
 $taxTypes = $data['tax_types'];
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.sales_orders' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.delivery_orders' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -17,49 +17,49 @@ $taxTypes = $data['tax_types'];
             <div class="col-md-12 col-lg-12">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_warehouse" class="col-sm-5 form-label">{{ __( 'template.warehouses' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_warehouse" class="col-sm-5 form-label">{{ __( 'template.warehouses' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $sales_order_create }}_warehouse" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.warehouses' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_create }}_warehouse" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.warehouses' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_supplier" class="col-sm-5 form-label">{{ __( 'template.suppliers' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_supplier" class="col-sm-5 form-label">{{ __( 'template.suppliers' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $sales_order_create }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.suppliers' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_create }}_supplier" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.suppliers' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_customer" class="col-sm-5 form-label">{{ __( 'template.customers' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_customer" class="col-sm-5 form-label">{{ __( 'template.customers' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $sales_order_create }}_customer" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.customers' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_create }}_customer" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.customers' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_salesman" class="col-sm-5 form-label">{{ __( 'template.salesmen' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_salesman" class="col-sm-5 form-label">{{ __( 'template.salesmen' ) }}</label>
                         <div class="col-sm-7">
-                            <select class="form-select" id="{{ $sales_order_create }}_salesman" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.salesmen' ) ] ) }}">
+                            <select class="form-select" id="{{ $delivery_order_create }}_salesman" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.salesmen' ) ] ) }}">
                             </select>
                             <div class="invalid-feedback"></div>
                         </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_product" class="col-sm-5 form-label">{{ __( 'template.products' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_product" class="col-sm-5 form-label">{{ __( 'template.products' ) }}</label>
                     <div class="col-sm-7">
 
-                        <select class="form-select" id="{{ $sales_order_create }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.products' ) ] ) }}" multiple="multiple">
+                        <select class="form-select" id="{{ $delivery_order_create }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'template.products' ) ] ) }}" multiple="multiple">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label>{{ __( 'sales_order.attachment' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $sales_order_create }}_attachment" style="min-height: 0px;">
+                    <label>{{ __( 'delivery_order.attachment' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $delivery_order_create }}_attachment" style="min-height: 0px;">
                         <div class="dz-message needsclick">
                             <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
                         </div>
@@ -105,42 +105,42 @@ $taxTypes = $data['tax_types'];
                 </table>
 
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_tax_method" class="col-sm-5 col-form-label">{{ __( 'product.tax_method' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_tax_method" class="col-sm-5 col-form-label">{{ __( 'product.tax_method' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select" id="{{ $sales_order_create }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
+                        <select class="form-select" id="{{ $delivery_order_create }}_tax_method" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product.tax_method' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_discount" class="col-sm-5 col-form-label">{{ __( 'sales_order.discount' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_discount" class="col-sm-5 col-form-label">{{ __( 'delivery_order.discount' ) }}</label>
                     <div class="col-sm-7">
-                        <input class="form-control" type="number" name="{{ $sales_order_create }}_discount" id="{{ $sales_order_create }}_discount">
+                        <input class="form-control" type="number" name="{{ $delivery_order_create }}_discount" id="{{ $delivery_order_create }}_discount">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_shipping_cost" class="col-sm-5 col-form-label">{{ __( 'sales_order.shipping_cost' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_shipping_cost" class="col-sm-5 col-form-label">{{ __( 'delivery_order.shipping_cost' ) }}</label>
                     <div class="col-sm-7">
-                        <input class="form-control" type="number" name="{{ $sales_order_create }}_shipping_cost" id="{{ $sales_order_create }}_shipping_cost">
+                        <input class="form-control" type="number" name="{{ $delivery_order_create }}_shipping_cost" id="{{ $delivery_order_create }}_shipping_cost">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $sales_order_create }}_remarks" class="col-sm-5 col-form-label">{{ __( 'sales_order.remarks' ) }}</label>
+                    <label for="{{ $delivery_order_create }}_remarks" class="col-sm-5 col-form-label">{{ __( 'delivery_order.remarks' ) }}</label>
                     <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $sales_order_create }}_remarks"></textarea>
+                        <textarea class="form-control" id="{{ $delivery_order_create }}_remarks"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="text-end">
-                    <button id="{{ $sales_order_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
+                    <button id="{{ $delivery_order_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
-                    <button id="{{ $sales_order_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
+                    <button id="{{ $delivery_order_create }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
         </div>
@@ -150,16 +150,16 @@ $taxTypes = $data['tax_types'];
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let fc = '#{{ $sales_order_create }}',
+        let fc = '#{{ $delivery_order_create }}',
                 fileID = '';
 
-        $( fc + '_sales_order_date' ).flatpickr( {
+        $( fc + '_delivery_order_date' ).flatpickr( {
             disableMobile: true,
             defaultDate: 'today',
         } );
 
         $( fc + '_cancel' ).click( function() {
-            window.location.href = '{{ route( 'admin.module_parent.sales_order.index' ) }}';
+            window.location.href = '{{ route( 'admin.module_parent.delivery_order.index' ) }}';
         } );
 
         $( fc + '_submit' ).click( function() {
@@ -195,7 +195,7 @@ $taxTypes = $data['tax_types'];
             });
 
             $.ajax( {
-                url: '{{ route( 'admin.sales_order.createSalesOrder' ) }}',
+                url: '{{ route( 'admin.delivery_order.createDeliveryOrder' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -206,7 +206,7 @@ $taxTypes = $data['tax_types'];
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.sales_order.index' ) }}';
+                        window.location.href = '{{ route( 'admin.module_parent.delivery_order.index' ) }}';
                     } );
                 },
                 error: function( error ) {

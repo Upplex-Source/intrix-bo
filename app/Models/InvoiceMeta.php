@@ -14,38 +14,40 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class Bundle extends Model
+class InvoiceMeta extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
+    protected $table = 'invoices_metas';
+
     protected $fillable = [
-        'title',
-        'description',
-        'image',
-        'thumbnail',
-        'url_slug',
-        'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'invoice_id',
+        'product_id',
+        'variant_id',
+        'bundle_id',
+        'custom_discount',
+        'custom_tax',
+        'custom_shipping_cost',
+        'quantity',
         'status',
+
     ];
-
-    public function products()
+    
+    public function invoice()
     {
-        return $this->belongsToMany(Product::class, 'products_bundles')
-        ->withPivot('quantity', 'price');
+        return $this->belongsTo(SalesOrder::class, 'invoice_id');
     }
 
-    public function getImagePathAttribute() {
-        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
+    public function variant() {
+        return $this->belongsTo( ProductVariant::class, 'variant_id' );
     }
 
-    public function getThumbnailPathAttribute() {
-        return $this->attributes['thumbnail'] ? asset( 'storage/'.$this->attributes['thumbnail'] ) : asset( 'admin/images/placeholder.png' );
+    public function product() {
+        return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function bundle() {
+        return $this->belongsTo( Bundle::class, 'bundle_id' );
     }
     
     public function getEncryptedIdAttribute() {
@@ -59,22 +61,18 @@ class Bundle extends Model
     }
 
     protected static $logAttributes = [
-        'title',
-        'description',
-        'image',
-        'thumbnail',
-        'url_slug',
-        'strucuture',
-        'sort',
-        'promotion_enabled',
-        'promotion_start',
-        'promotion_end',
-        'price',
-        'promotion_price',
+        'invoice_id',
+        'product_id',
+        'variant_id',
+        'bundle_id',
+        'custom_discount',
+        'custom_tax',
+        'custom_shipping_cost',
+        'quantity',
         'status',
     ];
 
-    protected static $logName = 'bundles';
+    protected static $logName = 'invoice_metas';
 
     protected static $logOnlyDirty = true;
 
@@ -83,6 +81,6 @@ class Bundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} bundle";
+        return "{$eventName} invoice_meta";
     }
 }

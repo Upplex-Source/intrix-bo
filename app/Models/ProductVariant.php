@@ -33,6 +33,13 @@ class ProductVariant extends Model
         return $this->belongsTo( Product::class, 'product_id' );
     }
 
+    public function warehouses()
+    {
+        return $this->belongsToMany(Warehouse::class, 'warehouses_variants', 'variant_id', 'warehouse_id')
+                    ->withPivot('quantity', 'price', 'status')
+                    ->withTimestamps();
+    }
+
     public function getPathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : null;
     }

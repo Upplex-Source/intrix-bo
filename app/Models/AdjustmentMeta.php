@@ -22,6 +22,7 @@ class AdjustmentMeta extends Model
         'adjustment_id',
         'product_id',
         'variant_id',
+        'bundle_id',
         'amount',
         'original_amount',
         'final_amount',
@@ -34,6 +35,10 @@ class AdjustmentMeta extends Model
 
     public function product() {
         return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function bundle() {
+        return $this->belongsTo( Bundle::class, 'bundle_id' );
     }
 
     public function Adjustment()
@@ -57,6 +62,7 @@ class AdjustmentMeta extends Model
         'adjustment_id',
         'product_id',
         'variant_id',
+        'bundle_id',
         'amount',
         'original_amount',
         'final_amount',

@@ -89,6 +89,7 @@ $adjustment_edit = 'adjustment_edit';
 
         $( fe + '_adjustment_date' ).flatpickr( {
             disableMobile: true,
+            defaultDate: 'today',
         } );
 
         $( fe + '_cancel' ).click( function() {
@@ -120,6 +121,17 @@ $adjustment_edit = 'adjustment_edit';
                 formData.append(`products[${index}][metaId]`, IdInput == undefined ? null : IdInput );
                 formData.append(`products[${index}][id]`, productId);
                 formData.append(`products[${index}][quantity]`, quantityInput);
+
+                $(`.variant-row[data-parent-id="product-${productId}"]`).each(function (variantIndex, variantRow) {
+                    let variantId = $(variantRow).attr('id').replace('variant-', '');
+                    let variantQuantity = $(variantRow).find('.variant-quantity').val();
+                    let IdInput = $(`#variant-${variantId} .meta-id`).val();
+                    // Append variant details under the corresponding product
+
+                    formData.append(`products[${index}][variants][${variantIndex}][metaId]`, IdInput == undefined ? null : IdInput );
+                    formData.append(`products[${index}][variants][${variantIndex}][id]`, variantId);
+                    formData.append(`products[${index}][variants][${variantIndex}][quantity]`, variantQuantity);
+                });
             });
 
             $.ajax( {
@@ -227,14 +239,32 @@ $adjustment_edit = 'adjustment_edit';
                     params.page = params.page || 1;
 
                     let processedResult = [];
+                    let addedBundles = new Set(); // Track unique bundles
 
-                    data.products.map(function(v, i) {
+                    // Process products and bundles with indicators
+                    data.products.forEach(function(product) {
+                        // Add the main product with a unique prefixed ID
                         processedResult.push({
-                            id: v.id,
-                            text: v.title,
+                            id: `product-${product.id}`, 
+                            text: `Product: ${product.title}`,
+                            variants: product.variants
                         });
-                    });
 
+                        // Add bundles associated with the product, ensuring uniqueness
+                        if (product.bundles && Array.isArray(product.bundles)) {
+                            product.bundles.forEach(function(bundle) {
+                                if (!addedBundles.has(bundle.id)) { // Check if the bundle is already added
+                                    processedResult.push({
+                                        id: `bundle-${bundle.id}`, // Prefix with "bundle-"
+                                        text: `Bundle: ${bundle.title}`, // Prefix with "Bundle:"
+                                        variants: null
+                                    });
+                                    addedBundles.add(bundle.id); // Mark this bundle as added
+                                }
+                            });
+                        }
+                    });
+                    
                     return {
                         results: processedResult,
                         pagination: {
@@ -268,50 +298,80 @@ $adjustment_edit = 'adjustment_edit';
                         wareHouseSelect2.append( option1 );
                         wareHouseSelect2.trigger( 'change' );
                     }
-
+                    appended = [];
                     response.adjustment_metas.forEach((product, index) => {
 
-                        let option = new Option(product.product.title, product.product.id, true, true); 
-                        productSelect2.append(option);
+                        if( (product.product && !product.variant) || (product.bundle && !product.variant) ){
 
-                        let productTable = $('#product-table tbody');
-                        if (!productTable.length) {
-                            console.error("Product table body not found.");
-                            return;
-                        }
-                        if ($(`#product-${product.id}`).length === 0) {
-                            productCount++;
-                            productTable.append(`
-                                <tr id="product-${product.product.id}">
-                                    <td>${index + 1}</td>
-                                    <td>${product.product.title}</td>
-                                    <td>
-                                        <input type="hidden" class="form-control meta-id" value="${product.id}"> 
-                                        <input type="number" class="form-control product-quantity" 
-                                            style="width: 100px;" min="1" 
-                                            data-product-id="${product.product.id}" value="${product.amount}">
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm remove-product" 
-                                                data-product-id="${product.product.id}">
-                                            <i class="fa fa-trash"></i> Remove
-                                        </button>
-                                    </td>
-                                </tr>
-                            `);
-                        }
+                            formattedId = product.bundle ? 'bundle-' + product.bundle.id : 'product-' + product.product.id;
+                            formattedTitle = product.bundle ? product.bundle.title : product.product.title;
 
-                        $(document).on('click', '.remove-product', function () {
-                            let productId = $(this).data('product-id');
-                            $('#product-' + productId).remove();
+                            let option = new Option(formattedTitle, formattedId, true, true); 
+                            productSelect2.append(option);
 
-                            // Re-index the table rows
-                            productCount = 0;
-                            $('#product-table tbody tr').each(function () {
+                            let productTable = $('#product-table tbody');
+                            if (!productTable.length) {
+                                console.error("Product table body not found.");
+                                return;
+                            }
+
+                            if ($(`#product-${product.id}`).length === 0) {
                                 productCount++;
-                                $(this).find('td:first').text(productCount);
+                                productTable.append(`
+                                    <tr id="product-${formattedId}">
+                                        <td>${productCount}</td>
+                                        <td>${formattedTitle}</td>
+                                        <td>
+                                            <input type="hidden" class="form-control meta-id" value="${product.id}"> 
+                                            <input type="number" class="form-control product-quantity" 
+                                                style="width: 100px;" min="1" 
+                                                data-product-id="${formattedId}" value="${product.amount}">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm remove-product" 
+                                                    data-product-id="${formattedId}">
+                                                <i class="fa fa-trash"></i> Remove
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `);
+                            }
+
+                            $(document).on('click', '.remove-product', function () {
+                                let productId = $(this).data('product-id');
+                                $('#product-' + productId).remove();
+                                $(`.variant-row[data-parent-id="product-${productId}"]`).remove();
+
+                                // Re-index the table rows
+                                productCount = 0;
+                                $('#product-table tbody tr').each(function () {
+                                    productCount++;
+                                    $(this).find('td:first').text(productCount);
+                                });
                             });
-                        });
+                        }else {
+
+                            if(product.variant != null) {
+
+                                formattedId = product.bundle ? 'bundle-' + product.bundle.id : 'product-' + product.product.id;
+                                formattedTitle = product.bundle ? product.bundle.title : product.product.title;
+
+                                $('#product-table tbody').append(`
+                                    <tr id="variant-${product.variant.id}" class="variant-row" data-parent-id="product-${formattedId}">
+                                        <td>${productCount}.${index + 1}</td>
+                                        <td>Variant: ${product.variant.title}</td>
+                                        <td>
+                                            <input type="hidden" class="form-control meta-id" value="${product.id}"> 
+                                            <input type="number" class="form-control variant-quantity" 
+                                                style="width: 100px;" min="1" 
+                                                data-variant-id="${product.variant.id}" data-product-id="${formattedId}" value="${product.amount}"
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                `);
+                            }
+                        }
+                       
                     });
                     const dropzone = new Dropzone( fe + '_attachment', {
                         url: '{{ route( 'admin.file.upload' ) }}',
@@ -391,6 +451,23 @@ $adjustment_edit = 'adjustment_edit';
                         </td>
                     </tr>
                 `);
+
+                if(selectedProduct.variants != null) {
+                    selectedProduct.variants.forEach((variant, index) => {
+                        $('#product-table tbody').append(`
+                            <tr id="variant-${variant.id}" class="variant-row" data-parent-id="product-${selectedProduct.id}">
+                                <td>${productCount}.${index + 1}</td>
+                                <td>Variant: ${variant.title}</td>
+                                <td>
+                                    <input type="number" class="form-control variant-quantity" 
+                                        style="width: 100px;" min="1" 
+                                        data-variant-id="${variant.id}" data-product-id="${selectedProduct.id}">
+                                </td>
+                                <td></td>
+                            </tr>
+                        `);
+                    });
+                }
             }
         });
 
@@ -399,6 +476,7 @@ $adjustment_edit = 'adjustment_edit';
             
             // Remove from table
             $('#product-' + productId).remove();
+            $(`.variant-row[data-parent-id="product-${productId}"]`).remove();
             
             // Remove from Select2
             let selectElement = $(fe + '_product'); // Replace with your Select2 element ID
@@ -409,7 +487,7 @@ $adjustment_edit = 'adjustment_edit';
             }
 
             // Re-index the table rows
-            let productCount = 0;
+            productCount = 0;
             $('#product-table tbody tr').each(function () {
                 productCount++;
                 $(this).find('td:first').text(productCount);
@@ -418,7 +496,7 @@ $adjustment_edit = 'adjustment_edit';
         $(fe + '_product').on('select2:unselect', function (e) {
             var categoryId = e.params.data.id; 
             $('#product-' + categoryId).remove();
-            updateTotals(); 
+            $(`.variant-row[data-parent-id="product-${categoryId}"]`).remove();
 
             var selectedValues = $(fe + '_product').val(); // Get the current selected values
             selectedValues = selectedValues.filter(function (id) {
@@ -427,6 +505,12 @@ $adjustment_edit = 'adjustment_edit';
 
             // Reassign the remaining selected values back to select2
             $(fe + '_product').val(selectedValues).trigger('change');
+            // Re-index the table rows
+            productCount = 0;
+            $('#product-table tbody tr').each(function () {
+                productCount++;
+                $(this).find('td:first').text(productCount);
+            });
         });
 
         $(fe + '_product').on("select2:select", function (evt) {

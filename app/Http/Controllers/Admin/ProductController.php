@@ -127,6 +127,11 @@ class ProductController extends Controller
         return ProductService::allProducts( $request );
     }
 
+    public function allProductsBundles( Request $request ) {
+
+        return ProductService::allProductsBundles( $request );
+    }
+
     public function oneProduct( Request $request ) {
 
         return ProductService::oneProduct( $request );

@@ -35,7 +35,22 @@ class AdjustmentService
             'remarks' => [ 'nullable' ],
             'attachment' => [ 'nullable' ],
             'products' => [ 'nullable' ],
-            'products.*.id' => [ 'nullable', 'exists:products,id' ],
+            'products.*.id' => [ 'nullable',  function ($attribute, $value, $fail) {
+                    if (!preg_match('/^(product|bundle)-(\d+)$/', $value, $matches)) {
+                        return $fail("The {$attribute} format is invalid.");
+                    }
+        
+                    $type = $matches[1];
+                    $identifier = $matches[2];
+        
+                    // Check if the identifier exists in the corresponding table
+                    if ($type === 'product' && !\DB::table('products')->where('id', $identifier)->exists()) {
+                        return $fail("The {$attribute} does not exist in products.");
+                    } elseif ($type === 'bundle' && !\DB::table('bundles')->where('id', $identifier)->exists()) {
+                        return $fail("The {$attribute} does not exist in bundles.");
+                    }
+                },
+            ],
             'products.*.quantity' => [ 'nullable' ],
             'warehouse' => [ 'nullable', 'exists:warehouses,id' ],
         ] );
@@ -96,18 +111,42 @@ class AdjustmentService
             if( $products ){
                 foreach( $products as $product ){
 
-                    $warehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, $product['id'], $product['quantity'] );
+                    $warehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, $product['id'], $product['quantity'], true  );
+
+                    preg_match('/^(product|bundle)-(\d+)$/', $product['id'], $matches);
+
+                    $type = $matches[1];
+                    $identifier = $matches[2];
 
                     $adjustmentMetaCreate = AdjustmentMeta::create([
                         'adjustment_id' => $adjustmentCreate->id,
-                        'product_id' => $product['id'],
-                        // 'variant_id' => $product['variant_id'],
+                        'product_id' => $type == 'product' ? $identifier : null,
+                        'variant_id' => null,
+                        'bundle_id' => $type == 'bundle' ? $identifier :null,
                         'amount' => $product['quantity'],
-                        // 'variant_id' => $product['variant_id'],
                         'original_amount' => $warehouseAdjustment['original_quantity'],
                         'final_amount' => $warehouseAdjustment['updated_quantity'],
                         'status' => 10,
                     ]);
+
+                    if( isset($product['variants']) ) {
+                        foreach( $product['variants'] as $variant ){
+
+                            $warehouseAdjustment = self::adjustWarehouseVariantQuantity( $request->warehouse, $product['id'], $variant['id'], $variant['quantity'], true );
+
+                            $adjustmentMetaCreate = AdjustmentMeta::create([
+                                'adjustment_id' => $adjustmentCreate->id,
+                                'product_id' => $identifier,
+                                'variant_id' => $variant['id'],
+                                'bundle_id' => null,
+                                'amount' => $variant['quantity'],
+                                'original_amount' => $warehouseAdjustment['original_quantity'],
+                                'final_amount' => $warehouseAdjustment['updated_quantity'],
+                                'status' => 10,
+                            ]);
+        
+                        }
+                    }
 
                 }
             }
@@ -140,7 +179,22 @@ class AdjustmentService
             'remarks' => [ 'nullable' ],
             'attachment' => [ 'nullable' ],
             'products' => [ 'nullable' ],
-            'products.*.id' => [ 'nullable', 'exists:products,id' ],
+            'products.*.id' => [ 'nullable',  function ($attribute, $value, $fail) {
+                    if (!preg_match('/^(product|bundle)-(\d+)$/', $value, $matches)) {
+                        return $fail("The {$attribute} format is invalid.");
+                    }
+        
+                    $type = $matches[1];
+                    $identifier = $matches[2];
+        
+                    // Check if the identifier exists in the corresponding table
+                    if ($type === 'product' && !\DB::table('products')->where('id', $identifier)->exists()) {
+                        return $fail("The {$attribute} does not exist in products.");
+                    } elseif ($type === 'bundle' && !\DB::table('bundles')->where('id', $identifier)->exists()) {
+                        return $fail("The {$attribute} does not exist in bundles.");
+                    }
+                },
+            ],
             'products.*.quantity' => [ 'nullable' ],
             'warehouse' => [ 'nullable', 'exists:warehouses,id' ],
         ] );
@@ -202,34 +256,124 @@ class AdjustmentService
             if( $products ) {
 
                 $incomingProductIds = array_column($products, 'metaId');
-    
+
+                // variants id
+                foreach( $products as $product ){
+                    if( isset($product['variants']) ){
+                        foreach( $product['variants'] as $variant ){
+                            array_push( $incomingProductIds, $variant['metaId'] );
+                        }
+                    }
+                }
+
                 $incomingProductIds = array_filter($incomingProductIds, function ($id) {
                     return $id !== null && $id !== 'null';
                 });
 
                 $idsToDelete = array_diff($oldAdjustmentMetasArray, $incomingProductIds);
 
+                foreach( $idsToDelete as $idToDelete ){
+
+                    $adjustment = AdjustmentMeta::find( $idToDelete );
+
+                    if( $adjustment->variant_id ){
+                        $prevWarehouseAdjustment = self::adjustWarehouseVariantQuantity( $request->warehouse, $adjustment->product_id, $adjustment->variant_id, -$adjustment->amount, true );
+                    }
+
+                    else if( $adjustment->bundle_id ){
+                        $prevWarehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $adjustment->product_id, -$adjustment->amount, true );
+                    }
+
+                    else{
+                        $prevWarehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, 'product-' . $adjustment->product_id, -$adjustment->amount, true );
+                    }
+
+                }
+
                 AdjustmentMeta::whereIn('id', $idsToDelete)->delete();
                 
                 foreach( $products as $product ){
-
+                    
                     if( in_array( $product['metaId'], $oldAdjustmentMetasArray ) ){
+
                         $removeAdjustmentMeta = AdjustmentMeta::find( $product['metaId'] );
+
+                        // Remove previous
+                        $prevWarehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, $product['id'], -$removeAdjustmentMeta->amount, true );
+
+                        // Add new
+                        $warehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, $product['id'], $product['quantity'], false );
+
+                        preg_match('/^(product|bundle)-(\d+)$/', $product['id'], $matches);
+
+                        $type = $matches[1];
+                        $identifier = $matches[2];
+
                         $removeAdjustmentMeta->adjustment_id = $updateAdjustment->id;
                         $removeAdjustmentMeta->amount = $product['quantity'];
+                        $removeAdjustmentMeta->original_amount = $warehouseAdjustment['original_quantity'];
+                        $removeAdjustmentMeta->final_amount = $warehouseAdjustment['updated_quantity'];
+                        $removeAdjustmentMeta->save();
+
+                        if( isset($product['variants']) ) {
+                            foreach( $product['variants'] as $variant ){
+
+                                $removeAdjustmentMeta = AdjustmentMeta::find( $variant['metaId'] );
+
+                                // Remove previous
+                                $prevWarehouseAdjustment = self::adjustWarehouseVariantQuantity( $request->warehouse, $product['id'], $variant['id'], -$removeAdjustmentMeta->amount, true );
+
+                                $warehouseAdjustment = self::adjustWarehouseVariantQuantity( $request->warehouse, $product['id'], $variant['id'], $variant['quantity'], false );
+
+                                $removeAdjustmentMeta->adjustment_id = $updateAdjustment->id;
+                                $removeAdjustmentMeta->amount = $variant['quantity'];
+                                $removeAdjustmentMeta->original_amount = $warehouseAdjustment['original_quantity'];
+                                $removeAdjustmentMeta->final_amount = $warehouseAdjustment['updated_quantity'];
+                                $removeAdjustmentMeta->save();
+                            }
+                        }    
+                        
                     } else {
 
                         if( $product['metaId'] == 'null' ){
+
+                            preg_match('/^(product|bundle)-(\d+)$/', $product['id'], $matches);
+
+                            $type = $matches[1];
+                            $identifier = $matches[2];
+
+                            $warehouseAdjustment = self::adjustWarehouseQuantity( $request->warehouse, $product['id'], $product['quantity'], true );
+
                             $adjustmentMetaCreate = AdjustmentMeta::create([
                                 'adjustment_id' => $updateAdjustment->id,
-                                'product_id' => $product['id'],
-                                // 'variant_id' => $product['variant_id'],
+                                'product_id' => $type == 'product' ? $identifier : null,
+                                'variant_id' => null,
+                                'bundle_id' => $type == 'bundle' ? $identifier :null,
                                 'amount' => $product['quantity'],
-                                // 'variant_id' => $product['variant_id'],
-                                // 'original_amount' => $product['quantity'],
-                                // 'final_amount' => $product['quantity'],
+                                'original_amount' => $warehouseAdjustment['original_quantity'],
+                                'final_amount' => $warehouseAdjustment['updated_quantity'],
                                 'status' => 10,
                             ]);
+
+                            if( isset($product['variants']) ) {
+                                foreach( $product['variants'] as $variant ){
+        
+                                    $warehouseAdjustment = self::adjustWarehouseVariantQuantity( $request->warehouse, $product['id'], $variant['id'], $variant['quantity'], true );
+                
+                                    $adjustmentMetaCreate = AdjustmentMeta::create([
+                                        'adjustment_id' => $updateAdjustment->id,
+                                        'product_id' => $identifier,
+                                        'variant_id' => $variant['id'],
+                                        'bundle_id' => null,
+                                        'amount' => $variant['quantity'],
+                                        'original_amount' => $warehouseAdjustment['original_quantity'],
+                                        'final_amount' => $warehouseAdjustment['updated_quantity'],
+                                        'status' => 10,
+                                    ]);
+                
+                                }
+                            }
+
                         } else{
                             $removeAdjustmentMeta = AdjustmentMeta::find( $product['metaId'] );
                             $removeAdjustmentMeta->delete();
@@ -263,7 +407,7 @@ class AdjustmentService
 
      public static function allAdjustments( $request ) {
 
-        $adjustments = Adjustment::with( ['AdjustmentMetas.product','warehouse'] )->select( 'adjustments.*');
+        $adjustments = Adjustment::with( ['AdjustmentMetas.product','AdjustmentMetas.variant','AdjustmentMetas.bundle','warehouse'] )->select( 'adjustments.*');
 
         $filterObject = self::filter( $request, $adjustments );
         $adjustment = $filterObject['model'];
@@ -347,6 +491,10 @@ class AdjustmentService
             $model->whereHas('adjustmentMetas', function ($query) use ($request) {
                 $query->whereHas('product', function ($query) use ($request) {
                     $query->where('title', 'LIKE', '%' . $request->product . '%');
+                })->orWhereHas('variant', function ($query) use ($request) {
+                    $query->where('title', 'LIKE', '%' . $request->product . '%');
+                })->orWhereHas('bundle', function ($query) use ($request) {
+                    $query->where('title', 'LIKE', '%' . $request->product . '%');
                 });
             });
             $filter = true;
@@ -364,7 +512,7 @@ class AdjustmentService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $adjustment = Adjustment::with( ['AdjustmentMetas.product','warehouse'] )->find( $request->id );
+        $adjustment = Adjustment::with( ['AdjustmentMetas.product.variants','AdjustmentMetas.variant','AdjustmentMetas.bundle','warehouse'] )->find( $request->id );
 
         $adjustment->append( ['encrypted_id','attachment_path'] );
         
@@ -453,7 +601,7 @@ class AdjustmentService
         ] );
     }
 
-    public static function adjustWarehouseQuantity($warehouseId, $productId, $quantity)
+    public static function adjustWarehouseQuantity($warehouseId, $productId, $quantity, $toogleUpdate = false )
     {
         // Find the warehouse
         $warehouse = Warehouse::find($warehouseId);
@@ -465,11 +613,109 @@ class AdjustmentService
         // Initialize original quantity as 0 (default for new relation)
         $originalQuantity = 0;
 
-        // Check if the product already exists in the warehouse
-        $existingProduct = $warehouse->products()->where('product_id', $productId)->first();
+        preg_match('/^(product|bundle)-(\d+)$/', $productId, $matches);
+
+        $type = $matches[1];
+        $identifier = $matches[2];
+
+        if( $type == 'product' ) {
+            $existingProduct = $warehouse->products()->where('product_id', $identifier)->first();
+
+            if ($existingProduct) {
+                // Get the current quantity
+                $originalQuantity = $existingProduct->pivot->quantity;
+
+                // Calculate the new quantity
+                $newQuantity = $originalQuantity + $quantity;
+
+                // Ensure quantity doesn't go below zero
+                if ($newQuantity < 0) {
+                    throw new \Exception("Insufficient quantity in warehouse for this product.");
+                }
+
+                    // Update the pivot table
+                    $warehouse->products()->updateExistingPivot($identifier, [
+                        'quantity' => $newQuantity,
+                    ]);
+            } else {
+                // If no relation exists, set original quantity to 0
+                if ($quantity < 0) {
+                    throw new \Exception("Cannot deduct quantity for a product not in this warehouse.");
+                }
+
+                // Create a new pivot relation
+                $newQuantity = $quantity;
+
+
+                    $warehouse->products()->attach($identifier, [
+                        'quantity' => $newQuantity,
+                        'price' => 0, // Default price
+                        'status' => 1, // Active by default
+                    ]);
+            }
+        } else {
+            $existingProduct = $warehouse->bundles()->where('bundle_id', $identifier)->first();
+
+            if ($existingProduct) {
+                // Get the current quantity
+                $originalQuantity = $existingProduct->pivot->quantity;
+
+                // Calculate the new quantity
+                $newQuantity = $originalQuantity + $quantity;
+
+                // Ensure quantity doesn't go below zero
+                if ($newQuantity < 0) {
+                    throw new \Exception("Insufficient quantity in warehouse for this product.");
+                }
+
+                // Update the pivot table
+                    $warehouse->bundles()->updateExistingPivot($identifier, [
+                        'quantity' => $newQuantity,
+                    ]);
+            } else {
+                // If no relation exists, set original quantity to 0
+                if ($quantity < 0) {
+                    throw new \Exception("Cannot deduct quantity for a product not in this warehouse.");
+                }
+
+                // Create a new pivot relation
+                $newQuantity = $quantity;
+
+                    $warehouse->bundles()->attach($identifier, [
+                        'quantity' => $newQuantity,
+                        'price' => 0, // Default price
+                        'status' => 1, // Active by default
+                    ]);
+            }
+        }
+
+        if( $toogleUpdate ) {
+            $warehouse->save();
+        }
+
+        // Return the original and updated quantities
+        return [
+            'original_quantity' => $originalQuantity,
+            'updated_quantity' => $newQuantity,
+        ];
+    }
+
+    public static function adjustWarehouseVariantQuantity($warehouseId, $productId, $variantId, $quantity, $toogleUpdate )
+    {
+        // Find the warehouse
+        $warehouse = Warehouse::find($warehouseId);
+
+        if (!$warehouse) {
+            throw new \Exception("Warehouse not found.");
+        }
+
+        // Initialize original quantity as 0 (default for new relation)
+        $originalQuantity = 0;
+
+        $existingProduct = $warehouse->variants()->where('variant_id', $variantId)->first();
 
         if ($existingProduct) {
-            // Get the current quantity
+
             $originalQuantity = $existingProduct->pivot->quantity;
 
             // Calculate the new quantity
@@ -481,9 +727,10 @@ class AdjustmentService
             }
 
             // Update the pivot table
-            $warehouse->products()->updateExistingPivot($productId, [
-                'quantity' => $newQuantity,
-            ]);
+
+                $warehouse->variants()->updateExistingPivot($variantId, [
+                    'quantity' => $newQuantity,
+                ]);
         } else {
             // If no relation exists, set original quantity to 0
             if ($quantity < 0) {
@@ -492,11 +739,16 @@ class AdjustmentService
 
             // Create a new pivot relation
             $newQuantity = $quantity;
-            $warehouse->products()->attach($productId, [
-                'quantity' => $newQuantity,
-                'price' => 0, // Default price
-                'status' => 1, // Active by default
-            ]);
+
+                $warehouse->variants()->attach($variantId, [
+                    'quantity' => $newQuantity,
+                    'price' => 0, // Default price
+                    'status' => 1, // Active by default
+                ]);
+        }
+
+        if( $toogleUpdate ) {
+            $warehouse->save();
         }
 
         // Return the original and updated quantities
@@ -505,6 +757,4 @@ class AdjustmentService
             'updated_quantity' => $newQuantity,
         ];
     }
-
-    
 }

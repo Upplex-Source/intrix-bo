@@ -47,6 +47,10 @@ class TaxMethod extends Model
         return Helper::encode( $this->attributes['id'] );
     }
 
+    public function getFormattedTaxAttribute() {
+        return $this->attributes['tax_percentage'] ? $this->attributes['tax_percentage'] / 100 : 0.06;
+    }
+
     public $translatable = [ 'name', 'description' ];
 
     protected function serializeDate( DateTimeInterface $date ) {

@@ -1,16 +1,16 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.invoices' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.delivery_orders' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add invoice' )
+        @can( 'add delivery_order' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
                 <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.invoice.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.delivery_order.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -36,38 +36,38 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'invoice.sales_order' ) ] ),
-        'id' => 'sales_order',
-        'title' => __( 'invoice.sales_order' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'delivery_order.invoice' ) ] ),
+        'id' => 'invoice',
+        'title' => __( 'delivery_order.invoice' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'invoice.reference' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'delivery_order.reference' ) ] ),
         'id' => 'reference',
-        'title' => __( 'invoice.reference' ),
+        'title' => __( 'delivery_order.reference' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'invoice.salesman' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'delivery_order.salesman' ) ] ),
         'id' => 'salesman',
-        'title' => __( 'invoice.salesman' ),
+        'title' => __( 'delivery_order.salesman' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'invoice.customer' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'delivery_order.customer' ) ] ),
         'id' => 'customer',
-        'title' => __( 'invoice.customer' ),
+        'title' => __( 'delivery_order.customer' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'invoice.supplier' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'delivery_order.supplier' ) ] ),
         'id' => 'supplier',
-        'title' => __( 'invoice.supplier' ),
+        'title' => __( 'delivery_order.supplier' ),
     ],
     [
         'type' => 'default',
         'id' => 'final_amount',
-        'title' => __( 'invoice.final_amount' ),
+        'title' => __( 'delivery_order.final_amount' ),
     ],
     [
         'type' => 'select',
@@ -83,7 +83,7 @@ $columns = [
 ];
 ?>
 
-<x-data-tables id="invoice_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="delivery_order_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -97,7 +97,7 @@ window['{{ $column['id'] }}'] = '';
 
 var statusMapper = @json( $data['status'] ),
     dt_table,
-    dt_table_name = '#invoice_table',
+    dt_table_name = '#delivery_order_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -111,18 +111,18 @@ var statusMapper = @json( $data['status'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.invoice.allInvoices' ) }}',
+            url: '{{ route( 'admin.delivery_order.allDeliveryOrders' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'invoices',
+            dataSrc: 'delivery_orders',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
         columns: [
             { data: null },
             { data: 'created_at' },
-            { data: 'sales_order' },
+            { data: 'invoice' },
             { data: 'reference' },
             { data: 'salesman' },
             { data: 'customer' },
@@ -182,7 +182,7 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "sales_order" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "invoice" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data.reference : '-' ;
@@ -234,17 +234,14 @@ var statusMapper = @json( $data['status'] ),
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit invoice', 'delete invoice' ] )
+                    @canany( [ 'edit delivery_order', 'delete delivery_order' ] )
                     let edit, status = '';
 
-                    @can( 'edit invoice' )
+                    @can( 'edit delivery_order' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
-                    if( row['status'] != 14 ){
-                        edit += '<li class="dt-convert" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'datatables.to_delivery_order' ) }}</span></a></li>';
-                    }
                     @endcan
 
-                    @can( 'delete invoice' )
+                    @can( 'delete delivery_order' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
@@ -285,13 +282,13 @@ var statusMapper = @json( $data['status'] ),
         } );
 
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.invoice.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.delivery_order.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
 
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.invoice.updateInvoiceStatus' ) }}',
+                url: '{{ route( 'admin.delivery_order.updateDeliveryOrderStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),
@@ -303,36 +300,6 @@ var statusMapper = @json( $data['status'] ),
                     $( '#modal_success .caption-text' ).html( response.message );
                     modalSuccess.toggle();
                 },
-            } );
-        } );
-
-        $( document ).on( 'click', '.dt-convert', function() {
-
-            $.ajax( {
-                url: '{{ route( 'admin.invoice.convertDeliveryOrder' ) }}',
-                type: 'POST',
-                data: {
-                    'id': $( this ).data( 'id' ),
-                    '_token': '{{ csrf_token() }}'
-                },
-                success: function( response ) {
-                    dt_table.draw( false );
-                    $( '#modal_success .caption-text' ).html( response.message );
-                    modalSuccess.toggle();
-                },
-                error: function( error ) {
-                    $( 'body' ).loading( 'stop' );
-
-                    if ( error.status === 422 ) {
-                        let errors = error.responseJSON.errors;
-                        $.each( errors, function( key, value ) {
-                            $( dc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-                        } );
-                    } else {
-                        $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
-                        modalDanger.toggle();
-                    }
-                }
             } );
         } );
     } );
