@@ -753,7 +753,7 @@ class InvoiceService
             'attachment_path',
         ] );
 
-        $invoice->taxMethod->append( [
+        $invoice->taxMethod?->append( [
             'formatted_tax'
         ] );
         

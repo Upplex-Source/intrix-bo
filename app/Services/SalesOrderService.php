@@ -758,7 +758,7 @@ class SalesOrderService
             'attachment_path',
         ] );
 
-        $salesorder->taxMethod->append( [
+        $salesorder->taxMethod?->append( [
             'formatted_tax'
         ] );
         

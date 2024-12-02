@@ -753,7 +753,7 @@ class QuotationService
             'attachment_path',
         ] );
 
-        $quotation->taxMethod->append( [
+        $quotation->taxMethod?->append( [
             'formatted_tax'
         ] );
         

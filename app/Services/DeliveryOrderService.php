@@ -753,7 +753,7 @@ class DeliveryOrderService
             'attachment_path',
         ] );
 
-        $deliveryOrder->taxMethod->append( [
+        $deliveryOrder->taxMethod?->append( [
             'formatted_tax'
         ] );
         
