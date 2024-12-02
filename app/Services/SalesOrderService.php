@@ -107,7 +107,7 @@ class SalesOrderService
                     }
 
                     if ($value > $availableStock) {
-                        return $fail("The requested quantity for {$name} exceeds available stock.");
+                        return $fail(" The requested quantity for {$name} exceeds available stock ({$availableStock} stocks available).");
                     }
                 },
             ],
@@ -380,7 +380,7 @@ class SalesOrderService
                     }
 
                     if ($value > $availableStock) {
-                        return $fail("The requested quantity for {$name} exceeds available stock.");
+                        return $fail(" The requested quantity for {$name} exceeds available stock ({$availableStock} stocks available).");
                     }
                 },
             ],
