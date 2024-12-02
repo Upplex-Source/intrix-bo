@@ -27,6 +27,7 @@ use App\Models\{
     SalesOrderMeta,
     ProductVariant,
     TaxMethod,
+    Bundle,
 };
 
 

@@ -27,6 +27,7 @@ use App\Models\{
     InvoiceMeta,
     ProductVariant,
     TaxMethod,
+    Bundle,
 };
 
 
