@@ -230,7 +230,7 @@ $taxTypes = $data['tax_types'];
                                     `);
                                 }
                             }else{
-                                $( fc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                                $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                             }
                         } );
                     } else {
