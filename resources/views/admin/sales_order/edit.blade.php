@@ -311,7 +311,7 @@ $taxTypes = $data['tax_types'];
                         if (Array.isArray(product.warehouses) && product.warehouses.length > 0) {
                             let matchingWarehouse = product.warehouses.find(warehouse => warehouse.id === parseInt($(fe + '_warehouse').val(), 10));
                             if (matchingWarehouse) {
-                                productPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.price;
+                                productPrice = ( matchingWarehouse.pivot.price && matchingWarehouse.pivot.price > 0 ) ? matchingWarehouse.pivot.price : product.price;
                             }
                         }
 
@@ -592,14 +592,14 @@ $taxTypes = $data['tax_types'];
                             let matchingWarehouse = product.product.warehouses.find(warehouse => warehouse.id === parseInt(response.warehouse_id, 10))
 
                             formattedId = 'product-' + product.product.id
-                            formattedPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.product.price;
+                            formattedPrice = ( matchingWarehouse.pivot.price && matchingWarehouse.pivot.price > 0 ) ? matchingWarehouse.pivot.price : product.product.price;
                             formattedTitle = 'Product: ' + product.product.title
 
                         } else if( product.variant ){
                             let matchingWarehouse = product.variant.product.warehouses.find(warehouse => warehouse.id === parseInt(response.warehouse_id, 10))
 
                             formattedId = 'variant-' + product.variant.id
-                            formattedPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.variant.product.price;
+                            formattedPrice = ( matchingWarehouse.pivot.price && matchingWarehouse.pivot.price > 0 ) ? matchingWarehouse.pivot.price : product.variant.product.price;
                             formattedTitle = 'Variant: ' + product.variant.title
 
                         } else {

@@ -547,7 +547,7 @@ $taxTypes = $data['tax_types'];
                         if (Array.isArray(product.warehouses) && product.warehouses.length > 0) {
                             let matchingWarehouse = product.warehouses.find(warehouse => warehouse.id === parseInt($(fc + '_warehouse').val(), 10));
                             if (matchingWarehouse) {
-                                productPrice = matchingWarehouse.pivot.price > 0 ? matchingWarehouse.pivot.price : product.price;
+                                productPrice = ( matchingWarehouse.pivot.price && matchingWarehouse.pivot.price > 0 ) ? matchingWarehouse.pivot.price : product.price;
                             }
                         }
 
