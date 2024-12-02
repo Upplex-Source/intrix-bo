@@ -204,7 +204,7 @@ var statusMapper = @json( $data['status'] ),
 
                     @can( 'edit warehouses' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
-                    edit = '<li class="dt-stock" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view_inventories' ) }}</span></a></li>';
+                    // edit = '<li class="dt-stock" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view_inventories' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete warehouses' )
