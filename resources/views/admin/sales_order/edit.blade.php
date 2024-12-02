@@ -230,7 +230,7 @@ $taxTypes = $data['tax_types'];
                                     `);
                                 }
                             }else{
-                                $( fc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                                $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                             }-feedback' ).text( value );
                         } );
                     } else {
@@ -305,7 +305,7 @@ $taxTypes = $data['tax_types'];
                 data: function(params) {
                     return {
                         name: params.term,
-                        warehouse: $( fc + '_warehouse' ).val(), // search term
+                        warehouse: $( fe + '_warehouse' ).val(), // search term
                         status: 10,
                         start: ((params.page ? params.page : 1) - 1) * 10,
                         length: 10,
