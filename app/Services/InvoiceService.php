@@ -534,15 +534,15 @@ class InvoiceService
                     $invoice = InvoiceMeta::find( $idToDelete );
 
                     if( $invoice->variant_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $invoice->product_id, $invoice->variant_id, -$invoice->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $invoice->product_id, $invoice->variant_id, -$invoice->quantity, true );
                     }
 
                     else if( $invoice->bundle_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $invoice->product_id, -$invoice->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $invoice->product_id, -$invoice->quantity, true );
                     }
 
                     else{
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $invoice->product_id, -$invoice->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $invoice->product_id, -$invoice->quantity, true );
                     }
 
                 }
@@ -557,18 +557,20 @@ class InvoiceService
 
                         // Remove previous
                         if( $removeInvoiceMeta->product_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeInvoiceMeta->product_id, -$removeInvoiceMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeInvoiceMeta->product_id, -$removeInvoiceMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeInvoiceMeta->product_id, $product['quantity'], false );
                         }elseif( $removeInvoiceMeta->variant_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeInvoiceMeta->product_id, $removeInvoiceMeta->variant_id, -$removeInvoiceMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeInvoiceMeta->product_id, $removeInvoiceMeta->variant_id, -$removeInvoiceMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeInvoiceMeta->product_id, $removeInvoiceMeta->variant_id, $product['quantity'], false  );
                         }else{
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeInvoiceMeta->bundle_id, -$removeInvoiceMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeInvoiceMeta->bundle_id, -$removeInvoiceMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeInvoiceMeta->bundle_id, $product['quantity'], false );
                         }
                         
                         $removeInvoiceMeta->invoice_id = $updateInvoice->id;
-                        $removeInvoiceMeta->amount = $product['quantity'];
+                        $removeInvoiceMeta->quantity= $product['quantity'];
+                        $removeInvoiceMeta->save();
+
                     } else {
 
                         if( $product['metaId'] == 'null' ){

@@ -534,15 +534,15 @@ class QuotationService
                     $quotation = QuotationMeta::find( $idToDelete );
 
                     if( $quotation->variant_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $quotation->product_id, $quotation->variant_id, -$quotation->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $quotation->product_id, $quotation->variant_id, -$quotation->quantity, true );
                     }
 
                     else if( $quotation->bundle_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $quotation->product_id, -$quotation->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $quotation->product_id, -$quotation->quantity, true );
                     }
 
                     else{
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $quotation->product_id, -$quotation->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $quotation->product_id, -$quotation->quantity, true );
                     }
 
                 }
@@ -557,18 +557,19 @@ class QuotationService
 
                         // Remove previous
                         if( $removeQuotationMeta->product_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, -$removeQuotationMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, -$removeQuotationMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, $product['quantity'], false );
                         }elseif( $removeQuotationMeta->variant_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, -$removeQuotationMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, -$removeQuotationMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, $product['quantity'], false  );
                         }else{
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, -$removeQuotationMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, -$removeQuotationMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, $product['quantity'], false );
                         }
                         
                         $removeQuotationMeta->quotation_id = $updateQuotation->id;
-                        $removeQuotationMeta->amount = $product['quantity'];
+                        $removeQuotationMeta->quantity= $product['quantity'];
+                        $removeQuotationMeta->save();
                     } else {
 
                         if( $product['metaId'] == 'null' ){
@@ -1048,7 +1049,7 @@ class QuotationService
 
             $quotation = Quotation::with( [ 'quotationMetas.product.warehouses','quotationMetas.bundle','quotationMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
 
-            Mail::to( $quotation->customer->email )->send(new QuotationMail( $updateQuotation ));
+            Mail::to( $quotation->customer->email )->send(new QuotationMail( $quotation ));
 
             DB::commit();
 

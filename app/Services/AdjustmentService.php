@@ -19,6 +19,7 @@ use App\Models\{
     Booking,
     FileManager,
     Warehouse,
+    WarehouseHistory,
 };
 
 
@@ -637,6 +638,17 @@ class AdjustmentService
                     $warehouse->products()->updateExistingPivot($identifier, [
                         'quantity' => $newQuantity,
                     ]);
+
+                    WarehouseHistory::create([
+                        'warehouse_id' => $warehouse->id,
+                        'product_id' => $identifier,
+                        'variant_id' => null,
+                        'bundle_id' => null,
+                        'original_quantity' => $originalQuantity,
+                        'update_quantity' => $quantity,
+                        'final_quantity' => $newQuantity,
+                    'status' => 10,
+                    ]);
             } else {
                 // If no relation exists, set original quantity to 0
                 if ($quantity < 0) {
@@ -646,12 +658,23 @@ class AdjustmentService
                 // Create a new pivot relation
                 $newQuantity = $quantity;
 
+                $warehouse->products()->attach($identifier, [
+                    'quantity' => $newQuantity,
+                    'price' => 0, // Default price
+                    'status' => 1, // Active by default
+                ]);
 
-                    $warehouse->products()->attach($identifier, [
-                        'quantity' => $newQuantity,
-                        'price' => 0, // Default price
-                        'status' => 1, // Active by default
-                    ]);
+                WarehouseHistory::create([
+                    'warehouse_id' => $warehouse->id,
+                    'product_id' => $identifier,
+                    'variant_id' => null,
+                    'bundle_id' => null,
+                    'original_quantity' => 0,
+                    'update_quantity' => $quantity,
+                    'final_quantity' => $newQuantity,
+                    'status' => 10,
+                ]);
+                    
             }
         } else {
             $existingProduct = $warehouse->bundles()->where('bundle_id', $identifier)->first();
@@ -672,6 +695,18 @@ class AdjustmentService
                     $warehouse->bundles()->updateExistingPivot($identifier, [
                         'quantity' => $newQuantity,
                     ]);
+
+                    WarehouseHistory::create([
+                        'warehouse_id' => $warehouse->id,
+                        'product_id' => null,
+                        'variant_id' => null,
+                        'bundle_id' => $identifier,
+                        'original_quantity' => $originalQuantity,
+                        'update_quantity' => $quantity,
+                        'final_quantity' => $newQuantity,
+                    'status' => 10,
+                    ]);
+
             } else {
                 // If no relation exists, set original quantity to 0
                 if ($quantity < 0) {
@@ -686,6 +721,17 @@ class AdjustmentService
                         'price' => 0, // Default price
                         'status' => 1, // Active by default
                     ]);
+
+                WarehouseHistory::create([
+                    'warehouse_id' => $warehouse->id,
+                    'product_id' => null,
+                    'variant_id' => null,
+                    'bundle_id' => $identifier,
+                    'original_quantity' => 0,
+                    'update_quantity' => $quantity,
+                    'final_quantity' => $newQuantity,
+                    'status' => 10,
+                ]);
             }
         }
 
@@ -731,6 +777,18 @@ class AdjustmentService
                 $warehouse->variants()->updateExistingPivot($variantId, [
                     'quantity' => $newQuantity,
                 ]);
+
+                WarehouseHistory::create([
+                    'warehouse_id' => $warehouse->id,
+                    'product_id' => null,
+                    'variant_id' => $variantId,
+                    'bundle_id' => null,
+                    'original_quantity' => 0,
+                    'update_quantity' => $quantity,
+                    'final_quantity' => $newQuantity,
+                    'status' => 10,
+                ]);
+                
         } else {
             // If no relation exists, set original quantity to 0
             if ($quantity < 0) {
@@ -744,6 +802,17 @@ class AdjustmentService
                     'quantity' => $newQuantity,
                     'price' => 0, // Default price
                     'status' => 1, // Active by default
+                ]);
+
+                WarehouseHistory::create([
+                    'warehouse_id' => $warehouse->id,
+                    'product_id' => null,
+                    'variant_id' => $variantId,
+                    'bundle_id' => null,
+                    'original_quantity' => 0,
+                    'update_quantity' => $quantity,
+                    'final_quantity' => $newQuantity,
+                    'status' => 10,
                 ]);
         }
 

@@ -534,15 +534,15 @@ class DeliveryOrderService
                     $deliveryOrder = DeliveryOrderMeta::find( $idToDelete );
 
                     if( $deliveryOrder->variant_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $deliveryOrder->product_id, $deliveryOrder->variant_id, -$deliveryOrder->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $deliveryOrder->product_id, $deliveryOrder->variant_id, -$deliveryOrder->quantity, true );
                     }
 
                     else if( $deliveryOrder->bundle_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $deliveryOrder->product_id, -$deliveryOrder->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $deliveryOrder->product_id, -$deliveryOrder->quantity, true );
                     }
 
                     else{
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $deliveryOrder->product_id, -$deliveryOrder->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $deliveryOrder->product_id, -$deliveryOrder->quantity, true );
                     }
 
                 }
@@ -557,18 +557,19 @@ class DeliveryOrderService
 
                         // Remove previous
                         if( $removeDeliveryOrderMeta->product_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeDeliveryOrderMeta->product_id, -$removeDeliveryOrderMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeDeliveryOrderMeta->product_id, -$removeDeliveryOrderMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeDeliveryOrderMeta->product_id, $product['quantity'], false );
                         }elseif( $removeDeliveryOrderMeta->variant_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeDeliveryOrderMeta->product_id, $removeDeliveryOrderMeta->variant_id, -$removeDeliveryOrderMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeDeliveryOrderMeta->product_id, $removeDeliveryOrderMeta->variant_id, -$removeDeliveryOrderMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeDeliveryOrderMeta->product_id, $removeDeliveryOrderMeta->variant_id, $product['quantity'], false  );
                         }else{
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeDeliveryOrderMeta->bundle_id, -$removeDeliveryOrderMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeDeliveryOrderMeta->bundle_id, -$removeDeliveryOrderMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeDeliveryOrderMeta->bundle_id, $product['quantity'], false );
                         }
                         
                         $removeDeliveryOrderMeta->delivery_order_id = $updateDeliveryOrder->id;
-                        $removeDeliveryOrderMeta->amount = $product['quantity'];
+                        $removeDeliveryOrderMeta->quantity= $product['quantity'];
+                        $removeDeliveryOrderMeta->save();
                     } else {
 
                         if( $product['metaId'] == 'null' ){

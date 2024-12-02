@@ -534,15 +534,15 @@ class SalesOrderService
                     $salesorder = SalesOrderMeta::find( $idToDelete );
 
                     if( $salesorder->variant_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $salesorder->product_id, $salesorder->variant_id, -$salesorder->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $salesorder->product_id, $salesorder->variant_id, -$salesorder->quantity, true );
                     }
 
                     else if( $salesorder->bundle_id ){
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $salesorder->product_id, -$salesorder->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle-' . $salesorder->product_id, -$salesorder->quantity, true );
                     }
 
                     else{
-                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $salesorder->product_id, -$salesorder->amount, true );
+                        $prevWarehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-' . $salesorder->product_id, -$salesorder->quantity, true );
                     }
 
                 }
@@ -557,13 +557,13 @@ class SalesOrderService
 
                         // Remove previous
                         if( $removeQuotationMeta->product_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, -$removeQuotationMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, -$removeQuotationMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'product-'.$removeQuotationMeta->product_id, $product['quantity'], false );
                         }elseif( $removeQuotationMeta->variant_id ) {
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, -$removeQuotationMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, -$removeQuotationMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseVariantQuantity( $request->warehouse, $removeQuotationMeta->product_id, $removeQuotationMeta->variant_id, $product['quantity'], false  );
                         }else{
-                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, -$removeQuotationMeta->amount, true  );
+                            $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, -$removeQuotationMeta->quantity, true  );
                             $warehouseAdjustment = AdjustmentService::adjustWarehouseQuantity( $request->warehouse, 'bundle'.$removeQuotationMeta->bundle_id, $product['quantity'], false );
                         }
 
@@ -573,7 +573,9 @@ class SalesOrderService
                         $identifier = $matches[2];
                         
                         $removeSalesOrderMeta->sales_order_id = $updateSalesOrder->id;
-                        $removeSalesOrderMeta->amount = $product['quantity'];
+                        $removeSalesOrderMeta->quantity= $product['quantity'];
+                        $removeSalesOrderMeta->save();
+
                     } else {
 
                         if( $product['metaId'] == 'null' ){
