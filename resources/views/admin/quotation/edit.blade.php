@@ -590,7 +590,9 @@ $taxTypes = $data['tax_types'];
                         if( product.product && product.variant == null ){
 
                             let matchingWarehouse = product.product.warehouses.find(warehouse => warehouse.id === parseInt(response.warehouse_id, 10))
-
+                            console.log(matchingWarehouse)
+                            console.log(product.product.warehouses)
+                            console.log(response.warehouse_id)
                             formattedId = 'product-' + product.product.id
                             formattedPrice = ( matchingWarehouse.pivot.price && matchingWarehouse.pivot.price > 0 ) ? matchingWarehouse.pivot.price : product.product.price;
                             formattedTitle = 'Product: ' + product.product.title
