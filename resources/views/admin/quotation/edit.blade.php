@@ -212,7 +212,8 @@ $taxTypes = $data['tax_types'];
                     $( 'body' ).loading( 'stop' );
 
                     if ( error.status === 422 ) {
-                        let match = key.match(/^products\.(\d+)\.quantity$/);
+                        $.each( errors, function( key, value ) {
+                            let match = key.match(/^products\.(\d+)\.quantity$/);
                             if (match) {
                                 let index = match[1];
                                 let productRow = $(`#product-table tbody tr:eq(${index})`);
@@ -228,8 +229,9 @@ $taxTypes = $data['tax_types'];
                                     `);
                                 }
                             }else{
-                                $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                                $( fc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                             }
+                        } );
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
                         modalDanger.toggle();
