@@ -211,6 +211,9 @@ $taxTypes = $data['tax_types'];
                 error: function( error ) {
                     $( 'body' ).loading( 'stop' );
 
+                    $('#product-table tbody tr').each(function () {
+                        $(this).find('.error-message').remove();
+                    });
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
