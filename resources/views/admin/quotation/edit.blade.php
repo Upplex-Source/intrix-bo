@@ -613,7 +613,7 @@ $taxTypes = $data['tax_types'];
                         
                         if ($(`#product-${product.id}`).length === 0) {
                             productCount++
-                            let taxRate = response.tax_method.formatted_tax;
+                            let taxRate = response.tax_method ? response.tax_method.formatted_tax : 0.06;
                             let subtotal = formattedPrice * product.quantity;
                             let tax = subtotal * taxRate;
 
