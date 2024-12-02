@@ -214,7 +214,24 @@ $taxTypes = $data['tax_types'];
                     if ( error.status === 422 ) {
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
-                            $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            let match = key.match(/^products\.(\d+)\.quantity$/);
+                            if (match) {
+                                let index = match[1];
+                                let productRow = $(`#product-table tbody tr:eq(${index})`);
+                                
+                                if (productRow.length > 0) {
+                                    // Add error message below the quantity input
+                                    console.log(productRow)
+                                    console.log(productRow.find('.product-quantity').closest('td')[0].outerHTML);
+
+                                    // Append error message below the quantity input
+                                    $(productRow.find('.product-quantity').closest('td')[0]).append(`
+                                        <div class="text-danger error-message">${value[0]}</div>
+                                    `);
+                                }
+                            }else{
+                                $( fc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            }
                         } );
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
@@ -287,7 +304,8 @@ $taxTypes = $data['tax_types'];
                 delay: 250,
                 data: function(params) {
                     return {
-                        name: params.term, // search term
+                        name: params.term,
+                        warehouse: $( fc + '_warehouse' ).val(), // search term
                         status: 10,
                         start: ((params.page ? params.page : 1) - 1) * 10,
                         length: 10,

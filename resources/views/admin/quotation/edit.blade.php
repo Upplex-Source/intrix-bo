@@ -212,10 +212,24 @@ $taxTypes = $data['tax_types'];
                     $( 'body' ).loading( 'stop' );
 
                     if ( error.status === 422 ) {
-                        let errors = error.responseJSON.errors;
-                        $.each( errors, function( key, value ) {
-                            $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-                        } );
+                        let match = key.match(/^products\.(\d+)\.quantity$/);
+                            if (match) {
+                                let index = match[1];
+                                let productRow = $(`#product-table tbody tr:eq(${index})`);
+                                
+                                if (productRow.length > 0) {
+                                    // Add error message below the quantity input
+                                    console.log(productRow)
+                                    console.log(productRow.find('.product-quantity').closest('td')[0].outerHTML);
+
+                                    // Append error message below the quantity input
+                                    $(productRow.find('.product-quantity').closest('td')[0]).append(`
+                                        <div class="text-danger error-message">${value[0]}</div>
+                                    `);
+                                }
+                            }else{
+                                $( fc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            }
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
                         modalDanger.toggle();
@@ -287,7 +301,8 @@ $taxTypes = $data['tax_types'];
                 delay: 250,
                 data: function(params) {
                     return {
-                        name: params.term, // search term
+                        name: params.term,
+                        warehouse: $( fc + '_warehouse' ).val(), // search term
                         status: 10,
                         start: ((params.page ? params.page : 1) - 1) * 10,
                         length: 10,
@@ -590,9 +605,7 @@ $taxTypes = $data['tax_types'];
                         if( product.product && product.variant == null ){
 
                             let matchingWarehouse = product.product.warehouses.find(warehouse => warehouse.id === parseInt(response.warehouse_id, 10))
-                            console.log(matchingWarehouse)
-                            console.log(product.product.warehouses)
-                            console.log(response.warehouse_id)
+
                             formattedId = 'product-' + product.product.id
                             formattedPrice = ( matchingWarehouse.pivot.price && matchingWarehouse.pivot.price > 0 ) ? matchingWarehouse.pivot.price : product.product.price;
                             formattedTitle = 'Product: ' + product.product.title
