@@ -234,7 +234,7 @@ $taxTypes = $data['tax_types'];
                                 }
                             }else{
                                 $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-                            }-feedback' ).text( value );
+                            }
                         } );
                     } else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
