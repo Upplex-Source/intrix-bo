@@ -212,6 +212,7 @@ $taxTypes = $data['tax_types'];
                     $( 'body' ).loading( 'stop' );
 
                     if ( error.status === 422 ) {
+                        let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
                             let match = key.match(/^products\.(\d+)\.quantity$/);
                             if (match) {
