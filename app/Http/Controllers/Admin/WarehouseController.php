@@ -84,6 +84,36 @@ class WarehouseController extends Controller
 
         return view( 'admin.main' )->with( $this->data );
     }
+    public function warehouseStock( Request $request ) {
+
+        $this->data['header']['title'] = __( 'warehouse.warehouse_stocks' );
+        $this->data['content'] = 'admin.warehouse.warehouse_stock';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'warehouse.warehouse_stocks' ),
+                'class' => 'active',
+            ],
+        ];
+        $this->data['data']['status'] = [
+            '10' => __( 'datatables.activated' ),
+            '20' => __( 'datatables.suspended' ),
+        ];
+
+        
+        $this->data['data']['inventory_type'] = [
+            '1' => __( 'warehouse.products' ),
+            '2' => __( 'warehouse.bundles' ),
+            '3' => __( 'warehouse.variants' ),
+        ];
+
+        return view( 'admin.main' )->with( $this->data );
+    }
 
     public function allWarehouses( Request $request ) {
 
@@ -114,4 +144,10 @@ class WarehouseController extends Controller
 
         return WarehouseService::removeWarehouseGalleryImage( $request );
     }
+
+    public function oneWarehouseStock( Request $request ) {
+
+        return WarehouseService::oneWarehouseStock( $request );
+    }
+    
 }

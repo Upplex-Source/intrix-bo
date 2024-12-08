@@ -42,7 +42,7 @@ class Bundle extends Model
 
     public function warehouses()
     {
-        return $this->belongsToMany(Warehouse::class, 'bundles')
+        return $this->belongsToMany(Warehouse::class, 'warehouses_bundles')
                     ->withPivot('quantity', 'price', 'status')
                     ->withTimestamps();
     }

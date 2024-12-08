@@ -41,7 +41,7 @@ class QuotationMail extends Mailable
                 ->with(['data' => $this->data])
                 ->subject($this->getSubject())
                 ->view('admin.mail.quotation_response')
-                ->attachData($pdf->output(), 'quotation.pdf', [
+                ->attachData($pdf->output(), 'document.pdf', [
                     'mime' => 'application/pdf',
                 ]);
     }
@@ -57,6 +57,12 @@ class QuotationMail extends Mailable
         switch ($this->data['action']) {
             case 'quotation':
                 return 'Quotation';
+            case 'invoice':
+                return 'Invoice';
+            case 'sales_order':
+                return 'Sales Order';
+            case 'delivery_order':
+                return 'Delivery Order';
             default:
                 return 'Quotation';
         }

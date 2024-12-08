@@ -22,4 +22,14 @@ return [
     'url_slug' => 'URL Slug',
     'structure' => 'Structure',
     'sort' => 'Sort Order',
+
+    'products' => 'Products',
+    'amount' => 'Amount',
+    'bundles' => 'Bundles',
+    'variants' => 'Variants',
+    'product_stocks' => 'Product Stocks',
+    'bundle_stocks' => 'Bundle Stocks',
+    'variant_stocks' => 'Variant Stocks',
+    'warehouse_stocks' => 'Warehouse Stocks',
+    'inventory_type' => 'Inventory Type',
 ];

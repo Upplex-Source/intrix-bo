@@ -287,6 +287,9 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:edit warehouses' ] ], function() {
                     Route::get( 'edit', [ WarehouseController::class, 'edit' ] )->name( 'admin.warehouse.edit' );
                 } );
+                Route::group( [ 'middleware' => [ 'permission:view warehouses' ] ], function() {
+                    Route::get( 'stock', [ WarehouseController::class, 'warehouseStock' ] )->name( 'admin.warehouse.warehouseStock' );
+                } );
 
                 Route::post( 'all-warehouses', [ WarehouseController::class, 'allWarehouses' ] )->name( 'admin.warehouse.allWarehouses' );
                 Route::post( 'one-warehouse', [ WarehouseController::class, 'oneWarehouse' ] )->name( 'admin.warehouse.oneWarehouse' );
@@ -294,6 +297,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-warehouse', [ WarehouseController::class, 'updateWarehouse' ] )->name( 'admin.warehouse.updateWarehouse' );
                 Route::post( 'update-warehouse-status', [ WarehouseController::class, 'updateWarehouseStatus' ] )->name( 'admin.warehouse.updateWarehouseStatus' );
                 Route::post( 'remove-warehouse-gallery-image', [ WarehouseController::class, 'removeWarehouseGalleryImage' ] )->name( 'admin.warehouse.removeWarehouseGalleryImage' );
+                Route::post( 'one-warehouse-stock', [ WarehouseController::class, 'oneWarehouseStock' ] )->name( 'admin.warehouse.oneWarehouseStock' );
             } );
 
             // new routes

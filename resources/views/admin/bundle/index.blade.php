@@ -44,6 +44,11 @@ $columns = [
         'id' => 'title',
         'title' => __( 'bundle.title' ),
     ],
+    [
+        'type' => 'default',
+        'id' => 'warehouses',
+        'title' => __( 'bundle.warehouses' ),
+    ],
     // [
     //     'type' => 'default',
     //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'bundle.number_of_product' ) ] ),
@@ -117,6 +122,7 @@ var statusMapper = @json( $data['status'] ),
             { data: 'created_at' },
             { data: 'image_path' },
             { data: 'title' },
+            { data: 'warehouses' },
             // { data: 'number_of_product' },
             // { data: 'stock_quantity' },
             // { data: 'stock_worth' },
@@ -172,6 +178,29 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return statusMapper[data];
+                },
+            },
+            {
+                targets: parseInt('{{ Helper::columnIndex( $columns, "warehouses" ) }}'),
+                width: '10%',
+                render: function(data, type, row, meta) {
+                    // Check if data is an array
+
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return '-';
+                        }
+                        return data
+                            .map(item => {
+                                // Check if the title and quantity exist
+                                const title = item?.title?.length > 0 ? item.title : '-';
+                                const quantity = item?.pivot.quantity != null ? item.pivot.quantity : '-';
+                                return `${title}: ${quantity}`;
+                            })
+                            .join('<br>'); // Join titles with line breaks
+                    }
+
+                    return '-'; // Fallback if not an array
                 },
             },
             {

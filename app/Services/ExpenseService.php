@@ -225,32 +225,44 @@ class ExpenseService
             }
         }
 
-            $expenseCount = $expense->count();
+        $expenseCount = $expense->count();
 
-            $limit = $request->length;
-            $offset = $request->start;
+        $limit = $request->length;
+        $offset = $request->start;
 
-            $expenses = $expense->skip( $offset )->take( $limit )->get();
+        $expenses = $expense->skip( $offset )->take( $limit )->get();
+        $subTotal = 0;
+        if ( $expenses ) {
+            $expenses->append( [
+                'encrypted_id',
+                'attachment_path',
+            ] );
 
-            if ( $expenses ) {
-                $expenses->append( [
-                    'encrypted_id',
-                    'attachment_path',
-                ] );
+            foreach ( $expenses as $expense ) {
+                $subTotal += $expense->amount;
             }
+        }
 
-            $totalRecord = Expense::count();
+        $totalRecord = Expense::count();
 
-            $data = [
-                'expenses' => $expenses,
-                'draw' => $request->draw,
-                'recordsFiltered' => $filter ? $expenseCount : $totalRecord,
-                'recordsTotal' => $totalRecord,
-            ];
+        $expenseObject = Expense::select( DB::raw( 'COUNT(*) as total, SUM(amount) AS grand_total' ) )->first();
+        $grandTotal = $expenseObject->grand_total;
+        $totalRecord = $expenseObject->total;
 
-            return response()->json( $data );
+        $data = [
+            'expenses' => $expenses,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $expenseCount : $totalRecord,
+            'recordsTotal' => $totalRecord,
+            'subTotal' => [
+                Helper::numberFormat( $subTotal, 2 )
+            ],
+            'grandTotal' => [
+                Helper::numberFormat( $grandTotal, 2 )
+            ],
+        ];
 
-              
+        return response()->json( $data );
     }
 
     private static function filter( $request, $model ) {

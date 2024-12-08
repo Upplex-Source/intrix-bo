@@ -62,6 +62,21 @@ $columns = [
         'id' => 'title',
         'title' => __( 'warehouse.title' ),
     ],
+    [
+        'type' => 'default',
+        'id' => 'products',
+        'title' => __( 'warehouse.products' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'variants',
+        'title' => __( 'warehouse.variants' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'bundles',
+        'title' => __( 'warehouse.bundles' ),
+    ],
     // [
     //     'type' => 'default',
     //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'warehouse.number_of_product' ) ] ),
@@ -135,6 +150,9 @@ var statusMapper = @json( $data['status'] ),
             { data: 'created_at' },
             { data: 'image_path' },
             { data: 'title' },
+            { data: 'products' },
+            { data: 'variants' },
+            { data: 'bundles' },
             // { data: 'number_of_product' },
             // { data: 'stock_quantity' },
             // { data: 'stock_worth' },
@@ -180,6 +198,75 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
+                targets: parseInt('{{ Helper::columnIndex( $columns, "products" ) }}'),
+                width: '10%',
+                render: function(data, type, row, meta) {
+                    // Check if data is an array
+
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return '-';
+                        }
+                        return data
+                            .map(item => {
+                                // Check if the title and quantity exist
+                                const title = item?.title?.length > 0 ? item.title : '-';
+                                const quantity = item?.pivot.quantity != null ? item.pivot.quantity : '-';
+                                return `${title}: ${quantity}`;
+                            })
+                            .join('<br>'); // Join titles with line breaks
+                    }
+
+                    return '-'; // Fallback if not an array
+                },
+            },
+            {
+                targets: parseInt('{{ Helper::columnIndex( $columns, "variants" ) }}'),
+                width: '10%',
+                render: function(data, type, row, meta) {
+                    // Check if data is an array
+
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return '-';
+                        }
+                        return data
+                            .map(item => {
+                                // Check if the title and quantity exist
+                                const title = item?.title?.length > 0 ? item.title : '-';
+                                const quantity = item?.pivot.quantity != null ? item.pivot.quantity : '-';
+                                return `${title}: ${quantity}`;
+                            })
+                            .join('<br>'); // Join titles with line breaks
+                    }
+
+                    return '-'; // Fallback if not an array
+                },
+            },
+            {
+                targets: parseInt('{{ Helper::columnIndex( $columns, "bundles" ) }}'),
+                width: '10%',
+                render: function(data, type, row, meta) {
+                    // Check if data is an array
+
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return '-';
+                        }
+                        return data
+                            .map(item => {
+                                // Check if the title and quantity exist
+                                const title = item?.title?.length > 0 ? item.title : '-';
+                                const quantity = item?.pivot.quantity != null ? item.pivot.quantity : '-';
+                                return `${title}: ${quantity}`;
+                            })
+                            .join('<br>'); // Join titles with line breaks
+                    }
+
+                    return '-'; // Fallback if not an array
+                },
+            },
+            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "remarks" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
@@ -204,7 +291,7 @@ var statusMapper = @json( $data['status'] ),
 
                     @can( 'edit warehouses' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
-                    // edit = '<li class="dt-stock" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view_inventories' ) }}</span></a></li>';
+                    edit += '<li class="dt-stock" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view_inventories' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete warehouses' )
@@ -270,33 +357,9 @@ var statusMapper = @json( $data['status'] ),
         } );
 
         $( document ).on( 'click', '.dt-stock', function() {
+            window.location.href = '{{ route( 'admin.warehouse.warehouseStock' ) }}?id=' + $( this ).data( 'id' );
+        } );
 
-            $productsList.html('<p>{{ __("warehouse.loading_products") }}</p>');
-
-            $.ajax({
-                url: '{{ route( 'admin.warehouse.oneWarehouse' ) }}',
-                method: 'GET',
-                data: {
-                    'id': $( this ).data( 'id' ),
-                    '_token': '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.products.length > 0) {
-                        let productHtml = '<ul class="list-group">';
-                        response.products.forEach(product => {
-                            productHtml += `<li class="list-group-item">${product.name} (RM ${product.price})</li>`;
-                        });
-                        productHtml += '</ul>';
-                        $productsList.html(productHtml);
-                    } else {
-                        $productsList.html('<p>{{ __("warehouse.no_products_found") }}</p>');
-                    }
-                },
-                error: function () {
-                    $productsList.html('<p>{{ __("warehouse.error_loading_products") }}</p>');
-                }
-            });
-        });
 
     } );
 </script>

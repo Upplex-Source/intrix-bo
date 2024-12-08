@@ -255,7 +255,7 @@ class BundleService
 
      public static function allBundles( $request ) {
 
-        $bundles = Bundle::with(['products']);
+        $bundles = Bundle::with(['products', 'warehouses']);
 
         $filterObject = self::filter( $request, $bundles );
         $bundle = $filterObject['model'];

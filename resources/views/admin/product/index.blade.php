@@ -64,8 +64,8 @@ $columns = [
     ],
     [
         'type' => 'default',
-        'id' => 'quantity',
-        'title' => __( 'product.quantity' ),
+        'id' => 'warehouse',
+        'title' => __( 'product.warehouse' ),
     ],
     [
         'type' => 'input',
@@ -164,7 +164,7 @@ var statusMapper = @json( $data['status'] ),
             { data: 'product_code' },
             { data: 'brand' },
             { data: 'categories' },
-            { data: 'quantity' },
+            { data: 'warehouses' },
             { data: 'unit' },
             { data: 'price' },
             { data: 'cost' },
@@ -265,6 +265,29 @@ var statusMapper = @json( $data['status'] ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-' ;
+                },
+            },
+            {
+                targets: parseInt('{{ Helper::columnIndex( $columns, "warehouse" ) }}'),
+                width: '10%',
+                render: function(data, type, row, meta) {
+                    // Check if data is an array
+
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return '-';
+                        }
+                        return data
+                            .map(item => {
+                                // Check if the title and quantity exist
+                                const title = item?.title?.length > 0 ? item.title : '-';
+                                const quantity = item?.pivot.quantity != null ? item.pivot.quantity : '-';
+                                return `${title}: ${quantity}`;
+                            })
+                            .join('<br>'); // Join titles with line breaks
+                    }
+
+                    return '-'; // Fallback if not an array
                 },
             },
             {

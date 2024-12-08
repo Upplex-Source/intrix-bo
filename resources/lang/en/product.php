@@ -71,6 +71,8 @@ return [
     'promotion_price' => 'Promotion Price',
 
     'adjustment' => 'Adjustment',
+    'warehouse' => 'Warehouse',
+    'warehouse_stock' => 'Warehouse Stock',
     'sku' => 'SKU',
 
 ];

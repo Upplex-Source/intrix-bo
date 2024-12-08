@@ -201,9 +201,9 @@ class WarehouseService
         ] );
     }
 
-     public static function allWarehouses( $request ) {
+    public static function allWarehouses( $request ) {
 
-        $warehouses = Warehouse::select( 'warehouses.*');
+        $warehouses = Warehouse::with( 'products', 'bundles', 'variants' )->select( 'warehouses.*');
 
         $filterObject = self::filter( $request, $warehouses );
         $warehouse = $filterObject['model'];
@@ -398,4 +398,130 @@ class WarehouseService
         return $warehouses;
               
     }
+    
+    public static function oneWarehouseStock($request)
+    {
+        // Decode the warehouse ID from the request
+        $request->merge([
+            'id' => Helper::decode($request->id),
+        ]);
+    
+        // Fetch the warehouse and related inventory data
+        $warehouse = Warehouse::findOrFail($request->id);
+    
+        // Collect products, bundles, and variants as inventory items
+        $products = $warehouse->products->map(function ($product) {
+            return [
+                'type' => 1,
+                'name' => $product->title,
+                'quantity' => $product->pivot->quantity,
+                'price' => $product->pivot->price,
+                'status' => 10,
+            ];
+        });
+    
+        $bundles = $warehouse->bundles->map(function ($bundle) {
+            return [
+                'type' => 2,
+                'name' => $bundle->title,
+                'quantity' => $bundle->pivot->quantity,
+                'price' => $bundle->pivot->price,
+                'status' => 10,
+            ];
+        });
+    
+        $variants = $warehouse->variants->map(function ($variant) {
+            return [
+                'type' => 3,
+                'name' => $variant->title,
+                'quantity' => $variant->pivot->quantity,
+                'price' => $variant->pivot->price,
+                'status' => 10,
+            ];
+        });
+    
+        // Combine all inventory data
+        $inventory = $products->merge($variants)->merge($bundles);
+        $grandTotal = $inventory->sum(function ($item) {
+            return $item['quantity'];
+        });
+
+        // Filter inventory data
+        $filterObject = self::filterInventory($request, $inventory);
+        $filteredInventory = $filterObject['inventory'];
+    
+        if ($request->has('order.0.column') && $request->input('order.0.column') != 0) {
+            $columnIndex = $request->input('order.0.column');
+            $dir = $request->input('order.0.dir', 'asc');
+            
+            // Map DataTables column index to inventory keys
+            $columns = [
+                1 => 'type',
+                2 => 'name',
+                3 => 'quantity',
+                4 => 'status',
+            ];
+            
+            $columnKey = $columns[$columnIndex] ?? null;
+        
+            if ($columnKey) {
+                $filteredInventory = $filteredInventory->sortBy([
+                    [$columnKey, $dir === 'asc' ? SORT_ASC : SORT_DESC],
+                ]);
+            }
+        }
+        
+        // Pagination
+        $limit = $request->length ?? 10;
+        $offset = $request->start ?? 0;
+        $paginatedInventory = $filteredInventory->slice($offset, $limit);
+
+        $subTotal = $filteredInventory->sum(function ($item) {
+            return $item['quantity'];
+        });
+    
+        // Prepare the response
+        $data = [
+            'inventory' => $paginatedInventory->values(),
+            'draw' => $request->draw,
+            'recordsFiltered' => $filteredInventory->count(),
+            'recordsTotal' => $inventory->count(),
+            'subTotal' => [
+                Helper::numberFormat( $subTotal, 2 )
+            ],
+            'grandTotal' => [
+                Helper::numberFormat( $grandTotal, 2 )
+            ],
+        ];
+    
+        return response()->json($data);
+    }
+    
+    private static function filterInventory($request, $inventory)
+    {
+        // Filter based on request parameters
+        $filteredInventory = $inventory->filter(function ($item) use ($request) {
+            $match = true;
+    
+            if (!empty($request->type)) {
+                $match = $match && $item['type'] == $request->type;
+            }
+    
+            if (!empty($request->status)) {
+                $match = $match && $item['status'] == $request->status;
+            }
+
+            if (!empty($request->products)) {
+                $match = $match && str_contains(strtolower($item['name']), strtolower($request->products));
+            }
+    
+            return $match;
+        });
+    
+        return [
+            'inventory' => $filteredInventory,
+        ];
+    }
+    
+    
 }

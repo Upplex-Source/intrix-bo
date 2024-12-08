@@ -29,7 +29,32 @@ document.addEventListener( 'DOMContentLoaded', function() {
         <"row align-items-center"
         <"col-sm-12 col-md-7"p>
         <"col-sm-12 col-md-5 text-start text-md-end"i>
-        >`,
+        >`, buttons: [
+            {
+                extend: 'csvHtml5',
+                text: 'Export CSV',
+                exportOptions: {
+                    // Specify columns to include in export (exclude action columns, etc.)
+                    columns: ':not(:last-child)',
+                },
+            },
+            {
+                extend: 'excelHtml5',
+                text: 'Export Excel',
+                exportOptions: {
+                    columns: ':not(:last-child)',
+                },
+            },
+            {
+                extend: 'pdfHtml5',
+                text: 'Export PDF',
+                orientation: 'portrait',
+                pageSize: 'A4',
+                exportOptions: {
+                    columns: ':not(:last-child)',
+                },
+            },
+        ],
         createdRow: function( row ) {
             $( row ).addClass( 'nk-tb-item' );
         },

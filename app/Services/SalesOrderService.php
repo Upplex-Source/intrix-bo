@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\{
     Mail,
 };
 
-use App\Mail\SalesOrderMail;
+use App\Mail\QuotationMail;
 
 use Helper;
 
@@ -1054,8 +1054,8 @@ class SalesOrderService
         try {
 
             $salesorder = SalesOrder::with( [ 'salesOrderMetas.product.warehouses','salesOrderMetas.bundle','salesOrderMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
-
-            Mail::to( $salesorder->customer->email )->send(new SalesOrderMail( $updateSalesOrder ));
+            $salesorder->action = 'sales_order';
+            Mail::to( $salesorder->customer->email )->send(new QuotationMail( $salesorder ));
 
             DB::commit();
 

@@ -97,15 +97,25 @@
                                 @endcan
                                 
                                 @can( 'view Warehouse' )
-                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WarehouseController' ? 'active current-page' : '' }}">
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WarehouseController' && in_array( $action, [ 'index', 'edit' ] ) ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.warehouse.index' ) }}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-inbox"></em></span>
                                             <span class="nk-menu-text">{{ __( 'template.warehouses' ) }}</span>
                                         </a>
                                     </li>
                                 @endcan
-
                                 
+                                @if( 1 == 2 )
+                                    @can( 'view Warehouse' )
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WarehouseController' && $action == 'warehouseStock' ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.warehouse.warehouseStock' ) }}" class="nk-menu-link">
+                                                <span class="nk-menu-icon"><em class="icon ni ni-inbox"></em></span>
+                                                <span class="nk-menu-text">{{ __( 'warehouse.warehouse_stocks' ) }}</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                @endif
+
                                 @can( 'view TaxMethods' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\TaxMethodController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.tax_method.index' ) }}" class="nk-menu-link">

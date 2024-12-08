@@ -22,6 +22,12 @@
 
 <?php
 $columns = [
+
+    [
+        'type' => 'default',
+        'id' => 'select_row',
+        'title' => '',
+    ],
     [
         'type' => 'default',
         'id' => 'dt_no',
@@ -50,24 +56,6 @@ $columns = [
         'id' => 'parent_category',
         'title' => __( 'category.parent_category' ),
     ],
-    // [
-    //     'type' => 'default',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'category.number_of_product' ) ] ),
-    //     'id' => 'number_of_product',
-    //     'title' => __( 'category.number_of_product' ),
-    // ],
-    // [
-    //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'category.stock_quantity' ) ] ),
-    //     'id' => 'stock_quantity',
-    //     'title' => __( 'category.stock_quantity' ),
-    // ],
-    // [
-    //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'category.stock_worth' ) ] ),
-    //     'id' => 'stock_worth',
-    //     'title' => __( 'category.stock_worth' ),
-    // ],
     [
         'type' => 'select',
         'options' => $data['status'],
@@ -120,17 +108,24 @@ var statusMapper = @json( $data['status'] ),
         order: [[ 2, 'desc' ]],
         columns: [
             { data: null },
+            { data: null },
             { data: 'created_at' },
             { data: 'image_path' },
             { data: 'title' },
             { data: 'parent.title' },
-            // { data: 'number_of_product' },
-            // { data: 'stock_quantity' },
-            // { data: 'stock_worth' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [
+            {
+                // Add checkboxes to the first column
+                targets: 0,
+                orderable: false,
+                className: 'text-center',
+                render: function (data, type, row) {
+                    return `<input type="checkbox" class="select-row" data-id="${row.encrypted_id}">`;
+                },
+            },
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
                 orderable: false,
@@ -225,6 +220,26 @@ var statusMapper = @json( $data['status'] ),
     timeout = null;
 
     document.addEventListener( 'DOMContentLoaded', function() {
+
+        $(document).on('click', '#export-data', function () {
+            let selectedRows = [];
+            $('.select-row:checked').each(function () {
+                selectedRows.push($(this).data('id'));
+            });
+
+            if (selectedRows.length > 0) {
+                console.log('Exporting selected rows:', selectedRows);
+                // Implement your export logic here (e.g., send selectedRows to the server)
+            } else {
+                console.log('Exporting all data');
+                // Implement logic to export all data (e.g., fetch all rows from the server)
+            }
+        });
+
+        // Select/Deselect All Functionality
+        $(document).on('change', '#select-all', function () {
+            $('.select-row').prop('checked', $(this).is(':checked'));
+        });
 
         $( '#created_date' ).flatpickr( {
             mode: 'range',

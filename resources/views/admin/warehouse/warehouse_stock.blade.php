@@ -1,22 +1,24 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.expenses' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.warehouse_stocks' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add expenses' )
-        <div class="nk-block-head-content">
-            <div class="toggle-wrap nk-block-tools-toggle">
-                <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
-                <div class="toggle-expand-content" data-content="pageMenu">
-                    <ul class="nk-block-tools g-3">
-                        <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.expense.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
-                        </li>
-                    </ul>
+        <div class="modal fade" id="warehouse_product_history_modal" tabindex="-1" role="dialog" aria-labelledby="warehouseProductsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ __('template.warehouse_products') }}</h5>
+                        <a href="#" class="close" data-bs-dismiss="modal" aria-label="Close"><em class="icon ni ni-cross"></em></a>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div id="warehouse_products_list" class="mt-3">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div><!-- .nk-block-head-content -->
-        @endcan
+        </div>  
 
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -29,47 +31,23 @@ $columns = [
         'title' => 'No.',
     ],
     [
-        'type' => 'date',
-        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
-        'id' => 'created_date',
-        'title' => __( 'datatables.created_date' ),
+        'type' => 'select',
+        'options' => $data['inventory_type'],
+        'id' => 'type',
+        'title' => __( 'warehouse.inventory_type' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'expense.reference' ) ] ),
-        'id' => 'reference',
-        'title' => __( 'expense.reference' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'expense.expenses_account' ) ] ),
-        'id' => 'expenses_account',
-        'title' => __( 'expense.expenses_account' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'expense.expenses_category' ) ] ),
-        'id' => 'expenses_category',
-        'title' => __( 'expense.expenses_category' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'expense.title' ) ] ),
-        'id' => 'title',
-        'title' => __( 'expense.title' ),
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'warehouse.products' ) ] ),
+        'id' => 'products',
+        'title' => __( 'warehouse.products' ),
         'preAmount' => true,
     ],
     [
         'type' => 'default',
         'id' => 'amount',
-        'title' => __( 'expense.amount' ),
+        'title' => __( 'warehouse.amount' ),
         'amount' => true,
-    ],
-    [
-        'type' => 'select',
-        'options' => $data['status'],
-        'id' => 'status',
-        'title' => __( 'datatables.status' ),
     ],
     [
         'type' => 'default',
@@ -79,7 +57,7 @@ $columns = [
 ];
 ?>
 
-<x-data-tables id="expense_table" enableFilter="true" enableFooter="true" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="warehouse_table" enableFilter="true" enableFooter="true" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -92,8 +70,9 @@ window['{{ $column['id'] }}'] = '';
 @endforeach
 
 var statusMapper = @json( $data['status'] ),
+    typeMapper = @json( $data['inventory_type'] ),
     dt_table,
-    dt_table_name = '#expense_table',
+    dt_table_name = '#warehouse_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -107,23 +86,20 @@ var statusMapper = @json( $data['status'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.expense.allExpenses' ) }}',
+            url: '{{ route( 'admin.warehouse.oneWarehouseStock' ) }}',
             data: {
+                'id' : '{{ request( 'id' ) }}',
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'expenses',
+            dataSrc: 'inventory',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
         columns: [
             { data: null },
-            { data: 'created_at' },
-            { data: 'reference' },
-            { data: 'expenses_account' },
-            { data: 'expenses_category' },
-            { data: 'title' },
-            { data: 'amount' },
-            { data: 'status' },
+            { data: 'type' },
+            { data: 'name' },
+            { data: 'quantity' },
             { data: 'encrypted_id' },
         ],
         columnDefs: [
@@ -158,48 +134,37 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "product" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    if (Array.isArray(data)) {
-                        return data
-                            .map(item => item.product?.title || '-') 
-                            .join('<br>'); 
-                    }
-                    return '-'; // Return '-' if no valid data
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "expenses_account" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data.title : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "expenses_category" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data ? data.title : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "reference" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "parent_warehouse" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-' ;
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "quantity" ) }}' ),
+                targets: parseInt('{{ Helper::columnIndex( $columns, "products" ) }}'),
+                render: function(data, type, row, meta) {
+                    return data ? data : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "remarks" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    if (Array.isArray(data)) {
-                        return data
-                            .map(item => item?.amount || '-') 
-                            .join('<br>'); 
-                    }
-                    return '-'; // Return '-' if no valid data
+                    return data ? data : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "type" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return typeMapper[data];
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "amount" ) }}' ),
+                className: 'text-end',
+
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
                 },
             },
             {
@@ -211,18 +176,19 @@ var statusMapper = @json( $data['status'] ),
             {
                 targets: parseInt( '{{ count( $columns ) - 1 }}' ),
                 orderable: false,
-                width: '1%',
+                width: '10%',
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit expenses', 'delete expenses' ] )
+                    @canany( [ 'edit warehouses', 'delete warehouses' ] )
                     let edit, status = '';
 
-                    @can( 'edit expenses' )
+                    @can( 'edit warehouses' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    // edit = '<li class="dt-stock" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view_inventories' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'delete expenses' )
+                    @can( 'delete warehouses' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
@@ -263,13 +229,13 @@ var statusMapper = @json( $data['status'] ),
         } );
 
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.expense.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.warehouse.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
 
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.expense.updateExpenseStatus' ) }}',
+                url: '{{ route( 'admin.warehouse.updateWarehouseStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),
@@ -283,6 +249,36 @@ var statusMapper = @json( $data['status'] ),
                 },
             } );
         } );
+
+        $( document ).on( 'click', '.dt-stock', function() {
+
+            $productsList.html('<p>{{ __("warehouse.loading_products") }}</p>');
+
+            $.ajax({
+                url: '{{ route( 'admin.warehouse.oneWarehouse' ) }}',
+                method: 'GET',
+                data: {
+                    'id': $( this ).data( 'id' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.products.length > 0) {
+                        let productHtml = '<ul class="list-group">';
+                        response.products.forEach(product => {
+                            productHtml += `<li class="list-group-item">${product.name} (RM ${product.price})</li>`;
+                        });
+                        productHtml += '</ul>';
+                        $productsList.html(productHtml);
+                    } else {
+                        $productsList.html('<p>{{ __("warehouse.no_products_found") }}</p>');
+                    }
+                },
+                error: function () {
+                    $productsList.html('<p>{{ __("warehouse.error_loading_products") }}</p>');
+                }
+            });
+        });
+
     } );
 </script>
 

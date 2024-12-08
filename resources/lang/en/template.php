@@ -119,6 +119,7 @@ return [
     'warehouses' => 'Warehouses',
     'parents' => 'Parents',
     'warehouse_products' => 'Warehouse Products',
+    'warehouse_stocks' => 'Warehouse Stocks',
     'stock_info' => 'Stock Info',
     'bundle_products' => 'Bundle Products',
     'purchases' => 'Purchases',

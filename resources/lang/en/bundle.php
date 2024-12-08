@@ -28,4 +28,7 @@ return [
     'promotion_end' => 'Promotion End',
     'price' => 'Price',
     'promotion_price' => 'Promotion Price',
+
+    'warehouses' => 'Warehouses',
+    'warehouse_stocks' => 'Warehouse Stocks',
 ];
