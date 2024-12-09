@@ -10,6 +10,11 @@
 $columns = [
     [
         'type' => 'default',
+        'id' => 'select_row',
+        'title' => '',
+    ],
+    [
+        'type' => 'default',
         'id' => 'dt_no',
         'title' => 'No.',
     ],
@@ -76,6 +81,7 @@ var dt_table,
         order: [[ 1, 'desc' ]],
         columns: [
             { data: null },
+            { data: null },
             { data: 'created_at' },
             { data: 'name' },
             { data: 'guard_name' },
@@ -118,4 +124,4 @@ var dt_table,
     } );
 </script>
 
-<script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/dataTable.init.js' ) . Helper::assetVersion() }}"></script>

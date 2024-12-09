@@ -24,6 +24,11 @@
 $columns = [
     [
         'type' => 'default',
+        'id' => 'select_row',
+        'title' => '',
+    ],
+    [
+        'type' => 'default',
         'id' => 'dt_no',
         'title' => 'No.',
     ],
@@ -164,4 +169,4 @@ $columns = [
     } );
 </script>
 
-<script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/dataTable.init.js' ) . Helper::assetVersion() }}"></script>

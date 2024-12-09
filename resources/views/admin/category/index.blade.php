@@ -130,8 +130,10 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
                 orderable: false,
                 width: '1%',
-                render: function( data, type, row, meta ) {
-                    return table_no += 1;
+                render: function (data, type, row, meta) {
+                    // Calculate the row number dynamically based on the page info
+                    const pageInfo = dt_table.page.info();
+                    return pageInfo.start + meta.row + 1; // Adjust for 1-based numbering
                 },
             },
             {
@@ -271,7 +273,11 @@ var statusMapper = @json( $data['status'] ),
                 },
             } );
         } );
+
+        $('#select-all').on('change', function () {
+            $('.select-row').prop('checked', this.checked);
+        });
     } );
 </script>
 
-<script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/dataTable.init.js' ) . Helper::assetVersion() }}"></script>

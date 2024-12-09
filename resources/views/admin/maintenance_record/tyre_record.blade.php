@@ -24,6 +24,11 @@
 $columns = [
     [
         'type' => 'default',
+        'id' => 'select_row',
+        'title' => '',
+    ],
+    [
+        'type' => 'default',
         'id' => 'dt_no',
         'title' => 'No.',
     ],
@@ -107,6 +112,7 @@ var dt_table,
         order: [[ 1, 'desc' ]],
         columns: [
             { data: null },
+            { data: null },
             { data: 'local_purchase_date' },
             { data: 'purchase_bill_reference' },
             { data: 'vehicle' },
@@ -116,12 +122,24 @@ var dt_table,
             { data: 'encrypted_id' },
         ],
         columnDefs: [
+
+            {
+                // Add checkboxes to the first column
+                targets: 0,
+                orderable: false,
+                className: 'text-center',
+                render: function (data, type, row) {
+                    return `<input type="checkbox" class="select-row" data-id="${row.encrypted_id}">`;
+                },
+            },
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
                 orderable: false,
                 width: '1%',
-                render: function( data, type, row, meta ) {
-                    return table_no += 1;
+                render: function (data, type, row, meta) {
+                    // Calculate the row number dynamically based on the page info
+                    const pageInfo = dt_table.page.info();
+                    return pageInfo.start + meta.row + 1; // Adjust for 1-based numbering
                 },
             },
             {
@@ -212,4 +230,4 @@ var dt_table,
 
 </script>
 
-<script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/dataTable.init.js' ) . Helper::assetVersion() }}"></script>

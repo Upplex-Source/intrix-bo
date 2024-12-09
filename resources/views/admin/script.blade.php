@@ -1,18 +1,29 @@
     <script src="{{ asset( 'admin/js/bundle.js' ) }}"></script>
     <script src="{{ asset( 'admin/js/scripts.js' ) }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+    {{-- <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script> --}}
     <script src="{{ asset( 'admin/js/jquery.loading.min.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/flatpickr-4.6.13.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/flatpickr-monthSelect.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/select2.min.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/notification-helper.js' ) . Helper::assetVersion() }}"></script>
 
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
+
+    <!-- JSZip for Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- pdfMake for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <!-- Buttons for HTML5 export -->
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
     
     <script>
 

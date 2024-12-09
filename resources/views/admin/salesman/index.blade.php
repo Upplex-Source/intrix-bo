@@ -22,6 +22,11 @@
 $columns = [
     [
         'type' => 'default',
+        'id' => 'select_row',
+        'title' => '',
+    ],
+    [
+        'type' => 'default',
         'id' => 'dt_no',
         'title' => 'No.',
     ],
@@ -101,6 +106,15 @@ $columns = [
                 { data: 'id' },
             ],
             columnDefs: [
+                {
+                    // Add checkboxes to the first column
+                    targets: 0,
+                    orderable: false,
+                    className: 'text-center',
+                    render: function (data, type, row) {
+                        return `<input type="checkbox" class="select-row" data-id="${row.encrypted_id}">`;
+                    },
+                },
                 {
                     targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
                     orderable: false,
@@ -186,4 +200,4 @@ $columns = [
     } );
 </script>
 
-<script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/dataTable.init.js' ) . Helper::assetVersion() }}"></script>

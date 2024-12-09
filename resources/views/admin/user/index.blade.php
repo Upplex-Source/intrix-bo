@@ -24,6 +24,11 @@
 $columns = [
     [
         'type' => 'default',
+        'id' => 'select_row',
+        'title' => '',
+    ],
+    [
+        'type' => 'default',
         'id' => 'dt_no',
         'title' => 'No.',
     ],
@@ -102,6 +107,7 @@ var statusMapper = @json( $data['status'] ),
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
         columns: [
+            { data: null },
             { data: null },
             { data: 'created_at' },
             { data: 'username' },
@@ -237,4 +243,4 @@ var statusMapper = @json( $data['status'] ),
     } );
 </script>
 
-<script src="{{ asset( 'admin/js/dataTable.init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/dataTable.init.js' ) . Helper::assetVersion() }}"></script>

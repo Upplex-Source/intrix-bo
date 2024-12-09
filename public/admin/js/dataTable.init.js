@@ -1,13 +1,19 @@
+
 document.addEventListener( 'DOMContentLoaded', function() {
 
-    dt_table = $( dt_table_name ).DataTable( {
+    dt_table = $(dt_table_name).DataTable({
         language: dt_table_config.language,
+        layout: {
+            topStart: {
+                buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5']
+            }
+        },
         ajax: {
             type: 'POST',
             url: dt_table_config.ajax.url,
             data: dt_table_config.ajax.data,
             dataSrc: dt_table_config.ajax.dataSrc,
-            error: function( xhr, error, code ) {
+            error: function (xhr, error, code) {
                 console.log(xhr);
                 console.log(error);
                 console.log(code);
@@ -22,61 +28,152 @@ document.addEventListener( 'DOMContentLoaded', function() {
         searchCols: dt_table_config.searchCols ? dt_table_config.searchCols : [],
         columns: dt_table_config.columns,
         columnDefs: dt_table_config.columnDefs,
-        dom: `<"row justify-between g-2"
-        <"col-7 col-sm-4 text-start"f>
-        <"col-5 col-sm-8 text-end"l>>
-        <"datatable-wrap my-3"t>
-        <"row align-items-center"
-        <"col-sm-12 col-md-7"p>
-        <"col-sm-12 col-md-5 text-start text-md-end"i>
-        >`, buttons: [
+        searching: false, // Disable the search bar
+        dom: 'Bfrtip', // Include buttons in the DataTable layout
+        buttons: [
             {
-                extend: 'csvHtml5',
-                text: 'Export CSV',
+                extend: 'copyHtml5',
+                text: '<i class="fa fa-copy"></i>', // Copy icon
+                className: 'btn btn-light', // Optional: Bootstrap styling
+                titleAttr: 'Copy to clipboard', // Tooltip
                 exportOptions: {
-                    // Specify columns to include in export (exclude action columns, etc.)
-                    columns: ':not(:last-child)',
+                    rows: function (idx, data, node) {
+                        let exportOnlySelected = $("#exportSelected").is(":checked");
+                        if (exportOnlySelected) {
+                            // Check if the checkbox in the row is checked
+                            let checkbox = $(node).find('.select-row');
+                            return checkbox.is(':checked');
+                        } else {
+                            // Export all rows
+                            return true;
+                        }
+                    },
+                    columns: ':not(:last-child)'
                 },
+                customize: function (win) {
+                    console.log('s')
+                    $(win.document).find('.dt-button').removeClass('dt-button');
+                }
+
             },
             {
                 extend: 'excelHtml5',
-                text: 'Export Excel',
+                text: '<i class="fa fa-file-excel"></i>', // Excel icon
+                className: 'btn btn-success',
+                titleAttr: 'Export to Excel',
                 exportOptions: {
-                    columns: ':not(:last-child)',
+                    rows: function (idx, data, node) {
+                        let exportOnlySelected = $("#exportSelected").is(":checked");
+                        if (exportOnlySelected) {
+                            // Check if the checkbox in the row is checked
+                            let checkbox = $(node).find('.select-row');
+                            return checkbox.is(':checked');
+                        } else {
+                            // Export all rows
+                            return true;
+                        }
+                    },
+                    columns: ':not(:last-child)'
                 },
+                customize: function (win) {
+                    // Remove the dt-button class from the export buttons
+                    $(win.document).find('.dt-button').removeClass('dt-button');
+                }
+
+            },
+            {
+                extend: 'csvHtml5',
+                text: '<i class="fa fa-file-csv"></i>', // CSV icon
+                className: 'btn btn-info',
+                titleAttr: 'Export to CSV',
+                exportOptions: {
+                    rows: function (idx, data, node) {
+                        let exportOnlySelected = $("#exportSelected").is(":checked");
+                        if (exportOnlySelected) {
+                            // Check if the checkbox in the row is checked
+                            let checkbox = $(node).find('.select-row');
+                            return checkbox.is(':checked');
+                        } else {
+                            // Export all rows
+                            return true;
+                        }
+                    },
+                    columns: ':not(:last-child)'
+                },
+                customize: function (win) {
+                    // Remove the dt-button class from the export buttons
+                    $(win.document).find('.dt-button').removeClass('dt-button');
+                }
+
             },
             {
                 extend: 'pdfHtml5',
-                text: 'Export PDF',
-                orientation: 'portrait',
-                pageSize: 'A4',
+                text: '<i class="fa fa-file-pdf"></i>', // PDF icon
+                className: 'btn btn-danger',
+                titleAttr: 'Export to PDF',
                 exportOptions: {
-                    columns: ':not(:last-child)',
+                    rows: function (idx, data, node) {
+                        let exportOnlySelected = $("#exportSelected").is(":checked");
+                        if (exportOnlySelected) {
+                            // Check if the checkbox in the row is checked
+                            let checkbox = $(node).find('.select-row');
+                            return checkbox.is(':checked');
+                        } else {
+                            // Export all rows
+                            return true;
+                        }
+                    },
+                    columns: ':not(:last-child)'
                 },
+                customize: function (win) {
+                    // Remove the dt-button class from the export buttons
+                    $(win.document).find('.dt-button').removeClass('dt-button');
+                }
+
             },
         ],
-        createdRow: function( row ) {
-            $( row ).addClass( 'nk-tb-item' );
-        },
-        initComplete: function() {
-            $( dt_table_name + '_filter' ).remove();
+        footerCallback: function (row, data, start, end, display) {
+            // Example: Calculate total for column index 3
+            var api = this.api();
+            var total = api
+                .column(3, { page: 'current' })
+                .data()
+                .reduce(function (a, b) {
+                    return parseFloat(a) + parseFloat(b);
+                }, 0);
 
-            let rawName = dt_table_name.replace( '#', '' );
-            let lengthSelect = $( dt_table_name + '_wrapper select[name="' + rawName + '_length"]' );
-            lengthSelect.addClass( 'custom-select custom-select-sm form-control form-control-sm' );
-            lengthSelect.wrap( '<div class="form-control-select ms-1"></div>' )
+            // Update footer
+            $(api.column(3).footer()).html('Total: ' + total.toFixed(2));
         },
-        drawCallback: function( response ) {
-            if( response.json.subTotal != undefined ) {
-                if( Array.isArray( response.json.subTotal ) ) {
-                    $.each( response.json.subTotal, function( i, v ) {
-                        $( '.dataTables_scrollFoot .subtotal' ).eq(i).html( v );
-                        $( '.dataTables_scrollFoot .grandtotal' ).eq(i).html( response.json.grandTotal[i] );
-                    } );
+        createdRow: function (row) {
+            $(row).addClass('nk-tb-item');
+        },
+        initComplete: function () {
+            const exportCheckbox = `
+                <div class="d-inline-block ms-3">
+                    <input type="checkbox" id="exportSelected" name="exportSelected">
+                    <label for="exportSelected" class="ms-1">Export ONLY selected rows</label>
+                </div>
+            `;
+            $('.dt-buttons').append(exportCheckbox);
+            $(dt_table_name + '_filter').remove();
+
+            let rawName = dt_table_name.replace('#', '');
+            let lengthSelect = $(dt_table_name + '_wrapper select[name="' + rawName + '_length"]');
+            lengthSelect.addClass('custom-select custom-select-sm form-control form-control-sm');
+            lengthSelect.wrap('<div class="form-control-select ms-1"></div>');
+        },
+        drawCallback: function (response) {
+            if (response.json.subTotal != undefined) {
+                if (Array.isArray(response.json.subTotal)) {
+                    $.each(response.json.subTotal, function (i, v) {
+                        $('.dataTables_scrollFoot .subtotal').eq(i).html(v);
+                        $('.dataTables_scrollFoot .grandtotal').eq(i).html(response.json.grandTotal[i]);
+                    });
                 }
             }
-        }
-    } );
+        },
+    });
 
     $( dt_table_name ).on( 'page.dt length.dt order.dt search.dt', function() {
         table_no = dt_table.page.info().page * dt_table.page.info().length;

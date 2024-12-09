@@ -21,6 +21,7 @@
     <link href="{{ asset( 'admin/css/select2-bootstrap-5-theme.min.css' ) . Helper::assetVersion() }}" rel="stylesheet">
     <link href="{{ asset( 'admin/css/flatpickr-monthSelect.css' ) . Helper::assetVersion() }}" rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.6/css/buttons.dataTables.min.css">
+    <link href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 </head>
