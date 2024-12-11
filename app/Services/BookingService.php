@@ -43,7 +43,7 @@ class BookingService
                 'title' => [
                     'html' => 'Reference:' . $booking->reference . '<br>Plate Number:' . $plateNumber . '<br>Notes:' . $notes,
                 ],
-                'color' => '#9769ff',
+                'color' => '#aad418',
             ] );
         }
 

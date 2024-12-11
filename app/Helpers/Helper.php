@@ -24,7 +24,7 @@ class Helper {
     }
 
     public static function assetVersion() {
-        return '?v=1.01';
+        return '?v=1.04';
     }
 
     public static function moduleActions() {

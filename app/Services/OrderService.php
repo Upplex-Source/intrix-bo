@@ -43,7 +43,7 @@ class OrderService
                 'title' => [
                     'html' => 'Reference:' . $order->reference . '<br>Plate Number:' . $plateNumber . '<br>Notes:' . $notes,
                 ],
-                'color' => '#9769ff',
+                'color' => '#aad418',
             ] );
         }
 

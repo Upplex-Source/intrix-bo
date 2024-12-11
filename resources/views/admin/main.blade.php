@@ -130,7 +130,7 @@
                                         <a href="#" class="dropdown-toggle me-n1" data-bs-toggle="dropdown">
                                             <div class="user-toggle">
                                                 <div class="user-avatar sm">
-                                                    <img src="https://ui-avatars.com/api/?background=9d72ff&color=fff&name={{ auth()->user()->fullname }}" alt="" />
+                                                    <img src="https://ui-avatars.com/api/?background=aad418&color=fff&name={{ auth()->user()->fullname }}" alt="" />
                                                 </div>
                                                 <div class="user-info d-none d-xl-block">
                                                     <div class="user-status">Super Admin</div>
@@ -142,7 +142,7 @@
                                             <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                                 <div class="user-card">
                                                     <div class="user-avatar">
-                                                        <img src="https://ui-avatars.com/api/?background=9d72ff&color=fff&name={{ auth()->user()->fullname }}" alt="" />
+                                                        <img src="https://ui-avatars.com/api/?background=aad418&color=fff&name={{ auth()->user()->fullname }}" alt="" />
                                                     </div>
                                                     <div class="user-info">
                                                         <span class="lead-text">{{ auth()->user()->fullname }}</span>
