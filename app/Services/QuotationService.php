@@ -1049,7 +1049,7 @@ class QuotationService
 
             $quotation = Quotation::with( [ 'quotationMetas.product.warehouses','quotationMetas.bundle','quotationMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
 
-            Mail::to( $quotation->customer->email )->send(new QuotationMail( $quotation ));
+            // Mail::to( $quotation->customer->email )->send(new QuotationMail( $quotation ));
 
             DB::commit();
 

@@ -34,9 +34,8 @@ class UserController extends Controller {
      * 
      * @group User API
      * 
-     * @bodyParam tmp_user string required The temporary user ID during request OTP. Example: eyJpdiI...
-     * @bodyParam fullname string required The fullname for register. Example: John Wick
-     * @bodyParam email string required The email for register. Example: johnwick@gmail.com
+     * @bodyParam identifier string required The temporary user ID during request OTP. Example: eyJpdiI...
+     * @bodyParam phone_number string required The phone_number for register. Example: 0123982334
      * @bodyParam otp_code string required The otp for register. Example: 123456
      * @bodyParam password string required The password for register. Example: abcd1234
      * @bodyParam password_confirmation string required The confirmation password. Example: abcd1234
@@ -54,7 +53,7 @@ class UserController extends Controller {
      * 
      * @group User API
      * 
-     * @bodyParam email string required The email for login. Example: johnwick@mail.com
+     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
      * @bodyParam password string required The password for login. Example: abcd1234
      * 
      */
@@ -72,7 +71,7 @@ class UserController extends Controller {
      * 
      * @group User API
      * 
-     * @bodyParam email string required The email for login. Example: johnwick@mail.com
+     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
      * @bodyParam request_type integer required The request type for OTP. Example: 1
      * 
      */
@@ -90,8 +89,8 @@ class UserController extends Controller {
      * 
      * @group User API
      * 
-     * @bodyParam tmp_user string required The temporary user ID during request OTP. Example: eyJpdiI...
-     * @bodyParam email string required The email for login. Example: johnwick@mail.com
+     * @bodyParam identifier string required The temporary user ID during request OTP. Example: eyJpdiI...
+     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
      * @bodyParam request_type integer required The request type for OTP. Example: 2
      * 
      */
@@ -125,7 +124,7 @@ class UserController extends Controller {
      * 
      * @bodyParam fullname string required The fullname to update. Example: John Wick
      * @bodyParam fullname string required The fullname to update. Example: John Wick
-     * @bodyParam email string required The email to update. Example: jphnwick@gmail.com
+     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
      * @bodyParam date_of_birth string required The date of birth to update. Example: 2022-01-01
      * 
      */
@@ -153,19 +152,19 @@ class UserController extends Controller {
     }
 
     /**
-     * 8. Check Email (Pre-request Otp)
+     * 8. Check Phone Number (Pre-request Otp)
      * @sort 8
      * 
-     * Validate an email
+     * Validate a phone number
      * 
      * @group User API
      * 
-     * @bodyParam email string required email, to prepare for password reset. Example: johnwick@gmail.com
+     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
      * 
      */
-    public function checkEmail( Request $request ) {
+    public function checkPhoneNumber( Request $request ) {
 
-        return UserService::checkEmail( $request );
+        return UserService::checkPhoneNumber( $request );
     }
 
     /**
@@ -176,7 +175,8 @@ class UserController extends Controller {
      * 
      * @group User API
      * 
-     * @bodyParam email string required  email, to perform password reset. Example: johnwick@gmail.com
+     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
+     * 
      * 
      */
     public function forgotPasswordOtp( Request $request ) {
@@ -189,7 +189,7 @@ class UserController extends Controller {
      * @sort 10
      * @group User API
      * 
-     * @bodyParam email string required Can be email or phone number, to perform password reset. Example: johnwick@gmail.com
+     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
      * @bodyParam identifier string required The unique_identifier from forgot password. Example: WLnvrJw6YYK
      * @bodyParam otp_code string The otp code to verify password reset. Example: 123456 
      * @bodyParam password string required The new password to perform password reset. Example: abcd1234

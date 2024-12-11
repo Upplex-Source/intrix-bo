@@ -35,7 +35,7 @@ return [
     'otp_email_success_note' => 'Otp request success',
     'register_success' => 'Register Success',
     'login_success' => 'Login Success',
-    'user_exist' => 'Email Found, you may proceed to request otp',
+    'user_exist' => 'Phone Number Found, you may proceed to request otp',
     'user_not_found' => 'User Not Found',
     'get_user_failed' => 'User Not Found',
     'user_updated' => 'User Updated',

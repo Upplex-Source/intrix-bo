@@ -252,7 +252,7 @@ class Helper {
                 'expire_on' => $expireOn,
             ] );
 
-            $body = 'Your OTP for Infinite Design ' . $action . ' is ' . $createOtp->otp_code;
+            $body = 'Your OTP for Yobe Froyo ' . $action . ' is ' . $createOtp->otp_code;
 
         } 
         else if ( $action == 'resend' ) {
@@ -267,13 +267,13 @@ class Helper {
 
             $phoneNumber = $createOtp->phone_number;
 
-            $body = 'Your OTP for Infinite Design ' . $action . ' is ' . $createOtp->otp_code;
+            $body = 'Your OTP for Yobe Froyo ' . $action . ' is ' . $createOtp->otp_code;
 
         } 
         else if ( $action == 'forgot_password' ) {
 
-            // $callingCode = $data['calling_code'];
-            // $phoneNumber = $data['phone_number'];
+            $callingCode = $data['calling_code'];
+            $phoneNumber = $data['phone_number'];
             $email = $data['email'];      
 
             // set previous to status 10
@@ -286,12 +286,12 @@ class Helper {
                 'expire_on' => $expireOn,
             ] );
 
-            $body = 'Your OTP for Infinite Design forgot password is ' . $createOtp->otp_code;
+            $body = 'Your OTP for Yobe Froyo forgot password is ' . $createOtp->otp_code;
 
         }else if ( $action == 'update_account' ) {
 
-            // $callingCode = $data['calling_code'];
-            // $phoneNumber = $data['phone_number'];
+            $callingCode = $data['calling_code'];
+            $phoneNumber = $data['phone_number'];
             $email = $data['email'];      
             
             $createOtp = OtpAction::create( [
@@ -301,14 +301,14 @@ class Helper {
                 'expire_on' => $expireOn,
             ] );
 
-            $body = 'Your OTP for Infinite Design update account is ' . $createOtp->otp_code;
+            $body = 'Your OTP for Yobe Froyo update account is ' . $createOtp->otp_code;
 
         }else {
 
             $currentUser = auth()->user();
 
-            // $callingCode = $currentUser->calling_code;
-            // $phoneNumber = $currentUser->phone_number;
+            $callingCode = $currentUser->calling_code;
+            $phoneNumber = $currentUser->phone_number;
             $email = $data['email'];      
 
             $createOtp = OtpAction::create( [
@@ -318,7 +318,7 @@ class Helper {
                 'expire_on' => $expireOn,
             ] );
 
-            $body = 'Your OTP for Infinite Design ' . $action . ' is ' . $createOtp->otp_code;
+            $body = 'Your OTP for Yobe Froyo ' . $action . ' is ' . $createOtp->otp_code;
         }
 
         return [
@@ -326,6 +326,33 @@ class Helper {
             'identifier' => Crypt::encryptString( $createOtp->id ),
             'otp_code' => $createOtp->otp_code,
         ];
+    }
+
+    public static function sendSMS( $mobile, $otp, $message = '' ) {
+
+        // $url = "http://cloudsms.trio-mobile.com/index.php/api/bulk_mt?";
+        $url = config( 'services.sms.sms_url' );
+
+        $request = array(
+            // 'api_key' => '1be74d22361e24a88b228e3359a9b8a2394833431ec8329dec548f40cb70e0dc',
+            'api_key' => config( 'services.sms.api_key' ),
+            'action' => 'send',
+            'to' => $mobile,
+            'msg' => 'MeCar: Your OTP is '.$otp.'. '.$message,
+            'sender_id' => 'CLOUDSMS',
+            'content_type' => 1,
+            'mode' => 'shortcode',
+            'campaign' => 'MeCar'
+        );
+
+        $sendSMS = Helper::curlGet( $url.http_build_query( $request ) );
+                
+        ApiLog::create( [
+            'url' => $url,
+            'method' => 'GET',
+            'raw_response' => json_encode( $sendSMS ),
+        ] );
+
     }
 
     public static function generateAdjustmentNumber()

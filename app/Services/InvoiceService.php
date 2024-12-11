@@ -1050,7 +1050,7 @@ class InvoiceService
 
             $invoice = Invoice::with( [ 'invoiceMetas.product.warehouses','invoiceMetas.bundle','invoiceMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
             $invoice->action = 'invoice';
-            Mail::to( $invoice->customer->email )->send(new InvoiceMail( $invoice ));
+            // Mail::to( $invoice->customer->email )->send(new InvoiceMail( $invoice ));
 
             DB::commit();
 

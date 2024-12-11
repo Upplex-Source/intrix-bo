@@ -1055,7 +1055,7 @@ class SalesOrderService
 
             $salesorder = SalesOrder::with( [ 'salesOrderMetas.product.warehouses','salesOrderMetas.bundle','salesOrderMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
             $salesorder->action = 'sales_order';
-            Mail::to( $salesorder->customer->email )->send(new QuotationMail( $salesorder ));
+            // Mail::to( $salesorder->customer->email )->send(new QuotationMail( $salesorder ));
 
             DB::commit();
 

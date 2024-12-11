@@ -15,6 +15,7 @@ $user_create = 'user_create';
         <div class="row">
             <div class="col-md-12 col-lg-12">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
+                @if( 1 == 2 )
                 <div class="mb-3 row">
                     <label for="{{ $user_create }}_account_type" class="col-sm-5 col-form-label">{{ __( 'user.account_type' ) }}</label>
                     <div class="col-sm-7">
@@ -26,6 +27,7 @@ $user_create = 'user_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                @endif
                 <div class="mb-3 row">
                     <label for="{{ $user_create }}_username" class="col-sm-5 col-form-label">{{ __( 'user.username' ) }}</label>
                     <div class="col-sm-7">
@@ -160,7 +162,7 @@ $user_create = 'user_create';
             formData.append( 'postcode', $( dc + '_postcode' ).val() );
             formData.append( 'phone_number', $( dc + '_phone_number' ).val() );
             formData.append( 'password', $( dc + '_password' ).val() );
-            formData.append( 'account_type', $( dc + '_account_type' ).val() );
+            // formData.append( 'account_type', $( dc + '_account_type' ).val() );
             
             formData.append( '_token', '{{ csrf_token() }}' );
 

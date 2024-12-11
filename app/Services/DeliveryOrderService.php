@@ -1050,7 +1050,7 @@ class DeliveryOrderService
             $deliveryOrder = DeliveryOrder::with( [ 'deliveryorderMetas.product.warehouses','deliveryorderMetas.bundle','deliveryorderMetas.variant.product.warehouses', 'taxMethod', 'salesman', 'customer','warehouse', 'supplier'] )->find( $request->id );
             $deliveryOrder->action = 'delivery_order';
 
-            Mail::to( $deliveryOrder->customer->email )->send(new QuotationMail( $deliveryOrder ));
+            // Mail::to( $deliveryOrder->customer->email )->send(new QuotationMail( $deliveryOrder ));
 
             DB::commit();
 

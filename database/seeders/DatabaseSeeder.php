@@ -17,11 +17,11 @@ class DatabaseSeeder extends Seeder
         $this->call( [
             AdministratorSeeder::class,
             CountrySeeder::class,
-            CategorySeeder::class,
-            UnitSeeder::class,
-            WarehouseSeeder::class,
-            BrandSeeder::class,
-            SupplierSeeder::class,
+            // CategorySeeder::class,
+            // UnitSeeder::class,
+            // WarehouseSeeder::class,
+            // BrandSeeder::class,
+            // SupplierSeeder::class,
         ] );
     }
 }

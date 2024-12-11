@@ -60,6 +60,7 @@
                                     </li>
                                 @endcan
 
+                                @if( 1 == 2 )
                                 @can( 'view Salesmen' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AdministratorController' && in_array( $action, [ 'indexSalesman', 'editSalesman', 'addSalesman' ] ) ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.administrator.indexSalesman' ) }}" class="nk-menu-link">
@@ -247,6 +248,7 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @endif
                                 @endif
 
                             </ul><!-- .nk-menu -->

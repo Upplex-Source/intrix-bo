@@ -34,7 +34,7 @@ class OtpMail extends Mailable
     public function build()
     {
         // from
-        return $this->from('support@infinitedesign.my', 'Infinite Design')
+        return $this->from('support@infinitedesign.my', 'Yobe Froyo')
         ->subject($this->getSubject())
         ->view('admin/mail/otp')
         ->with(['data' => $this->data]);

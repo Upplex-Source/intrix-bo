@@ -15,6 +15,8 @@ $user_edit = 'user_edit';
         <div class="row">
             <div class="col-md-12 col-lg-12">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
+                @if( 1 == 2 )
+
                 <div class="mb-3 row">
                     <label for="{{ $user_edit }}_account_type" class="col-sm-5 col-form-label">{{ __( 'user.account_type' ) }}</label>
                     <div class="col-sm-7">
@@ -26,6 +28,7 @@ $user_edit = 'user_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                @endif
                 <div class="mb-3 row">
                     <label for="{{ $user_edit }}_username" class="col-sm-5 col-form-label">{{ __( 'user.username' ) }}</label>
                     <div class="col-sm-7">
@@ -160,7 +163,7 @@ $user_edit = 'user_edit';
             formData.append( 'city', $( de + '_city' ).val() );
             formData.append( 'state', $( de + '_state' ).val() );
             formData.append( 'postcode', $( de + '_postcode' ).val() );
-            formData.append( 'account_type', $( de + '_account_type' ).val() );
+            // formData.append( 'account_type', $( de + '_account_type' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -220,7 +223,7 @@ $user_edit = 'user_edit';
                     $( de + '_city' ).val( response.city );
                     $( de + '_state' ).val( response.state );
                     $( de + '_postcode' ).val( response.postcode );
-                    $( de + '_account_type' ).val( response.account_type );
+                    // $( de + '_account_type' ).val( response.account_type );
 
                     $( 'body' ).loading( 'stop' );
                 },

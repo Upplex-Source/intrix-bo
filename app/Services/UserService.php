@@ -36,7 +36,7 @@ class UserService
 {
     public static function allUsers( $request ) {
 
-        $user = User::select( 'users.*' )->where('username','!=', null)->orderBy( 'created_at', 'DESC' );
+        $user = User::select( 'users.*' )->orderBy( 'created_at', 'DESC' );
 
         $filterObject = self::filter( $request, $user );
         $user = $filterObject['model'];
@@ -145,8 +145,8 @@ class UserService
     public static function createUser( $request ) {
 
         $validator = Validator::make( $request->all(), [
-            'username' => [ 'required', 'alpha_dash', 'unique:users,username', new CheckASCIICharacter ],
-            'email' => [ 'required', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'username' => [ 'nullable', 'alpha_dash', 'unique:users,username', new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'fullname' => [ 'nullable' ],
             'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
 
@@ -180,9 +180,9 @@ class UserService
         try {
 
             $createUserObject = [
-                'fullname' => $request->fullname,
-                'username' => $request->username,
-                'email' => strtolower( $request->email ),
+                'fullname' => $request->fullname ?? null,
+                'username' => $request->username ?? null,
+                'email' => $request->email ? strtolower( $request->email ) : null,
                 'phone_number' => $request->phone_number,
                 'calling_code' => '+60',
                 'password' => Hash::make( $request->password ),
@@ -219,8 +219,8 @@ class UserService
         ] );
 
         $validator = Validator::make( $request->all(), [
-            'username' => [ 'required', 'alpha_dash', 'unique:users,username,' . $request->id, new CheckASCIICharacter ],
-            'email' => [ 'required', 'bail', 'unique:users,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'username' => [ 'nullable', 'alpha_dash', 'unique:users,username,' . $request->id, new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'unique:users,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'fullname' => [ 'required' ],
             'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
                 
@@ -541,11 +541,11 @@ class UserService
         DB::beginTransaction();
 
         $validator = Validator::make( $request->all(), [
-            'email' => [ 'required' ],
+            'phone_number' => [ 'required' ],
         ] );
 
         $attributeName = [
-            'email' => __( 'user.email' ),
+            'phone_number' => __( 'user.phone_number' ),
         ];
 
         foreach ( $attributeName as $key => $aName ) {
@@ -559,16 +559,18 @@ class UserService
             $data['otp_code'] = '';
             $data['identifier'] = '';
 
-            $existingUser = User::where( 'email', $request->email )->first();
+            $existingUser = User::where( 'phone_number', $request->phone_number )->first();
             if ( $existingUser ) {
                 $forgotPassword = Helper::requestOtp( 'forgot_password', [
                     'id' => $existingUser->id,
                     'email' => $existingUser->email,
+                    'phone_number' => $existingUser->phone_number,
+                    'calling_code' => $existingUser->calling_code,
                 ] );
                 
                 DB::commit();
 
-                Mail::to( $existingUser->email )->send(new OtpMail( $forgotPassword ));
+                // Mail::to( $existingUser->email )->send(new OtpMail( $forgotPassword ));
     
                 if (Mail::failures() != 0) {
                     
@@ -613,15 +615,15 @@ class UserService
         ] );
     }
 
-    public static function checkEmail( $request ) {
+    public static function checkPhoneNumber( $request ) {
 
         DB::beginTransaction();
 
         $validator = Validator::make($request->all(), [
-            'email' => ['required', 'exists:users,email'],
+            'phone_number' => ['required', 'exists:users,phone_number'],
         ], [
-            'email.required' => __('The email field is required.'),
-            'email.exists' => __('The email does not exist in our records.'),
+            'phone_number.required' => __('The phone number field is required.'),
+            'phone_number.exists' => __('The phone number does not exist in our records.'),
         ]);
 
         $attributeName = [
@@ -636,7 +638,7 @@ class UserService
 
         try {
 
-            $existingUser = User::where( 'email', $request->email )->first();
+            $existingUser = User::where( 'phone_number', $request->phone_number )->first();
             if ( $existingUser ) {
                
                 $response = [
@@ -753,13 +755,13 @@ class UserService
 
         try {
             $request->merge( [
-                'tmp_user' => Crypt::decryptString( $request->tmp_user ),
+                'identifier' => Crypt::decryptString( $request->identifier ),
             ] );
         } catch ( \Throwable $th ) {
             return response()->json( [
                 'message' => __( 'validation.header_message' ),
                 'errors' => [
-                    'tmp_user' => [
+                    'identifier' => [
                         __( 'user.invalid_otp' ),
                     ],
                 ]
@@ -768,7 +770,7 @@ class UserService
 
         $validator = Validator::make( $request->all(), [
             'otp_code' => [ 'required' ],
-            'tmp_user' => [ 'required', function( $attribute, $value, $fail ) use ( $request, &$currentTmpUser ) {
+            'identifier' => [ 'required', function( $attribute, $value, $fail ) use ( $request, &$currentTmpUser ) {
 
                 $currentTmpUser = TmpUser::lockForUpdate()->find( $value );
 
@@ -787,7 +789,7 @@ class UserService
                     return false;
                 }
             } ],
-            'email' => [ 'required', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'fullname' => [ 'nullable' ],
             'calling_code' => [ 'nullable', 'exists:countries,calling_code' ],
             'phone_number' => [ 'nullable', 'digits_between:8,15', function( $attribute, $value, $fail ) {
@@ -819,9 +821,9 @@ class UserService
         try {
 
             $createUserObject = [
-                'fullname' => strtolower( $request->fullname ),
-                'username' => strtolower( $request->email ),
-                'email' => strtolower( $request->email ),
+                'fullname' => $request->fullname ? strtolower( $request->fullname ) : null,
+                'username' => $request->email ? strtolower( $request->email ) : null,
+                'email' => $request->email ? strtolower( $request->email ) : null,
                 'phone_number' => $request->phone_number,
                 'calling_code' => $request->calling_code,
                 'password' => Hash::make( $request->password ),
@@ -830,7 +832,7 @@ class UserService
 
             $createUser = User::create( $createUserObject );
 
-            $currentTmpUser = TmpUser::find( $request->tmp_user );
+            $currentTmpUser = TmpUser::find( $request->identifier );
             $currentTmpUser->status = 10;
             $currentTmpUser->save();
 
@@ -861,11 +863,12 @@ class UserService
         $request->merge( [ 'account' => 'test' ] );
 
         $request->validate( [
-            'email' => 'required',
+            'phone_number' => 'required',
             'password' => 'required',
             'account' => [ 'sometimes', function( $attributes, $value, $fail ) {
 
-                $user = User::where( 'email', request( 'email' ) )->first();
+                $user = User::where( 'phone_number', request( 'phone_number' ) )->first();
+
                 if ( !$user ) {
                     $fail( __( 'user.user_wrong_user_password' ) );
                     return 0;
@@ -878,12 +881,12 @@ class UserService
             } ],
         ] );
 
-        $user = User::where( 'email', $request->email )->first();
+        $user = User::where( 'phone_number', $request->phone_number )->first();
 
         // Register OneSignal
         if ( !empty( $request->register_token ) ) {
             self::registerOneSignal( $user->id, $request->device_type, $request->register_token );
-        }
+    }
 
         return response()->json( [
             'data' => [ 
@@ -920,8 +923,8 @@ class UserService
 
         $validator = Validator::make( $request->all(), [
             // 'country' => 'required|exists:countries,id',
-            'fullname' => [ 'required', 'min:6' ],
-            'email' => [ 'required', 'unique:users,email,' . auth()->user()->id, 'min:8', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'nullable', 'min:6' ],
+            'email' => [ 'nullable', 'unique:users,email,' . auth()->user()->id, 'min:8', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'calling_code' => [ 'required', 'exists:countries,calling_code' ],
             'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) {
                 $user = User::where( 'calling_code', request( 'calling_code' ) )->where( 'phone_number', $value )->first();
@@ -931,7 +934,7 @@ class UserService
                     }
                 }
             } ],
-            'date_of_birth' => 'required',
+            'date_of_birth' => 'nullable',
         ] );
 
         $attributeName = [
@@ -1015,13 +1018,19 @@ class UserService
         if ( $request->request_type == 1 ) {
             
             $validator = Validator::make( $request->all(), [
-                'email' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', function ($attribute, $value, $fail) use ($request) {
-                        $user = User::where('email', $value)->first();
+                'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
 
-                    if ($user) {
-                        $fail(__('validation.unique'));
+                    if ( mb_substr( $value, 0, 1 ) == 0 ) {
+                        $value = mb_substr( $value, 1 );
                     }
-                }],
+
+                    $user = User::where( 'phone_number', $value )
+                        ->first();
+
+                    if ( $user ) {
+                        $fail( __( 'validation.unique' ) );
+                    }
+                } ],
                 'request_type' => [ 'required', 'in:1' ],
             ] );
     
@@ -1049,14 +1058,14 @@ class UserService
                 DB::commit();
                 $phoneNumber  = $request->calling_code . $request->phone_number;
 
-                Mail::to( $request->email )->send(new OtpMail( $createTmpUser ));
+                // Mail::to( $request->email )->send(new OtpMail( $createTmpUser ));
                 
                 return response()->json( [
                     'message' => $request->calling_code . $request->phone_number,
                     'message_key' => 'request_otp_success',
                     'data' => [
                         'otp_code' => '#DEBUG - ' . $createTmpUser['otp_code'],
-                        'tmp_user' => $createTmpUser['identifier'],
+                        'identifier' => $createTmpUser['identifier'],
                         'title' => $createTmpUser ? __( 'user.otp_email_success' ) : '',
                         'note' => $createTmpUser ? __( 'user.otp_email_success_note', [ 'title' => $phoneNumber ] ) : ''
                     ]
@@ -1071,14 +1080,14 @@ class UserService
 
             try {
                 $request->merge( [
-                    'tmp_user' => Crypt::decryptString( $request->tmp_user ),
+                    'identifier' => Crypt::decryptString( $request->identifier ),
                 ] );
 
             } catch ( \Throwable $th ) {
                 return response()->json( [
                     'message' => __( 'validation.header_message' ),
                     'errors' => [
-                        'tmp_user' => [
+                        'identifier' => [
                             __( 'user.invalid_otp' ),
                         ],
                     ]
@@ -1086,7 +1095,7 @@ class UserService
             }
 
             $validator = Validator::make( $request->all(), [
-                'tmp_user' => [ 'required', function( $attribute, $value, $fail ) {
+                'identifier' => [ 'required', function( $attribute, $value, $fail ) {
     
                     $current = TmpUser::find( $value );
 
@@ -1105,33 +1114,33 @@ class UserService
             ] );
 
             $attributeName = [
-                'tmp_user' => __( 'user.email' ),
+                'identifier' => __( 'user.phone_number' ),
             ];
     
             foreach ( $attributeName as $key => $aName ) {
                 $attributeName[$key] = strtolower( $aName );
             }
-            $currentTmp = TmpUser::find( $request->tmp_user );
+            $currentTmp = TmpUser::find( $request->identifier );
     
             $validator->setAttributeNames( $attributeName )->validate();
             $phoneNumber  = $request->calling_code . $request->phone_number;
             $updateTmpUser = Helper::requestOtp( 'resend', [
                 'calling_code' => $request->calling_code,
-                'tmp_user' => $request->tmp_user,
+                'identifier' => $request->identifier,
                 'title' => __( 'user.otp_email_success' ),
                 'note' =>  __( 'user.otp_email_success_note', [ 'title' => $phoneNumber ] )
             ] );
 
             DB::commit();
 
-            Mail::to( $currentTmp->email )->send(new OtpMail( $updateTmpUser ));
+            // Mail::to( $currentTmp->email )->send(new OtpMail( $updateTmpUser ));
 
             return response()->json( [
                 'message' => 'resend_otp_success',
                 'message_key' => 'resend_otp_success',
                 'data' => [
                     'otp_code' => '#DEBUG - ' . $updateTmpUser['otp_code'],
-                    'tmp_user' => $updateTmpUser['identifier'],
+                    'identifier' => $updateTmpUser['identifier'],
                 ]
             ] );
         }
@@ -1172,7 +1181,7 @@ class UserService
             
             DB::commit();
 
-            Mail::to( config( 'services.mail.receiver' ) )->send(new EnquiryEmail( $mailContent ));
+            // Mail::to( config( 'services.mail.receiver' ) )->send(new EnquiryEmail( $mailContent ));
             
             return response()->json( [
                 'data' => [

@@ -91,8 +91,10 @@ var dt_table,
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
                 orderable: false,
-                render: function( data, type, row, meta ) {
-                    return table_no += 1;
+                render: function (data, type, row, meta) {
+                    // Calculate the row number dynamically based on the page info
+                    const pageInfo = dt_table.page.info();
+                    return pageInfo.start + meta.row + 1; // Adjust for 1-based numbering
                 },
             },
             {
