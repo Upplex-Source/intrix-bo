@@ -1,0 +1,395 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\{
+    DB,
+    Validator,
+};
+
+use App\Models\{
+    UserTopup,
+    Wallet,
+    WalletTransaction,
+};
+
+use Helper;
+
+use Carbon\Carbon;
+
+class WalletService
+{
+    public static function allWallets( $request ) {
+
+        $wallet = Wallet::with( [ 'user' ] )->select( 'wallets.*' );
+        $wallet->leftJoin( 'users', 'users.id', '=', 'wallets.user_id' );
+
+        $filterObject = self::filterWallet( $request, $wallet );
+        $wallet = $filterObject['model'];
+        $filter = $filterObject['filter'];
+
+        $wallet->orderBy( 'wallets.id', 'DESC' )->orderBy( 'wallets.type', 'ASC' );
+
+        $walletCount = $wallet->count();
+
+        $limit = $request->length;
+        $offset = $request->start;
+
+        $wallets = $wallet->skip( $offset )->take( $limit )->get();
+
+        if ( $wallets ) {
+            $wallets->append( [
+                'listing_balance',
+                'encrypted_id',
+            ] );
+        }
+
+        $totalRecord = Wallet::count();
+
+        $data = [
+            'wallets' => $wallets,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $walletCount : $totalRecord,
+            'recordsTotal' => $totalRecord,
+        ];
+
+        return response()->json( $data );
+    }
+
+    private static function filterWallet( $request, $model ) {
+
+        $filter = false;
+
+        if ( !empty( $request->user ) ) {
+            $model->where( 'users.phone_number', 'LIKE', "%$request->phone_number%" );
+            $filter = true;
+        }
+
+        if ( !empty( $request->wallet ) ) {
+            $model->where( 'wallets.type', $request->wallet );
+            $filter = true;
+        }
+
+        return [
+            'filter' => $filter,
+            'model' => $model,
+        ];
+    }
+
+    public static function oneWallet( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $wallet = Wallet::with( [ 'user' ] )->find( $request->id );
+
+        if ( $wallet ) {
+            $wallet->append( [
+                'listing_balance',
+                'encrypted_id',
+            ] );
+        }
+
+        return response()->json( $wallet );
+    }
+
+    public static function updateWallet( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $validator = Validator::make( $request->all(), [
+            'amount' => [ 'required', 'numeric' ],
+            'remark' => [ 'required', 'string' ],
+            'action' => [ 'required', 'in:topup,deduct' ],
+        ] );
+
+        $attributeName = [
+            'amount' => __( 'wallet.amount' ),
+            'remark' => __( 'wallet.remark' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $wallet = Wallet::lockForUpdate()->find( $request->id );
+            self::transact( $wallet, [
+                'amount' => $request->action == 'topup' ? $request->amount : ( $request->amount * -1 ),
+                'remark' => $request->remark,
+                'type' => $wallet->type,
+                'transaction_type' => 3,
+            ] );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.wallets' ) ) ] ),
+        ] );
+    }
+
+    public static function updateWalletMultiple( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'amount' => [ 'required', 'numeric' ],
+            'remark' => [ 'required', 'string' ],
+            'action' => [ 'required', 'in:topup,deduct' ],
+        ] );
+
+        $attributeName = [
+            'amount' => __( 'wallet.amount' ),
+            'remark' => __( 'wallet.remark' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            foreach ( $request->ids as $id ) {
+
+                $wallet = Wallet::lockForUpdate()->find( $id );
+                self::transact( $wallet, [
+                    'amount' => $request->action == 'topup' ? $request->amount : ( $request->amount * -1 ),
+                    'remark' => $request->remark,
+                    'type' => $wallet->type,
+                    'transaction_type' => 3,
+                ] );
+
+                DB::commit();
+            }
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.wallets' ) ) ] ),
+        ] );
+    }
+
+    public static function allWalletTransactions( $request ) {
+
+        $transaction = WalletTransaction::with( [ 'user' ] )->select( 'wallet_transactions.*' );
+        $transaction->leftJoin( 'users', 'users.id', '=', 'wallet_transactions.user_id' );
+
+        $filterObject = self::filterTransaction( $request, $transaction );
+        $transaction = $filterObject['model'];
+        $filter = $filterObject['filter'];
+
+        if ( $request->input( 'order.0.column' ) != 0 ) {
+            $dir = $request->input( 'order.0.dir' );
+            switch ( $request->input( 'order.0.column' ) ) {
+                case 1:
+                    $transaction->orderBy( 'created_at', $dir );
+                    break;
+            }
+        }
+
+        $transactionCount = $transaction->count();
+
+        $limit = $request->length;
+        $offset = $request->start;
+
+        $transactions = $transaction->skip( $offset )->take( $limit )->get();
+
+        $subTotal = 0;
+
+        if ( $transactions ) {
+            $transactions->append( [
+                'converted_remark',
+                'listing_amount',
+            ] );
+
+            foreach ( $transactions as $transaction ) {
+                $subTotal += $transaction->amount;
+            }
+        }
+
+        $walletTransactionObject = WalletTransaction::select( DB::raw( 'COUNT(*) as total, SUM(amount) AS grand_total' ) )->first();
+        $grandTotal = $walletTransactionObject->grand_total;
+        $totalRecord = $walletTransactionObject->total;
+
+        $data = [
+            'transactions' => $transactions,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $transactionCount : $totalRecord,
+            'recordsTotal' => $totalRecord,
+            'subTotal' => [
+                Helper::numberFormat( $subTotal, 2 )
+            ],
+            'grandTotal' => [
+                Helper::numberFormat( $grandTotal, 2 )
+            ],
+        ];
+
+        return response()->json( $data );
+    }
+
+    private static function filterTransaction( $request, $model ) {
+
+        $filter = false;
+
+        if (  !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'wallet_transactions.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'wallet_transactions.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+
+            $filter = true;
+        }
+
+        if ( !empty( $request->phone_number ) ) {
+            $model->where( 'users.phone_number', 'LIKE', "%$request->phone_number%" );
+            $filter = true;
+        }
+
+        if ( !empty( $request->wallet ) ) {
+            $model->where( 'wallet_transactions.type', $request->wallet );
+            $filter = true;
+        }
+
+        if ( !empty( $request->transaction_type ) ) {
+            $model->where( 'wallet_transactions.transaction_type', $request->transaction_type );
+            $filter = true;
+        }
+
+        return [
+            'filter' => $filter,
+            'model' => $model,
+        ];
+    }
+
+    public static function getWalletTransactions( $request ) {
+
+        $walletTranasctions = WalletTransaction::where( 'user_id', auth()->user()->id )
+            ->orderBy( 'created_at', 'DESC' );
+
+        $walletTranasctions = $walletTranasctions->paginate( empty( $request->per_page ) ? 10 : $request->per_page );
+
+        foreach ( $walletTranasctions->items() as $wt ) {
+
+            $wt->makeHidden( [
+                'type',
+                'opening_balance',
+                'closing_balance',
+                'updated_at',
+            ] );
+
+            $wt->append( [
+                'converted_remark',
+                'display_transaction_type',
+            ] );
+        }
+
+        return response()->json( $walletTranasctions );
+    }
+
+    public static function topup( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'topup_amount' => [ 'required', 'numeric', 'min:10' ],
+            'payment_method' => [ 'required', 'in:1' ],
+        ] );
+
+        $attributeName = [
+            'topup_amount' => __( 'wallet.topup_amount' ),
+            'payment_method' => __( 'wallet.payment_method' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createTopup = UserTopup::create( [
+                'user_id' => auth()->user()->id,
+                'reference' => 'MECAR-T-' . Helper::getLatestOrderNumber( 'TOPUP_' ),
+                'amount' => $request->topup_amount,
+                'payment_method' => 1,
+            ] );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollBack();
+
+            abort( 500, $th->getMessage() . ' in line: ' . $th->getLine() );
+        }
+
+        return response()->json( [
+            'message_key' => 'topup_success',
+            'redirect_url' => config( 'services.admin.url' ) . '/revenue-monster/initiate?user_id=' . $createTopup->user_id . '&reference=' . $createTopup->reference . '&scope=topup',
+        ] );
+    }
+
+    public static function transact( Wallet $wallet, $data ) {
+
+        $openingBalance = $wallet->balance;
+
+        $wallet->balance += $data['amount'];
+        $wallet->save();
+
+        $createWalletTransaction = WalletTransaction::create( [
+            'user_wallet_id' => $wallet->id,
+            'user_id' => $wallet->user_id,
+            'opening_balance' => $openingBalance,
+            'amount' => $data['amount'],
+            'closing_balance' => $wallet->balance,
+            'remark' => isset( $data['remark'] ) ? $data['remark'] : null,
+            'type' => $data['type'],
+            'transaction_type' => $data['transaction_type'],
+        ] );
+
+        return $createWalletTransaction;
+    }
+}

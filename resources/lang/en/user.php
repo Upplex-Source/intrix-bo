@@ -47,4 +47,9 @@ return [
     'invalid_otp' => 'Invalid_otp',
     'repeat_password_not_match' => 'Repeat Password does not match',
     'message' => 'Message',
+
+    'password_verified' => 'Password Verified',
+    'invalid_password' => 'Password incorrect',
+    'account_suspended' => 'Account suspended',
+    'account_deleted' => 'Account Deleted'
 ];

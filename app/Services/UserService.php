@@ -22,6 +22,7 @@ use App\Models\{
     OtpAction,
     TmpUser,
     MailContent,
+    Wallet,
 };
 
 use App\Rules\CheckASCIICharacter;
@@ -195,6 +196,14 @@ class UserService
             ];
 
             $createUser = User::create( $createUserObject );
+
+            for ( $i = 2; $i <= 2; $i++ ) {
+                $userWallet = Wallet::create( [
+                    'user_id' => $createUser->id,
+                    'type' => $i,
+                    'balance' => 0,
+                ] );
+            }
 
             DB::commit();
 
@@ -831,6 +840,14 @@ class UserService
             ];
 
             $createUser = User::create( $createUserObject );
+            
+            for ( $i = 2; $i <= 2; $i++ ) {
+                $userWallet = Wallet::create( [
+                    'user_id' => $createUser->id,
+                    'type' => $i,
+                    'balance' => 0,
+                ] );
+            }
 
             $currentTmpUser = TmpUser::find( $request->identifier );
             $currentTmpUser->status = 10;
@@ -878,6 +895,11 @@ class UserService
                     $fail( __( 'user.user_wrong_user_password' ) );
                     return 0;
                 }
+
+                if( $user->status == 20 ) {
+                    $fail( __( 'user.account_suspended' ) );
+                    return 0;
+                }
             } ],
         ] );
 
@@ -922,26 +944,12 @@ class UserService
     public static function updateUserApi( $request ) {
 
         $validator = Validator::make( $request->all(), [
-            // 'country' => 'required|exists:countries,id',
-            'fullname' => [ 'nullable', 'min:6' ],
-            'email' => [ 'nullable', 'unique:users,email,' . auth()->user()->id, 'min:8', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
-            'calling_code' => [ 'required', 'exists:countries,calling_code' ],
-            'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) {
-                $user = User::where( 'calling_code', request( 'calling_code' ) )->where( 'phone_number', $value )->first();
-                if ( $user ) {
-                    if ( $user->id != auth()->user()->id ) {
-                        $fail( __( 'validation.unique' ) );
-                    }
-                }
-            } ],
+            'username' => [ 'nullable', 'unique:users,username,' . auth()->user()->id, ],
             'date_of_birth' => 'nullable',
         ] );
 
         $attributeName = [
-            'fullname' => __( 'user.fullname' ),
-            'email' => __( 'user.email' ),
-            'calling_code' => __( 'user.calling_code' ),
-            'phone_number' => __( 'user.phone_number' ),
+            'username' => __( 'user.username' ),
             'date_of_birth' => __( 'user.date_of_birth' ),
         ];
 
@@ -952,10 +960,8 @@ class UserService
         $validator->setAttributeNames( $attributeName )->validate();
 
         $updateUser = User::find( auth()->user()->id );
-        $updateUser->fullname = $request->fullname;
-        $updateUser->email = $request->email;
-        $updateUser->calling_code = $request->calling_code;
-        $updateUser->phone_number = $request->phone_number;
+        $updateUser->username = $request->username;
+        $updateUser->date_of_birth = $request->date_of_birth;
         $updateUser->save();
 
         return response()->json( [
@@ -1196,6 +1202,118 @@ class UserService
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
                 'message_key' => 'create_enquiry_failed',
             ], 500 );
+        }
+    }
+
+    public static function deleteVerification($request)
+    {
+        $validator = Validator::make($request->all(), [
+            'password' => ['required'],
+        ], [
+            'password.required' => __('The password field is required.'),
+        ]);
+    
+        $attributeName = [
+            'password' => __('user.password'),
+        ];
+    
+        foreach ($attributeName as $key => $aName) {
+            $attributeName[$key] = strtolower($aName);
+        }
+    
+        $validator->setAttributeNames($attributeName)->validate();
+    
+        try {
+            // Assume the authenticated user is making this request
+            $currentUser = auth()->user();
+    
+            if (!$currentUser) {
+                return response()->json([
+                    'message' => __('user.not_authenticated'),
+                    'message_key' => 'user_not_authenticated',
+                    'data' => null,
+                ], 401);
+            }
+    
+            // Verify password
+            if (!Hash::check($request->password, $currentUser->password)) {
+                return response()->json([
+                    'message' => __('user.invalid_password'),
+                    'message_key' => 'invalid_password',
+                    'data' => null,
+                ], 422);
+            }
+    
+            return response()->json([
+                'message' => __('user.password_verified'),
+                'message_key' => 'account_deleted',
+                'data' => null,
+            ]);
+    
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500);
+        }
+    }
+
+    public static function deleteConfirm( $request ) {
+
+        $validator = Validator::make($request->all(), [
+            'password' => ['required'],
+        ], [
+            'password.required' => __('The password field is required.'),
+        ]);
+    
+        $attributeName = [
+            'password' => __('user.password'),
+        ];
+    
+        foreach ($attributeName as $key => $aName) {
+            $attributeName[$key] = strtolower($aName);
+        }
+    
+        $validator->setAttributeNames($attributeName)->validate();
+    
+        try {
+            // Assume the authenticated user is making this request
+            $currentUser = auth()->user();
+    
+            if (!$currentUser) {
+                return response()->json([
+                    'message' => __('user.not_authenticated'),
+                    'message_key' => 'user_not_authenticated',
+                    'data' => null,
+                ], 401);
+            }
+    
+            // Verify password
+            if (!Hash::check($request->password, $currentUser->password)) {
+                return response()->json([
+                    'message' => __('user.invalid_password'),
+                    'message_key' => 'invalid_password',
+                    'data' => null,
+                ], 422);
+            }
+    
+            DB::beginTransaction();
+    
+            $currentUser->status = 20;
+            $currentUser->save();
+            DB::commit();
+    
+            return response()->json([
+                'message' => __('user.account_deleted'),
+                'message_key' => 'account_deleted',
+                'data' => null,
+            ]);
+    
+        } catch (\Throwable $th) {
+            DB::rollBack();
+    
+            return response()->json([
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500);
         }
     }
 }

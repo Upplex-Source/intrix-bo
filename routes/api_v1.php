@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\{
     UserController,
     MailContentController,
+    WalletController
 };
 
 use Illuminate\Support\Facades\Route;
@@ -46,9 +47,18 @@ Route::middleware( 'auth:user' )->group( function() {
 
     Route::prefix( 'users' )->group( function() {
         Route::get( '/', [ UserController::class, 'getUser' ] );
+        Route::post( 'delete-verification', [ UserController::class, 'deleteVerification' ] );
+        Route::post( 'delete-confirm', [ UserController::class, 'deleteConfirm' ] );
+        Route::post( '/update', [ UserController::class, 'updateUserApi' ] );
+
         if( 1 == 2 ){
-            Route::get( '/update', [ UserController::class, 'updateUser' ] );
             Route::get( '/update-password', [ UserController::class, 'updateUserPassword' ] );
         }
+    } );
+    
+    Route::prefix( 'wallets' )->group( function() {
+
+        Route::get( 'transactions', [ WalletController::class, 'getWalletTransactions' ] );
+        Route::post( 'topup', [ WalletController::class, 'topup' ] );
     } );
 });

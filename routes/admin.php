@@ -14,33 +14,9 @@ use App\Http\Controllers\Admin\{
     FileController,
     ModuleController,
     SettingController,
-    FarmController,
     UserController,
-    OwnerController,
-    OrderController,
-    OrderItemController,
-    BuyerController,
-    CategoryController,
-    BrandController,
-    SupplierController,
-    ProductController,
-    WarehouseController,
-    UnitController,
-    ProductBundleController,
-    BundleController,
-    TaxMethodController,
-    WorkmanshipController,
-    MeasurementUnitController,
-    AdjustmentController,
-    ProductInventoryController,
-    PurchaseController,
-    ExpenseController,
-    ExpenseCategoryController,
-    ExpenseAccountController,
-    QuotationController,
-    SalesOrderController,
-    InvoiceController,
-    DeliveryOrderController,
+    WalletController,
+    WalletTransactionController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -497,95 +473,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'remove-expense-account-image', [ ExpenseAccountController::class, 'removeExpenseAccountGalleryImage' ] )->name( 'admin.expense_account.removeExpenseAccountGalleryImage' );
             } );
 
-            Route::prefix( 'quotations' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view quotations' ] ], function() {
-                    Route::get( '/', [ QuotationController::class, 'index' ] )->name( 'admin.module_parent.quotation.index' );
+            Route::prefix( 'wallets' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view wallets' ] ], function() {
+                    Route::get( '/', [ WalletController::class, 'index' ] )->name( 'admin.module_parent.wallet.index' );
                 } );
-                Route::group( [ 'middleware' => [ 'permission:add quotations' ] ], function() {
-                    Route::get( 'add', [ QuotationController::class, 'add' ] )->name( 'admin.quotation.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit quotations' ] ], function() {
-                    Route::get( 'edit', [ QuotationController::class, 'edit' ] )->name( 'admin.quotation.edit' );
-                } );
-        
-                Route::post( 'all-quotations', [ QuotationController::class, 'allQuotations' ] )->name( 'admin.quotation.allQuotations' );
-                Route::post( 'one-quotation', [ QuotationController::class, 'oneQuotation' ] )->name( 'admin.quotation.oneQuotation' );
-                Route::post( 'create-quotation', [ QuotationController::class, 'createQuotation' ] )->name( 'admin.quotation.createQuotation' );
-                Route::post( 'update-quotation', [ QuotationController::class, 'updateQuotation' ] )->name( 'admin.quotation.updateQuotation' );
-                Route::post( 'update-quotation-status', [ QuotationController::class, 'updateQuotationStatus' ] )->name( 'admin.quotation.updateQuotationStatus' );
-                Route::post( 'remove-quotation-attachment', [ QuotationController::class, 'removeQuotationAttachment' ] )->name( 'admin.quotation.removeQuotationAttachment' );
 
-                Route::post( 'convert-sales-order', [ QuotationController::class, 'convertSalesOrder' ] )->name( 'admin.quotation.convertSalesOrder' );
-                Route::post( 'send-email', [ QuotationController::class, 'sendEmail' ] )->name( 'admin.quotation.sendEmail' );
-
+                Route::post( 'all-wallets', [ WalletController::class, 'allWallets' ] )->name( 'admin.wallet.allWallets' );
+                Route::post( 'one-wallet', [ WalletController::class, 'oneWallet' ] )->name( 'admin.wallet.oneWallet' );
+                Route::post( 'update-wallet', [ WalletController::class, 'updateWallet' ] )->name( 'admin.wallet.updateWallet' );
+                Route::post( 'update-wallet-multiple', [ WalletController::class, 'updateWalletMultiple' ] )->name( 'admin.wallet.updateWalletMultiple' );
             } );
 
-            Route::prefix( 'sales-orders' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view sales-orders' ] ], function() {
-                    Route::get( '/', [ SalesOrderController::class, 'index' ] )->name( 'admin.module_parent.sales_order.index' );
+            
+            Route::prefix( 'wallet-transactions' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view wallet_transactions' ] ], function() {
+                    Route::get( '/', [ WalletTransactionController::class, 'index' ] )->name( 'admin.module_parent.wallet_transaction.index' );
                 } );
-                Route::group( [ 'middleware' => [ 'permission:add sales-orders' ] ], function() {
-                    Route::get( 'add', [ SalesOrderController::class, 'add' ] )->name( 'admin.sales_order.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit sales-orders' ] ], function() {
-                    Route::get( 'edit', [ SalesOrderController::class, 'edit' ] )->name( 'admin.sales_order.edit' );
-                } );
-        
-                Route::post( 'all-sales-orders', [ SalesOrderController::class, 'allSalesOrders' ] )->name( 'admin.sales_order.allSalesOrders' );
-                Route::post( 'one-sales-order', [ SalesOrderController::class, 'oneSalesOrder' ] )->name( 'admin.sales_order.oneSalesOrder' );
-                Route::post( 'create-sales-order', [ SalesOrderController::class, 'createSalesOrder' ] )->name( 'admin.sales_order.createSalesOrder' );
-                Route::post( 'update-sales-order', [ SalesOrderController::class, 'updateSalesOrder' ] )->name( 'admin.sales_order.updateSalesOrder' );
-                Route::post( 'update-sales-order-status', [ SalesOrderController::class, 'updateSalesOrderStatus' ] )->name( 'admin.sales_order.updateSalesOrderStatus' );
-                Route::post( 'remove-sales-order-attachment', [ SalesOrderController::class, 'removeSalesOrderAttachment' ] )->name( 'admin.sales_order.removeSalesOrderAttachment' );
 
-                Route::post( 'convert-invoice', [ SalesOrderController::class, 'convertInvoice' ] )->name( 'admin.sales_order.convertInvoice' );
-                Route::post( 'send-email', [ SalesOrderController::class, 'sendEmail' ] )->name( 'admin.sales_order.sendEmail' );
-
-            } );
-
-            Route::prefix( 'invoices' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view invoices' ] ], function() {
-                    Route::get( '/', [ InvoiceController::class, 'index' ] )->name( 'admin.module_parent.invoice.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add invoices' ] ], function() {
-                    Route::get( 'add', [ InvoiceController::class, 'add' ] )->name( 'admin.invoice.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit invoices' ] ], function() {
-                    Route::get( 'edit', [ InvoiceController::class, 'edit' ] )->name( 'admin.invoice.edit' );
-                } );
-        
-                Route::post( 'all-invoices', [ InvoiceController::class, 'allInvoices' ] )->name( 'admin.invoice.allInvoices' );
-                Route::post( 'one-invoice', [ InvoiceController::class, 'oneInvoice' ] )->name( 'admin.invoice.oneInvoice' );
-                Route::post( 'create-invoice', [ InvoiceController::class, 'createInvoice' ] )->name( 'admin.invoice.createInvoice' );
-                Route::post( 'update-invoice', [ InvoiceController::class, 'updateInvoice' ] )->name( 'admin.invoice.updateInvoice' );
-                Route::post( 'update-invoice-status', [ InvoiceController::class, 'updateInvoiceStatus' ] )->name( 'admin.invoice.updateInvoiceStatus' );
-                Route::post( 'remove-invoice-attachment', [ InvoiceController::class, 'removeInvoiceAttachment' ] )->name( 'admin.invoice.removeInvoiceAttachment' );
-
-                Route::post( 'convert-delivery-order', [ InvoiceController::class, 'convertDeliveryOrder' ] )->name( 'admin.invoice.convertDeliveryOrder' );
-                Route::post( 'send-email', [ InvoiceController::class, 'sendEmail' ] )->name( 'admin.invoice.sendEmail' );
-
-            } );
-
-            Route::prefix( 'delivery-orders' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view delivery-orders' ] ], function() {
-                    Route::get( '/', [ DeliveryOrderController::class, 'index' ] )->name( 'admin.module_parent.delivery_order.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add delivery-orders' ] ], function() {
-                    Route::get( 'add', [ DeliveryOrderController::class, 'add' ] )->name( 'admin.delivery_order.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit delivery-orders' ] ], function() {
-                    Route::get( 'edit', [ DeliveryOrderController::class, 'edit' ] )->name( 'admin.delivery_order.edit' );
-                } );
-        
-                Route::post( 'all-delivery-orders', [ DeliveryOrderController::class, 'allDeliveryOrders' ] )->name( 'admin.delivery_order.allDeliveryOrders' );
-                Route::post( 'one-delivery-order', [ DeliveryOrderController::class, 'oneDeliveryOrder' ] )->name( 'admin.delivery_order.oneDeliveryOrder' );
-                Route::post( 'create-delivery-order', [ DeliveryOrderController::class, 'createDeliveryOrder' ] )->name( 'admin.delivery_order.createDeliveryOrder' );
-                Route::post( 'update-delivery-order', [ DeliveryOrderController::class, 'updateDeliveryOrder' ] )->name( 'admin.delivery_order.updateDeliveryOrder' );
-                Route::post( 'update-delivery-order-status', [ DeliveryOrderController::class, 'updateDeliveryOrderStatus' ] )->name( 'admin.delivery_order.updateDeliveryOrderStatus' );
-                Route::post( 'remove-delivery-order-attachment', [ DeliveryOrderController::class, 'removeDeliveryOrderAttachment' ] )->name( 'admin.delivery_order.removeDeliveryOrderAttachment' );
-
-                Route::post( 'send-email', [ DeliveryOrderController::class, 'sendEmail' ] )->name( 'admin.delivery_order.sendEmail' );
-
+                Route::post( 'all-wallet-transactions', [ WalletTransactionController::class, 'allWalletTransactions' ] )->name( 'admin.wallet_transaction.allWalletTransactions' );
             } );
 
         } );

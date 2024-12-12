@@ -11,10 +11,15 @@ use App\Models\{
     Option,
     Order,
     Adjustment,
+    Wallet,
 };
 
 use Illuminate\Support\Facades\{
     Crypt
+};
+
+use App\Services\{
+    WalletService,
 };
 
 class Helper {
@@ -25,6 +30,28 @@ class Helper {
 
     public static function assetVersion() {
         return '?v=1.04';
+    }
+
+    public static function wallets() {
+        return [
+            '1' => __( 'wallet.wallet_1' ),
+            '2' => __( 'wallet.wallet_2' ),
+        ];
+    }
+
+    public static function trxTypes() {
+        return [
+            '1' => __( 'wallet.topup' ),
+            '2' => __( 'wallet.refund' ),
+            '3' => __( 'wallet.manual_adjustment' ),
+            '10' => __( 'wallet.purchase_insurance' ),
+            '11' => __( 'wallet.purchase_promotion' ),
+            '12' => __( 'wallet.redeem' ),
+            '13' => __( 'wallet.refund_redeem' ),
+            '20' => __( 'wallet.register_bonus' ),
+            '21' => __( 'wallet.promo_code_bonus' ),
+            '22' => __( 'wallet.affiliate_bonue' ),
+        ];
     }
 
     public static function moduleActions() {
@@ -258,7 +285,7 @@ class Helper {
         else if ( $action == 'resend' ) {
 
             $callingCode = $data['calling_code'];
-            $tmpUser = $data['tmp_user'];
+            $tmpUser = $data['identifier'];
 
             $createOtp = TmpUser::find( $tmpUser );
             $createOtp->otp_code = mt_rand( 100000, 999999 );

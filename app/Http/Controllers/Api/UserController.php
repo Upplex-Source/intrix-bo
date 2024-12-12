@@ -122,13 +122,11 @@ class UserController extends Controller {
      * 
      * @authenticated
      * 
-     * @bodyParam fullname string required The fullname to update. Example: John Wick
-     * @bodyParam fullname string required The fullname to update. Example: John Wick
-     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
+     * @bodyParam username string required The fullname to update. Example: John Wick
      * @bodyParam date_of_birth string required The date of birth to update. Example: 2022-01-01
      * 
      */
-    public function updateUser( Request $request ) {
+    public function updateUserApi( Request $request ) {
 
         return UserService::updateUserApi( $request );
     }
@@ -199,6 +197,38 @@ class UserController extends Controller {
     public function resetPassword( Request $request ) {
 
         return UserService::resetPassword( $request );
+    }
+
+    /**
+     * 11. Delete Verification
+     * @sort 511
+     * 
+     * @group User API
+     * 
+     * @authenticated
+     * @bodyParam password string required The password to perform account delete checking. Example: abcd1234
+     * 
+     * 
+     */ 
+    public function deleteVerification( Request $request ) {
+        
+        return UserService::deleteVerification( $request );
+    }
+
+    /**
+     * 12. Delete Confirm
+     * @sort 511
+     * 
+     * @group User API
+     * 
+     * @authenticated
+     * @bodyParam password string required The password to perform account delete checking. Example: abcd1234
+     * 
+     * 
+     */ 
+    public function deleteConfirm( Request $request ) {
+        
+        return UserService::deleteConfirm( $request );
     }
 
 }

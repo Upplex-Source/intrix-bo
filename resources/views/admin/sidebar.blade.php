@@ -60,6 +60,24 @@
                                     </li>
                                 @endcan
 
+                                @can( 'view Wallets' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WalletController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.wallet.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-user-group-fill"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.wallets' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @can( 'view Wallet Transactions' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WalletTransactionController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.wallet_transaction.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-user-group-fill"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.wallet_transactions' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @if( 1 == 2 )
                                 @can( 'view Salesmen' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AdministratorController' && in_array( $action, [ 'indexSalesman', 'editSalesman', 'addSalesman' ] ) ? 'active current-page' : '' }}">

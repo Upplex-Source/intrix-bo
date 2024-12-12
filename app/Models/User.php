@@ -39,6 +39,7 @@ class User extends Model
         'status',
         'phone_number',
         'account_type',
+        'date_of_birth',
     ];
 
     public function getEncryptedIdAttribute() {
@@ -67,6 +68,7 @@ class User extends Model
         'status',
         'phone_number',
         'account_type',
+        'date_of_birth',
     ];
 
     protected static $logName = 'users';
