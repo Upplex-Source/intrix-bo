@@ -85,7 +85,7 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::post( 'delete', [ CartController::class, 'deleteCart' ] );
     } );
     
-    Route::prefix( 'order' )->group( function() {
+    Route::prefix( 'orders' )->group( function() {
         Route::get( '/', [ OrderController::class, 'getOrder' ] );
         Route::get( 'checkout', [ OrderController::class, 'checkout' ] );
     } );

@@ -32,8 +32,9 @@ class CartService {
         $validator = Validator::make($request->all(), [
             'id' => ['nullable', 'exists:carts,id'],
             'session_key' => ['nullable', 'exists:carts,session_key'],
+            'per_page' => ['nullable', 'integer', 'min:1'], // Validate per_page input
         ]);
-    
+        
         // If validation fails, it will automatically throw an error
         $validator->validate();
     
@@ -42,58 +43,57 @@ class CartService {
     
         // Start by querying carts for the authenticated user
         $query = Cart::where('user_id', $user->id)
-        ->with(['cartMetas','vendingMachine'])
-        ->where('status',10);
+            ->with(['cartMetas', 'vendingMachine'])
+            ->where('status', 10)
+            ->orderBy('created_at', 'DESC');
     
-        // If 'id' is provided, filter by cart ID
+        // Apply filters if 'id' or 'session_key' is provided
         if ($request->has('id')) {
             $query->where('id', $request->id);
         }
     
-        // If 'session_key' is provided, filter by session key
         if ($request->has('session_key')) {
             $query->where('session_key', $request->session_key);
         }
     
-        // Retrieve the cart(s) based on the applied filters
-        $userCarts = $query->get()
-        ->makeHidden( ['products','froyos','syrups','toppings'] );
+        // Use paginate instead of get
+        $perPage = $request->input('per_page', 10); // Default to 10 items per page
+        $userCarts = $query->paginate($perPage);
     
-        // If no carts are found, return an empty response with a success message
-        if ($userCarts->isEmpty()) {
-            return response()->json([
-                'message' => '',
-                'message_key' => 'get_cart_success',
-                'carts' => []
-            ]);
-        }
-
-        foreach ($userCarts as $cart) {
-            // Prepare the cart metas data to be returned for each cart
-            $cart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)->setAttribute('image_path', $cart->vendingMachine->image_path);
-
+        // Modify each cart and its related data
+        $userCarts->getCollection()->transform(function ($cart) {
+            // Make vending machine attributes hidden and add additional attributes
+            $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)
+                ->setAttribute('image_path', $cart->vendingMachine->image_path);
+    
+            // Process each cart meta data
             $cartMetas = $cart->cartMetas->map(function ($meta) {
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
-                    'product' => $meta->product->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
+                    'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                        ->setAttribute('image_path', $meta->product->image_path),
                     'froyo' => $meta->froyos_metas,
                     'syrup' => $meta->syrups_metas,
                     'topping' => $meta->toppings_metas,
                 ];
             });
-        
+    
             // Attach the cart metas to the cart object
             $cart->cartMetas = $cartMetas;
-        }
     
-        // Return the response with the carts data
+            return $cart;
+        });
+    
+        // Return the response with the paginated carts data
         return response()->json([
             'message' => '',
             'message_key' => 'get_cart_success',
             'carts' => $userCarts,
         ]);
     }
+    
 
     public static function addToCart( $request ) {
 

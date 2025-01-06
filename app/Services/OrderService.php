@@ -18,6 +18,8 @@ use App\Models\{
     Froyo,
     Syrup,
     Topping,
+    Cart,
+    CartMeta,
 };
 
 use Helper;
@@ -628,6 +630,241 @@ class OrderService
     
         return $amount;
     }
+
+    public static function updateOrderStatus( $request ) {
+        
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateOrder = Order::find( $request->id );
+            $updateOrder->status = $updateOrder->status != 20 ? 20 : 1;
+
+            $updateOrder->save();
+            DB::commit();
+
+            return response()->json( [
+                'data' => [
+                    'froyo' => $updateOrder,
+                    'message_key' => 'update_order_success',
+                ]
+            ] );
+
+        } catch ( \Throwable $th ) {
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+                'message_key' => 'create_froyo_failed',
+            ], 500 );
+        }
+    }
     
+    public static function getOrder($request)
+    {
+        // Validate the incoming request parameters (id and reference)
+        $validator = Validator::make($request->all(), [
+            'id' => ['nullable', 'exists:orders,id'],
+            'status' => ['nullable', 'in:1,2,3,10,20'],
+            'reference' => ['nullable', 'exists:orders,reference'],
+            'per_page' => ['nullable', 'integer', 'min:1'], // Validate per_page input
+        ]);
     
+        // If validation fails, it will automatically throw an error
+        $validator->validate();
+    
+        // Get the current authenticated user
+        $user = auth()->user();
+    
+        // Start by querying orders for the authenticated user
+        $query = Order::where('user_id', $user->id)
+            ->with(['orderMetas', 'vendingMachine'])
+            ->orderBy('created_at', 'DESC');
+    
+        // Apply filters
+        if ($request->has('id')) {
+            $query->where('id', $request->id);
+        }
+    
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+    
+        if ($request->has('reference')) {
+            $query->where('reference', $request->reference);
+        }
+    
+        // Use paginate instead of get
+        $perPage = $request->input('per_page', 10); // Default to 10 items per page
+        $userOrders = $query->paginate($perPage);
+    
+        // Modify each order and its related data
+        $userOrders->getCollection()->transform(function ($order) {
+            $order->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('operational_hour', $order->vendingMachine->operational_hour)
+                ->setAttribute('image_path', $order->vendingMachine->image_path);
+    
+            $orderMetas = $order->orderMetas->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                        ->setAttribute('image_path', $meta->product->image_path),
+                    'froyo' => $meta->froyos_metas,
+                    'syrup' => $meta->syrups_metas,
+                    'topping' => $meta->toppings_metas,
+                ];
+            });
+    
+            $order->orderMetas = $orderMetas;
+    
+            return $order;
+        });
+    
+        // Return the paginated response
+        return response()->json([
+            'message' => '',
+            'message_key' => 'get_order_success',
+            'orders' => $userOrders,
+        ]);
+    }
+    
+
+    public static function checkout( $request ) {
+
+        $validator = Validator::make($request->all(), [
+            'id' => ['required', 'exists:carts,id'],
+        ]);
+
+        $user = auth()->user();
+
+        $query = Cart::where('user_id', $user->id)
+        ->where('id', $request->id)
+        ->where('status',10);
+    
+        $userCart = $query->first();
+        
+        if (!$userCart) {
+            return response()->json([
+                'message' => '',
+                'message_key' => 'cart_is_empty',
+                'carts' => []
+            ]);
+        }
+        
+        $validator->validate();
+
+        DB::beginTransaction();
+        try {
+        
+            $orderPrice = 0;
+
+            $order = Order::create( [
+                'user_id' => auth()->user()->id,
+                'product_id' => null,
+                'product_bundle_id' => null,
+                'outlet_id' => null,
+                'vending_machine_id' => $userCart->vending_machine_id,
+                'total_price' => $orderPrice,
+                'discount' => 0,
+                'status' => 1,
+                'reference' => Helper::generateOrderReference(),
+            ] );
+
+            foreach ( $userCart->cartMetas as $cartProduct ) {
+
+                $froyos = json_decode($cartProduct->froyos,true);
+                $froyoCount = count($froyos);
+                $syrups = json_decode($cartProduct->syrups,true);
+                $syrupCount = count($syrups);
+                $toppings = json_decode($cartProduct->toppings,true);
+                $toppingCount = count($toppings);
+                $product = Product::find($cartProduct->product_id);
+                $metaPrice = 0;
+
+                $orderMeta = OrderMeta::create( [
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'product_bundle_id' => null,
+                    'froyos' =>  $cartProduct->froyos,
+                    'syrups' =>  $cartProduct->syrups,
+                    'toppings' =>  $cartProduct->toppings,
+                    'total_price' =>  $metaPrice,
+                ] );
+
+                $orderPrice += $product->price ?? 0;
+                $metaPrice += $product->price ?? 0;
+
+                if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                    asort($froyoPrices);
+                    $mostExpensiveFroyoPrice = end($froyoPrices);
+                    $orderPrice += $mostExpensiveFroyoPrice;
+                    $metaPrice += $mostExpensiveFroyoPrice;
+                } 
+
+                if (($product->default_syrup_quantity != null || $product->default_syrup_quantity != 0 ) && $syrupCount > $product->default_syrup_quantity) {
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                    asort($syrupPrices);
+                    $mostExpensiveSyrupPrice = end($syrupPrices);
+                    $orderPrice += $mostExpensiveSyrupPrice;
+                    $metaPrice += $mostExpensiveSyrupPrice;
+                } 
+
+                if (($product->default_topping_quantity != null || $product->default_topping_quantity != 0 ) && $toppingCount > $product->default_topping_quantity) {
+                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                    asort($toppingPrices);
+                    $mostExpensiveToppingPrice = end($toppingPrices);
+                    $orderPrice += $mostExpensiveToppingPrice;
+                    $metaPrice += $mostExpensiveToppingPrice;
+                }
+
+                $orderMeta->total_price = $metaPrice;
+                $orderMeta->save();
+
+                $cartProduct->status = 20;
+                $cartProduct->save();
+            }
+
+            $order->total_price = $orderPrice;
+            $order->save();
+
+            $userCart->status = 20;
+            $userCart->save();
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'froyo' => $meta->froyos_metas,
+                'syrup' => $meta->syrups_metas,
+                'topping' => $meta->toppings_metas,
+            ];
+        });
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'create_order_success',
+            'payment_url' => route('payment.testSuccess'),
+            'sesion_key' => $order->session_key,
+            'order_id' => $order->id,
+            'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
+            'total' => $order->total_price,
+            'order_metas' => $orderMetas
+        ] );
+    }
 }

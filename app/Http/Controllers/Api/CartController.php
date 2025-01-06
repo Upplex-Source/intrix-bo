@@ -46,6 +46,7 @@ class CartController extends Controller
      * 
      * @queryParam session_key string The unique identifier for the cart. Example: abcd-1234
      * @queryParam id string The ID of the cart. . Example: abcd-1234
+     * @queryParam per_page integer Retrieve how many insurance quote in a page, default is 10. Example: 10
      * 
      */
     public function getCart( Request $request ) {

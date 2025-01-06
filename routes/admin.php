@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\{
     VendingMachineStockController,
     VendingMachineProductController,
     OrderController,
+    PaymentController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -365,4 +366,12 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
     Route::post( 'login', [ AuthenticatedSessionController::class, 'store' ] )->middleware( array_filter( [ 'guest:admin', $limiter ? 'throttle:'.$limiter : null ] ) )->name( 'admin.login' );
 
     Route::post( 'logout', [ AuthenticatedSessionController::class, 'destroy' ] )->middleware( 'auth:admin' )->name( 'admin.logout' );
+} );
+
+Route::prefix( 'eghl' )->group( function() {
+    Route::get( 'initiate', [ PaymentController::class, 'initEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'notify', [ PaymentController::class, 'notifyEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'query', [ PaymentController::class, 'queryEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'callback', [PaymentController::class, 'callbackEghl'] )->name( 'payment.callbackEghl' );
+    Route::any( 'test-success', [PaymentController::class, 'testSuccess'] )->name( 'payment.testSuccess' );
 } );
