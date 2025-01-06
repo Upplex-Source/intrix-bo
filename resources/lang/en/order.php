@@ -36,5 +36,6 @@ return [
     'order_items' => 'Order Items',
     'froyo' => 'Froyo (s)',
     'syrup' => 'Syrup (s)',
-    'topping' => 'Topping (s)'
+    'topping' => 'Topping (s)',
+    'order_details' => 'Order Details'
 ];

@@ -7,8 +7,8 @@ endpoints:
     uri: api/v1/carts/add
     metadata:
       title: '1. Add to cart'
-      description: '<aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>'
-      authenticated: false
+      description: ''
+      authenticated: true
       custom: []
     headers:
       Content-Type: application/json
@@ -102,8 +102,8 @@ endpoints:
     uri: api/v1/carts/update
     metadata:
       title: '3. Update to cart'
-      description: '<aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>'
-      authenticated: false
+      description: ''
+      authenticated: true
       custom: []
     headers:
       Content-Type: application/json
@@ -111,48 +111,97 @@ endpoints:
     urlParameters: []
     queryParameters: []
     bodyParameters:
-      item:
-        name: item
-        description: 'The ID of the cart item.'
+      vending_machine:
+        name: vending_machine
+        description: 'The ID of the vending_machine.'
         required: true
+        example: 2
+        type: integer
+        custom: []
+      items:
+        name: items
+        description: 'The list of products with their ingredients.'
+        required: true
+        example:
+          -
+            productId: 1
+            froyo:
+              - 1
+              - 2
+            syrup:
+              - 3
+            topping:
+              - 4
+              - 5
+        type: 'string[]'
+        custom: []
+      'items.*.product':
+        name: 'items.*.product'
+        description: 'The ID of the product. Pass `null` if no product is selected.'
+        required: false
         example: 1
         type: integer
         custom: []
-      froyos:
-        name: froyos
-        description: 'The JSON array of froyo IDs.'
-        required: true
-        example:
-          - 1
-          - 2
-          - 3
-        type: 'string[]'
-        custom: []
-      syrups:
-        name: syrups
-        description: 'The JSON array of syrup IDs.'
-        required: true
+      'items.*.froyo':
+        name: 'items.*.froyo'
+        description: 'An array of froyo IDs. Pass an empty array if no froyo is selected.'
+        required: false
         example:
           - 1
           - 2
         type: 'string[]'
         custom: []
-      toppings:
-        name: toppings
-        description: 'The JSON array of topping IDs.'
-        required: true
+      'items.*.froyo.*':
+        name: 'items.*.froyo.*'
+        description: 'A froyo ID.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+      'items.*.syrup':
+        name: 'items.*.syrup'
+        description: 'An array of syrup IDs. Pass an empty array if no syrup is selected.'
+        required: false
         example:
-          - 1
           - 3
+        type: 'string[]'
+        custom: []
+      'items.*.syrup.*':
+        name: 'items.*.syrup.*'
+        description: 'A syrup ID.'
+        required: false
+        example: 3
+        type: integer
+        custom: []
+      'items.*.topping':
+        name: 'items.*.topping'
+        description: 'An array of topping IDs. Pass an empty array if no topping is selected.'
+        required: false
+        example:
+          - 4
           - 5
         type: 'string[]'
+        custom: []
+      'items.*.topping.*':
+        name: 'items.*.topping.*'
+        description: 'A topping ID.'
+        required: false
+        example: 4
+        type: integer
         custom: []
       session_key:
         name: session_key
         description: 'The unique identifier for the cart.'
-        required: true
+        required: false
         example: abcd-1234
         type: string
+        custom: []
+      id:
+        name: id
+        description: 'The ID of the cart.'
+        required: false
+        example: 1
+        type: integer
         custom: []
     responses: []
     responseFields: []
@@ -162,11 +211,8 @@ endpoints:
     uri: api/v1/carts
     metadata:
       title: '2. Retrieve user cart'
-      description: |-
-        <aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>
-
-        type 10: Free Product, cannot be updated
-      authenticated: false
+      description: ''
+      authenticated: true
       custom: []
     headers:
       Content-Type: application/json
@@ -176,7 +222,14 @@ endpoints:
       session_key:
         name: session_key
         description: 'The unique identifier for the cart.'
-        required: true
+        required: false
+        example: abcd-1234
+        type: string
+        custom: []
+      id:
+        name: id
+        description: 'The ID of the cart. .'
+        required: false
         example: abcd-1234
         type: string
         custom: []
@@ -554,4 +607,35 @@ endpoints:
           cache-control: 'no-cache, private'
           content-type: application/json
         description: null
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/carts/delete
+    metadata:
+      title: '4. Delete Cart'
+      description: ''
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      id:
+        name: id
+        description: 'The ID of the cart.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+      session_key:
+        name: session_key
+        description: 'The unique identifier for the cart.'
+        required: false
+        example: abcd-1234
+        type: string
+        custom: []
+    responses: []
     responseFields: []

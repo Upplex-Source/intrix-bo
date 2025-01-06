@@ -21,6 +21,8 @@
 </div><!-- .nk-block-head -->
 
 <?php
+$order_view = 'order_view';
+
 $columns = [
     [
         'type' => 'default',
@@ -71,6 +73,51 @@ $columns = [
 ?>
 
 <x-data-tables id="order_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+
+<div class="modal fade" id="modal_order_view" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{ __( 'order.order_details' ) }}</h5>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3 row d-flex justify-content-between">
+                <label class="col-sm-5 col-form-label">Vending Machine</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}_fullname" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row d-flex justify-content-between">
+                <label class="col-sm-5 col-form-label">Reference</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}_email" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row d-flex justify-content-between">
+                <label class="col-sm-5 col-form-label">Payment Method</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}_type" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row d-flex justify-content-between">
+                <label class="col-sm-5 col-form-label">Status</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}_account_type" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row d-flex justify-content-between">
+                <label class="col-sm-5 col-form-label">Total Price</label>
+                <div class="col-sm-7">
+                    <input type="number" class="form-control-plaintext" id="{{ $order_view }}_leverage" readonly>
+                </div>
+            </div>
+            <div class="mb-3">
+                <strong>Order Details</strong>
+                <div class="selections"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 
@@ -165,16 +212,18 @@ var statusMapper = @json( $data['status'] ),
                 render: function( data, type, row, meta ) {
 
                     @canany( [ 'edit orders', 'delete orders' ] )
-                    let edit, status = '';
-
+                    let edit = '', 
+                    status = '';
+ 
                     @can( 'edit orders' )
-                    edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
+                    edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete orders' )
                     status = row['status'] == 10 ? 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.order_canceled' ) }}</span></a></li>' : 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.order_placed' ) }}</span></a></li>';
                     @endcan
                     
                     let html = 
@@ -189,6 +238,7 @@ var statusMapper = @json( $data['status'] ),
                             </div>
                         </div>
                         `;
+                        console.log(html)
                         return html;
                     @else
                     return '-';
@@ -201,6 +251,9 @@ var statusMapper = @json( $data['status'] ),
     timeout = null;
 
     document.addEventListener( 'DOMContentLoaded', function() {
+
+        let ov = '#{{ $order_view }}',
+            modalmt5Detail = new bootstrap.Modal( document.getElementById( 'modal_order_view' ) );
 
         $( '#created_date' ).flatpickr( {
             mode: 'range',
@@ -229,6 +282,82 @@ var statusMapper = @json( $data['status'] ),
                     dt_table.draw( false );
                     $( '#modal_success .caption-text' ).html( response.message );
                     modalSuccess.toggle();
+                },
+            } );
+        } );
+
+        $( document ).on( 'click', '.dt-view', function() {
+
+            $( '#modal_order_view .form-control-plaintext' ).val( '-' );
+            $( '#modal_order_view .form-select' ).val( 2 );
+            $( '#modal_order_view textarea' ).val();
+
+            let id = $( this ).data( 'id' );
+
+            $.ajax( {
+                url: '{{ route( 'admin.order.oneOrder' ) }}',
+                type: 'POST',
+                data: {
+                    id,
+                    _token: '{{ csrf_token() }}',
+                },
+                success: function( response ) {
+                    $('#{{ $order_view }}_id').val(response.id);
+                    $('#{{ $order_view }}_fullname').val(response.vending_machine.title || '-');
+                    $('#{{ $order_view }}_email').val(response.reference || '-');
+                    $('#{{ $order_view }}_type').val(response.payment_method === 1 ? 'Yobe Wallet' : 'Online Payment');
+                    $('#{{ $order_view }}_account_type').val(response.status === 1 ? 'Order Placed' : 'Collected');
+                    $('#{{ $order_view }}_leverage').val(response.total_price || '0.00');
+                    
+
+                    const orderMetas = response.orderMetas || [];
+                    orderMetas.forEach((meta) => {
+                        const froyoHtml = meta.froyo
+                            ? meta.froyo
+                                .map(
+                                    (froyo) =>
+                                        `<div><strong>Froyo:</strong> ${froyo.title}</div>`
+                                )
+                                .join('')
+                            : '<div><strong>Froyo:</strong> None selected</div>';
+
+                        const syrupHtml = meta.syrup
+                            ? meta.syrup
+                                .map(
+                                    (syrup) =>
+                                        `<div><strong>Syrup:</strong> ${syrup.title}</div>`
+                                )
+                                .join('')
+                            : '<div><strong>Syrup:</strong> None selected</div>';
+
+                        const toppingHtml = meta.topping
+                            ? meta.topping
+                                .map(
+                                    (topping) =>
+                                        `<div><strong>Topping:</strong> ${topping.title}</div>`
+                                )
+                                .join('')
+                            : '<div><strong>Topping:</strong> None selected</div>';
+
+                        // Append to the modal
+                        $('#modal_order_view .selections').append(
+                            `<div>
+                                <h6>Product: ${meta.product.title} (${meta.product.code})</h6>
+                                <h6>Price: ${meta.product.title} (${meta.product.code})</h6>
+                                ${froyoHtml}
+                                ${syrupHtml}
+                                ${toppingHtml}
+                            </div><hr>`
+                        );
+                    });
+
+
+                    modalmt5Detail.show();
+                },
+                error: function( error ) {
+                    modalmt5Detail.hide();
+                    $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
+                    modalDanger.show();
                 },
             } );
         } );

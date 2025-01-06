@@ -61,6 +61,65 @@ class OrderMeta extends Model
         return $this->belongsTo(Topping::class, 'topping_id');
     }
 
+    public function getFroyosMetasAttribute()
+    {
+        $froyoIds = json_decode($this->attributes['froyos'], true);
+    
+        if (empty($froyoIds)) {
+            return collect(); // Return an empty collection if no froyo IDs
+        }
+
+        $froyo = Froyo::whereIn('id', $froyoIds)
+        ->select('id', 'title', 'price', 'image') // Select only specific fields
+        ->get();
+
+        $froyo->append('image_path');
+    
+        return $froyo;
+    }
+
+    public function getSyrupsMetasAttribute()
+    {
+        $syrupIds = json_decode($this->attributes['syrups'], true);
+    
+        if (empty($syrupIds)) {
+            return collect(); // Return an empty collection if no syrup IDs
+        }
+    
+        $syrup = Syrup::whereIn('id', $syrupIds)
+        ->select('id', 'title', 'price', 'image') // Select only specific fields
+        ->get();
+
+        $syrup->append('image_path');
+    
+        return $syrup;
+    }
+
+    public function getToppingsMetasAttribute()
+    {
+        $toppingIds = json_decode($this->attributes['toppings'], true);
+    
+        if (empty($toppingIds)) {
+            return collect(); // Return an empty collection if no topping IDs
+        }
+    
+        $topping = Topping::whereIn('id', $toppingIds)
+        ->select('id', 'title', 'price', 'image') // Select only specific fields
+        ->get();
+
+        $topping->append('image_path');
+    
+        return $topping;
+    }
+
+    public function getProductsMetasAttribute()
+    {
+        return Product::whereIn('id', $this->attributes['products'])
+        ->select('id', 'title', 'price')
+        ->get();
+    }
+
+
     public function orderMetas() {
         return $this->hasMany( OrderMeta::class, 'order_id' );
     }

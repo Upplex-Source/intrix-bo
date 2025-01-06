@@ -10,7 +10,7 @@ paths:
   /api/v1/carts/add:
     post:
       summary: '1. Add to cart'
-      description: '<aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>'
+      description: ''
       parameters:
         -
           in: header
@@ -59,11 +59,10 @@ paths:
               required:
                 - vending_machine
                 - items
-      security: []
   /api/v1/carts/update:
     post:
       summary: '3. Update to cart'
-      description: '<aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>'
+      description: ''
       parameters:
         -
           in: header
@@ -89,61 +88,61 @@ paths:
             schema:
               type: object
               properties:
-                item:
+                vending_machine:
                   type: integer
-                  description: 'The ID of the cart item.'
-                  example: 1
-                froyos:
+                  description: 'The ID of the vending_machine.'
+                  example: 2
+                items:
                   type: array
-                  description: 'The JSON array of froyo IDs.'
+                  description: 'The list of products with their ingredients.'
                   example:
-                    - 1
-                    - 2
-                    - 3
-                  items:
-                    type: string
-                syrups:
-                  type: array
-                  description: 'The JSON array of syrup IDs.'
-                  example:
-                    - 1
-                    - 2
-                  items:
-                    type: string
-                toppings:
-                  type: array
-                  description: 'The JSON array of topping IDs.'
-                  example:
-                    - 1
-                    - 3
-                    - 5
+                    -
+                      productId: 1
+                      froyo:
+                        - 1
+                        - 2
+                      syrup:
+                        - 3
+                      topping:
+                        - 4
+                        - 5
                   items:
                     type: string
                 session_key:
                   type: string
                   description: 'The unique identifier for the cart.'
                   example: abcd-1234
+                id:
+                  type: integer
+                  description: 'The ID of the cart.'
+                  example: 1
               required:
-                - item
-                - froyos
-                - syrups
-                - toppings
-                - session_key
-      security: []
+                - vending_machine
+                - items
   /api/v1/carts:
     get:
       summary: '2. Retrieve user cart'
-      description: "<aside class=\"notice\">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>\n\ntype 10: Free Product, cannot be updated"
+      description: ''
       parameters:
         -
           in: query
           name: session_key
           description: 'The unique identifier for the cart.'
           example: abcd-1234
-          required: true
+          required: false
           schema:
             type: string
             description: 'The unique identifier for the cart.'
+            example: abcd-1234
+        -
+          in: query
+          name: id
+          description: 'The ID of the cart. .'
+          example: abcd-1234
+          required: false
+          schema:
+            type: string
+            description: 'The ID of the cart. .'
             example: abcd-1234
         -
           in: header
@@ -804,7 +803,43 @@ paths:
                       type: object
       tags:
         - 'Cart API'
-      security: []
+  /api/v1/carts/delete:
+    post:
+      summary: '4. Delete Cart'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'Cart API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: 'The ID of the cart.'
+                  example: 1
+                session_key:
+                  type: string
+                  description: 'The unique identifier for the cart.'
+                  example: abcd-1234
   /api/v1/contact-us:
     post:
       summary: '1. Enquiry Mail'

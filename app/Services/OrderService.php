@@ -200,11 +200,24 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'farm',
-            'farm.owner',
-            'buyer',
-            'orderMetas',
+            'orderMetas','vendingMachine','user'
         ] )->find( $request->id );
+
+        $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour)->setAttribute('image_path', $order->vendingMachine->image_path);
+
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'product' => $meta->product->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
+                'froyo' => $meta->froyos_metas,
+                'syrup' => $meta->syrups_metas,
+                'topping' => $meta->toppings_metas,
+            ];
+        });
+    
+        // Attach the cart metas to the cart object
+        $order->orderMetas = $orderMetas;
 
         return response()->json( $order );
     }
@@ -348,19 +361,30 @@ class OrderService
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
-            'order_items' => json_decode( $request->order_items, true ),
         ] );
 
+        if ($request->has('products')) {
+            $decodedProducts = [];
+            foreach ($request->products as $product) {
+                $productArray = json_decode($product, true);
+        
+                $productArray['productId'] = explode('-', $productArray['productId'])[0];
+        
+                $decodedProducts[] = $productArray;
+            }
+        
+            $request->merge(['products' => $decodedProducts]);
+        }
+
         $validator = Validator::make( $request->all(), [
-            'reference' => [ 'required', 'unique:orders,reference,' . $request->id ],
-            'farm' => [ 'required', 'exists:farms,id'  ],
-            'buyer' => [ 'required', 'exists:buyers,id'  ],
-            'order_items' => [ 'nullable' ],
-            'grade' => [ 'nullable' ],
-            'weight' => [ 'nullable' ],
-            'rate' => [ 'nullable' ],
-            'total' => [ 'nullable' ],
-            // 'subtotal' => [ 'nullable' ],
+            'id' => [ 'required', 'exists:orders,id'  ],
+            'user' => [ 'required', 'exists:users,id'  ],
+            'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
+            'products' => [ 'nullable' ],
+            'products.*.productId' => [ 'nullable', 'exists:products,id' ],
+            'products.*.froyo' => [ 'nullable', 'exists:froyos,id' ],
+            'products.*.syrup' => [ 'nullable', 'exists:syrups,id' ],
+            'products.*.topping' => [ 'nullable', 'exists:toppings,id' ],
         ] );
 
         $attributeName = [
@@ -383,26 +407,60 @@ class OrderService
         DB::beginTransaction();
 
         try {
+            $orderPrice = 0;
 
             $updateOrder = Order::find( $request->id );
-            $updateOrder->reference = $request->reference;
-            $updateOrder->buyer_id = $request->buyer;
-            $updateOrder->order_date = $request->order_date ? Carbon::createFromFormat( 'Y-m-d', $request->order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null;
-            $updateOrder->subtotal = 0;
-            $updateOrder->total = $request->total;
+            $updateOrder->user_id = $request->user;
+            $updateOrder->vending_machine_id = $request->vending_machine;
             $updateOrder->save();
 
             OrderMeta::where( 'order_id', $updateOrder->id )->delete();
 
-            foreach ( $request->order_items as $orderMetas ) {
+            foreach ( $request->products as $product ) {
 
-                OrderMeta::create( [
+                $froyos = $product['froyo'];
+                $froyoCount = count($froyos);
+                $syrups = $product['syrup'];
+                $syrupCount = count($syrups);
+                $toppings = $product['topping'];
+                $toppingCount = count($toppings);
+                $product = Product::find($product['productId']);
+
+                $orderMeta = OrderMeta::create( [
                     'order_id' => $updateOrder->id,
-                    'grade' => $orderMetas['grade'],
-                    'weight' => $orderMetas['weight'] != null ? $orderMetas['weight'] : 0,
-                    'rate' => $orderMetas['rate'] != null ? $orderMetas['rate'] : 0,
+                    'product_id' => $product->id,
+                    'product_bundle_id' => null,
+                    'froyos' =>  json_encode($froyos),
+                    'syrups' =>  json_encode($syrups),
+                    'toppings' =>  json_encode($toppings),
                 ] );
+
+                $orderPrice += $product->price ?? 0;
+
+                if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                    asort($froyoPrices);
+                    $mostExpensiveFroyoPrice = end($froyoPrices);
+                    $orderPrice += $mostExpensiveFroyoPrice;
+                } 
+                
+                if (($product->default_syrup_quantity != null || $product->default_syrup_quantity != 0 ) && $syrupCount > $product->default_syrup_quantity) {
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                    asort($syrupPrices);
+                    $mostExpensiveSyrupPrice = end($syrupPrices);
+                    $orderPrice += $mostExpensiveSyrupPrice;
+                } 
+
+                if (($product->default_topping_quantity != null || $product->default_topping_quantity != 0 ) && $toppingCount > $product->default_topping_quantity) {
+                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                    asort($toppingPrices);
+                    $mostExpensiveToppingPrice = end($toppingPrices);
+                    $orderPrice += $mostExpensiveToppingPrice;
+                } 
             }
+
+            $updateOrder->total_price = $orderPrice;
+            $updateOrder->save();
 
             DB::commit();
 

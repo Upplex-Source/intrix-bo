@@ -26,7 +26,7 @@
             </style>
 
     <script>
-        var baseUrl = "http://localhost/yobe-backoffice/";
+        var baseUrl = "http://localhost/yobe-backoffice";
         var useCsrf = Boolean();
         var csrfUrl = "/sanctum/csrf-cookie";
     </script>
@@ -82,6 +82,9 @@
                     </li>
                                     <li class="tocify-item level-2" data-unique="cart-api-GETapi-v1-carts">
                         <a href="#cart-api-GETapi-v1-carts">2. Retrieve user cart</a>
+                    </li>
+                                    <li class="tocify-item level-2" data-unique="cart-api-POSTapi-v1-carts-delete">
+                        <a href="#cart-api-POSTapi-v1-carts-delete">4. Delete Cart</a>
                     </li>
                                                     </ul>
                             </ul>
@@ -216,9 +219,10 @@ You can switch the language used with the tabs at the top right (or from the nav
             <h2 id="cart-api-POSTapi-v1-carts-add">1. Add to cart</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
-<aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>
+
 
 <span id="example-requests-POSTapi-v1-carts-add">
 <blockquote>Example request:</blockquote>
@@ -303,7 +307,7 @@ fetch(url, {
 </span>
 <form id="form-POSTapi-v1-carts-add" data-method="POST"
       data-path="api/v1/carts/add"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
@@ -330,7 +334,15 @@ fetch(url, {
             <small class="badge badge-black">POST</small>
             <b><code>api/v1/carts/add</code></b>
         </p>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+                <p>
+            <label id="auth-POSTapi-v1-carts-add" hidden>Authorization header:
+                <b><code>Bearer </code></b><input type="text"
+                                                                name="Authorization"
+                                                                data-prefix="Bearer "
+                                                                data-endpoint="POSTapi-v1-carts-add"
+                                                                data-component="header"></label>
+        </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <p>
             <b><code>vending_machine</code></b>&nbsp;&nbsp;<small>integer</small>  &nbsp;
                 <input type="number"
@@ -431,9 +443,10 @@ fetch(url, {
             <h2 id="cart-api-POSTapi-v1-carts-update">3. Update to cart</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
-<aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>
+
 
 <span id="example-requests-POSTapi-v1-carts-update">
 <blockquote>Example request:</blockquote>
@@ -445,22 +458,25 @@ fetch(url, {
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"item\": 1,
-    \"froyos\": [
-        1,
-        2,
-        3
+    \"vending_machine\": 2,
+    \"items\": [
+        {
+            \"productId\": 1,
+            \"froyo\": [
+                1,
+                2
+            ],
+            \"syrup\": [
+                3
+            ],
+            \"topping\": [
+                4,
+                5
+            ]
+        }
     ],
-    \"syrups\": [
-        1,
-        2
-    ],
-    \"toppings\": [
-        1,
-        3,
-        5
-    ],
-    \"session_key\": \"abcd-1234\"
+    \"session_key\": \"abcd-1234\",
+    \"id\": 1
 }"
 </code></pre></div>
 
@@ -476,22 +492,25 @@ const headers = {
 };
 
 let body = {
-    "item": 1,
-    "froyos": [
-        1,
-        2,
-        3
+    "vending_machine": 2,
+    "items": [
+        {
+            "productId": 1,
+            "froyo": [
+                1,
+                2
+            ],
+            "syrup": [
+                3
+            ],
+            "topping": [
+                4,
+                5
+            ]
+        }
     ],
-    "syrups": [
-        1,
-        2
-    ],
-    "toppings": [
-        1,
-        3,
-        5
-    ],
-    "session_key": "abcd-1234"
+    "session_key": "abcd-1234",
+    "id": 1
 };
 
 fetch(url, {
@@ -516,7 +535,7 @@ fetch(url, {
 </span>
 <form id="form-POSTapi-v1-carts-update" data-method="POST"
       data-path="api/v1/carts/update"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
@@ -543,58 +562,112 @@ fetch(url, {
             <small class="badge badge-black">POST</small>
             <b><code>api/v1/carts/update</code></b>
         </p>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+                <p>
+            <label id="auth-POSTapi-v1-carts-update" hidden>Authorization header:
+                <b><code>Bearer </code></b><input type="text"
+                                                                name="Authorization"
+                                                                data-prefix="Bearer "
+                                                                data-endpoint="POSTapi-v1-carts-update"
+                                                                data-component="header"></label>
+        </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <p>
-            <b><code>item</code></b>&nbsp;&nbsp;<small>integer</small>  &nbsp;
+            <b><code>vending_machine</code></b>&nbsp;&nbsp;<small>integer</small>  &nbsp;
                 <input type="number"
-               name="item"
+               name="vending_machine"
+               data-endpoint="POSTapi-v1-carts-update"
+               value="2"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the vending_machine.</p>
+        </p>
+                <p>
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b><code>items</code></b>&nbsp;&nbsp;<small>string[]</small>  &nbsp;
+<br>
+<p>The list of products with their ingredients.</p>
+            </summary>
+                                                <p>
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b><code>items.*</code></b>&nbsp;&nbsp;<small>object</small>  &nbsp;
+<br>
+
+            </summary>
+                                                <p>
+                        <b><code>items.*.product</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="items.*.product"
                data-endpoint="POSTapi-v1-carts-update"
                value="1"
                data-component="body" hidden>
     <br>
-<p>The ID of the cart item.</p>
-        </p>
-                <p>
-            <b><code>froyos</code></b>&nbsp;&nbsp;<small>string[]</small>  &nbsp;
-                <input type="text"
-               name="froyos[0]"
+<p>The ID of the product. Pass <code>null</code> if no product is selected.</p>
+                    </p>
+                                                                <p>
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b><code>items.*.froyo</code></b>&nbsp;&nbsp;<small>string[]</small>     <i>optional</i> &nbsp;
+<br>
+<p>An array of froyo IDs. Pass an empty array if no froyo is selected.</p>
+            </summary>
+                                                <p>
+                        <b><code>items.*.froyo.*</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="items.*.froyo.*"
                data-endpoint="POSTapi-v1-carts-update"
-               data-component="body" hidden>
-        <input type="text"
-               name="froyos[1]"
-               data-endpoint="POSTapi-v1-carts-update"
-               data-component="body" hidden>
-    <br>
-<p>The JSON array of froyo IDs.</p>
-        </p>
-                <p>
-            <b><code>syrups</code></b>&nbsp;&nbsp;<small>string[]</small>  &nbsp;
-                <input type="text"
-               name="syrups[0]"
-               data-endpoint="POSTapi-v1-carts-update"
-               data-component="body" hidden>
-        <input type="text"
-               name="syrups[1]"
-               data-endpoint="POSTapi-v1-carts-update"
+               value="1"
                data-component="body" hidden>
     <br>
-<p>The JSON array of syrup IDs.</p>
+<p>A froyo ID.</p>
+                    </p>
+                                    </details>
         </p>
-                <p>
-            <b><code>toppings</code></b>&nbsp;&nbsp;<small>string[]</small>  &nbsp;
-                <input type="text"
-               name="toppings[0]"
+                                                                    <p>
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b><code>items.*.syrup</code></b>&nbsp;&nbsp;<small>string[]</small>     <i>optional</i> &nbsp;
+<br>
+<p>An array of syrup IDs. Pass an empty array if no syrup is selected.</p>
+            </summary>
+                                                <p>
+                        <b><code>items.*.syrup.*</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="items.*.syrup.*"
                data-endpoint="POSTapi-v1-carts-update"
-               data-component="body" hidden>
-        <input type="text"
-               name="toppings[1]"
-               data-endpoint="POSTapi-v1-carts-update"
+               value="3"
                data-component="body" hidden>
     <br>
-<p>The JSON array of topping IDs.</p>
+<p>A syrup ID.</p>
+                    </p>
+                                    </details>
+        </p>
+                                                                    <p>
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b><code>items.*.topping</code></b>&nbsp;&nbsp;<small>string[]</small>     <i>optional</i> &nbsp;
+<br>
+<p>An array of topping IDs. Pass an empty array if no topping is selected.</p>
+            </summary>
+                                                <p>
+                        <b><code>items.*.topping.*</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="items.*.topping.*"
+               data-endpoint="POSTapi-v1-carts-update"
+               value="4"
+               data-component="body" hidden>
+    <br>
+<p>A topping ID.</p>
+                    </p>
+                                    </details>
+        </p>
+                                        </details>
+        </p>
+                                        </details>
         </p>
                 <p>
-            <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+            <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
                 <input type="text"
                name="session_key"
                data-endpoint="POSTapi-v1-carts-update"
@@ -603,15 +676,25 @@ fetch(url, {
     <br>
 <p>The unique identifier for the cart.</p>
         </p>
+                <p>
+            <b><code>id</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="id"
+               data-endpoint="POSTapi-v1-carts-update"
+               value="1"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the cart.</p>
+        </p>
         </form>
 
             <h2 id="cart-api-GETapi-v1-carts">2. Retrieve user cart</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
-<aside class="notice">When authenticated user call this endpoint, system will check user_id instead of session_key</aside>
-<p>type 10: Free Product, cannot be updated</p>
+
 
 <span id="example-requests-GETapi-v1-carts">
 <blockquote>Example request:</blockquote>
@@ -619,7 +702,7 @@ fetch(url, {
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost/yobe-backoffice/api/v1/carts?session_key=abcd-1234" \
+    --get "http://localhost/yobe-backoffice/api/v1/carts?session_key=abcd-1234&amp;id=abcd-1234" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -631,6 +714,7 @@ fetch(url, {
 
 const params = {
     "session_key": "abcd-1234",
+    "id": "abcd-1234",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -1039,7 +1123,7 @@ content-type: application/json
 </span>
 <form id="form-GETapi-v1-carts" data-method="GET"
       data-path="api/v1/carts"
-      data-authed="0"
+      data-authed="1"
       data-hasfiles="0"
       data-isarraybody="0"
       data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
@@ -1066,9 +1150,17 @@ content-type: application/json
             <small class="badge badge-green">GET</small>
             <b><code>api/v1/carts</code></b>
         </p>
-                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                <p>
+            <label id="auth-GETapi-v1-carts" hidden>Authorization header:
+                <b><code>Bearer </code></b><input type="text"
+                                                                name="Authorization"
+                                                                data-prefix="Bearer "
+                                                                data-endpoint="GETapi-v1-carts"
+                                                                data-component="header"></label>
+        </p>
+                    <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                     <p>
-                <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
                 <input type="text"
                name="session_key"
                data-endpoint="GETapi-v1-carts"
@@ -1077,7 +1169,136 @@ content-type: application/json
     <br>
 <p>The unique identifier for the cart.</p>
             </p>
+                    <p>
+                <b><code>id</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="id"
+               data-endpoint="GETapi-v1-carts"
+               value="abcd-1234"
+               data-component="query" hidden>
+    <br>
+<p>The ID of the cart. .</p>
+            </p>
                 </form>
+
+            <h2 id="cart-api-POSTapi-v1-carts-delete">4. Delete Cart</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-carts-delete">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost/yobe-backoffice/api/v1/carts/delete" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"id\": 1,
+    \"session_key\": \"abcd-1234\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/yobe-backoffice/api/v1/carts/delete"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "id": 1,
+    "session_key": "abcd-1234"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-carts-delete">
+</span>
+<span id="execution-results-POSTapi-v1-carts-delete" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-carts-delete"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-carts-delete"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-carts-delete" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-carts-delete"></code></pre>
+</span>
+<form id="form-POSTapi-v1-carts-delete" data-method="POST"
+      data-path="api/v1/carts/delete"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-carts-delete', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-carts-delete"
+                    onclick="tryItOut('POSTapi-v1-carts-delete');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-carts-delete"
+                    onclick="cancelTryOut('POSTapi-v1-carts-delete');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-carts-delete" hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/carts/delete</code></b>
+        </p>
+                <p>
+            <label id="auth-POSTapi-v1-carts-delete" hidden>Authorization header:
+                <b><code>Bearer </code></b><input type="text"
+                                                                name="Authorization"
+                                                                data-prefix="Bearer "
+                                                                data-endpoint="POSTapi-v1-carts-delete"
+                                                                data-component="header"></label>
+        </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <p>
+            <b><code>id</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="id"
+               data-endpoint="POSTapi-v1-carts-delete"
+               value="1"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the cart.</p>
+        </p>
+                <p>
+            <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="session_key"
+               data-endpoint="POSTapi-v1-carts-delete"
+               value="abcd-1234"
+               data-component="body" hidden>
+    <br>
+<p>The unique identifier for the cart.</p>
+        </p>
+        </form>
 
         <h1 id="contact-us-api">Contact-Us API</h1>
 

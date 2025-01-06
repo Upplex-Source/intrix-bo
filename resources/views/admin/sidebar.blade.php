@@ -134,6 +134,15 @@
                                 </li>
                                 @endcan
 
+                                @can( 'view Orders' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-list-index-fill"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.orders' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @if( 1 == 2 )
                                 @can( 'view Salesmen' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AdministratorController' && in_array( $action, [ 'indexSalesman', 'editSalesman', 'addSalesman' ] ) ? 'active current-page' : '' }}">
