@@ -27,7 +27,11 @@ class Wallet extends Model
     }
 
     public function getListingBalanceAttribute() {
-        return Helper::numberFormat( $this->attributes['balance'], 2 );
+        return Helper::numberFormat( $this->attributes['balance'], 2, false );
+    }
+
+    public function getFormattedTypeAttribute() {
+        return Helper::wallets()[$this->attributes['type']];
     }
 
     public function getEncryptedIdAttribute() {

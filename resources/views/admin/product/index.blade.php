@@ -1,7 +1,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.products' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.menus' ) }}</h3>
         </div><!-- .nk-block-head-content -->
         @can( 'add products' )
         <div class="nk-block-head-content">
@@ -51,66 +51,15 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.product_code' ) ] ),
-        'id' => 'product_code',
-        'title' => __( 'product.product_code' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.brand' ) ] ),
-        'id' => 'brand',
-        'title' => __( 'product.brand' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.category' ) ] ),
-        'id' => 'category',
-        'title' => __( 'product.category' ),
-    ],
-    [
-        'type' => 'default',
-        'id' => 'warehouse',
-        'title' => __( 'product.warehouse' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.unit' ) ] ),
-        'id' => 'unit',
-        'title' => __( 'product.unit' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.code' ) ] ),
+        'id' => 'code',
+        'title' => __( 'product.code' ),
     ],
     [
         'type' => 'default',
         'id' => 'price',
         'title' => __( 'product.price' ),
     ],
-    [
-        'type' => 'default',
-        'id' => 'cost',
-        'title' => __( 'product.cost' ),
-    ],
-    [
-        'type' => 'default',
-        'id' => 'stock_worth',
-        'title' => __( 'product.stock_worth' ),
-    ],
-    // [
-    //     'type' => 'default',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.number_of_product' ) ] ),
-    //     'id' => 'number_of_product',
-    //     'title' => __( 'product.number_of_product' ),
-    // ],
-    // [
-    //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.stock_quantity' ) ] ),
-    //     'id' => 'stock_quantity',
-    //     'title' => __( 'product.stock_quantity' ),
-    // ],
-    // [
-    //     'type' => 'input',
-    //     'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.stock_worth' ) ] ),
-    //     'id' => 'stock_worth',
-    //     'title' => __( 'product.stock_worth' ),
-    // ],
     [
         'type' => 'select',
         'options' => $data['status'],
@@ -165,19 +114,10 @@ var statusMapper = @json( $data['status'] ),
             { data: null },
             { data: null },
             { data: 'created_at' },
-            { data: 'galleries' },
+            { data: 'image_path' },
             { data: 'title' },
-            { data: 'product_code' },
-            { data: 'brand' },
-            { data: 'categories' },
-            { data: 'warehouses' },
-            { data: 'unit' },
+            { data: 'code' },
             { data: 'price' },
-            { data: 'cost' },
-            { data: 'stock_worth' },
-            // { data: 'number_of_product' },
-            // { data: 'stock_quantity' },
-            // { data: 'stock_worth' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -203,19 +143,6 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "image" ) }}' ),
-                orderable: false,
-                render: function( data, type, row, meta ) {
-                    if ( data ) {
-                        return '<img src="' + (data && data.length > 0 ? data[data.length - 1].image_path : '{{ asset( 'admin/images/placeholder.png' ) }}') + '" width="75px" />';
-                    } else {
-
-                        return '<img src="' + '{{ asset( 'admin/images/placeholder.png' ) }}' + '" width="75px" />'
-                        
-                    }
-                },
-            },
-            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "title" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
@@ -234,6 +161,21 @@ var statusMapper = @json( $data['status'] ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data.title : '-' ;
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "image" ) }}' ),
+                orderable: false,
+                render: function( data, type, row, meta ) {
+                    if ( data ) {
+
+                        return '<img src="' + ( data ? data : '{{ asset( 'admin/images/placeholder.png' ) }}' ) + '" width="75px" />';
+
+                    } else {
+
+                        return '<img src="' + '{{ asset( 'admin/images/placeholder.png' ) }}' + '" width="75px" />'
+                        
+                    }
                 },
             },
             {
@@ -328,10 +270,6 @@ var statusMapper = @json( $data['status'] ),
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'edit products' )
-                    edit += '<li class="dt-print-barcode" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.print_barcode' ) }}</span></a></li>';
-                    @endcan
-
                     @can( 'delete products' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
@@ -375,35 +313,6 @@ var statusMapper = @json( $data['status'] ),
         $( document ).on( 'click', '.dt-edit', function() {
             window.location.href = '{{ route( 'admin.product.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
-
-        $( document ).on( 'click', '.dt-print-barcode', function() {
-
-            let formData = {
-                id: $( this ).data( 'id' ),
-                _token: '{{ csrf_token() }}',
-            };
-
-            $.ajax({
-                url: '{{ route( 'admin.product.generateBarcode' ) }}',
-                method: 'POST',
-                data: formData,
-                xhrFields: {
-                    responseType: 'blob'
-                },
-                success: function (data) {
-                    // Create a blob and trigger download
-                    const blob = new Blob([data], { type: 'application/pdf' });
-                    const link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = 'barcode.pdf';
-                    link.click();
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error generating barcode PDF:', error);
-                    alert('Failed to generate PDF. Please try again.');
-                }
-            });
-        });
 
         $( document ).on( 'click', '.dt-status', function() {
 

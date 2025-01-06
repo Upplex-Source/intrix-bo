@@ -30,7 +30,7 @@ class WalletController extends Controller
      * 2. Topup
      * 
      * <strong>payment_method</strong><br>
-     * 1: Revenue Monster
+     * 1: Payment Gateway
      * 
      * @group Wallet API
      * 

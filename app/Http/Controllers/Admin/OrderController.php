@@ -33,8 +33,11 @@ class OrderController extends Controller
             ],
         ];
         $this->data['data']['status'] = [
-            '10' => __( 'datatables.activate' ),
-            '20' => __( 'datatables.suspend' ),
+            '1' => __( 'datatables.order_placed' ),
+            '2' => __( 'datatables.order_pending_payment' ),
+            '3' => __( 'datatables.order_paid' ),
+            '10' => __( 'datatables.order_completed' ),
+            '20' => __( 'datatables.order_canceled' ),
         ];
         $this->data['data']['company'] = [];
 
@@ -113,6 +116,13 @@ class OrderController extends Controller
             'D',
         ];
 
+        $this->data['data']['status'] = [
+            '1' => __( 'datatables.order_placed' ),
+            '2' => __( 'datatables.order_pending_payment' ),
+            '3' => __( 'datatables.order_paid' ),
+            '10' => __( 'datatables.order_completed' ),
+            '20' => __( 'datatables.order_canceled' ),
+        ];
         return view( 'admin.main' )->with( $this->data );
     }
 

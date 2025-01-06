@@ -13,7 +13,11 @@ use App\Models\{
     FileManager,
     Option,
     Order,
-    OrderItem,
+    OrderMeta,
+    Product,
+    Froyo,
+    Syrup,
+    Topping,
 };
 
 use Helper;
@@ -53,10 +57,9 @@ class OrderService
     public static function allOrders( $request, $export = false ) {
 
         $order = Order::with( [
-            'farm',
-            'farm.owner',
-            'buyer',
-            'orderItems',
+            'vendingMachine',
+            'user',
+            'orderMetas',
         ] )->select( 'orders.*' )
         ->orderBy( 'created_at', 'DESC' );
             
@@ -200,7 +203,7 @@ class OrderService
             'farm',
             'farm.owner',
             'buyer',
-            'orderItems',
+            'orderMetas',
         ] )->find( $request->id );
 
         return response()->json( $order );
@@ -222,40 +225,36 @@ class OrderService
 
     public static function createOrder( $request ) {
 
-        $request->merge( [
-            'order_items' => json_decode( $request->order_items, true ),
-        ] );
+        if ($request->has('products')) {
+            $decodedProducts = [];
+            foreach ($request->products as $product) {
+                $productArray = json_decode($product, true);
+        
+                $productArray['productId'] = explode('-', $productArray['productId'])[0];
+        
+                $decodedProducts[] = $productArray;
+            }
+        
+            $request->merge(['products' => $decodedProducts]);
+        }
 
         $validator = Validator::make( $request->all(), [
-            'reference' => [ 'required', 'unique:orders' ],
-            'farm' => [ 'required', 'exists:farms,id'  ],
-            'buyer' => [ 'required', 'exists:buyers,id'  ],
-            'order_items' => [ 'nullable' ],
-            'grade' => [ 'nullable' ],
-            'weight' => [ 'nullable' ],
-            'rate' => [ 'nullable' ],
-            'total' => [ 'nullable' ],
-            // 'subtotal' => [ 'nullable' ],
-
-            'order_items' => ['nullable', 'array'],
-            'order_items.*.weight' => ['nullable', 'numeric', 'min:0'],
-            'order_items.*.rate' => ['nullable', 'numeric', 'min:0'],
-
+            'user' => [ 'required', 'exists:users,id'  ],
+            'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
+            'products' => [ 'nullable' ],
+            'products.*.productId' => [ 'nullable', 'exists:products,id' ],
+            'products.*.froyo' => [ 'nullable', 'exists:froyos,id' ],
+            'products.*.syrup' => [ 'nullable', 'exists:syrups,id' ],
+            'products.*.topping' => [ 'nullable', 'exists:toppings,id' ],
         ] );
 
         $attributeName = [
-            'reference' => __( 'order.reference' ),
-            'farm' => __( 'order.farm' ),
-            'buyer' => __( 'order.buyer' ),
-            'grade' => __( 'order.grade' ),
-            'weight' => __( 'order.weight' ),
-            'rate' => __( 'order.rate' ),
-            'total' => __( 'order.total' ),
-            // 'subtotal' => __( 'order.subtotal' ),
-
-            'order_items.*.weight' => __( 'order.order_items' ),
-            'order_items.*.rate' => __( 'order.order_items' ),
-            'order_items' => __( 'order.order_items' ),
+            'user' => __( 'order.user' ),
+            'vending_machine' => __( 'order.vending_machine' ),
+            'products' => __( 'order.products' ),
+            'froyo' => __( 'order.froyo' ),
+            'syrup' => __( 'order.syrup' ),
+            'topping' => __( 'order.topping' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -267,24 +266,67 @@ class OrderService
         DB::beginTransaction();
 
         try {
+
+            $orderPrice = 0;
+
             $createOrder = Order::create( [
-                'reference' => $request->reference,
-                'farm_id' => $request->farm,
-                'buyer_id' => $request->buyer,
-                'order_date' => $request->order_date ? Carbon::createFromFormat( 'Y-m-d', $request->order_date, 'Asia/Kuala_Lumpur' )->setTimezone( 'UTC' )->format( 'Y-m-d H:i:s' ) : null,
-                'subtotal' => 0,
-                'total' => $request->total,
+                'product_id' => null,
+                'product_bundle_id' => null,
+                'outlet_id' => null,
+                'user_id' => $request->user,
+                'vending_machine_id' => $request->vending_machine,
+                'total_price' => 0,
+                'discount' => 0,
+                'reference' => Helper::generateOrderReference(),
+                'payment_method' => 1,
+                'status' => 1,
             ] );
 
-            foreach ( $request->order_items as $orderItems ) {
+            foreach ( $request->products as $product ) {
 
-                OrderItem::create( [
+                $froyos = $product['froyo'];
+                $froyoCount = count($froyos);
+                $syrups = $product['syrup'];
+                $syrupCount = count($syrups);
+                $toppings = $product['topping'];
+                $toppingCount = count($toppings);
+                $product = Product::find($product['productId']);
+
+                $orderMeta = OrderMeta::create( [
                     'order_id' => $createOrder->id,
-                    'grade' => $orderItems['grade'],
-                    'weight' => $orderItems['weight'] != null ? $orderItems['weight'] : 0,
-                    'rate' => $orderItems['rate'] != null ? $orderItems['rate'] : 0,
+                    'product_id' => $product->id,
+                    'product_bundle_id' => null,
+                    'froyos' =>  json_encode($froyos),
+                    'syrups' =>  json_encode($syrups),
+                    'toppings' =>  json_encode($toppings),
                 ] );
+
+                $orderPrice += $product->price ?? 0;
+
+                if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                    asort($froyoPrices);
+                    $mostExpensiveFroyoPrice = end($froyoPrices);
+                    $orderPrice += $mostExpensiveFroyoPrice;
+                } 
+                
+                if (($product->default_syrup_quantity != null || $product->default_syrup_quantity != 0 ) && $syrupCount > $product->default_syrup_quantity) {
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                    asort($syrupPrices);
+                    $mostExpensiveSyrupPrice = end($syrupPrices);
+                    $orderPrice += $mostExpensiveSyrupPrice;
+                } 
+
+                if (($product->default_topping_quantity != null || $product->default_topping_quantity != 0 ) && $toppingCount > $product->default_topping_quantity) {
+                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                    asort($toppingPrices);
+                    $mostExpensiveToppingPrice = end($toppingPrices);
+                    $orderPrice += $mostExpensiveToppingPrice;
+                } 
             }
+
+            $createOrder->total_price = $orderPrice;
+            $createOrder->save();
 
             DB::commit();
 
@@ -350,15 +392,15 @@ class OrderService
             $updateOrder->total = $request->total;
             $updateOrder->save();
 
-            OrderItem::where( 'order_id', $updateOrder->id )->delete();
+            OrderMeta::where( 'order_id', $updateOrder->id )->delete();
 
-            foreach ( $request->order_items as $orderItems ) {
+            foreach ( $request->order_items as $orderMetas ) {
 
-                OrderItem::create( [
+                OrderMeta::create( [
                     'order_id' => $updateOrder->id,
-                    'grade' => $orderItems['grade'],
-                    'weight' => $orderItems['weight'] != null ? $orderItems['weight'] : 0,
-                    'rate' => $orderItems['rate'] != null ? $orderItems['rate'] : 0,
+                    'grade' => $orderMetas['grade'],
+                    'weight' => $orderMetas['weight'] != null ? $orderMetas['weight'] : 0,
+                    'rate' => $orderMetas['rate'] != null ? $orderMetas['rate'] : 0,
                 ] );
             }
 
@@ -444,10 +486,10 @@ class OrderService
                 $grandRates[$grade]['weight'] = 0;
             }
         
-            foreach($order->orderItems as $orderItem) {
-                $grade = $orderItem['grade'];
-                $grandRates[$grade]['rates'] += $orderItem['rate'];
-                $grandRates[$grade]['weight'] += $orderItem['weight'];
+            foreach($order->orderMetas as $orderMeta) {
+                $grade = $orderMeta['grade'];
+                $grandRates[$grade]['rates'] += $orderMeta['rate'];
+                $grandRates[$grade]['weight'] += $orderMeta['weight'];
             }
 
             foreach($grades as $grade) {
@@ -484,7 +526,7 @@ class OrderService
         $salesRecords = Order::with( [
             'farm.owner',
             'buyer',
-            'orderItems',
+            'orderMetas',
         ] )->where( 'created_at', '>=', $start->format( 'Y-m-d H:i:s' ) )
             ->where( 'created_at', '<=', $end->format( 'Y-m-d H:i:s' ) )
             ->orderBy( 'created_at', 'DESC' )
@@ -500,5 +542,34 @@ class OrderService
             'orders' => $salesRecords->toArray(),
         ];
     }
+
+    private static function getIngredientPrice($id, $type, $prices = null)
+    {
+        // If we already have the prices, we can directly use them
+        if ($prices && isset($prices[$id])) {
+            return $prices[$id];
+        }
+    
+        // Otherwise, fall back to the original way (if necessary)
+        $amount = 0;
+    
+        switch ($type) {
+            case 'froyo':
+                $amount = Froyo::find($id)->price;
+                break;
+            case 'syrup':
+                $amount = Syrup::find($id)->price;
+                break;
+            case 'topping':
+                $amount = Topping::find($id)->price;
+                break;
+            default:
+                $amount = Froyo::find($id)->price;
+                break;
+        }
+    
+        return $amount;
+    }
+    
     
 }

@@ -12,9 +12,6 @@
                         <li class="nk-block-tools-opt">
                             <a href="{{ route( 'admin.order.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
-                        <li class="nk-block-tools-opt">
-                            <button type="button" class="btn btn-secondary dt-export">{{ __( 'template.export' ) }}</button>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -37,9 +34,9 @@ $columns = [
     ],
     [
         'type' => 'date',
-        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'order.order_date' ) ] ),
-        'id' => 'order_date',
-        'title' => __( 'order.order_date' ),
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'datatables.created_date' ) ] ),
+        'id' => 'created_date',
+        'title' => __( 'datatables.created_date' ),
     ],
     [
         'type' => 'input',
@@ -49,26 +46,14 @@ $columns = [
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.owner' ) ] ),
-        'id' => 'owner',
-        'title' => __( 'order.owner' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.farm' ) ] ),
-        'id' => 'farm',
-        'title' => __( 'order.farm' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.buyer' ) ] ),
-        'id' => 'buyer',
-        'title' => __( 'order.buyer' ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.user' ) ] ),
+        'id' => 'user',
+        'title' => __( 'order.user' ),
     ],
     [
         'type' => 'default',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'order.total' ) ] ),
-        'id' => 'total',
+        'id' => 'total_price',
         'title' => __( 'order.total' ) . ' (' . __( 'order.rm' ) . ')',
     ],
     [
@@ -124,12 +109,10 @@ var statusMapper = @json( $data['status'] ),
         columns: [
             { data: null },
             { data: null },
-            { data: 'order_date' },
+            { data: 'created_at' },
             { data: 'reference' },
-            { data: 'farm.owner.fullname' },
-            { data: 'farm.title' },
-            { data: 'buyer.name' },
-            { data: 'total' },
+            { data: 'user.username' },
+            { data: 'total_price' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -155,14 +138,14 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "order_date" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "created_date" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "total" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "total_price" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data;
@@ -216,11 +199,10 @@ var statusMapper = @json( $data['status'] ),
     },
     table_no = 0,
     timeout = null;
-    exportPath = '{{ route( 'admin.order.export' ) }}';
 
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        $( '#order_date' ).flatpickr( {
+        $( '#created_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
             onClose: function( selected, dateStr, instance ) {

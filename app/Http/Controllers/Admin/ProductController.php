@@ -18,7 +18,7 @@ class ProductController extends Controller
 {
     public function index( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.products' );
+        $this->data['header']['title'] = __( 'template.menus' );
         $this->data['content'] = 'admin.product.index';
         $this->data['breadcrumb'] = [
             [
@@ -28,7 +28,7 @@ class ProductController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.products' ),
+                'text' => __( 'template.menus' ),
                 'class' => 'active',
             ],
         ];
@@ -42,7 +42,7 @@ class ProductController extends Controller
 
     public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.products' ) ) ] );
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] );
         $this->data['content'] = 'admin.product.add';
         $this->data['breadcrumb'] = [
             [
@@ -52,28 +52,22 @@ class ProductController extends Controller
             ],
             [
                 'url' => route( 'admin.module_parent.product.index' ),
-                'text' => __( 'template.products' ),
+                'text' => __( 'template.menus' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.products' ) ) ] ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] ),
                 'class' => 'active',
             ],
         ];
-
-        $this->data['data']['barcodes'] = Product::getPredefinedBarcodeSymbologies();
-        $this->data['data']['product_types'] = Product::getPredefinedProductTypes();
-        $this->data['data']['unit_types'] = Product::getPredefinedUnits();
-        $this->data['data']['tax_methods'] = Product::getPredefinedTaxMethods();
-        $this->data['data']['warehouses'] = WarehouseService::getWareHouses( $request );
 
         return view( 'admin.main' )->with( $this->data );
     }
 
     public function edit( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.products' ) ) ] );
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] );
         $this->data['content'] = 'admin.product.edit';
         $this->data['breadcrumb'] = [
             [
@@ -83,38 +77,12 @@ class ProductController extends Controller
             ],
             [
                 'url' => route( 'admin.module_parent.product.index' ),
-                'text' => __( 'template.products' ),
+                'text' => __( 'template.menus' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.products' ) ) ] ),
-                'class' => 'active',
-            ],
-        ];
-
-        $this->data['data']['barcodes'] = Product::getPredefinedBarcodeSymbologies();
-        $this->data['data']['product_types'] = Product::getPredefinedProductTypes();
-        $this->data['data']['unit_types'] = Product::getPredefinedUnits();
-        $this->data['data']['tax_methods'] = Product::getPredefinedTaxMethods();
-        $this->data['data']['warehouses'] = WarehouseService::getWareHouses( $request );
-
-        return view( 'admin.main' )->with( $this->data );
-    }
-
-    public function printBarcodes( Request $request ) {
-
-        $this->data['header']['title'] = __( 'template.generate_barcodes' );
-        $this->data['content'] = 'admin.product.print_barcode';
-        $this->data['breadcrumb'] = [
-            [
-                'url' => route( 'admin.dashboard' ),
-                'text' => __( 'template.dashboard' ),
-                'class' => '',
-            ],
-            [
-                'url' => '',
-                'text' => __( 'template.products' ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] ),
                 'class' => 'active',
             ],
         ];
@@ -156,28 +124,4 @@ class ProductController extends Controller
         return ProductService::removeProductGalleryImage( $request );
     }
 
-    public function ckeUpload( Request $request ) {
-
-        return ProductService::ckeUpload( $request );
-    }
-
-    public function generateProductCode( Request $request ) {
-
-        return ProductService::generateProductCode( $request );
-    }
-
-    public function generateBarcode( Request $request ) {
-
-        return ProductService::generateBarcode( $request );
-    }
-
-    public function generateBarcodes( Request $request ) {
-
-        return ProductService::generateBarcodes( $request );
-    }
-    
-    public function previewBarcode( Request $request ) {
-
-        return ProductService::previewBarcode( $request );
-    }
 }

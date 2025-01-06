@@ -23,9 +23,6 @@
                                             <label class="form-label" for="email">{{ __( 'auth.credentials' ) }}</label>
                                         </div>
                                         <div class="form-control-wrap input-group">
-                                            <button class="flex-shrink-0 inline-flex items-center input-group-text" type="button">
-                                                +60
-                                            </button>
                                             <input type="text" class="form-control form-control-lg @error('email') is-invalid @enderror" 
                                             id="email" name="email" 
                                             placeholder="{{ __( 'auth.enter_your_x', [ 'type' => strtolower( __( 'auth.email' ) .' or '. __( 'auth.phone_number' ) ) ] ) }}"

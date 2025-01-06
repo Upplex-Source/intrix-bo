@@ -29,13 +29,21 @@ class Helper {
     }
 
     public static function assetVersion() {
-        return '?v=1.04';
+        return '?v=1.05';
     }
 
     public static function wallets() {
         return [
             '1' => __( 'wallet.wallet_1' ),
             '2' => __( 'wallet.wallet_2' ),
+        ];
+    }
+    
+    public static function maxStocks() {
+        return [
+            'froyo' => 1000,
+            'syrup' => 1000,
+            'topping' => 1000,
         ];
     }
 
@@ -91,6 +99,7 @@ class Helper {
     }
 
     public static function numberFormat( $number, $decimal, $isRound = false ) {
+
         if ( $isRound ) {
             return number_format( $number, $decimal );    
         } else {
@@ -387,39 +396,14 @@ class Helper {
         return now()->format('YmdHis');
     }
 
-    public static function generatePurchaseNumber()
+    public static function generateOrderReference()
     {
-        return 'PCR' . now()->format('YmdHis');
+        return 'ODR-' . now()->format('YmdHis');
     }
-
-    public static function generatePurchaseTransactionNumber()
+    
+    public static function generateCartSessionKey()
     {
-        return 'PCR-T-' . now()->format('YmdHis');
-    }
-
-    public static function generateExpenseNumber()
-    {
-        return 'EXP-T-' . now()->format('YmdHis');
-    }
-
-    public static function generateQuotationNumber()
-    {
-        return 'QWT-' . now()->format('YmdHis');
-    }
-
-    public static function generateSalesOrderNumber()
-    {
-        return 'SO-' . now()->format('YmdHis');
-    }
-
-    public static function generateInvoiceNumber()
-    {
-        return 'INV-' . now()->format('YmdHis');
-    }
-
-    public static function generateDeliveryOrderNumber()
-    {
-        return 'DLV-' . now()->format('YmdHis');
+        return 'CART-' . now()->format('YmdHis');
     }
     
 }

@@ -19,34 +19,42 @@ class Order extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'owner_id',
-        'farm_id',
-        'buyer_id',
+        'product_id',
+        'product_bundle_id',
+        'user_id',
+        'vending_machine_id',
+        'outlet_id',
+        'total_price',
+        'discount',
         'reference',
-        'order_date',
-        'grade',
-        'weight',
-        'rate',
-        'subtotal',
-        'total',
-        'internal_status',
+        'payment_method',
         'status',
+        'voucher_id',
+        'taxes',
     ];
 
-    public function owner() {
-        return $this->belongsTo( User::class, 'owner_id' );
+    public function product() {
+        return $this->belongsTo( Product::class, 'product_id' );
     }
 
-    public function farm() {
-        return $this->belongsTo( Farm::class, 'farm_id' );
+    public function productBundle() {
+        return $this->belongsTo( ProductBundle::class, 'product_bundle_id' );
     }
 
-    public function buyer() {
-        return $this->belongsTo( Buyer::class, 'buyer_id' );
+    public function user() {
+        return $this->belongsTo( User::class, 'user_id' );
     }
 
-    public function orderItems() {
-        return $this->hasMany( OrderItem::class, 'order_id' )->orderBy( 'grade' );
+    public function outlet() {
+        return $this->belongsTo( Outlet::class, 'outlet_id' );
+    }
+
+    public function vendingMachine() {
+        return $this->belongsTo( VendingMachine::class, 'vending_machine_id' );
+    }
+
+    public function orderMetas() {
+        return $this->hasMany( OrderMeta::class, 'order_id' );
     }
     
     public function getEncryptedIdAttribute() {
@@ -58,18 +66,18 @@ class Order extends Model
     }
 
     protected static $logAttributes = [
-        'owner_id',
-        'farm_id',
-        'buyer_id',
+        'product_id',
+        'product_bundle_id',
+        'user_id',
+        'vending_machine_id',
+        'outlet_id',
+        'total_price',
+        'discount',
         'reference',
-        'order_date',
-        'grade',
-        'weight',
-        'rate',
-        'subtotal',
-        'total',
-        'internal_status',
+        'payment_method',
         'status',
+        'voucher_id',
+        'taxes',
     ];
 
     protected static $logName = 'orders';

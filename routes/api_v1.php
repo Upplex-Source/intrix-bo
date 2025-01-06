@@ -3,7 +3,11 @@
 use App\Http\Controllers\Api\{
     UserController,
     MailContentController,
-    WalletController
+    WalletController,
+    VendingMachineController,
+    MenuController,
+    CartController,
+    OrderController
 };
 
 use Illuminate\Support\Facades\Route;
@@ -57,8 +61,32 @@ Route::middleware( 'auth:user' )->group( function() {
     } );
     
     Route::prefix( 'wallets' )->group( function() {
-
         Route::get( 'transactions', [ WalletController::class, 'getWalletTransactions' ] );
         Route::post( 'topup', [ WalletController::class, 'topup' ] );
+    } );
+    
+    // New API routes
+    Route::prefix( 'vending-machines' )->group( function() {
+        Route::get( '/', [ VendingMachineController::class, 'getVendingMachines' ] );
+    } );
+    
+    Route::prefix( 'menus' )->group( function() {
+        Route::get( '/', [ MenuController::class, 'getMenus' ] );
+        Route::get( 'get-selections', [ MenuController::class, 'getSelections' ] );
+        Route::get( 'get-froyos', [ MenuController::class, 'getFroyos' ] );
+        Route::get( 'get-syrups', [ MenuController::class, 'getSyrups' ] );
+        Route::get( 'get-toppings', [ MenuController::class, 'getToppings' ] );
+    } );
+    
+    Route::prefix( 'carts' )->group( function() {
+        Route::post( 'add', [ CartController::class, 'addToCart' ] );
+        Route::post( 'update', [ CartController::class, 'updateCart' ] );
+        Route::get( '/', [ CartController::class, 'getCart' ] );
+        Route::post( 'delete', [ CartController::class, 'deleteCart' ] );
+    } );
+    
+    Route::prefix( 'order' )->group( function() {
+        Route::get( '/', [ OrderController::class, 'getOrder' ] );
+        Route::get( 'checkout', [ OrderController::class, 'checkout' ] );
     } );
 });

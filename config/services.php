@@ -47,5 +47,11 @@ return [
 
     'mail' => [
         'receiver' => env( 'MAIL_RECEIVER' )
+    ],
+
+    'eghl' => [
+        'test_url' => env( 'EGHL_TEST_URL' ),
+        'merchant_id' => env( 'EGHL_MERCHANT_ID' ),
+        'merchant_password' => env( 'EGHL_MERCHANT_PASSWORD' ),
     ]
 ];

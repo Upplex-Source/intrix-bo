@@ -55,4 +55,11 @@ return [
 
     'sub_total' => 'Sub Total',
     'grand_total' => 'Grand Total',
+
+    // orders status
+    'order_placed' => 'Order Placed',
+    'order_pending_payment' => 'Order Pending Payement',
+    'order_paid' => 'Order Paid',
+    'order_completed' => 'Order Completed',
+    'order_canceled' => 'Order Canceled',
 ];

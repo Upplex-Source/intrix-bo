@@ -922,7 +922,23 @@ class UserService
 
     public static function getUser( $request, $filterClientCode ) {
 
-        $user = User::find( auth()->user()->id );
+        $user = User::with( ['wallets'] )->find( auth()->user()->id );
+
+        if ( $user ) {
+            $user->makeHidden( [
+                'status',
+                'updated_at',
+            ] );
+        }
+
+        if($user->wallets){ 
+            foreach($user->wallets as $wallet){
+                $wallet->append([
+                    'listing_balance',
+                    'formatted_type'
+                ]);
+            }
+        }
     
         // If user not found, return early with error response
         if (!$user) {

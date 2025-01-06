@@ -10,98 +10,38 @@ $order_create = 'order_create';
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
-<?php
-$orderIncrement = $data['order_increment'];
-$grade = $data['grade'];
-?>
 
 <div class="card">
     <div class="card-inner">
         <div class="row gx-5">
-            <div class="col-md-6 col-lg-6">
+            <div class="col-md-12 col-lg-12">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $order_create }}_reference" class="col-sm-4 col-form-label">{{ __( 'booking.reference' ) }}</label>
+                    <label for="{{ $order_create }}_user" class="col-sm-4 col-form-label">{{ __( 'order.user' ) }}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_reference" value="BNS-{{ date( 'Ymd' ) . ( $orderIncrement ) }}" readonly>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_farm" class="col-sm-4 col-form-label">{{ __( 'order.farm' ) }}</label>
-                    <div class="col-sm-6">
-                        <select class="form-select" id="{{ $order_create }}_farm" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.farm' ) ] ) }}">
+                        <select class="form-select" id="{{ $order_create }}_user" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.user' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $order_create }}_buyer" class="col-sm-4 col-form-label">{{ __( 'order.buyer' ) }}</label>
+                    <label for="{{ $order_create }}_vending_machine" class="col-sm-4 col-form-label">{{ __( 'order.vending_machine' ) }}</label>
                     <div class="col-sm-6">
-                        <select class="form-select" id="{{ $order_create }}_buyer" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.buyer' ) ] ) }}">
+                        <select class="form-select" id="{{ $order_create }}_vending_machine" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.vending_machine' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $order_create }}_order_date" class="col-sm-4 col-form-label">{{ __( 'order.order_date' ) }}</label>
+                    <label for="{{ $order_create }}_product" class="col-sm-4 col-form-label">{{ __( 'order.product' ) }}</label>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_order_date" placeholder="{{ __( 'template.optional' ) }}">
+                        <select class="form-select" id="{{ $order_create }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.product' ) ] ) }}"  multiple="multiple">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-lg-6 order-details">
-
-                <div id="order_details_0">
-                    <h5 class="card-title mb-4">{{ __( 'order.order_details' ) }}</h5>
-                    <div class="mb-3 row">
-                        <label for="{{ $order_create }}_grade" class="col-sm-4 col-form-label">{{ __( 'order.grade' ) }}</label>
-                        <div class="col-sm-6">
-                            <select class="form-select" id="{{ $order_create }}_grade" >
-                                <option value="A">A</option>
-                                <option value="B">B</option>
-                                <option value="C">C</option>
-                                <option value="D">D</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="{{ $order_create }}_weight" class="col-sm-4 col-form-label">{{ __( 'order.weight' ) }}</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control weight" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="{{ $order_create }}_rate" class="col-sm-4 col-form-label">{{ __( 'order.rate' ) }}</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control rate" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3 row">
-                        <label for="{{ $order_create }}_subtotal" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
-                        <div class="col-sm-6">
-                            <input type="text" class="form-control subtotal" id="{{ $order_create }}_subtotal" >
-                            <div class="invalid-feedback"></div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="text-center mt-2 mb-2" id="order_details_add">
-                    <em class="icon ni ni-plus-round address-icon order-details-add"></em>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_total" class="col-sm-4 col-form-label">{{ __( 'order.total' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" id="{{ $order_create }}_total">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
+            <div class="col-md-12 col-lg-12 order-details">
             </div>
 
         </div>
@@ -117,34 +57,8 @@ $grade = $data['grade'];
     document.addEventListener( 'DOMContentLoaded', function() {
 
         let oc = '#{{ $order_create }}',
-                    odIndex = 1;
-
-        $( document ).on( 'click', '.order-details-remove', function() {
-            
-            let id = $( this ).data( 'id' );
-
-            $( '#order_details_' + id ).remove();
-
-            odIndex-=1;
-
-            calculateTotal();
-
-        } );
-
-        $( oc + '_order_date' ).flatpickr({
-            defaultDate: "today",
-        });
-
-        $( oc + '_order_date' ).on( 'change', function() {
-
-            const selectedDate = $( this ).val();
-    
-            const cleanedDate = selectedDate.replace( /-/g, '' );
-
-            const value = `BNS-${cleanedDate}{{ $orderIncrement }}`;
-
-            $( oc + '_reference' ).val( value )
-        } );
+            odIndex = 1,
+            orderDetailsContainer = $(".order-details");
 
         $( oc + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.order.index' ) }}';
@@ -159,25 +73,39 @@ $grade = $data['grade'];
             } );
 
             let formData = new FormData();
-            formData.append( 'reference', $( oc + '_reference' ).val() );
-            formData.append( 'farm', $( oc + '_farm' ).val() );
-            formData.append( 'buyer', $( oc + '_buyer' ).val() );
-            formData.append( 'order_date', $( oc + '_order_date' ).val() );
-            formData.append( 'grade', $( oc + '_grade' ).val() );
-            formData.append( 'weight', $( oc + '_weight' ).val() );
-            // formData.append( 'subtotal', $( oc + '_subtotal' ).val() );
-            formData.append( 'total', $( oc + '_total' ).val() );
-            formData.append( 'rate', $( oc + '_rate' ).val() );
-            let orderItems = [];
-            $( '.order-details' ).each( function( i, v ) {
-                orderItems.push( {
-                    'grade': $( v ).find( oc + '_grade' ).val(),
-                    'weight': $( v ).find( oc + '_weight' ).val(),
-                    'rate': $( v ).find( oc + '_rate' ).val(),
-                } );
-            } );
-            formData.append( 'order_items', JSON.stringify( orderItems ) );
             formData.append( '_token', '{{ csrf_token() }}' );
+            formData.append( 'user', $( oc + '_user').val() );
+            formData.append( 'vending_machine', $( oc + '_vending_machine').val()  );
+            // Loop through each product card to get the selected data
+            $('.item-card').each(function () {
+                const productId = $(this).attr('id').replace('product-card-', '');
+                const froyoSelect = $(this).find(`#froyo-${productId}`);
+                const syrupSelect = $(this).find(`#syrup-${productId}`);
+                const toppingSelect = $(this).find(`#topping-${productId}`);
+
+                // Get selected froyo, syrup, and topping values
+                const froyoSelected = froyoSelect.select2('data').map(f => ({ id: f.id, price: parseFloat(f.price || 0) }));
+                const syrupSelected = syrupSelect.select2('data').map(s => ({ id: s.id, price: parseFloat(s.price || 0) }));
+                const toppingSelected = toppingSelect.select2('data').map(t => ({ id: t.id, price: parseFloat(t.price || 0) }));
+
+                // Calculate subtotal dynamically
+                const froyoSubtotal = froyoSelected.reduce((sum, item) => sum + item.price, 0);
+                const syrupSubtotal = syrupSelected.reduce((sum, item) => sum + item.price, 0);
+                const toppingSubtotal = toppingSelected.reduce((sum, item) => sum + item.price, 0);
+                const totalSubtotal = froyoSubtotal + syrupSubtotal + toppingSubtotal;
+
+                // Update the subtotal field in the UI
+                $(this).find(`#subtotal-${productId}`).val(totalSubtotal.toFixed(2));
+
+                // Append product details to FormData
+                formData.append('products[]', JSON.stringify({
+                    productId: productId,
+                    froyo: froyoSelected.map(f => f.id), // Only send IDs
+                    syrup: syrupSelected.map(s => s.id), // Only send IDs
+                    topping: toppingSelected.map(t => t.id), // Only send IDs
+                    subtotal: totalSubtotal
+                }));
+            });
 
             $.ajax( {
                 url: '{{ route( 'admin.order.createOrder' ) }}',
@@ -206,14 +134,13 @@ $grade = $data['grade'];
                                 let stringKey = key.split( '.' );
 
                                 $( '#order_details_' + stringKey[1] ).find( oc + '_' + stringKey[2] ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-                                console.log( '#order_details_' + stringKey[1])
-                                console.log( $( '#order_details_' + stringKey[1] ) )
-                                console.log(stringKey[2])
-                                console.log(value)
+
                                 return true;
+                            }else{
+
+                                $( oc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                             }
 
-                            // $( oc + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
                         } );
 
                     } else {
@@ -224,192 +151,546 @@ $grade = $data['grade'];
             } );
         } );
 
-        $( oc + '_farm' ).select2( {
-            language: '{{ App::getLocale() }}',
-            theme: 'bootstrap-5',
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-            allowClear: true,
-            ajax: {
-                method: 'POST',
-                url: '{{ route( 'admin.farm.allFarms' ) }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        custom_search: params.term, // search term
-                        designation: 1,
-                        status: 10,
-                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
-                        length: 10,
-                        _token: '{{ csrf_token() }}',
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
+        $( oc + "_product" ).on("select2:select", function (e) {
+            const selectedItem = e.params.data;
+            const productId = selectedItem.id;
+            const productName = selectedItem.text;
+            const productPrice = selectedItem.price;
+            const maxFroyo = selectedItem.maxFroyo;
+            const maxSyrup = selectedItem.maxSyrup;
+            const maxTopping = selectedItem.maxTopping;
 
-                    let processedResult = [];
+            // Check if the product card already exists
+            if ($(`#product-card-${productId}`).length === 0) {
+                const cardHtml = `
+                    <div class="mb-4 item-card" id="product-card-${productId}" data-max-froyo="${maxFroyo}" data-max-syrup="${maxSyrup}" data-max-topping="${maxTopping}">
+                        <h5 class="card-title">${productName}</h5>
+                        <h6 class="card-title">You may choose: ${maxFroyo} Froyo(s), ${maxSyrup} Syrup(s), ${maxTopping} Topping(s) extra selection will be charged</h6>
+                        
+                        <div class="mb-3 row">
+                            <label for="froyo-${productId}" class="col-sm-4 col-form-label">{{ __( 'order.froyo' ) }}</label>
+                            <div class="col-sm-6">
+                                <select class="form-select select2-froyo" id="froyo-${productId}" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.froyo' ) ] ) }}" multiple="multiple">
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 row">
+                            <label for="syrup-${productId}" class="col-sm-4 col-form-label">{{ __( 'order.syrup' ) }}</label>
+                            <div class="col-sm-6">
+                                <select class="form-select select2-syrup" id="syrup-${productId}" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.syrup' ) ] ) }}" multiple="multiple">
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 row">
+                            <label for="topping-${productId}" class="col-sm-4 col-form-label">{{ __( 'order.topping' ) }}</label>
+                            <div class="col-sm-6">
+                                <select class="form-select select2-topping" id="topping-${productId}" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'order.topping' ) ] ) }}" multiple="multiple">
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
 
-                    data.farms.map( function( v, i ) {
-                        processedResult.push( {
-                            id: v.id,
-                            text: v.title + ' ( ' + v.owner.name + ' )',
-                        } );
-                    } );
+                        <div class="mb-3 row">
+                            <label for="topping-${productId}" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control" id="subtotal-${productId}" value="${productPrice}" placeholder="Enter quantity">
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
 
-                    return {
-                        results: processedResult,
-                        pagination: {
-                            more: ( params.page * 10 ) < data.recordsFiltered
+                        <button type="button" class="btn btn-danger btn-sm remove-product-card" data-id="${productId}">
+                            {{ __( 'order.remove' ) }}
+                        </button>
+
+                    </div>
+                `;
+
+                // Append the new product card to the container
+                orderDetailsContainer.append(cardHtml);
+        
+                $(`#froyo-${productId}`).select2( {
+                    language: '{{ App::getLocale() }}',
+                    theme: 'bootstrap-5',
+                    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+                    placeholder: $( this ).data( 'placeholder' ),
+                    closeOnSelect: true,
+                    ajax: {
+                        method: 'POST',
+                        url: '{{ route( 'admin.froyo.allFroyos' ) }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                custom_search: params.term, // search term
+                                status: 10,
+                                start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                                length: 10,
+                                _token: '{{ csrf_token() }}',
+                            };
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
+
+                            let processedResult = [];
+
+                            data.froyos.map( function( v, i ) {
+                                processedResult.push( {
+                                    id: v.id,
+                                    text: v.title + ' RM (' + v.price + ')',
+                                    price: v.price,
+                                    productId : productId,
+                                } );
+                            } );
+
+                            return {
+                                results: processedResult,
+                                pagination: {
+                                    more: ( params.page * 10 ) < data.recordsFiltered
+                                }
+                            };
                         }
-                    };
-                }
-            },
-        } );
+                    },
+                } );
 
-        $( oc + '_buyer' ).select2( {
-            language: '{{ App::getLocale() }}',
-            theme: 'bootstrap-5',
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-            allowClear: true,
-            ajax: {
-                method: 'POST',
-                url: '{{ route( 'admin.buyer.allBuyers' ) }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        custom_search: params.term, // search term
-                        designation: 1,
-                        status: 10,
-                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
-                        length: 10,
-                        _token: '{{ csrf_token() }}',
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
+                $(`#syrup-${productId}`).select2( {
+                    language: '{{ App::getLocale() }}',
+                    theme: 'bootstrap-5',
+                    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+                    placeholder: $( this ).data( 'placeholder' ),
+                    closeOnSelect: true,
+                    ajax: {
+                        method: 'POST',
+                        url: '{{ route( 'admin.syrup.allSyrups' ) }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                custom_search: params.term, // search term
+                                status: 10,
+                                start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                                length: 10,
+                                _token: '{{ csrf_token() }}',
+                            };
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
 
-                    let processedResult = [];
+                            let processedResult = [];
 
-                    data.buyers.map( function( v, i ) {
-                        processedResult.push( {
-                            id: v.id,
-                            text: v.name,
-                        } );
-                    } );
+                            data.syrups.map( function( v, i ) {
+                                processedResult.push( {
+                                    id: v.id,
+                                    text: v.title + ' RM (' + v.price + ')',
+                                    price: v.price,
+                                    productId : productId,
+                                } );
+                            } );
 
-                    return {
-                        results: processedResult,
-                        pagination: {
-                            more: ( params.page * 10 ) < data.recordsFiltered
+                            return {
+                                results: processedResult,
+                                pagination: {
+                                    more: ( params.page * 10 ) < data.recordsFiltered
+                                }
+                            };
                         }
-                    };
-                }
-            },
-        } );
+                    },
+                } );
 
-        $( document ).on( 'click', '.order-details-add', function() {
+                $(`#topping-${productId}`).select2( {
+                    language: '{{ App::getLocale() }}',
+                    theme: 'bootstrap-5',
+                    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+                    placeholder: $( this ).data( 'placeholder' ),
+                    closeOnSelect: true,
+                    ajax: {
+                        method: 'POST',
+                        url: '{{ route( 'admin.topping.allToppings' ) }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                custom_search: params.term, // search term
+                                status: 10,
+                                start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                                length: 10,
+                                _token: '{{ csrf_token() }}',
+                            };
+                        },
+                        processResults: function (data, params) {
+                            params.page = params.page || 1;
 
-            let html = 
-            `
-            <div class="order-details" id="order_details_` + odIndex + `" data-id="` + odIndex + `">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mt-2 mb-2">{{ __( 'order.order_details' ) }} ` + (odIndex + 1) + `</h5>
-                    <div class="mb-1">
-                        <em class="icon ni ni-trash address-icon order-details-remove" data-id="` + odIndex + `"></em>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_grade" class="col-sm-4 col-form-label">{{ __( 'order.grade' ) }}</label>
-                    <div class="col-sm-6">
-                        <select class="form-select" id="{{ $order_create }}_grade" >
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_weight" class="col-sm-4 col-form-label">{{ __( 'order.weight' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control weight" id="{{ $order_create }}_weight" placeholder="{{ __( 'template.optional' ) }}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_rate" class="col-sm-4 col-form-label">{{ __( 'order.rate' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control rate" id="{{ $order_create }}_rate" placeholder="{{ __( 'template.optional' ) }}">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
+                            let processedResult = [];
 
-                <div class="mb-3 row">
-                    <label for="{{ $order_create }}_subtotal" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control subtotal" id="{{ $order_create }}_subtotal" >
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
+                            data.toppings.map( function( v, i ) {
+                                processedResult.push( {
+                                    id: v.id,
+                                    text: v.title + ' RM (' + v.price + ')',
+                                    price: v.price,
+                                    productId : productId,
+                                } );
+                            } );
 
-            </div>
-            `;
+                            return {
+                                results: processedResult,
+                                pagination: {
+                                    more: ( params.page * 10 ) < data.recordsFiltered
+                                }
+                            };
+                        }
+                    },
+                } );
 
-            $( html ).insertBefore( '#order_details_add' );
-            newOrderItem = document.querySelector( "#order_details_" + odIndex );
+            }
+            recalculateTotal();
+        });
 
-            odIndex+=1;
-
-            newOrderItem.querySelector( '.rate' ).addEventListener( 'input', function() {
-                calculateSubtotal( newOrderItem );
-            });
-            newOrderItem.querySelector( '.weight' ).addEventListener( 'input', function() {
-                calculateSubtotal( newOrderItem );
-            });
-            newOrderItem.querySelector( '.subtotal' ).addEventListener( 'input', function() {
-                calculateTotal();
-            });
+        // Handle unselect event for Select2
+        $(document).on("select2:unselect", ".select2-froyo, .select2-syrup, .select2-topping", function (e) {
+            const unselectedItem = e.params.data; // Get unselected item
+            const select2Type = $(this).attr("class").includes("froyo") ? "froyo" 
+                                : $(this).attr("class").includes("syrup") ? "syrup" 
+                                : "topping"; // Determine which select2 triggered
+            const productSelect = $(oc + `_product`).select2("data");
+            const selectedProduct = productSelect.find(p => (p.id) === (unselectedItem.productId));
+            const productCardId = $(this).closest('.mb-4').attr('id'); // Get the unique card ID
             
+            if (!selectedProduct) return; // No product found, exit
+
+            const maxFroyo = selectedProduct.maxFroyo || 0;
+            const maxSyrup = selectedProduct.maxSyrup || 0;
+            const maxTopping = selectedProduct.maxTopping || 0;
+
+            // Get updated counts after unselecting
+            const froyoCount = $(".select2-froyo").select2("data").length;
+            const syrupCount = $(".select2-syrup").select2("data").length;
+            const toppingCount = $(".select2-topping").select2("data").length;
+
+            // Initialize subtotal with the product price
+            let subtotal = parseFloat(selectedProduct.price);
+
+            // Iterate over froyo, syrup, and topping select elements within the current product card
+            $(`#${productCardId} .select2-froyo, #${productCardId} .select2-syrup, #${productCardId} .select2-topping`).each(function () {
+                const select2 = $(this);
+
+                const type = select2.hasClass("select2-froyo")
+                    ? "froyo"
+                    : select2.hasClass("select2-syrup")
+                    ? "syrup"
+                    : select2.hasClass("select2-topping")
+                    ? "topping"
+                    : "";
+
+                if (!type) return; // Skip if no valid type
+
+                // Get selected items for each category
+                const selectedItems = select2.select2("data");
+                let maxSelection = 0;
+
+                // Dynamic selection counts based on type
+                if (type === "froyo") maxSelection = getMaxSelectionForProductCard(productCardId, "froyo");
+                if (type === "syrup") maxSelection = getMaxSelectionForProductCard(productCardId, "syrup");
+                if (type === "topping") maxSelection = getMaxSelectionForProductCard(productCardId, "topping");
+
+                // Handle excess selections
+                if (selectedItems.length > maxSelection) {
+                    // Sort selected items by price in descending order
+                    const sortedItems = selectedItems.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+
+                    // Keep only the highest-priced items
+                    const itemsToAdd = sortedItems.slice(0, maxSelection);
+
+                    // Add the prices of the selected items to the subtotal
+                    itemsToAdd.forEach(item => {
+                        subtotal += parseFloat(item.price || 0);
+                    });
+                }
+            });
+
+            // Update subtotal input
+            const subtotalInput = $(`#subtotal-${selectedProduct.id}`);
+            if (subtotalInput.length > 0) {
+                subtotalInput.val(subtotal);
+            } else {
+                // Remove the subtotal input if no items are selected for the product
+                $(`#subtotal-${selectedProduct.id}`).closest(".mb-3.row").remove();
+            }
+
+            // Recalculate the total
+            recalculateTotal();
+        });
+
+        $(document).on("select2:select", ".select2-froyo, .select2-syrup, .select2-topping", function (e) {
+            const selectedItem = e.params.data; // Get selected item
+            const select2Type = $(this).attr("class").includes("froyo") ? "froyo" 
+                                : $(this).attr("class").includes("syrup") ? "syrup" 
+                                : "topping"; // Determine which select2 triggered
+            const productSelect = $(oc + `_product`).select2("data");
+            const selectedProduct = productSelect.find(p => (p.id) === (selectedItem.productId));
+            const productCardId = $(this).closest('.mb-4').attr('id'); // Get the unique card ID
+            // let subtotal = 0; // Initialize subtotal for the current product card
+            let subtotal = parseFloat(selectedProduct.price);
+
+            // Iterate over froyo, syrup, and topping select elements within the current product card
+            $(`#${productCardId} .select2-froyo, #${productCardId} .select2-syrup, #${productCardId} .select2-topping`).each(function () {
+                const select2 = $(this);
+
+                const type = select2.hasClass("select2-froyo")
+                    ? "froyo"
+                    : select2.hasClass("select2-syrup")
+                    ? "syrup"
+                    : select2.hasClass("select2-topping")
+                    ? "topping"
+                    : "";
+
+                if (!type) return; // Skip if no valid type
+
+                // Get selected items for each category
+                const selectedItems = select2.select2("data");
+                let maxSelection = 0;
+
+                // Dynamic selection counts based on type
+                if (type === "froyo") maxSelection = getMaxSelectionForProductCard(productCardId, "froyo");
+                if (type === "syrup") maxSelection = getMaxSelectionForProductCard(productCardId, "syrup");
+                if (type === "topping") maxSelection = getMaxSelectionForProductCard(productCardId, "topping");
+
+                // Handle excess selections
+                if (selectedItems.length > maxSelection) {
+                    // Sort selected items by price in descending order
+                    const sortedItems = selectedItems.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+
+                    // Keep only the highest-priced items
+                    const itemsToAdd = sortedItems.slice(0, maxSelection);
+
+                    // Add the prices of the selected items to the subtotal
+                    itemsToAdd.forEach(item => {
+                        subtotal += parseFloat(item.price || 0);
+                    });
+                }
+            });
+
+            // Update or create the subtotal input for the product card
+            const subtotalInput = $(`#subtotal-${selectedProduct.id}`);
+            if (subtotalInput.length > 0) {
+                subtotalInput.val(subtotal.toFixed(2));
+            } else {
+                // Append subtotal input if it doesn't exist
+                $(`#order_details_${selectedProduct.id}`).append(`
+                    <div class="mb-3 row">
+                        <label for="subtotal-${selectedProduct.id}" class="col-sm-4 col-form-label">Subtotal</label>
+                        <div class="col-sm-6">
+                            <input type="number" class="form-control" id="subtotal-${productCardId}" value="${subtotal.toFixed(2)}" readonly>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                `);
+            }
+
+            // Recalculate the total
+            recalculateTotal();
+        });
+
+
+        function getMaxSelectionForProductCard(cardId, type) {
+            let maxSelection = 0;
+
+            if (type === 'froyo') {
+                maxSelection = $(`#${cardId}`).data('max-froyo') || 1;  // Default to 1 if no value is found
+            } else if (type === 'syrup') {
+                maxSelection = $(`#${cardId}`).data('max-syrup') || 1;  // Default to 1 if no value is found
+            } else if (type === 'topping') {
+                maxSelection = $(`#${cardId}`).data('max-topping') || 1;  // Default to 1 if no value is found
+            }
+
+            return maxSelection;
+        }
+
+        // Handle unselect event for Select2
+        $( oc + "_product" ).on("select2:unselect", function (e) {
+            const unselectedItem = e.params.data;
+            const productId = unselectedItem.id;
+
+            // Remove the product card
+            $(`#product-card-${productId}`).remove();
+            const select2 = $(oc + "_product");
+            const selectedItems = select2.val().filter(item => item != productId);
+            select2.val(selectedItems).trigger("change");
+            recalculateTotal();
+        });
+
+        // Function to recalculate the total price
+        function recalculateTotal() {
+            let total = 0;
+            $("input[id^='subtotal-']").each(function () {
+                total += parseFloat($(this).val()) || 0;
+            });
+
+            // Update or create total input
+            const totalInput = $("#order-total");
+            if (totalInput.length > 0) {
+                totalInput.val(parseFloat(total).toFixed(2));
+            } else {
+                $(".order-details").after(`
+                    <div class="col-md-12 col-lg-12">
+                        <div class="mb-3 row">
+                            <label for="order-total" class="col-sm-4 col-form-label">RM {{  __('order.total') }}</label>
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control" id="order-total" value="${total}" readonly>
+                                <div class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+        }
+
+        // Handle remove button click
+        orderDetailsContainer.on("click", ".remove-product-card", function () {
+            const productId = $(this).data("id");
+
+            // Remove the product card
+            $(`#product-card-${productId}`).remove();
+
+            // Deselect the product in the Select2 dropdown
+            const select2 = $(oc + "_product");
+            const selectedItems = select2.val().filter(item => item != productId);
+            select2.val(selectedItems).trigger("change");
+            recalculateTotal();
+
+        });
+        
+        let userSelect2 = $( oc + '_user' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.user.allUsers' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.users.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.username,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
         } );
+        
+        let vendingMachineSelect2 = $( oc + '_vending_machine' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.vending_machine.allVendingMachines' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
 
-        function calculateSubtotal(order) {
-            var rate = parseFloat(order.querySelector( '.rate' ).value) || 0;
-            var weight = parseFloat(order.querySelector( '.weight' ).value) || 0;
-            weight /= 1000;
-            var subtotal = rate * weight;
-            order.querySelector( '.subtotal' ).value = subtotal.toFixed(2);
-            calculateTotal();
-        }
+                    let processedResult = [];
 
-        function calculateTotal() {
-            var subtotals = document.querySelectorAll( '.subtotal' );
-            var total = Array.from( subtotals ).reduce(function( acc, subtotal ) {
-                return acc + parseFloat( subtotal.value );
-            }, 0);
-            document.getElementById( 'order_create_total' ).value = total.toFixed(2);
-        }
+                    data.vending_machines.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.title,
+                        } );
+                    } );
 
-        document.querySelectorAll( '.rate' ).forEach(function( rateInput ) {
-            rateInput.addEventListener( 'keyup', function() {
-                calculateSubtotal( rateInput.closest( '[id^="order_details_"]' ) );
-            });
-        });
-        document.querySelectorAll( '.weight' ).forEach(function( weightInput ) {
-            weightInput.addEventListener( 'keyup', function() {
-                calculateSubtotal( weightInput.closest( '[id^="order_details_"]' ) );
-            });
-        });
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
+        
+        let productSelect2 = $( oc + '_product' ).select2( {
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: true,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.product.allProducts' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        custom_search: params.term, // search term
+                        status: 10,
+                        start: ( ( params.page ? params.page : 1 ) - 1 ) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
 
-        document.querySelectorAll( '.subtotal' ).forEach(function( subTotalInput ) {
-            subTotalInput.addEventListener( 'keyup', function() {
-                calculateTotal();
-            });
-        });
+                    let processedResult = [];
+
+                    data.products.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id + '-' + Date.now(),
+                            text: v.title,
+                            maxFroyo: v.default_froyo_quantity,
+                            maxSyrup: v.default_syrup_quantity,
+                            maxTopping: v.default_topping_quantity,
+                            price: v.price,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            },
+        } );
 
     } );
 </script>

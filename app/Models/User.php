@@ -42,6 +42,11 @@ class User extends Model
         'date_of_birth',
     ];
 
+    public function wallets()
+    {
+        return $this->hasMany(Wallet::class, 'user_id');
+    }
+
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
     }

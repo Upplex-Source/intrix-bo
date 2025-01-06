@@ -1,8 +1,8 @@
 
 document.addEventListener( 'DOMContentLoaded', function() {
-
     dt_table = $(dt_table_name).DataTable({
         language: dt_table_config.language,
+        autoHeight: true,
         layout: {
             topStart: {
                 buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5']
@@ -19,7 +19,9 @@ document.addEventListener( 'DOMContentLoaded', function() {
                 console.log(code);
             },
         },
-        lengthMenu: dt_table_config.lengthMenu,
+        lengthMenu: [5, 10, 25, 50, 100], // Define the options for the dropdown
+        pageLength: 10, 
+        responsive: true,
         processing: true,
         serverSide: true,
         order: dt_table_config.order,
@@ -29,7 +31,9 @@ document.addEventListener( 'DOMContentLoaded', function() {
         columns: dt_table_config.columns,
         columnDefs: dt_table_config.columnDefs,
         searching: false, // Disable the search bar
-        dom: 'Bfrtip', // Include buttons in the DataTable layout
+        dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6 text-end'l>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'mt-2 col-sm-12 col-md-5'i><'mt-2 col-sm-12 col-md-7 text-end'p>>",
         buttons: [
             {
                 extend: 'copyHtml5',
@@ -51,7 +55,6 @@ document.addEventListener( 'DOMContentLoaded', function() {
                     columns: ':not(:last-child)'
                 },
                 customize: function (win) {
-                    console.log('s')
                     $(win.document).find('.dt-button').removeClass('dt-button');
                 }
 
@@ -150,7 +153,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
         },
         initComplete: function () {
             const exportCheckbox = `
-                <div class="d-inline-block ms-3">
+                <div class="my-3">
                     <input type="checkbox" id="exportSelected" name="exportSelected">
                     <label for="exportSelected" class="ms-1">Export ONLY selected rows</label>
                 </div>
@@ -159,9 +162,8 @@ document.addEventListener( 'DOMContentLoaded', function() {
             $(dt_table_name + '_filter').remove();
 
             let rawName = dt_table_name.replace('#', '');
-            let lengthSelect = $(dt_table_name + '_wrapper select[name="' + rawName + '_length"]');
-            lengthSelect.addClass('custom-select custom-select-sm form-control form-control-sm');
-            lengthSelect.wrap('<div class="form-control-select ms-1"></div>');
+            let lengthSelect2 = $('.dataTables_length select');
+            lengthSelect2.addClass('custom-dropdown');
         },
         drawCallback: function (response) {
             if (response.json.subTotal != undefined) {
@@ -174,6 +176,63 @@ document.addEventListener( 'DOMContentLoaded', function() {
             }
         },
     });
+
+    function positionDropdown(event) {
+        console.log(event)
+        var dropdown = document.querySelector('.dropdown-menu');
+        var trigger = event.target; // The element that triggered the dropdown
+        var rect = trigger.getBoundingClientRect();
+        var dropdownWidth = dropdown.offsetWidth;
+        var dropdownHeight = dropdown.offsetHeight;
+        
+        // Calculate positions
+        var top = rect.top + window.pageYOffset + rect.height;
+        var left = rect.left + window.pageXOffset;
+      
+        // Ensure dropdown does not overflow the viewport
+        var viewportWidth = window.innerWidth;
+        var viewportHeight = window.innerHeight;
+      
+        if (left + dropdownWidth > viewportWidth) {
+          left = viewportWidth - dropdownWidth;
+        }
+      
+        if (top + dropdownHeight > viewportHeight) {
+          top = rect.top + window.pageYOffset - dropdownHeight;
+        }
+      
+        dropdown.style.top = top + 'px';
+        dropdown.style.left = left + 'px';
+    }
+
+    document.querySelector('.dropdown-toggle').addEventListener('click', positionDropdown);
+  
+    $(dt_table_name).on('shown.bs.dropdown', function (event) {
+        setTimeout(() => {
+            const scrollBody = $('.dt-scroll-body');
+            const dropdown = $(event.target).closest('.dropdown').find('.dropdown-menu');
+            const dropdownOffset = dropdown.offset();
+            const scrollBodyOffset = scrollBody.offset();
+    
+            if (dropdownOffset && scrollBodyOffset) {
+                const dropdownPosition = dropdownOffset.top - scrollBodyOffset.top + scrollBody.scrollTop();
+    
+                console.log('Dropdown Offset Top:', dropdownOffset.top);
+                console.log('ScrollBody Offset Top:', scrollBodyOffset.top);
+                console.log('ScrollBody ScrollTop:', scrollBody.scrollTop());
+                console.log('Calculated Dropdown Position:', dropdownPosition);
+    
+                scrollBody.scrollTop(dropdownPosition);
+            } else {
+                console.error('Offsets not found for Dropdown or ScrollBody');
+            }
+        }, 10); // 10ms delay
+    });
+    
+   
+   $(dt_table_name).on('hide.bs.dropdown', function () {
+        $('.dt-scroll-body').css( "overflow-y", "auto" );
+   })   
 
     $( dt_table_name ).on( 'page.dt length.dt order.dt search.dt', function() {
         table_no = dt_table.page.info().page * dt_table.page.info().length;

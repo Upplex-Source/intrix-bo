@@ -13,19 +13,28 @@ return [
     |
     */
 
-    'order_details' => 'Order Details',
-    'owner_name' => 'Owner Name',
-    'owner' => 'Owner',
-    'reference' => 'reference',
-    'farm' => 'Farm',
-    'buyer' => 'Buyer',
-    'order_date' => 'Order Date',
-    'grade' => 'Grade',
-    'rate' => 'Rate (RM/kg)',
-    'weight' => 'Weight (g)',
+    'product_id' => 'Product',
+    'product' => 'Product',
+    'product_bundle_id' => 'Product Bundle',
+    'product_bundle' => 'Product Bundle',
+    'user_id' => 'User',
+    'user' => 'User',
+    'vending_machine_id' => 'Vending Machine',
+    'vending_machine' => 'Vending Machine',
+    'outlet_id' => 'Outlet',
+    'outlet' => 'Outlet',
+    'total_price' => 'Total Price',
+    'discount' => 'Discount',
+    'reference' => 'Reference',
+    'payment_method' => 'Payment Method',
     'subtotal' => 'Subtotal',
     'total' => 'Total',
     'rm' => 'RM',
+    'order_details' => 'Order Details',
+    'remove' => 'Remove',
     
     'order_items' => 'Order Items',
+    'froyo' => 'Froyo (s)',
+    'syrup' => 'Syrup (s)',
+    'topping' => 'Topping (s)'
 ];
