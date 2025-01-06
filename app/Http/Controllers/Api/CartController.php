@@ -15,6 +15,7 @@ class CartController extends Controller
     /**
      * 1. Add to cart
      * 
+     * @authenticated
      * 
      * @group Cart API
      * 
@@ -36,6 +37,7 @@ class CartController extends Controller
 
     /**
      * 2. Retrieve user cart
+     * @authenticated
      * 
      * <aside class="notice">id and session_key can be used to filter out the cart</aside>
      * 
@@ -53,6 +55,7 @@ class CartController extends Controller
 
     /**
      * 3. Update to cart
+     * @authenticated
      * 
      * <aside class="notice">session_key or cart id can be used to update the cart</aside>
      * 
@@ -79,6 +82,7 @@ class CartController extends Controller
 
     /**
      * 4. Delete Cart
+     * @authenticated
      * 
      * <aside class="notice">session_key or cart id can be used to delete the cart</aside>
      * 
