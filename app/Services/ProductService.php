@@ -89,11 +89,11 @@ class ProductService
                     $fileName = explode( '/', $imageFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'froyo/' . $froyoCreate->id . '/' . $fileName[1];
+                    $target = 'froyo/' . $productCreate->id . '/' . $fileName[1];
                     Storage::disk( 'public' )->move( $imageFile->file, $target );
 
-                   $froyoCreate->image = $target;
-                   $froyoCreate->save();
+                   $productCreate->image = $target;
+                   $productCreate->save();
 
                     $imageFile->status = 10;
                     $imageFile->save();
