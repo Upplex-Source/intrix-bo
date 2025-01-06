@@ -736,13 +736,13 @@ class OrderService
     public static function checkout( $request ) {
 
         $validator = Validator::make($request->all(), [
-            'id' => ['required', 'exists:carts,id'],
+            'cart' => ['required', 'exists:carts,id'],
         ]);
 
         $user = auth()->user();
 
         $query = Cart::where('user_id', $user->id)
-        ->where('id', $request->id)
+        ->where('id', $request->cart)
         ->where('status',10);
     
         $userCart = $query->first();
