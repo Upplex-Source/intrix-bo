@@ -174,22 +174,19 @@ class ProductService
             $imageFiles = FileManager::whereIn( 'id', $image )->get();
 
             if ( $imageFiles ) {
-                foreach ( $imageFiles as $file ) {
+                foreach ( $imageFiles as $imageFile ) {
 
-                    $fileName = explode( '/', $file->file );
+                    $fileName = explode( '/', $imageFile->file );
                     $fileExtention = pathinfo($fileName[1])['extension'];
 
-                    $target = 'product-galleries/' . $updateProduct->id . '/' . $fileName[1];
-                    Storage::disk( 'public' )->move( $file->file, $target );
+                    $target = 'product/' . $updateProduct->id . '/' . $fileName[1];
+                    Storage::disk( 'public' )->move( $imageFile->file, $target );
 
-                    $createProductGallery = ProductGallery::create( [
-                        'product_id' => $updateProduct->id,
-                        'image' => $target,
-                        'status' => 10,
-                    ] );
+                   $updateProduct->image = $target;
+                   $updateProduct->save();
 
-                    $file->status = 10;
-                    $file->save();
+                    $imageFile->status = 10;
+                    $imageFile->save();
 
                 }
             }
