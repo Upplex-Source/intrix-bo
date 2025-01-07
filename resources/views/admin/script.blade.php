@@ -8,6 +8,7 @@
     <script src="{{ asset( 'admin/js/select2.min.js' ) . Helper::assetVersion() }}"></script>
     <script src="{{ asset( 'admin/js/notification-helper.js' ) . Helper::assetVersion() }}"></script>
 
+
     <!-- DataTables -->
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 

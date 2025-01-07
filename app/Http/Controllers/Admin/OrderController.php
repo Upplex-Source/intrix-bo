@@ -154,4 +154,26 @@ class OrderController extends Controller
         return OrderService::updateOrderStatus( $request );
     }
 
+    public function scanner( Request $request ) {
+        $this->data['header']['title'] = __( 'template.scan_order' );
+    $this->data['content'] = 'admin.order.scan';
+        $this->data['breadcrumb'] = [
+            [
+                'url' => route( 'admin.dashboard' ),
+                'text' => __( 'template.dashboard' ),
+                'class' => '',
+            ],
+            [
+                'url' => '',
+                'text' => __( 'template.orders' ),
+                'class' => 'active',
+            ],
+        ];
+        return view( 'admin.main' )->with( $this->data );
+    }
+
+    public function scannedOrder( Request $request ) {
+        return OrderService::scannedOrder( $request );
+    }
+
 }

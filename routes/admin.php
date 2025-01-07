@@ -343,7 +343,10 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-order', [ OrderController::class, 'createOrder' ] )->name( 'admin.order.createOrder' );
                 Route::post( 'update-order', [ OrderController::class, 'updateOrder' ] )->name( 'admin.order.updateOrder' );
                 Route::post( 'update-order-status', [ OrderController::class, 'updateOrderStatus' ] )->name( 'admin.order.updateOrderStatus' );
-    
+
+                Route::get( 'scanner', [ OrderController::class, 'scanner' ] )->name( 'admin.order.scanner' );
+                Route::post( 'scanned-order', [ OrderController::class, 'scannedOrder' ] )->name( 'admin.order.scannedOrder' );
+
             } );
 
         } );

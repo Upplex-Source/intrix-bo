@@ -147,6 +147,7 @@ return [
     'stock_management' => 'Stock Management',
     'stock_history' => 'Stock History',
     'select_froyo' => 'Select Froyo',
+    'scan_order' => 'Scan Order',
     'select_x' => 'Select :title.',
 
     'tax_methods' => 'Tax Methods',

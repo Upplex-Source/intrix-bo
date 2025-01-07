@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Services;
-
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
     DB,
     Storage,
     Validator,
+    File,
 };
 
 use App\Models\{
@@ -662,6 +664,41 @@ class OrderService
             ], 500 );
         }
     }
+
+    public static function generateQrCode($order)
+    {
+
+        $orderId = $order->reference;
+
+        // Set QR code options (optional)
+        $options = new QROptions([
+            'version'    => 5,   // Controls the size of the QR code
+            'eccLevel'   => QRCode::ECC_L, // Error correction level (L, M, Q, H)
+            'outputType' => QRCode::OUTPUT_IMAGE_PNG, // Image output format (PNG)
+            'scale'      => 5,   // Pixel size
+        ]);
+
+        // Generate the QR code
+        $qrcode = new QRCode($options);
+        $qrImage = $qrcode->render($orderId);
+
+        // Remove the "data:image/png;base64," prefix
+        $base64Image = str_replace('data:image/png;base64,', '', $qrImage);
+    
+        // Decode the Base64 string
+        $decodedImage = base64_decode($base64Image);
+
+        $fileName = "qr-codes/order-{$orderId}.png";
+        $filePath = "public/{$fileName}";
+
+        // Save the QR code image in storage/app/public
+        Storage::put($filePath, $decodedImage);
+
+        // Generate the URL for the QR code
+        $qrUrl = asset("storage/{$fileName}");
+
+        return $qrUrl;
+    }
     
     public static function getOrder($request)
     {
@@ -720,7 +757,7 @@ class OrderService
             });
     
             $order->orderMetas = $orderMetas;
-    
+            $order->qr_code = $order->status != 20 ? self::generateQrCode($order) : null;
             return $order;
         });
     
@@ -866,5 +903,61 @@ class OrderService
             'total' => $order->total_price,
             'order_metas' => $orderMetas
         ] );
+    }
+
+    public static function scannedOrder( $request ) {
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateOrder = Order::with( [
+                'orderMetas','vendingMachine','user'
+            ] )->where( 'reference', $request->reference )
+            ->whereNotIn('status', [10, 20])->first();
+            $updateOrder->status = 10;
+
+            $updateOrder->save();
+            DB::commit();
+
+            $updateOrder = $updateOrder->paginate(10);
+    
+            // Modify each order and its related data
+            $updateOrder->getCollection()->transform(function ($order) {
+                $order->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
+                    ->setAttribute('operational_hour', $order->vendingMachine->operational_hour)
+                    ->setAttribute('image_path', $order->vendingMachine->image_path);
+        
+                $orderMetas = $order->orderMetas->map(function ($meta) {
+                    return [
+                        'id' => $meta->id,
+                        'subtotal' => $meta->total_price,
+                        'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                            ->setAttribute('image_path', $meta->product->image_path),
+                        'froyo' => $meta->froyos_metas,
+                        'syrup' => $meta->syrups_metas,
+                        'topping' => $meta->toppings_metas,
+                    ];
+                });
+        
+                $order->orderMetas = $orderMetas;
+
+                return $order;
+            });
+        
+            // Return the paginated response
+            return response()->json([
+                'message' => '',
+                'message_key' => 'get_order_success',
+                'orders' => $updateOrder,
+            ]);
+
+        } catch ( \Throwable $th ) {
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+                'message_key' => 'create_froyo_failed',
+            ], 500 );
+        }
     }
 }

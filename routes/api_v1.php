@@ -84,6 +84,7 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::post( 'update', [ CartController::class, 'updateCart' ] );
         Route::get( '/', [ CartController::class, 'getCart' ] );
         Route::post( 'delete', [ CartController::class, 'deleteCart' ] );
+        Route::post( 'delete-cart-item', [ CartController::class, 'deleteCartItem' ] );
     } );
     
     Route::prefix( 'orders' )->group( function() {

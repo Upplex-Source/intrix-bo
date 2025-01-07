@@ -55,7 +55,7 @@ class CartController extends Controller
     }
 
     /**
-     * 3. Update to cart
+     * 3. Update cart
      * @authenticated
      * 
      * <aside class="notice">session_key or cart id can be used to update the cart</aside>
@@ -73,6 +73,7 @@ class CartController extends Controller
      * @bodyParam items.*.topping.* integer A topping ID. Example: 4
      * @bodyParam session_key string The unique identifier for the cart. Example: abcd-1234
      * @bodyParam id integer The ID of the cart. Example: 1
+     * @bodyParam cart_item integer The ID of the cart item. Example: 1
      * 
      */
     public function updateCart( Request $request ) {
@@ -98,5 +99,20 @@ class CartController extends Controller
         return CartService::deleteCart( $request );
     }
 
+    /**
+     * 4. Delete Cart Item
+     * @authenticated
+     * 
+     * <aside class="notice">session_key or cart id can be used to delete the cart</aside>
+     * 
+     * @group Cart API
+     * 
+     * @bodyParam id integer The ID of the cart. Example: 1
+     * @bodyParam cart_item integer The ID of the cart item. Example: 1
+     * 
+     */
+    public function deleteCartItem( Request $request ) {
 
+        return CartService::deleteCartItem( $request );
+    }
 }
