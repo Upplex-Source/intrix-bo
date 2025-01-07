@@ -374,4 +374,5 @@ Route::prefix( 'eghl' )->group( function() {
     Route::any( 'query', [ PaymentController::class, 'queryEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::any( 'callback', [PaymentController::class, 'callbackEghl'] )->name( 'payment.callbackEghl' );
     Route::any( 'test-success', [PaymentController::class, 'testSuccess'] )->name( 'payment.testSuccess' );
+    Route::any( 'test-failed', [PaymentController::class, 'testFailed'] )->name( 'payment.testFailed' );
 } );

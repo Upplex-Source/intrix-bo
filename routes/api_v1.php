@@ -61,6 +61,7 @@ Route::middleware( 'auth:user' )->group( function() {
     } );
     
     Route::prefix( 'wallets' )->group( function() {
+        Route::get( '', [ WalletController::class, 'getWallet' ] );
         Route::get( 'transactions', [ WalletController::class, 'getWalletTransactions' ] );
         Route::post( 'topup', [ WalletController::class, 'topup' ] );
     } );

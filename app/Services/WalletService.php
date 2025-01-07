@@ -350,11 +350,13 @@ class WalletService
 
         try {
 
-            $createTopup = UserTopup::create( [
-                'user_id' => auth()->user()->id,
-                'reference' => 'MECAR-T-' . Helper::getLatestOrderNumber( 'TOPUP_' ),
+            $wallet = Wallet::lockForUpdate()->where( 'user_id', auth()->user()->id )->where( 'type', 1 )->first();
+
+            self::transact( $wallet, [
                 'amount' => $request->topup_amount,
-                'payment_method' => 1,
+                'remark' => '',
+                'type' => $wallet->type,
+                'transaction_type' => 1,
             ] );
 
             DB::commit();
@@ -368,7 +370,7 @@ class WalletService
 
         return response()->json( [
             'message_key' => 'topup_success',
-            'redirect_url' => config( 'services.admin.url' ) . '/revenue-monster/initiate?user_id=' . $createTopup->user_id . '&reference=' . $createTopup->reference . '&scope=topup',
+            'redirect_url' => route('payment.testSuccess'),
         ] );
     }
 
@@ -391,5 +393,24 @@ class WalletService
         ] );
 
         return $createWalletTransaction;
+    }
+
+    public static function getWallet( $request ) {
+
+        $wallet = Wallet::where( 'user_id', auth()->user()->id )->get();
+
+        if ( $wallet ) {
+            $wallet->append( [
+                'listing_balance',
+                'formatted_type',
+                'encrypted_id',
+            ] );
+        }
+
+        return response()->json([
+            'message' => '',
+            'message_key' => 'get_wallet_success',
+            'data' => $wallet,
+        ]);
     }
 }

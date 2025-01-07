@@ -11,8 +11,23 @@ use App\Services\{
 
 class WalletController extends Controller
 {
+
     /**
-     * 1. Get wallet transactions
+     * 1. Get wallet
+     * 
+     * @group Wallet API
+     * 
+     * @authenticated
+     * 
+     * 
+     */   
+    public function getWallet( Request $request ) {
+
+        return WalletService::getWallet( $request );
+    }
+
+    /**
+     * 2. Get wallet transactions
      * 
      * @group Wallet API
      * 
@@ -27,7 +42,7 @@ class WalletController extends Controller
     }
 
     /**
-     * 2. Topup
+     * 3. Topup
      * 
      * <strong>payment_method</strong><br>
      * 1: Payment Gateway

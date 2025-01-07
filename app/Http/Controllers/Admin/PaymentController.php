@@ -48,4 +48,15 @@ class PaymentController extends Controller
             ],
         ] );
     }
+
+    public function testFailed( Request $request ) {
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'order_failed',
+            'data' => [
+                'status' => true
+            ],
+        ] );
+    }
 }
