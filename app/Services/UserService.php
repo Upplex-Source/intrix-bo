@@ -841,7 +841,7 @@ class UserService
 
             $createUser = User::create( $createUserObject );
             
-            for ( $i = 2; $i <= 2; $i++ ) {
+            for ( $i = 1; $i <= 2; $i++ ) {
                 $userWallet = Wallet::create( [
                     'user_id' => $createUser->id,
                     'type' => $i,
