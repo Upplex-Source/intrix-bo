@@ -99,10 +99,15 @@ $columns = [
                     <input type="text" class="form-control-plaintext" id="{{ $order_view }}_type" readonly>
                 </div>
             </div>
-            <div class="mb-3 row d-flex justify-content-between">
-                <label class="col-sm-5 col-form-label">Status</label>
+            <div class="mb-3 row">
+                <label for="{{ $order_view }}_status" class="col-sm-5 col-form-label">{{ __( 'mt5.status' ) }}</label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}_account_type" readonly>
+                    <select class="form-select form-select-sm" id="{{ $order_view }}_status">
+                        @foreach ( $data[ 'status' ] as $key => $status)
+                            <option value="{{ $key }}">{{ $status }}</option>
+                        @endforeach
+                    </select>
+                    <div class="invalid-feedback"></div>
                 </div>
             </div>
             <div class="mb-3 row d-flex justify-content-between">
@@ -111,10 +116,18 @@ $columns = [
                     <input type="number" class="form-control-plaintext" id="{{ $order_view }}_leverage" readonly>
                 </div>
             </div>
+            <input type="hidden" id="{{ $order_view }}_id">
+
             <div class="mb-3">
                 <strong>Order Details</strong>
                 <div class="selections"></div>
             </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">{{ __( 'template.cancel' ) }}</button>
+                <button type="button" class="btn btn-sm btn-primary">{{ __( 'template.save_changes' ) }}</button>
+            </div>
+            
         </div>
     </div>
 </div>
@@ -233,7 +246,6 @@ var statusMapper = @json( $data['status'] ),
                             <div class="dropdown-menu">
                                 <ul class="link-list-opt">
                                     `+edit+`
-                                    `+status+`
                                 </ul>
                             </div>
                         </div>
@@ -291,6 +303,7 @@ var statusMapper = @json( $data['status'] ),
             $( '#modal_order_view .form-control-plaintext' ).val( '-' );
             $( '#modal_order_view .form-select' ).val( 2 );
             $( '#modal_order_view textarea' ).val();
+            $( '#modal_order_view textarea' ).val();
 
             let id = $( this ).data( 'id' );
 
@@ -304,11 +317,12 @@ var statusMapper = @json( $data['status'] ),
                 success: function( response ) {
                     $('#{{ $order_view }}_id').val(response.id);
                     $('#{{ $order_view }}_fullname').val(response.vending_machine.title || '-');
+                    $('#{{ $order_view }}_status').val(response.status || '-');
                     $('#{{ $order_view }}_email').val(response.reference || '-');
                     $('#{{ $order_view }}_type').val(response.payment_method === 1 ? 'Yobe Wallet' : 'Online Payment');
                     $('#{{ $order_view }}_account_type').val(response.status === 1 ? 'Order Placed' : 'Collected');
                     $('#{{ $order_view }}_leverage').val(response.total_price || '0.00');
-                    
+                    $('#modal_order_view .selections').empty();
 
                     const orderMetas = response.orderMetas || [];
                     orderMetas.forEach((meta) => {
@@ -361,6 +375,42 @@ var statusMapper = @json( $data['status'] ),
                 },
             } );
         } );
+
+        $( '#modal_order_view .btn-primary' ).on( 'click', function() {
+
+            let formData = new FormData();
+            formData.append( 'id', $( ov + '_id' ).val() );
+            formData.append( 'status', $( ov + '_status' ).val() );
+            formData.append( '_token', '{{ csrf_token() }}' );
+
+            $.ajax( {
+                url: '{{ route( 'admin.order.updateOrderStatusView' ) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function( response ) {
+                    modalmt5Detail.hide();
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.show();
+                    dt_table.draw( true );
+                },
+                error: function( error ) {
+                    if ( error.status === 422 ) {
+                        let errors = error.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $( ov + '_' + key ).addClass( 'is-invalid' ).next().text( value );
+                        });
+
+                    } else {
+                        modalmt5Detail.hide();
+                        $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
+                        modalDanger.show();    
+                    }
+                },
+            } );
+        } );
+
     } );
 </script>
 

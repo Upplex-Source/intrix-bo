@@ -156,7 +156,7 @@ class OrderController extends Controller
 
     public function scanner( Request $request ) {
         $this->data['header']['title'] = __( 'template.scan_order' );
-    $this->data['content'] = 'admin.order.scan';
+        $this->data['content'] = 'admin.order.scan';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -174,6 +174,10 @@ class OrderController extends Controller
 
     public function scannedOrder( Request $request ) {
         return OrderService::scannedOrder( $request );
+    }
+
+    public function updateOrderStatusView( Request $request ) {
+        return OrderService::updateOrderStatusView( $request );
     }
 
 }

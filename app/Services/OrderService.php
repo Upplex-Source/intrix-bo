@@ -665,6 +665,34 @@ class OrderService
         }
     }
 
+    public static function updateOrderStatusView( $request ) {
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateOrder = Order::find( $request->id );
+            $updateOrder->status = $request->status;
+
+            $updateOrder->save();
+            DB::commit();
+
+            return response()->json( [
+                'data' => [
+                    'froyo' => $updateOrder,
+                    'message_key' => 'update_order_success',
+                ]
+            ] );
+
+        } catch ( \Throwable $th ) {
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+                'message_key' => 'create_froyo_failed',
+            ], 500 );
+        }
+    }
+
     public static function generateQrCode($order)
     {
 
