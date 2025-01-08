@@ -144,8 +144,6 @@
                                         <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
                                             <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.orders' ) }}</span></a>
                                         </li>
-                                    </ul>
-                                    <ul class="nk-menu-sub">
                                         <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' && in_array( $action, [ 'scanner' ] ) ? 'active current-page' : '' }}">
                                             <a href="{{ route( 'admin.order.scanner' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.scan_qr' ) }}</span></a>
                                         </li>
