@@ -155,7 +155,7 @@ class OrderController extends Controller
     }
 
     public function scanner( Request $request ) {
-        $this->data['header']['title'] = __( 'template.scan_order' );
+        $this->data['header']['title'] = __( 'template.scan_qr' );
         $this->data['content'] = 'admin.order.scan';
         $this->data['breadcrumb'] = [
             [

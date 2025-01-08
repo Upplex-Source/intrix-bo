@@ -67,7 +67,23 @@ $vending_machine_edit = 'vending_machine_edit';
                     </div>
                     <div class="invalid-feedback"></div>
                 </div>
+                <h5 class="card-title mb-4">{{ __( 'template.location_info' ) }}</h5>
 
+                <div class="mb-3 row">
+                    <label for="{{ $vending_machine_edit }}_latitude" class="col-sm-5 col-form-label">{{ __( 'vending_machine.latitude' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vending_machine_edit }}_latitude" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vending_machine_edit }}_longitude" class="col-sm-5 col-form-label">{{ __( 'vending_machine.longitude' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vending_machine_edit }}_longitude" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
                 <div class="mb-3 row">
                     <label for="{{ $vending_machine_edit }}_address_1" class="col-sm-5 col-form-label">{{ __( 'customer.address_1' ) }}</label>
                     <div class="col-sm-7">
@@ -156,6 +172,8 @@ $vending_machine_edit = 'vending_machine_edit';
             formData.append( 'description', $( fe + '_description' ).val() );
             formData.append( 'address_1', $( fe + '_address_1' ).val() );
             formData.append( 'address_2', $( fe + '_address_2' ).val() );
+            formData.append( 'latitude', $( fe + '_latitude' ).val() );
+            formData.append( 'longitude', $( fe + '_longitude' ).val() );
             formData.append( 'city', $( fe + '_city' ).val() );
             formData.append( 'state', $( fe + '_state' ).val() );
             formData.append( 'postcode', $( fe + '_postcode' ).val() );
@@ -219,6 +237,8 @@ $vending_machine_edit = 'vending_machine_edit';
                     $( fe + '_description' ).val( response.description );
                     $( fe + '_address_1' ).val( response.address_1 );
                     $( fe + '_address_2' ).val( response.address_2 );
+                    $( fe + '_latitude' ).val( response.latitude );
+                    $( fe + '_longitude' ).val( response.longitude );
                     $( fe + '_city' ).val( response.city );
                     $( fe + '_state' ).val( response.state );
                     $( fe + '_postcode' ).val( response.postcode );

@@ -67,33 +67,48 @@ $vending_machine_create = 'vending_machine_create';
                     </div>
                     <div class="invalid-feedback"></div>
                 </div>
+                <h5 class="card-title mb-4">{{ __( 'template.location_info' ) }}</h5>
 
                 <div class="mb-3 row">
-                    <label for="{{ $vending_machine_create }}_address_1" class="col-sm-5 col-form-label">{{ __( 'customer.address_1' ) }}</label>
+                    <label for="{{ $vending_machine_create }}_latitude" class="col-sm-5 col-form-label">{{ __( 'vending_machine.latitude' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vending_machine_create }}_latitude" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vending_machine_create }}_longitude" class="col-sm-5 col-form-label">{{ __( 'vending_machine.longitude' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" id="{{ $vending_machine_create }}_longitude" placeholder="{{ __( 'template.optional' ) }}">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $vending_machine_create }}_address_1" class="col-sm-5 col-form-label">{{ __( 'vending_machine.address_1' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" id="{{ $vending_machine_create }}_address_1" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vending_machine_create }}_address_2" class="col-sm-5 col-form-label">{{ __( 'customer.address_2' ) }}</label>
+                    <label for="{{ $vending_machine_create }}_address_2" class="col-sm-5 col-form-label">{{ __( 'vending_machine.address_2' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" id="{{ $vending_machine_create }}_address_2" style="min-height: 80px;" placeholder="{{ __( 'template.optional' ) }}"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vending_machine_create }}_city" class="col-sm-5 col-form-label">{{ __( 'customer.city' ) }}</label>
+                    <label for="{{ $vending_machine_create }}_city" class="col-sm-5 col-form-label">{{ __( 'vending_machine.city' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vending_machine_create }}_city" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vending_machine_create }}_state" class="col-sm-5 col-form-label">{{ __( 'customer.state' ) }}</label>
+                    <label for="{{ $vending_machine_create }}_state" class="col-sm-5 col-form-label">{{ __( 'vending_machine.state' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $vending_machine_create }}_state" >
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'customer.state' ) ] ) }}</option>
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'vending_machine.state' ) ] ) }}</option>
                             <option value="Johor">Johor</option>
                             <option value="Kedah">Kedah</option>
                             <option value="Kelantan">Kelantan</option>
@@ -115,7 +130,7 @@ $vending_machine_create = 'vending_machine_create';
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $vending_machine_create }}_postcode" class="col-sm-5 col-form-label">{{ __( 'customer.postcode' ) }}</label>
+                    <label for="{{ $vending_machine_create }}_postcode" class="col-sm-5 col-form-label">{{ __( 'vending_machine.postcode' ) }}</label>
                     <div class="col-sm-7">
                         <input type="text" class="form-control" id="{{ $vending_machine_create }}_postcode" placeholder="{{ __( 'template.optional' ) }}">
                         <div class="invalid-feedback"></div>
@@ -165,6 +180,8 @@ $vending_machine_create = 'vending_machine_create';
             formData.append( 'title', $( fc + '_title' ).val() );
             formData.append( 'code', $( fc + '_code' ).val() );
             formData.append( 'description', $( fc + '_description' ).val() );
+            formData.append( 'latitude', $( fc + '_latitude' ).val() );
+            formData.append( 'longitude', $( fc + '_longitude' ).val() );
             formData.append( 'address_1', $( fc + '_address_1' ).val() );
             formData.append( 'address_2', $( fc + '_address_2' ).val() );
             formData.append( 'city', $( fc + '_city' ).val() );

@@ -39,6 +39,8 @@ class VendingMachineService
             'opening_hour' => [ 'nullable' ],
             'closing_hour' => [ 'nullable' ],
             'navigation_links' => [ 'nullable' ],
+            'latitude' => [ 'nullable' ],
+            'longitude' => [ 'nullable' ],
         ] );
 
         $attributeName = [
@@ -72,6 +74,8 @@ class VendingMachineService
                 'city' => $request->city,
                 'state' => $request->state,
                 'postcode' => $request->postcode,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
                 'navigation_links' => $request->navigation_links,
                 'closing_hour' => now()->format('Y-m-d') . ' ' . $request->closing_hour,
                 'opening_hour' => now()->format('Y-m-d') . ' ' . $request->opening_hour,
@@ -155,6 +159,8 @@ class VendingMachineService
             'opening_hour' => ['nullable'],
             'closing_hour' => ['nullable'],
             'code' => [ 'nullable' ],
+            'latitude' => [ 'nullable' ],
+            'longitude' => [ 'nullable' ],
         ] );
 
         $attributeName = [
@@ -186,6 +192,8 @@ class VendingMachineService
             $updateVendingMachine->code = $request->code;
             $updateVendingMachine->address_1 = $request->address_1;
             $updateVendingMachine->address_2 = $request->address_2;
+            $updateVendingMachine->latitude = $request->latitude;
+            $updateVendingMachine->longitude = $request->longitude;
             $updateVendingMachine->city = $request->city;
             $updateVendingMachine->state = $request->state;
             $updateVendingMachine->postcode = $request->postcode;
