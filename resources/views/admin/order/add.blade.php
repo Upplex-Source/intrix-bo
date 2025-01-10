@@ -357,7 +357,7 @@ $order_create = 'order_create';
             const productSelect = $(oc + `_product`).select2("data");
             const selectedProduct = productSelect.find(p => (p.id) === (unselectedItem.productId));
             const productCardId = $(this).closest('.mb-4').attr('id'); // Get the unique card ID
-            
+
             if (!selectedProduct) return; // No product found, exit
 
             const maxFroyo = selectedProduct.maxFroyo || 0;
@@ -396,18 +396,18 @@ $order_create = 'order_create';
                 if (type === "topping") maxSelection = getMaxSelectionForProductCard(productCardId, "topping");
 
                 // Handle excess selections
-                if (selectedItems.length > maxSelection) {
+                // if (selectedItems.length > maxSelection) {
                     // Sort selected items by price in descending order
                     const sortedItems = selectedItems.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
 
                     // Keep only the highest-priced items
-                    const itemsToAdd = sortedItems.slice(0, maxSelection);
+                    const itemsToAdd = sortedItems;
 
                     // Add the prices of the selected items to the subtotal
                     itemsToAdd.forEach(item => {
                         subtotal += parseFloat(item.price || 0);
                     });
-                }
+                // }
             });
 
             // Update subtotal input
@@ -433,7 +433,7 @@ $order_create = 'order_create';
             const productCardId = $(this).closest('.mb-4').attr('id'); // Get the unique card ID
             // let subtotal = 0; // Initialize subtotal for the current product card
             let subtotal = parseFloat(selectedProduct.price);
-
+            
             // Iterate over froyo, syrup, and topping select elements within the current product card
             $(`#${productCardId} .select2-froyo, #${productCardId} .select2-syrup, #${productCardId} .select2-topping`).each(function () {
                 const select2 = $(this);
@@ -458,18 +458,18 @@ $order_create = 'order_create';
                 if (type === "topping") maxSelection = getMaxSelectionForProductCard(productCardId, "topping");
 
                 // Handle excess selections
-                if (selectedItems.length > maxSelection) {
+                // if (selectedItems.length > maxSelection) {
                     // Sort selected items by price in descending order
                     const sortedItems = selectedItems.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
 
                     // Keep only the highest-priced items
-                    const itemsToAdd = sortedItems.slice(0, maxSelection);
+                    const itemsToAdd = sortedItems;
 
                     // Add the prices of the selected items to the subtotal
                     itemsToAdd.forEach(item => {
                         subtotal += parseFloat(item.price || 0);
                     });
-                }
+                // }
             });
 
             // Update or create the subtotal input for the product card

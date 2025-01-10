@@ -349,6 +349,7 @@ $order_create = 'order_create';
         });
 
         // Handle unselect event for Select2
+
         $(document).on("select2:unselect", ".select2-froyo, .select2-syrup, .select2-topping", function (e) {
             const unselectedItem = e.params.data; // Get unselected item
             const select2Type = $(this).attr("class").includes("froyo") ? "froyo" 
@@ -357,7 +358,7 @@ $order_create = 'order_create';
             const productSelect = $(oc + `_product`).select2("data");
             const selectedProduct = productSelect.find(p => (p.id) === (unselectedItem.productId));
             const productCardId = $(this).closest('.mb-4').attr('id'); // Get the unique card ID
-            
+
             if (!selectedProduct) return; // No product found, exit
 
             const maxFroyo = selectedProduct.maxFroyo || 0;
@@ -371,6 +372,7 @@ $order_create = 'order_create';
 
             // Initialize subtotal with the product price
             let subtotal = parseFloat(selectedProduct.price);
+            // let subtotal = parseFloat($('#subtotal-' + unselectedItem.productId).val());
 
             // Iterate over froyo, syrup, and topping select elements within the current product card
             $(`#${productCardId} .select2-froyo, #${productCardId} .select2-syrup, #${productCardId} .select2-topping`).each(function () {
@@ -396,18 +398,18 @@ $order_create = 'order_create';
                 if (type === "topping") maxSelection = getMaxSelectionForProductCard(productCardId, "topping");
 
                 // Handle excess selections
-                if (selectedItems.length > maxSelection) {
+                // if (selectedItems.length > maxSelection) {
                     // Sort selected items by price in descending order
                     const sortedItems = selectedItems.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
 
                     // Keep only the highest-priced items
-                    const itemsToAdd = sortedItems.slice(0, maxSelection);
+                    const itemsToAdd = sortedItems;
 
                     // Add the prices of the selected items to the subtotal
                     itemsToAdd.forEach(item => {
                         subtotal += parseFloat(item.price || 0);
                     });
-                }
+                // }
             });
 
             // Update subtotal input
@@ -424,6 +426,7 @@ $order_create = 'order_create';
         });
 
         $(document).on("select2:select", ".select2-froyo, .select2-syrup, .select2-topping", function (e) {
+
             const selectedItem = e.params.data; // Get selected item
             const select2Type = $(this).attr("class").includes("froyo") ? "froyo" 
                                 : $(this).attr("class").includes("syrup") ? "syrup" 
@@ -432,13 +435,9 @@ $order_create = 'order_create';
             const selectedProduct = productSelect.find(p => (p.id) === (selectedItem.productId));
             const productCardId = $(this).closest('.mb-4').attr('id'); // Get the unique card ID
             // let subtotal = 0; // Initialize subtotal for the current product card
+            // let subtotal = parseFloat($('#subtotal-' + selectedItem.productId).val());
             let subtotal = parseFloat(selectedProduct.price);
-            console.log(subtotal)
-            console.log(selectedItem)
-            console.log(select2Type)
-            console.log(productSelect)
-            console.log(selectedProduct)
-            console.log(productCardId)
+
             // Iterate over froyo, syrup, and topping select elements within the current product card
             $(`#${productCardId} .select2-froyo, #${productCardId} .select2-syrup, #${productCardId} .select2-topping`).each(function () {
                 const select2 = $(this);
@@ -463,18 +462,18 @@ $order_create = 'order_create';
                 if (type === "topping") maxSelection = getMaxSelectionForProductCard(productCardId, "topping");
 
                 // Handle excess selections
-                if (selectedItems.length > maxSelection) {
+                // if (selectedItems.length > maxSelection) {
                     // Sort selected items by price in descending order
                     const sortedItems = selectedItems.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
 
                     // Keep only the highest-priced items
-                    const itemsToAdd = sortedItems.slice(0, maxSelection);
+                    const itemsToAdd = sortedItems;
 
                     // Add the prices of the selected items to the subtotal
                     itemsToAdd.forEach(item => {
                         subtotal += parseFloat(item.price || 0);
                     });
-                }
+                // }
             });
 
             // Update or create the subtotal input for the product card
@@ -734,6 +733,7 @@ $order_create = 'order_create';
                         const maxFroyo = orderMeta.product.default_froyo_quantity;
                         const maxSyrup = orderMeta.product.default_syrup_quantity;
                         const maxTopping = orderMeta.product.default_topping_quantity;
+                        const subTotal = orderMeta.subtotal;
 
                         if ($(`#product-card-${productId}`).length === 0) {
                             const cardHtml = `
@@ -771,7 +771,7 @@ $order_create = 'order_create';
                                     <div class="mb-3 row">
                                         <label for="topping-${productId}" class="col-sm-4 col-form-label">{{ __( 'order.subtotal' ) }}</label>
                                         <div class="col-sm-6">
-                                            <input type="number" class="form-control" id="subtotal-${productId}" value="${productPrice}" placeholder="Enter quantity">
+                                            <input type="number" class="form-control" id="subtotal-${productId}" value="${subTotal}" placeholder="Enter quantity">
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
@@ -917,9 +917,6 @@ $order_create = 'order_create';
                                     }
                                 },
                             } );
-
-
-
                         }
 
                         orderMeta.froyo.forEach((froyoMeta, index) => {
@@ -928,7 +925,7 @@ $order_create = 'order_create';
                             $(`#froyo-${productId}`).append(option);
 
                             let data = {
-                                id: productId,
+                                id: froyoMeta.id,
                                 price: froyoMeta.price,
                                 productId: productId,
                             };
@@ -950,7 +947,7 @@ $order_create = 'order_create';
                             $(`#syrup-${productId}`).append(option);
 
                             let data = {
-                                id: productId,
+                                id: syrupMeta.id,
                                 price: syrupMeta.price,
                                 productId: productId,
                             };
@@ -972,7 +969,7 @@ $order_create = 'order_create';
                             $(`#topping-${productId}`).append(option);
 
                             let data = {
-                                id: productId,
+                                id: toppingMeta.id,
                                 price: toppingMeta.price,
                                 productId: productId,
                             };

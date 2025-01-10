@@ -45,4 +45,6 @@ return [
     'min_quantity_of_x' => 'Minimum quanitity of :title required',
 
     'total_claimable' => 'Total Claimable',
+    'public_voucher' => 'Public Voucher',
+    'user_specific_voucher' => 'User Specific Voucher',
 ];

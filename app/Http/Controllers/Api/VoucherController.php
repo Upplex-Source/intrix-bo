@@ -16,11 +16,14 @@ class VoucherController extends Controller
      * 
      * @authenticated
      * 
-     * <strong>voucher type</strong></br>
+     * <strong>voucher discount type</strong></br>
      * 1: percentage<br>
      * 2: fixed amoun<br>
      * 3: buy x free y<br>
      * 
+     * <strong>voucher type</strong></br>
+     * 1: public voucher<br>
+     * 2: user specific<br>
      * 
      * @group Voucher API
      * 

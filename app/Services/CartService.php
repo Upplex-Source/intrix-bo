@@ -99,12 +99,52 @@ class CartService {
 
         $validator = Validator::make($request->all(), [
             'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
-            'items.*.product' => [ 'nullable', 'exists:products,id' ],
-            'items.*.froyo' => [ 'nullable', 'exists:froyos,id' ],
-            'items.*.syrup' => [ 'nullable', 'exists:syrups,id' ],
-            'items.*.topping' => [ 'nullable', 'exists:toppings,id' ],
+            'items' => ['nullable', 'array'],
+            'items.*.product' => ['required', 'exists:products,id'],
+            'items.*.froyo' => ['nullable', 'array'],
+            'items.*.froyo.*' => ['exists:froyos,id'], // Validate each froyo ID
+            'items.*.syrup' => ['nullable', 'array'],
+            'items.*.syrup.*' => ['exists:syrups,id'], // Validate each syrup ID
+            'items.*.topping' => ['nullable', 'array'],
+            'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
         ]);
+        
+        // Add after validation logic
+        if( isset( $request->items ) ) {
 
+            $validator->after(function ($validator) use ($request) {
+                foreach ($request->items as $index => $item) {
+                    // Fetch the product and its default quantities
+                    $product = Product::find($item['product']);
+            
+                    if (!$product) {
+                        $validator->errors()->add("items.$index.product", 'Invalid product ID.');
+                        continue;
+                    }
+            
+                    // Check froyo quantity
+                    if (isset($item['froyo']) && count($item['froyo']) > $product->default_froyo_quantity) {
+                        $validator->errors()->add("items.$index.froyo", "You can select up to {$product->default_froyo_quantity} froyos.");
+                    }
+            
+                    // Check syrup quantity
+                    if (isset($item['syrup']) && count($item['syrup']) > $product->default_syrup_quantity) {
+                        $validator->errors()->add("items.$index.syrup", "You can select up to {$product->default_syrup_quantity} syrups.");
+                    }
+            
+                    // Check topping quantity
+                    if (isset($item['topping']) && count($item['topping']) > $product->default_topping_quantity) {
+                        $validator->errors()->add("items.$index.topping", "You can select up to {$product->default_topping_quantity} toppings.");
+                    }
+                }
+            });
+        }
+        
+        // Handle validation failure
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        
         $validator->validate();
 
         DB::beginTransaction();
@@ -150,6 +190,20 @@ class CartService {
                     $orderPrice += $product->price ?? 0;
                     $metaPrice += $product->price ?? 0;
     
+                    // new calculation 
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                    $orderPrice += $froyoPrices;
+                    $metaPrice += $froyoPrices;
+
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                    $orderPrice += $syrupPrices;
+                    $metaPrice += $syrupPrices;
+
+                    $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                    $orderPrice += $toppingPrices;
+                    $metaPrice += $toppingPrices;
+
+                    /*
                     if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
                         $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                         asort($froyoPrices);
@@ -173,6 +227,7 @@ class CartService {
                         $orderPrice += $mostExpensiveToppingPrice;
                         $metaPrice += $mostExpensiveToppingPrice;
                     }
+                    */
     
                     $orderMeta->total_price = $metaPrice;
                     $orderMeta->save();
@@ -209,7 +264,7 @@ class CartService {
             'sesion_key' => $cart->session_key,
             'cart_id' => $cart->id,
             'vending_machine' => $cart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $cart->vendingMachine->operational_hour),
-            'total' => $cart->total_price,
+            'total' => Helper::numberFormatV2($cart->total_price, 2, true),
             'cart_metas' => $cartMetas
         ] );
     }
@@ -220,14 +275,55 @@ class CartService {
             'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
             'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
-            'items.*.product' => [ 'nullable', 'exists:products,id' ],
-            'items.*.froyo' => [ 'nullable', 'exists:froyos,id' ],
-            'items.*.syrup' => [ 'nullable', 'exists:syrups,id' ],
-            'items.*.topping' => [ 'nullable', 'exists:toppings,id' ],
+            'items' => ['nullable', 'array'],
+            'items.*.product' => ['required', 'exists:products,id'],
+            'items.*.froyo' => ['nullable', 'array'],
+            'items.*.froyo.*' => ['exists:froyos,id'], // Validate each froyo ID
+            'items.*.syrup' => ['nullable', 'array'],
+            'items.*.syrup.*' => ['exists:syrups,id'], // Validate each syrup ID
+            'items.*.topping' => ['nullable', 'array'],
+            'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
             'cart_item' => ['nullable', 'exists:cart_metas,id'],
         ] );
+        
+        // Add after validation logic
+        if( isset( $request->items ) ) {
+
+            $validator->after(function ($validator) use ($request) {
+                foreach ($request->items as $index => $item) {
+                    // Fetch the product and its default quantities
+                    $product = Product::find($item['product']);
+            
+                    if (!$product) {
+                        $validator->errors()->add("items.$index.product", 'Invalid product ID.');
+                        continue;
+                    }
+            
+                    // Check froyo quantity
+                    if (isset($item['froyo']) && count($item['froyo']) > $product->default_froyo_quantity) {
+                        $validator->errors()->add("items.$index.froyo", "You can select up to {$product->default_froyo_quantity} froyos.");
+                    }
+            
+                    // Check syrup quantity
+                    if (isset($item['syrup']) && count($item['syrup']) > $product->default_syrup_quantity) {
+                        $validator->errors()->add("items.$index.syrup", "You can select up to {$product->default_syrup_quantity} syrups.");
+                    }
+            
+                    // Check topping quantity
+                    if (isset($item['topping']) && count($item['topping']) > $product->default_topping_quantity) {
+                        $validator->errors()->add("items.$index.topping", "You can select up to {$product->default_topping_quantity} toppings.");
+                    }
+                }
+            });
+        }
+        
+        // Handle validation failure
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $validator->validate();
+
         $user = auth()->user();
         $query = Cart::where('user_id', $user->id)
         ->with(['cartMetas','vendingMachine'])
@@ -274,7 +370,21 @@ class CartService {
                 // Calculate new total price for this cart item
                 $metaPrice = 0;
                 $metaPrice += $product->price ?? 0;
-    
+
+                // new calculation 
+                $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                $orderPrice += $froyoPrices;
+                $metaPrice += $froyoPrices;
+
+                $syrupPrices = Syrup::whereIn('id', $froyos)->sum('price');
+                $orderPrice += $syrupPrices;
+                $metaPrice += $syrupPrices;
+
+                $toppingPrices = Topping::whereIn('id', $froyos)->sum('price');
+                $orderPrice += $toppingPrices;
+                $metaPrice += $toppingPrices;
+
+                /*
                 if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
                     $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                     asort($froyoPrices);
@@ -298,7 +408,8 @@ class CartService {
                     $orderPrice += $mostExpensiveToppingPrice;
                     $metaPrice += $mostExpensiveToppingPrice;
                 }
-                
+                */
+
                 $cartMeta->froyos = json_encode($froyos);
                 $cartMeta->syrups = json_encode($syrups);
                 $cartMeta->toppings = json_encode($toppings);
@@ -334,6 +445,21 @@ class CartService {
                     $orderPrice += $product->price ?? 0;
                     $metaPrice += $product->price ?? 0;
     
+                    // new calculation 
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                    $orderPrice += $froyoPrices;
+                    $metaPrice += $froyoPrices;
+
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                    $orderPrice += $syrupPrices;
+                    $metaPrice += $syrupPrices;
+
+                    $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                    $orderPrice += $toppingPrices;
+                    $metaPrice += $toppingPrices;
+
+                    /*
+    
                     if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
                         $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                         asort($froyoPrices);
@@ -357,6 +483,7 @@ class CartService {
                         $orderPrice += $mostExpensiveToppingPrice;
                         $metaPrice += $mostExpensiveToppingPrice;
                     }
+                    */
 
                     $orderMeta->total_price = $metaPrice;
                     $orderMeta->save();
@@ -396,8 +523,8 @@ class CartService {
             'sesion_key' => $updateCart->session_key,
             'cart_id' => $updateCart->id,
             'vending_machine' => $updateCart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $updateCart->vendingMachine->operational_hour),
-            'total' => $updateCart->total_price,
-            'cart_metas' => $cartMetas
+            'total' => Helper::numberFormatV2($updateCart->total_price, 2, true),
+            'cart_metas' => $cartMetas,
         ] );
     }
 

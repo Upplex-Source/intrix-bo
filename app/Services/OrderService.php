@@ -302,6 +302,7 @@ class OrderService
             ] );
 
             foreach ( $request->products as $product ) {
+                $metaPrice = 0;
 
                 $froyos = $product['froyo'];
                 $froyoCount = count($froyos);
@@ -321,6 +322,22 @@ class OrderService
                 ] );
 
                 $orderPrice += $product->price ?? 0;
+                $metaPrice += $product->price ?? 0;
+    
+                // new calculation 
+                $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                $orderPrice += $froyoPrices;
+                $metaPrice += $froyoPrices;
+
+                $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                $orderPrice += $syrupPrices;
+                $metaPrice += $syrupPrices;
+
+                $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                $orderPrice += $toppingPrices;
+                $metaPrice += $toppingPrices;
+
+                /*
 
                 if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
                     $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
@@ -342,6 +359,10 @@ class OrderService
                     $mostExpensiveToppingPrice = end($toppingPrices);
                     $orderPrice += $mostExpensiveToppingPrice;
                 } 
+                */
+
+                $orderMeta->total_price = $metaPrice;
+                $orderMeta->save();
             }
 
             $createOrder->total_price = $orderPrice;
@@ -423,6 +444,7 @@ class OrderService
             OrderMeta::where( 'order_id', $updateOrder->id )->delete();
 
             foreach ( $request->products as $product ) {
+                $metaPrice = 0;
 
                 $froyos = $product['froyo'];
                 $froyoCount = count($froyos);
@@ -442,7 +464,22 @@ class OrderService
                 ] );
 
                 $orderPrice += $product->price ?? 0;
+                $metaPrice += $product->price ?? 0;
 
+                // new calculation 
+                $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                $orderPrice += $froyoPrices;
+                $metaPrice += $froyoPrices;
+
+                $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                $orderPrice += $syrupPrices;
+                $metaPrice += $syrupPrices;
+
+                $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                $orderPrice += $toppingPrices;
+                $metaPrice += $toppingPrices;
+
+                /*
                 if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
                     $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                     asort($froyoPrices);
@@ -463,6 +500,10 @@ class OrderService
                     $mostExpensiveToppingPrice = end($toppingPrices);
                     $orderPrice += $mostExpensiveToppingPrice;
                 } 
+                */
+
+                $orderMeta->total_price = $metaPrice;
+                $orderMeta->save();
             }
 
             $updateOrder->total_price = $orderPrice;
@@ -873,7 +914,21 @@ class OrderService
 
                 $orderPrice += $product->price ?? 0;
                 $metaPrice += $product->price ?? 0;
+    
+                // new calculation 
+                $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                $orderPrice += $froyoPrices;
+                $metaPrice += $froyoPrices;
 
+                $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                $orderPrice += $syrupPrices;
+                $metaPrice += $syrupPrices;
+
+                $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                $orderPrice += $toppingPrices;
+                $metaPrice += $toppingPrices;
+
+                /*
                 if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
                     $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                     asort($froyoPrices);
@@ -897,6 +952,7 @@ class OrderService
                     $orderPrice += $mostExpensiveToppingPrice;
                     $metaPrice += $mostExpensiveToppingPrice;
                 }
+                */
 
                 $orderMeta->total_price = $metaPrice;
                 $orderMeta->save();

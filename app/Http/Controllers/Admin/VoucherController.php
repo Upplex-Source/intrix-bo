@@ -32,6 +32,11 @@ class VoucherController extends Controller
             '20' => __( 'datatables.suspended' ),
         ];
 
+        $this->data['data']['voucher_type'] = [
+            '1' => __( 'voucher.public_voucher' ),
+            '2' => __( 'voucher.user_specific_voucher' ),
+        ];
+
         return view( 'admin.main' )->with( $this->data );
     }
 
@@ -61,6 +66,11 @@ class VoucherController extends Controller
             '1' => __( 'voucher.percentage' ),
             '2' => __( 'voucher.fixed_amount' ),
             '3' => __( 'voucher.free_cup' ),
+        ];
+
+        $this->data['data']['voucher_type'] = [
+            '1' => __( 'voucher.public_voucher' ),
+            '2' => __( 'voucher.user_specific_voucher' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -93,6 +103,12 @@ class VoucherController extends Controller
             '2' => __( 'voucher.fixed_amount' ),
             '3' => __( 'voucher.free_cup' ),
         ];
+
+        $this->data['data']['voucher_type'] = [
+            '1' => __( 'voucher.public_voucher' ),
+            '2' => __( 'voucher.user_specific_voucher' ),
+        ];
+
 
         return view( 'admin.main' )->with( $this->data );
     }
