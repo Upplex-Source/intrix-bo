@@ -16,41 +16,19 @@ $user_checkin_edit = 'user_checkin_edit';
             <div class="col-md-12 col-lg-6">
                 <h5 class="card-title mb-4">{{ __( 'template.general_info' ) }}</h5>
                 <div class="mb-3 row">
-                    <label for="{{ $user_checkin_edit }}_code" class="col-sm-5 col-form-label">{{ __( 'user_checkin.code' ) }}</label>
+                    <label for="{{ $user_checkin_edit }}_user" class="col-sm-5 col-form-label">{{ __( 'user_checkin.user' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $user_checkin_edit }}_code">
+                        <select class="form-select form-select-sm" id="{{ $user_checkin_edit }}_user" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'user_checkin.user' ) ] ) }}">
+                        </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{ $user_checkin_edit }}_title" class="col-sm-5 col-form-label">{{ __( 'user_checkin.title' ) }}</label>
+                    <label for="{{ $user_checkin_edit}}_checkin_date" class="col-sm-5 col-form-label">{{ __( 'user_checkin.checkin_date' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control" id="{{ $user_checkin_edit }}_title">
+                        <input type="text" class="form-control" id="{{ $user_checkin_edit}}_checkin_date">
                         <div class="invalid-feedback"></div>
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $user_checkin_edit }}_description" class="col-sm-5 col-form-label">{{ __( 'user_checkin.description' ) }}</label>
-                    <div class="col-sm-7">
-                        <textarea class="form-control" id="{{ $user_checkin_edit }}_description"></textarea>
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="{{ $user_checkin_edit }}_price" class="col-sm-5 col-form-label">{{ __( 'user_checkin.price' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $user_checkin_edit }}_price">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label>{{ __( 'user_checkin.image' ) }}</label>
-                    <div class="dropzone mb-3" id="{{ $user_checkin_edit }}_image" style="min-height: 0px;">
-                        <div class="dz-message needsclick">
-                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
-                        </div>
-                    </div>
-                    <div class="invalid-feedback"></div>
                 </div>
                 <div class="text-end">
                     <button id="{{ $user_checkin_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
@@ -72,6 +50,10 @@ $user_checkin_edit = 'user_checkin_edit';
             window.location.href = '{{ route( 'admin.module_parent.user_checkin.index' ) }}';
         } );
 
+        let checkinDate = $( fe + '_checkin_date' ).flatpickr( {
+            disableMobile: false,
+        } );
+
         $( fe + '_submit' ).click( function() {
 
             resetInputValidation();
@@ -82,11 +64,8 @@ $user_checkin_edit = 'user_checkin_edit';
 
             let formData = new FormData();
             formData.append( 'id', '{{ request( 'id' ) }}' );
-            formData.append( 'title', $( fe + '_title' ).val() );
-            formData.append( 'description', $( fe + '_description' ).val() );
-            formData.append( 'code', $( fe + '_code' ).val() );
-            formData.append( 'price', $( fe + '_price' ).val() );
-            formData.append( 'image', fileID );
+            formData.append( 'user', $( fe + '_user' ).val() );
+            formData.append( 'checkin_date', $( fe + '_checkin_date' ).val() );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -121,7 +100,6 @@ $user_checkin_edit = 'user_checkin_edit';
         } );
 
         getUserCheckin();
-        Dropzone.autoDiscover = false;
 
         function getUserCheckin() {
 
@@ -138,102 +116,56 @@ $user_checkin_edit = 'user_checkin_edit';
                 },
                 success: function( response ) {
                     
-                    $( fe + '_title' ).val( response.title );
-                    $( fe + '_description' ).val( response.description );
-                    $( fe + '_code' ).val( response.code );
-                    $( fe + '_price' ).val( response.price );
+                    if( response.user ){
+                        let option = new Option( response.user.phone_number, response.user.id, true, true );
+                        userSelect2.append( option )
+                    }
+                    checkinDate.setDate( response.checkin_date );
 
-                    const dropzone = new Dropzone( fe + '_image', {
-                        url: '{{ route( 'admin.file.upload' ) }}',
-                        maxFiles: 10,
-                        acceptedFiles: 'image/jpg,image/jpeg,image/png',
-                        addRemoveLinks: true,
-                        init: function() {
+                    $( 'body' ).loading( 'stop' );
+                },
+            } );
+        }
 
-                            let that = this;
-                            console.log(response)
-                            if ( response.image_path != 0 ) {
-                                let myDropzone = that
-                                    cat_id = '{{ request('id') }}',
-                                    mockFile = { name: 'Default', size: 1024, accepted: true, id: cat_id };
+        let userSelect2 = $( fe + '_user' ).select2( {
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: true,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.user.allUsers' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        title: params.term, // search term
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
 
-                                myDropzone.files.push( mockFile );
-                                myDropzone.displayExistingFile( mockFile, response.image_path );
-                                $( myDropzone.files[myDropzone.files.length - 1].previewElement ).data( 'id', cat_id );
-                            }
-                        },
-                        removedfile: function( file ) {
-                            var idToRemove = file.id;
+                    let processedResult = [];
 
-                            var idArrays = fileID.split(/\s*,\s*/);
-
-                            var indexToRemove = idArrays.indexOf( idToRemove.toString() );
-                            if (indexToRemove !== -1) {
-                                idArrays.splice( indexToRemove, 1 );
-                            }
-
-                            fileID = idArrays.join( ', ' );
-
-                            file.previewElement.remove();
-
-                            removeGallery( idToRemove );
-
-                        },
-                        success: function( file, response ) {
-                            if ( response.status == 200 )  {
-                                if ( fileID !== '' ) {
-                                    fileID += ','; // Add a comma if fileID is not empty
-                                }
-                                fileID += response.data.id;
-
-                                file.previewElement.id = response.data.id;
-                            }
-                        }
+                    data.users.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.phone_number,
+                        } );
                     } );
 
-                    $( 'body' ).loading( 'stop' );
-                },
-            } );
-        }
-
-        function removeGallery( gallery ) {
-
-            resetInputValidation();
-
-            $( 'body' ).loading( {
-                message: '{{ __( 'template.loading' ) }}'
-            } );
-
-            let formData = new FormData();
-            formData.append( 'id', gallery );
-            formData.append( '_token', '{{ csrf_token() }}' );
-
-            $.ajax( {
-                url: '{{ route( 'admin.user_checkin.removeUserCheckinGalleryImage' ) }}',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType:   false,
-                success: function( response ) {
-                    $( 'body' ).loading( 'stop' );
-                    $( '#modal_success .caption-text' ).html( response.message );
-                    modalSuccess.toggle();
-                },
-                error: function( error ) {
-                    $( 'body' ).loading( 'stop' );
-
-                    if ( error.status === 422 ) {
-                        let errors = error.responseJSON.errors;
-                        $.each( errors, function( key, value ) {
-                            $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
-                        } );
-                    } else {
-                        $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
-                        modalDanger.toggle();
-                    }
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
                 }
-            } );
-        }
+            }
+        } );
 
     } );
 </script>

@@ -27,7 +27,7 @@ return [
     'reward_description_points' => 'Yobe Points user will get:',
     'reward_description_voucher' => 'Voucher user will get:',
 
-    'checkin_details' => 'Check-in Users',
+    'checkin_details' => 'Checked-in Users',
     'username' => 'Username',
     'phone_number' => 'phone_number',
     'total_checkin' => 'total Check-in'

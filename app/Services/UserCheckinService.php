@@ -70,6 +70,11 @@ class UserCheckinService
         DB::beginTransaction();
         
         try {
+
+            $user = User::find( $request->user );
+            $user->total_check_in += 1;
+            $user->save();
+
             $userCheckinCreate =  UserCheckin::create([
                 'user_id' => $user->id,
                 'checkin_date' => now(),
@@ -330,8 +335,15 @@ class UserCheckinService
         DB::beginTransaction();
 
         try {
-
             $updateUserCheckin = UserCheckin::find( $request->id );
+
+            if( $updateUserCheckin->status == 10 ){
+                $updateUserCheckin->user->total_check_in -= 1;
+            }else{
+                $updateUserCheckin->user->total_check_in += 1;
+            }
+            $updateUserCheckin->user->save();
+
             $updateUserCheckin->status = $updateUserCheckin->status == 10 ? 20 : 10;
 
             $updateUserCheckin->save();
@@ -354,6 +366,25 @@ class UserCheckinService
     }
 
     // Calendar
+    public static function allUserCheckinCalendars( $request ) {
+
+        $userCheckins = UserCheckin::with( ['user'] )->where( 'status', 10 )->get();
+
+        $groupedCheckins = $userCheckins->groupBy(function ($checkin) {
+            return Carbon::parse($checkin->checkin_date)->toDateString(); // Extract date
+        })->map(function ($checkins) {
+            return $checkins->map(function ($checkin) {
+                return [
+                    'username' => $checkin->user->name ?? '-',
+                    'phone_number' => $checkin->user->phone_number,
+                    'total_checkin' => $checkin->user->total_check_in,
+                ];
+            });
+        });
+    
+        return response()->json(['data' => $groupedCheckins]);
+
+    }
 
     // API
     public static function getCheckinHistory( $request )
