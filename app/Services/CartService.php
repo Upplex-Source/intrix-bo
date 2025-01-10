@@ -108,30 +108,28 @@ class CartService {
             'items.*.topping' => ['nullable', 'array'],
             'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
         ]);
-        
-        // Add after validation logic
-        if( isset( $request->items ) ) {
 
+        if (isset($request->items)) {
             $validator->after(function ($validator) use ($request) {
                 foreach ($request->items as $index => $item) {
                     // Fetch the product and its default quantities
                     $product = Product::find($item['product']);
-            
+        
                     if (!$product) {
                         $validator->errors()->add("items.$index.product", 'Invalid product ID.');
                         continue;
                     }
-            
+        
                     // Check froyo quantity
                     if (isset($item['froyo']) && count($item['froyo']) > $product->default_froyo_quantity) {
                         $validator->errors()->add("items.$index.froyo", "You can select up to {$product->default_froyo_quantity} froyos.");
                     }
-            
+        
                     // Check syrup quantity
                     if (isset($item['syrup']) && count($item['syrup']) > $product->default_syrup_quantity) {
                         $validator->errors()->add("items.$index.syrup", "You can select up to {$product->default_syrup_quantity} syrups.");
                     }
-            
+        
                     // Check topping quantity
                     if (isset($item['topping']) && count($item['topping']) > $product->default_topping_quantity) {
                         $validator->errors()->add("items.$index.topping", "You can select up to {$product->default_topping_quantity} toppings.");
@@ -140,9 +138,26 @@ class CartService {
             });
         }
         
-        // Handle validation failure
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            $rawErrors = $validator->errors()->toArray();
+            $formattedErrors = [];
+        
+            foreach ($rawErrors as $key => $messages) {
+                // Extract the index and field (e.g., items.0.froyo -> 0, froyo)
+                if (preg_match('/items\.(\d+)\.(\w+)/', $key, $matches)) {
+                    $index = $matches[1]; // Extract index (e.g., 0)
+                    $field = $matches[2]; // Extract field (e.g., froyo)
+        
+                    // Group errors by index
+                    if (!isset($formattedErrors[$index])) {
+                        $formattedErrors[$index] = [];
+                    }
+        
+                    $formattedErrors[$index][$field] = $messages[0]; // Add the first error message
+                }
+            }
+        
+            return response()->json(['errors' => $formattedErrors], 422);
         }
         
         $validator->validate();
@@ -285,30 +300,28 @@ class CartService {
             'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
             'cart_item' => ['nullable', 'exists:cart_metas,id'],
         ] );
-        
-        // Add after validation logic
-        if( isset( $request->items ) ) {
 
+        if (isset($request->items)) {
             $validator->after(function ($validator) use ($request) {
                 foreach ($request->items as $index => $item) {
                     // Fetch the product and its default quantities
                     $product = Product::find($item['product']);
-            
+        
                     if (!$product) {
                         $validator->errors()->add("items.$index.product", 'Invalid product ID.');
                         continue;
                     }
-            
+        
                     // Check froyo quantity
                     if (isset($item['froyo']) && count($item['froyo']) > $product->default_froyo_quantity) {
                         $validator->errors()->add("items.$index.froyo", "You can select up to {$product->default_froyo_quantity} froyos.");
                     }
-            
+        
                     // Check syrup quantity
                     if (isset($item['syrup']) && count($item['syrup']) > $product->default_syrup_quantity) {
                         $validator->errors()->add("items.$index.syrup", "You can select up to {$product->default_syrup_quantity} syrups.");
                     }
-            
+        
                     // Check topping quantity
                     if (isset($item['topping']) && count($item['topping']) > $product->default_topping_quantity) {
                         $validator->errors()->add("items.$index.topping", "You can select up to {$product->default_topping_quantity} toppings.");
@@ -317,9 +330,26 @@ class CartService {
             });
         }
         
-        // Handle validation failure
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            $rawErrors = $validator->errors()->toArray();
+            $formattedErrors = [];
+        
+            foreach ($rawErrors as $key => $messages) {
+                // Extract the index and field (e.g., items.0.froyo -> 0, froyo)
+                if (preg_match('/items\.(\d+)\.(\w+)/', $key, $matches)) {
+                    $index = $matches[1]; // Extract index (e.g., 0)
+                    $field = $matches[2]; // Extract field (e.g., froyo)
+        
+                    // Group errors by index
+                    if (!isset($formattedErrors[$index])) {
+                        $formattedErrors[$index] = [];
+                    }
+        
+                    $formattedErrors[$index][$field] = $messages[0]; // Add the first error message
+                }
+            }
+        
+            return response()->json(['errors' => $formattedErrors], 422);
         }
 
         $validator->validate();
