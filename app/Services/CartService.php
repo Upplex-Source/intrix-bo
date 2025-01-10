@@ -140,21 +140,29 @@ class CartService {
         
         if ($validator->fails()) {
             $rawErrors = $validator->errors()->toArray();
-            $formattedErrors = [];
+            $formattedErrors = [
+                'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
+                'items' => []
+            ];
         
             foreach ($rawErrors as $key => $messages) {
-                // Extract the index and field (e.g., items.0.froyo -> 0, froyo)
+                // Handle items validation errors
                 if (preg_match('/items\.(\d+)\.(\w+)/', $key, $matches)) {
                     $index = $matches[1]; // Extract index (e.g., 0)
                     $field = $matches[2]; // Extract field (e.g., froyo)
         
                     // Group errors by index
-                    if (!isset($formattedErrors[$index])) {
-                        $formattedErrors[$index] = [];
+                    if (!isset($formattedErrors['items'][$index])) {
+                        $formattedErrors['items'][$index] = [];
                     }
         
-                    $formattedErrors[$index][$field] = $messages[0]; // Add the first error message
+                    $formattedErrors['items'][$index][$field] = $messages[0]; // Add the first error message
                 }
+            }
+        
+            // Remove null vending machine error if not present
+            if (!$formattedErrors['vending_machine']) {
+                unset($formattedErrors['vending_machine']);
             }
         
             return response()->json(['errors' => $formattedErrors], 422);
@@ -332,21 +340,29 @@ class CartService {
         
         if ($validator->fails()) {
             $rawErrors = $validator->errors()->toArray();
-            $formattedErrors = [];
+            $formattedErrors = [
+                'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
+                'items' => []
+            ];
         
             foreach ($rawErrors as $key => $messages) {
-                // Extract the index and field (e.g., items.0.froyo -> 0, froyo)
+                // Handle items validation errors
                 if (preg_match('/items\.(\d+)\.(\w+)/', $key, $matches)) {
                     $index = $matches[1]; // Extract index (e.g., 0)
                     $field = $matches[2]; // Extract field (e.g., froyo)
         
                     // Group errors by index
-                    if (!isset($formattedErrors[$index])) {
-                        $formattedErrors[$index] = [];
+                    if (!isset($formattedErrors['items'][$index])) {
+                        $formattedErrors['items'][$index] = [];
                     }
         
-                    $formattedErrors[$index][$field] = $messages[0]; // Add the first error message
+                    $formattedErrors['items'][$index][$field] = $messages[0]; // Add the first error message
                 }
+            }
+        
+            // Remove null vending machine error if not present
+            if (!$formattedErrors['vending_machine']) {
+                unset($formattedErrors['vending_machine']);
             }
         
             return response()->json(['errors' => $formattedErrors], 422);
