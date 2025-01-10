@@ -27,6 +27,9 @@ use App\Http\Controllers\Admin\{
     VendingMachineProductController,
     OrderController,
     PaymentController,
+    VoucherController,
+    UserCheckinController,
+    CheckinRewardController,
 };
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
@@ -348,6 +351,70 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::get( 'scanner', [ OrderController::class, 'scanner' ] )->name( 'admin.order.scanner' );
                 Route::post( 'scanned-order', [ OrderController::class, 'scannedOrder' ] )->name( 'admin.order.scannedOrder' );
 
+            } );
+
+            Route::prefix( 'vouchers' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view vouchers' ] ], function() {
+                    Route::get( '/', [ VoucherController::class, 'index' ] )->name( 'admin.module_parent.voucher.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add vouchers' ] ], function() {
+                    Route::get( 'add', [ VoucherController::class, 'add' ] )->name( 'admin.voucher.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit vouchers' ] ], function() {
+                    Route::get( 'edit', [ VoucherController::class, 'edit' ] )->name( 'admin.voucher.edit' );
+                } );
+    
+                Route::post( 'all-vouchers', [ VoucherController::class, 'allVouchers' ] )->name( 'admin.voucher.allVouchers' );
+                Route::post( 'one-voucher', [ VoucherController::class, 'oneVoucher' ] )->name( 'admin.voucher.oneVoucher' );
+                Route::post( 'create-voucher', [ VoucherController::class, 'createVoucher' ] )->name( 'admin.voucher.createVoucher' );
+                Route::post( 'update-voucher', [ VoucherController::class, 'updateVoucher' ] )->name( 'admin.voucher.updateVoucher' );
+                Route::post( 'update-voucher-status', [ VoucherController::class, 'updateVoucherStatus' ] )->name( 'admin.voucher.updateVoucherStatus' );
+                Route::post( 'remove-voucher-gallery-image', [ VoucherController::class, 'removeVoucherGalleryImage' ] )->name( 'admin.voucher.removeVoucherGalleryImage' );
+                Route::post( 'ckeUpload', [ VoucherController::class, 'ckeUpload' ] )->name( 'admin.voucher.ckeUpload' );
+            } );
+
+            Route::prefix( 'user-checkins' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view user_checkins' ] ], function() {
+                    Route::get( '/', [ UserCheckinController::class, 'index' ] )->name( 'admin.module_parent.user_checkin.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add user_checkins' ] ], function() {
+                    Route::get( 'add', [ UserCheckinController::class, 'add' ] )->name( 'admin.user_checkin.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit user_checkins' ] ], function() {
+                    Route::get( 'edit', [ UserCheckinController::class, 'edit' ] )->name( 'admin.user_checkin.edit' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:view checkin_rewards' ] ], function() {
+                    Route::get( 'calendar', [ UserCheckinController::class, 'calendar' ] )->name( 'admin.user_checkin.calendar' );
+                } );
+    
+                Route::post( 'all-user-checkins', [ UserCheckinController::class, 'allUserCheckins' ] )->name( 'admin.user_checkin.allUserCheckins' );
+                Route::post( 'all-user-checkin-calendars', [ UserCheckinController::class, 'allUserCheckinCalendars' ] )->name( 'admin.user_checkin.allUserCheckinCalendars' );
+                Route::post( 'one-user-checkin', [ UserCheckinController::class, 'oneUserCheckin' ] )->name( 'admin.user_checkin.oneUserCheckin' );
+                Route::post( 'create-user-checkin', [ UserCheckinController::class, 'createUserCheckin' ] )->name( 'admin.user_checkin.createUserCheckin' );
+                Route::post( 'update-user-checkin', [ UserCheckinController::class, 'updateUserCheckin' ] )->name( 'admin.user_checkin.updateUserCheckin' );
+                Route::post( 'update-user-checkin-status', [ UserCheckinController::class, 'updateUserCheckinStatus' ] )->name( 'admin.user_checkin.updateUserCheckinStatus' );
+                Route::post( 'remove-user-checkin-gallery-image', [ UserCheckinController::class, 'removeUserCheckinGalleryImage' ] )->name( 'admin.user_checkin.removeUserCheckinGalleryImage' );
+                Route::post( 'ckeUpload', [ UserCheckinController::class, 'ckeUpload' ] )->name( 'admin.user_checkin.ckeUpload' );
+            } );
+
+            Route::prefix( 'checkin-rewards' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view checkin_rewards' ] ], function() {
+                    Route::get( '/', [ CheckinRewardController::class, 'index' ] )->name( 'admin.module_parent.checkin_reward.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add checkin_rewards' ] ], function() {
+                    Route::get( 'add', [ CheckinRewardController::class, 'add' ] )->name( 'admin.checkin_reward.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit checkin_rewards' ] ], function() {
+                    Route::get( 'edit', [ CheckinRewardController::class, 'edit' ] )->name( 'admin.checkin_reward.edit' );
+                } );
+    
+                Route::post( 'all-checkin-rewards', [ CheckinRewardController::class, 'allCheckinRewards' ] )->name( 'admin.checkin_reward.allCheckinRewards' );
+                Route::post( 'one-checkin-reward', [ CheckinRewardController::class, 'oneCheckinReward' ] )->name( 'admin.checkin_reward.oneCheckinReward' );
+                Route::post( 'create-checkin-reward', [ CheckinRewardController::class, 'createCheckinReward' ] )->name( 'admin.checkin_reward.createCheckinReward' );
+                Route::post( 'update-checkin-reward', [ CheckinRewardController::class, 'updateCheckinReward' ] )->name( 'admin.checkin_reward.updateCheckinReward' );
+                Route::post( 'update-checkin-reward-status', [ CheckinRewardController::class, 'updateCheckinRewardStatus' ] )->name( 'admin.checkin_reward.updateCheckinRewardStatus' );
+                Route::post( 'remove-checkin-reward-gallery-image', [ CheckinRewardController::class, 'removeCheckinRewardGalleryImage' ] )->name( 'admin.checkin_reward.removeCheckinRewardGalleryImage' );
+                Route::post( 'ckeUpload', [ CheckinRewardController::class, 'ckeUpload' ] )->name( 'admin.checkin_reward.ckeUpload' );
             } );
 
         } );

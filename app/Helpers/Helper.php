@@ -58,7 +58,8 @@ class Helper {
             '13' => __( 'wallet.refund_redeem' ),
             '20' => __( 'wallet.register_bonus' ),
             '21' => __( 'wallet.promo_code_bonus' ),
-            '22' => __( 'wallet.affiliate_bonue' ),
+            '22' => __( 'wallet.affiliate_bonus' ),
+            '23' => __( 'wallet.check_in_bonus' ),
         ];
     }
 

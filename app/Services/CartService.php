@@ -275,8 +275,30 @@ class CartService {
                 $metaPrice = 0;
                 $metaPrice += $product->price ?? 0;
     
-                // Update froyo, syrup, and topping prices as needed
-                // (Include logic for calculating prices based on quantities)
+                if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                    asort($froyoPrices);
+                    $mostExpensiveFroyoPrice = end($froyoPrices);
+                    $orderPrice += $mostExpensiveFroyoPrice;
+                    $metaPrice += $mostExpensiveFroyoPrice;
+                } 
+                
+                if (($product->default_syrup_quantity != null || $product->default_syrup_quantity != 0 ) && $syrupCount > $product->default_syrup_quantity) {
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                    asort($syrupPrices);
+                    $mostExpensiveSyrupPrice = end($syrupPrices);
+                    $orderPrice += $mostExpensiveSyrupPrice;
+                    $metaPrice += $mostExpensiveSyrupPrice;
+                } 
+
+                if (($product->default_topping_quantity != null || $product->default_topping_quantity != 0 ) && $toppingCount > $product->default_topping_quantity) {
+                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                    asort($toppingPrices);
+                    $mostExpensiveToppingPrice = end($toppingPrices);
+                    $orderPrice += $mostExpensiveToppingPrice;
+                    $metaPrice += $mostExpensiveToppingPrice;
+                }
+                
                 $cartMeta->froyos = json_encode($froyos);
                 $cartMeta->syrups = json_encode($syrups);
                 $cartMeta->toppings = json_encode($toppings);
@@ -312,8 +334,30 @@ class CartService {
                     $orderPrice += $product->price ?? 0;
                     $metaPrice += $product->price ?? 0;
     
-                    // Update froyo, syrup, and topping prices as needed
-                    // (Include logic for calculating prices based on quantities)
+                    if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
+                        $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                        asort($froyoPrices);
+                        $mostExpensiveFroyoPrice = end($froyoPrices);
+                        $orderPrice += $mostExpensiveFroyoPrice;
+                        $metaPrice += $mostExpensiveFroyoPrice;
+                    } 
+                    
+                    if (($product->default_syrup_quantity != null || $product->default_syrup_quantity != 0 ) && $syrupCount > $product->default_syrup_quantity) {
+                        $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                        asort($syrupPrices);
+                        $mostExpensiveSyrupPrice = end($syrupPrices);
+                        $orderPrice += $mostExpensiveSyrupPrice;
+                        $metaPrice += $mostExpensiveSyrupPrice;
+                    } 
+    
+                    if (($product->default_topping_quantity != null || $product->default_topping_quantity != 0 ) && $toppingCount > $product->default_topping_quantity) {
+                        $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                        asort($toppingPrices);
+                        $mostExpensiveToppingPrice = end($toppingPrices);
+                        $orderPrice += $mostExpensiveToppingPrice;
+                        $metaPrice += $mostExpensiveToppingPrice;
+                    }
+
                     $orderMeta->total_price = $metaPrice;
                     $orderMeta->save();
                 }

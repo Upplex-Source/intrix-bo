@@ -36,5 +36,6 @@ return [
     'refund_redeem' => 'Refund Redeem Point',
     'register_bonus' => 'Register Bonus',
     'promo_code_bonus' => 'Promo Code Bonus',
-    'affiliate_bonue' => 'Affiliate Bonus',
+    'affiliate_bonus' => 'Affiliate Bonus',
+    'checkin_bonus' => 'Check-in Bonus',
 ];

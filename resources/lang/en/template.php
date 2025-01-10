@@ -150,6 +150,13 @@ return [
     'scan_qr' => 'Scan Order',
     'select_x' => 'Select :title.',
     'location_info' => 'Location Info.',
+    'vouchers' => 'Vouchers',
+    'user_vouchers' => 'User Vouchers',
+    'voucher_usages' => 'Voucher Usages',
+    'user_checkins' => 'User Check-ins',
+    'checkin_rewards' => 'Check-in Rewards',
+    'checkins' => 'Check-ins',
+    'checkin_calendar' => 'Check-in Calendar',
 
     'tax_methods' => 'Tax Methods',
     'workmanships' => 'Workmanships',

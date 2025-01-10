@@ -99,6 +99,7 @@ $columns = [
             order: [[ 1, 'desc' ]],
             columns: [
                 { data: null },
+                { data: null },
                 { data: 'created_at' },
                 { data: 'name' },
                 { data: 'email' },
@@ -106,6 +107,15 @@ $columns = [
                 { data: 'id' },
             ],
             columnDefs: [
+                {
+                    // Add checkboxes to the first column
+                    targets: 0,
+                    orderable: false,
+                    className: 'text-center',
+                    render: function (data, type, row) {
+                        return `<input type="checkbox" class="select-row" data-id="${row.encrypted_id}">`;
+                    },
+                },
                 {
                     targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
                     orderable: false,

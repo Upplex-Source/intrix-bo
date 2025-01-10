@@ -22,6 +22,8 @@ use App\Models\{
     Topping,
     Cart,
     CartMeta,
+    Voucher,
+    VoucherUsage,
 };
 
 use Helper;
@@ -802,6 +804,7 @@ class OrderService
 
         $validator = Validator::make($request->all(), [
             'cart' => ['required', 'exists:carts,id'],
+            'promo_code' => ['nullable', 'exists:vouchers,promo_code'],
         ]);
 
         $user = auth()->user();
@@ -821,6 +824,14 @@ class OrderService
         }
         
         $validator->validate();
+
+        if( $request->promo_code ){
+            $test = self::validateVoucher($request);
+
+            if ($test->getStatusCode() === 422) {
+                return $test;
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -894,6 +905,71 @@ class OrderService
                 $cartProduct->save();
             }
 
+            if( $request->promo_code ){
+                $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+
+                if ( $voucher->discount_type == 3 ) {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
+        
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $getProductMeta = $userCart->cartMetas
+                        ->where('product_id', $adjustment->get_product)
+                        ->sortBy('total_price')
+                        ->first();                    
+
+                        if ($getProductMeta) {
+                            $getProduct = Product::find($adjustment->get_product);
+                            if ($getProduct && $getProduct->price) {
+                                $orderPrice -= $getProduct->price;
+                            }
+                            $getProductMeta->total_price = 0;
+                            $getProductMeta->save();
+   
+                            $updateOrderMeta = OrderMeta::where('order_id', $order->id)
+                            ->where('product_id', $adjustment->get_product)
+                            ->get() 
+                            ->sortBy('total_price') 
+                            ->first();
+
+                            $updateOrderMeta->total_price = 0;
+                            $updateOrderMeta->save();
+                        }
+                    }
+        
+                } else if ( $voucher->discount_type == 2 ) {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $cart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
+        
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $orderPrice -= $adjustment->discount_quantity;
+                    }
+        
+                } else {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $cart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
+        
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity );
+                    }
+                }
+
+                $order->voucher_id = $voucher->id;
+                
+                VoucherUsage::create( [
+                    'user_id' => auth()->user()->id,
+                    'order_id' => $order->id,
+                    'voucher_id' => $voucher->id,
+                    'status' => 10
+                ] );
+            }
+
             $order->total_price = $orderPrice;
             $order->save();
 
@@ -928,7 +1004,7 @@ class OrderService
             'sesion_key' => $order->session_key,
             'order_id' => $order->id,
             'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
-            'total' => $order->total_price,
+            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas
         ] );
     }
@@ -987,5 +1063,72 @@ class OrderService
                 'message_key' => 'create_froyo_failed',
             ], 500 );
         }
+    }
+
+    public static function validateVoucher( $request ){
+        $voucher = Voucher::where('status', 10)
+            ->where('promo_code', $request->promo_code)
+            ->where(function ( $query) {
+                $query->where(function ( $q) {
+                    $q->whereNull('start_date')
+                    ->orWhere('start_date', '<=', Carbon::now());
+                })
+                ->where(function ( $q) {
+                    $q->whereNull('expired_date')
+                    ->orWhere('expired_date', '>=', Carbon::now());
+                });
+        })->first();
+
+        if ( !$voucher ) {
+            return response()->json( [
+                'message' => 'voucher.voucher_not_available',
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->get();
+
+        if ( $voucherUsages->count() > $voucher->usable_amount ) {
+            return response()->json( [
+                'message' => 'voucher.voucher_fully_claimed',
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        $user = auth()->user();
+        $cart = Cart::find( $request->cart );
+
+        if ( $voucher->discount_type == 3 ) {
+
+            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+
+            
+            $x = $cart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
+
+            if ( $x < $adjustment->buy_quantity ) {
+                return response()->json( [
+                    'required_amount' => $adjustment->buy_quantity,
+                    'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                    'errors' => 'voucher',
+                ], 422 );
+            }
+
+        } else {
+
+            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+
+            if ( $cart->total_price < $adjustment->buy_quantity ) {
+                return response()->json( [
+                    'required_amount' => $adjustment->buy_quantity,
+                    'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                    'errors' => 'voucher',
+                ], 422 );
+            }
+
+        }
+    
+        return response()->json( [
+            'message' => 'voucher.voucher_validated',
+        ] );
     }
 }

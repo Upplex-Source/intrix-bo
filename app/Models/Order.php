@@ -33,6 +33,10 @@ class Order extends Model
         'taxes',
     ];
 
+    public function voucher() {
+        return $this->belongsTo( Voucher::class, 'voucher_id' );
+    }
+
     public function product() {
         return $this->belongsTo( Product::class, 'product_id' );
     }

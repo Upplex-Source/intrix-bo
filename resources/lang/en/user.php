@@ -51,5 +51,11 @@ return [
     'password_verified' => 'Password Verified',
     'invalid_password' => 'Password incorrect',
     'account_suspended' => 'Account suspended',
-    'account_deleted' => 'Account Deleted'
+    'account_deleted' => 'Account Deleted',
+    
+    'check_in_streak' => 'Check in Streak',
+    'total_check_in' => 'Total Check In',
+
+    'checkin_rewards' => 'Check-in Rewards',
+    'points_exchange' => 'Points Exchange',
 ];

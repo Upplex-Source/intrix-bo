@@ -7,7 +7,9 @@ use App\Http\Controllers\Api\{
     VendingMachineController,
     MenuController,
     CartController,
-    OrderController
+    OrderController,
+    VoucherController,
+    CheckinController,
 };
 
 use Illuminate\Support\Facades\Route;
@@ -90,5 +92,16 @@ Route::middleware( 'auth:user' )->group( function() {
     Route::prefix( 'orders' )->group( function() {
         Route::get( '/', [ OrderController::class, 'getOrder' ] );
         Route::post( 'checkout', [ OrderController::class, 'checkout' ] );
+    } );
+
+    Route::prefix( 'vouchers' )->group( function() {
+        Route::get( '/', [ VoucherController::class, 'getVouchers' ] );
+        Route::post( '/validate', [ VoucherController::class, 'validateVoucher' ] );
+    } );
+
+    Route::prefix( 'checkin' )->group( function() {
+        Route::get( '/', [ CheckinController::class, 'getCheckinHistory' ] );
+        Route::post( '', [ CheckinController::class, 'checkin' ] );
+        Route::get( 'rewards', [ CheckinController::class, 'getCheckinRewards' ] );
     } );
 });

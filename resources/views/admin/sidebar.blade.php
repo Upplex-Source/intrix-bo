@@ -151,6 +151,35 @@
                                 </li>
                                 @endcan
 
+                                @can( 'view Vouchers' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VoucherController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.voucher.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-ticket-alt"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.vouchers' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @can( 'view Checkin Rewards' )
+                                <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\UserCheckinController' || $controller == 'App\Http\Controllers\Admin\CheckinRewardController') ? 'active current-page' : '' }}">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-check-c"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.checkins' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\CheckinRewardController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.checkin_reward.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.checkin_rewards' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\UserCheckinController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.user_checkin.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.user_checkins' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\UserCheckinController' && in_array( $action, [ 'calendar' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.user_checkin.calendar' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.checkin_calendar' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
+
                             </ul><!-- .nk-menu -->
                         </div><!-- .nk-sidebar-menu -->
                     </div><!-- .nk-sidebar-content -->

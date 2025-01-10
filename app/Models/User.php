@@ -40,6 +40,8 @@ class User extends Model
         'phone_number',
         'account_type',
         'date_of_birth',
+        'check_in_streak',
+        'total_check_in',
     ];
 
     public function wallets()
@@ -74,6 +76,8 @@ class User extends Model
         'phone_number',
         'account_type',
         'date_of_birth',
+        'check_in_streak',
+        'total_check_in',
     ];
 
     protected static $logName = 'users';
