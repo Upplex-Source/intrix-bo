@@ -58,4 +58,7 @@ return [
 
     'checkin_rewards' => 'Check-in Rewards',
     'points_exchange' => 'Points Exchange',
+    'invitation_code' => 'Invitation Code',
+    'referral' => 'Referral',
+    'referral_structure' => 'Referral Structure',
 ];

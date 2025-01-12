@@ -52,7 +52,7 @@ class Helper {
             '1' => __( 'wallet.topup' ),
             '2' => __( 'wallet.refund' ),
             '3' => __( 'wallet.manual_adjustment' ),
-            '10' => __( 'wallet.purchase_insurance' ),
+            '10' => __( 'wallet.placed_order' ),
             '11' => __( 'wallet.purchase_promotion' ),
             '12' => __( 'wallet.redeem' ),
             '13' => __( 'wallet.refund_redeem' ),

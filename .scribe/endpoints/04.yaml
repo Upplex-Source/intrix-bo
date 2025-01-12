@@ -7,7 +7,15 @@ endpoints:
     uri: api/v1/orders
     metadata:
       title: '2. Retrieve user order'
-      description: ''
+      description: |-
+        <aside class="notice">id and reference can be used to filter out the order</aside>
+
+        <strong>status</strong><br>
+        1: placed order<br>
+        2: pending payment<br>
+        3: paid<br>
+        10: completed<br>
+        20: canceled<br>
       authenticated: true
       custom: []
     headers:
@@ -424,7 +432,10 @@ endpoints:
     uri: api/v1/orders/checkout
     metadata:
       title: '1. checkout'
-      description: ''
+      description: |-
+        <strong>payment_method</strong><br>
+        1: yobe wallet<br>
+        2: payment gateway<br>
       authenticated: true
       custom: []
     headers:
@@ -443,6 +454,13 @@ endpoints:
       promo_code:
         name: promo_code
         description: 'The ID of the promotion to apply.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+      payment_method:
+        name: payment_method
+        description: 'The payment Method.'
         required: false
         example: 1
         type: integer

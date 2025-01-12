@@ -24,6 +24,7 @@
 <?php
 $voucher_edit = 'voucher_edit';
 $discountTypes = $data['discount_types'];
+$voucherTypes = $data['voucher_type'];
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
@@ -47,6 +48,18 @@ $discountTypes = $data['discount_types'];
                         </div>
                     </div>
                     <div class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_edit }}_voucher_type" class="col-sm-5 col-form-label">{{ __( 'voucher.voucher_type' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $voucher_edit }}_voucher_type">
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'voucher.voucher_type' ) ] ) }}</option>
+                            @forEach( $voucherTypes as $key => $voucherType )
+                                <option value="{{ $key }}">{{ $voucherType }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $voucher_edit }}_discount_type" class="col-sm-5 col-form-label">{{ __( 'voucher.discount_type' ) }}</label>
@@ -279,6 +292,7 @@ window.cke_element1 = 'voucher_edit_description';
             formData.append( 'title', $( fe + '_title' ).val() );
             formData.append( 'promo_code', $( fe + '_promo_code' ).val() );
             formData.append( 'discount_type', type );
+            formData.append( 'voucher_type', $( fe + '_voucher_type' ).val() );
             formData.append( 'total_claimable', $( fe + '_total_claimable' ).val() );
             formData.append( 'points_required', $( fe + '_points_required' ).val() );
             formData.append( 'start_date', $( fe + '_start_date' ).val() );
@@ -343,6 +357,7 @@ window.cke_element1 = 'voucher_edit_description';
                     $( fe + '_discount_type' ).val( response.discount_type );
                     $( fe + '_total_claimable' ).val( response.total_claimable );
                     $( fe + '_points_required' ).val( response.points_required );
+                    $( fe + '_voucher_type' ).val( response.type );
                     endDate.setDate( response.expired_date );
                     startDate.setDate( response.start_date );
                     editor.setData( response.description );

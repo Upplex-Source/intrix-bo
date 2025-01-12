@@ -39,6 +39,7 @@ class UserController extends Controller {
      * @bodyParam otp_code string required The otp for register. Example: 123456
      * @bodyParam password string required The password for register. Example: abcd1234
      * @bodyParam password_confirmation string required The confirmation password. Example: abcd1234
+     * @bodyParam invitation_code string The invitation code of referral. Example: AASSCC
      * 
      */
     public function registerUser( Request $request ) {

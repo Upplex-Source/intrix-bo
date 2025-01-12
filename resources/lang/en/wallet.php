@@ -28,7 +28,7 @@ return [
     'topup' => 'Topup',
     'refund' => 'Refund',
     'manual_adjustment' => 'Manual Adjustment',
-    'purchase_insurance' => 'Purchase Insurance',
+    'placed_order' => 'Order Placed',
     'purchase_promotion' => 'Purchase Promotion',
     'renew_promotion' => 'Renew Promotion',
     'rm_topup' => 'Revenue Monster Topup',

@@ -24,6 +24,7 @@
 <?php
 $voucher_create = 'voucher_create';
 $discountTypes = $data['discount_types'];
+$voucherTypes = $data['voucher_type'];
 ?>
 
 <div class="nk-block-head nk-block-head-sm">
@@ -47,6 +48,18 @@ $discountTypes = $data['discount_types'];
                         </div>
                     </div>
                     <div class="invalid-feedback"></div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_create }}_voucher_type" class="col-sm-5 col-form-label">{{ __( 'voucher.voucher_type' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $voucher_create }}_voucher_type">
+                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'voucher.voucher_type' ) ] ) }}</option>
+                            @forEach( $voucherTypes as $key => $voucherType )
+                                <option value="{{ $key }}">{{ $voucherType }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="{{ $voucher_create }}_discount_type" class="col-sm-5 col-form-label">{{ __( 'voucher.discount_type' ) }}</label>
@@ -276,6 +289,7 @@ window.cke_element1 = 'voucher_create_description';
             formData.append( 'title', $( fc + '_title' ).val() );
             formData.append( 'promo_code', $( fc + '_promo_code' ).val() );
             formData.append( 'discount_type', type );
+            formData.append( 'voucher_type', $( fc + '_voucher_type' ).val() );
             formData.append( 'total_claimable', $( fc + '_total_claimable' ).val() );
             formData.append( 'points_required', $( fc + '_points_required' ).val() );
             formData.append( 'start_date', $( fc + '_start_date' ).val() );

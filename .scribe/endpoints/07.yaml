@@ -7,7 +7,15 @@ endpoints:
     uri: api/v1/vouchers
     metadata:
       title: '1. Get vouchers'
-      description: ''
+      description: |-
+        <strong>voucher discount type</strong></br>
+        1: percentage<br>
+        2: fixed amoun<br>
+        3: buy x free y<br>
+
+        <strong>voucher type</strong></br>
+        1: public voucher<br>
+        2: user specific<br>
       authenticated: true
       custom: []
     headers:

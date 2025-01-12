@@ -157,6 +157,7 @@ return [
     'checkin_rewards' => 'Check-in Rewards',
     'checkins' => 'Check-ins',
     'checkin_calendar' => 'Check-in Calendar',
+    'settings' => 'Settings',
 
     'tax_methods' => 'Tax Methods',
     'workmanships' => 'Workmanships',

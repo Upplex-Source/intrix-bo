@@ -41,12 +41,33 @@ class User extends Model
         'account_type',
         'date_of_birth',
         'check_in_streak',
-        'total_check_in',
+        'total_check_in',        
+        'referral_id',
+        'invitation_code',
+        'referral_structure',
+
     ];
 
     public function wallets()
     {
         return $this->hasMany(Wallet::class, 'user_id');
+    }
+
+    public function referral() {
+        return $this->hasOne( User::class, 'id', 'referral_id' );
+    }
+
+    public function downlines() {
+        return $this->hasMany( User::class, 'referral_id', 'id' );
+    }
+
+    public function groups() {
+        return $this->hasManyThrough( User::class, UserStructure::class, 'referral_id', 'id', 'id', 'user_id' );
+    }
+
+    public function uplines() {
+        return $this->hasManyThrough( User::class, UserStructure::class, 'user_id', 'id', 'id', 'referral_id' )
+            ->orderBy( 'level', 'ASC' );
     }
 
     public function getEncryptedIdAttribute() {
@@ -77,7 +98,10 @@ class User extends Model
         'account_type',
         'date_of_birth',
         'check_in_streak',
-        'total_check_in',
+        'total_check_in',        
+        'referral_id',
+        'invitation_code',
+        'referral_structure',
     ];
 
     protected static $logName = 'users';

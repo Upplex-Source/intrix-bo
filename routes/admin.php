@@ -417,6 +417,20 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'ckeUpload', [ CheckinRewardController::class, 'ckeUpload' ] )->name( 'admin.checkin_reward.ckeUpload' );
             } );
 
+            Route::prefix( 'settings' )->group( function() {
+
+                Route::group( [ 'middleware' => [ 'permission:add settings|view settings|edit settings|delete settings' ] ], function() {
+                    Route::get( '/', [ SettingController::class, 'index' ] )->name( 'admin.module_parent.setting.index' );
+                } );
+
+                Route::post( 'settings', [ SettingController::class, 'settings' ] )->name( 'admin.setting.settings' );
+                Route::post( 'bonus-settings', [ SettingController::class, 'bonusSettings' ] )->name( 'admin.setting.bonusSettings' );
+                Route::post( 'maintenance-settings', [ SettingController::class, 'maintenanceSettings' ] )->name( 'admin.setting.maintenanceSettings' );
+                Route::post( 'update-bonus-setting', [ SettingController::class, 'updateBonusSetting' ] )->name( 'admin.setting.updateBonusSetting' );
+                Route::post( 'update-maintenance-setting', [ SettingController::class, 'updateMaintenanceSetting' ] )->name( 'admin.setting.updateMaintenanceSetting' );
+            } );
+
+
         } );
         
     } );

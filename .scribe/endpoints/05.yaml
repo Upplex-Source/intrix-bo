@@ -51,6 +51,13 @@ endpoints:
         example: abcd1234
         type: string
         custom: []
+      invitation_code:
+        name: invitation_code
+        description: 'The invitation code of referral.'
+        required: false
+        example: AASSCC
+        type: string
+        custom: []
     responses: []
     responseFields: []
   -

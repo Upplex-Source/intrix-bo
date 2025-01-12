@@ -180,6 +180,15 @@
                                 </li>
                                 @endcan
 
+                                @can( 'view Settings' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\SettingController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.setting.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.settings' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                             </ul><!-- .nk-menu -->
                         </div><!-- .nk-sidebar-menu -->
                     </div><!-- .nk-sidebar-content -->

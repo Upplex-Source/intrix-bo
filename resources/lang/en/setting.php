@@ -35,4 +35,14 @@ return [
 
     'verify_mfa_title' => 'Verify your identity',
     'verify_mfa_subtitle' => 'Use an authentication code from your authenticator app.',
+
+    'maintenance_settings' => 'Maintenance Settings',
+    'bonus_settings' => 'Bonus Settings',
+    'points_convertion' => 'Points Convertion',
+    'convertion_rate' => 'Points Convertion',
+
+    'points_redeemtions' => 'Points Redeemtions',
+    'register_bonus' => 'Register bonus points',
+    'referral_register_bonus_points' => 'Referral Register bonus points',
+    'referral_spending_bonus_points' => 'Referral Spending bonus points',
 ];

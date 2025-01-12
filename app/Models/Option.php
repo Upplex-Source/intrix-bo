@@ -16,6 +16,18 @@ class Option extends Model
         'option_value',
     ];
 
+    public static function getRegisterBonusSettings(){
+        return self::where('option_name', 'REGISTER_BONUS')->first();
+    }
+
+    public static function getReferralBonusSettings(){
+        return self::where('option_name', 'REFERRAL_REGISTER')->first();
+    }
+
+    public static function getReferralSpendingSettings(){
+        return self::where('option_name', 'REFERRAL_SPENDING')->first();
+    }
+
     protected function serializeDate( DateTimeInterface $date ) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }

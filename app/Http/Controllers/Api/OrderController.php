@@ -15,12 +15,17 @@ class OrderController extends Controller
     /**
      * 1. checkout
      * 
+     * <strong>payment_method</strong><br>
+     * 1: yobe wallet<br>
+     * 2: payment gateway<br>
+     * 
      * @authenticated
      * 
      * @group Order API
      * 
      * @bodyParam cart integer required The ID of the cart. Example: 1
      * @bodyParam promo_code integer The ID of the promotion to apply. Example: 1
+     * @bodyParam payment_method integer The payment Method. Example: 1
      * 
      */
     public function checkout( Request $request ) {
@@ -30,7 +35,6 @@ class OrderController extends Controller
 
     /**
      * 2. Retrieve user order
-     * @authenticated
      * 
      * <aside class="notice">id and reference can be used to filter out the order</aside>
      * 
@@ -40,6 +44,8 @@ class OrderController extends Controller
      * 3: paid<br>
      * 10: completed<br>
      * 20: canceled<br>
+     * 
+     * @authenticated
      * 
      * @group Order API
      * 

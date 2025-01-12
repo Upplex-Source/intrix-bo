@@ -23,6 +23,8 @@ use App\Models\{
     TmpUser,
     MailContent,
     Wallet,
+    Option,
+    WalletTransaction,
 };
 
 use App\Rules\CheckASCIICharacter;
@@ -193,6 +195,7 @@ class UserService
                 'city' => $request->city,
                 'postcode' => $request->postcode,
                 'status' => 10,
+                'invitation_code' => strtoupper( \Str::random( 6 ) ),
             ];
 
             $createUser = User::create( $createUserObject );
@@ -809,6 +812,7 @@ class UserService
                 }
             } ],
             'password' => [ 'required', 'confirmed', Password::min( 8 ) ],
+            'invitation_code' => [ 'sometimes', 'exists:users,invitation_code' ],
         ] );
 
         $attributeName = [
@@ -837,15 +841,48 @@ class UserService
                 'calling_code' => $request->calling_code,
                 'password' => Hash::make( $request->password ),
                 'status' => 10,
+                'invitation_code' => strtoupper( \Str::random( 6 ) ),
             ];
 
+            $referral = User::where( 'invitation_code', $request->invitation_code )->first();
+
+            if ( $referral ) {
+                $createUserObject['referral_id'] = $referral->id;
+                $createUserObject['referral_structure'] = $referral->referral_structure . '|' . $referral->id;
+            }
+
             $createUser = User::create( $createUserObject );
-            
+            // assign register bonus
+            $registerBonus = Option::getRegisterBonusSettings();
+
             for ( $i = 1; $i <= 2; $i++ ) {
                 $userWallet = Wallet::create( [
                     'user_id' => $createUser->id,
                     'type' => $i,
                     'balance' => 0,
+                ] );
+
+                if ( $registerBonus && $i == 2 ) {
+                    WalletService::transact( $userWallet, [
+                        'amount' => $registerBonus->option_value,
+                        'remark' => 'Register Bonus',
+                        'type' => $userWallet->type,
+                        'transaction_type' => 20,
+                    ] );
+                }
+            }
+
+            // assign referral bonus
+            $referralBonus = Option::getReferralBonusSettings();
+            if( $referral && $registerBonus){
+
+                $referralWallet = $referral->wallets->where('type',2)->first();
+
+                WalletService::transact( $referralWallet, [
+                    'amount' => $referralBonus->option_value,
+                    'remark' => 'Register Bonus',
+                    'type' => $referralWallet->type,
+                    'transaction_type' => 22,
                 ] );
             }
 

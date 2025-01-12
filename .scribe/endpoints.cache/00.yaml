@@ -104,7 +104,7 @@ endpoints:
     uri: api/v1/carts/update
     metadata:
       title: '3. Update cart'
-      description: ''
+      description: '<aside class="notice">session_key or cart id can be used to update the cart</aside>'
       authenticated: true
       custom: []
     headers:
@@ -219,8 +219,8 @@ endpoints:
       - GET
     uri: api/v1/carts
     metadata:
-      title: '2. Retrieve user cart'
-      description: ''
+      title: '2. Retrieve user'
+      description: '<aside class="notice">id and session_key can be used to filter out the cart</aside>'
       authenticated: true
       custom: []
     headers:
@@ -630,7 +630,7 @@ endpoints:
     uri: api/v1/carts/delete
     metadata:
       title: '4. Delete Cart'
-      description: ''
+      description: '<aside class="notice">session_key or cart id can be used to delete the cart</aside>'
       authenticated: true
       custom: []
     headers:
@@ -661,7 +661,7 @@ endpoints:
     uri: api/v1/carts/delete-cart-item
     metadata:
       title: '4. Delete Cart Item'
-      description: ''
+      description: '<aside class="notice">session_key or cart id can be used to delete the cart</aside>'
       authenticated: true
       custom: []
     headers:

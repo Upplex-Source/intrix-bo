@@ -14,8 +14,6 @@ class VoucherController extends Controller
     /**
      * 1. Get vouchers
      * 
-     * @authenticated
-     * 
      * <strong>voucher discount type</strong></br>
      * 1: percentage<br>
      * 2: fixed amoun<br>
@@ -24,6 +22,9 @@ class VoucherController extends Controller
      * <strong>voucher type</strong></br>
      * 1: public voucher<br>
      * 2: user specific<br>
+     * 3: register reward<br>
+     * 
+     * @authenticated
      * 
      * @group Voucher API
      * 

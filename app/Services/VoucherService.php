@@ -38,7 +38,8 @@ class VoucherService
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'discount_type' => [ 'nullable' ],
-            'promo_code' => [ 'nullable' ],
+            'voucher_type' => [ 'nullable' ],
+            'promo_code' => ['nullable', 'unique:vouchers,promo_code'],
             'image' => [ 'nullable' ],
             'start_date' => [ 'nullable' ],
             'expired_date' => [ 'nullable' ],
@@ -106,6 +107,7 @@ class VoucherService
             $voucherCreate = Voucher::create([
                 'title' => $request->title,
                 'discount_type' => $request->discount_type,
+                'type' => $request->voucher_type,
                 'description' => $request->description,
                 'promo_code' => $request->promo_code,
                 'total_claimable' => $request->total_claimable,
@@ -163,7 +165,8 @@ class VoucherService
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
             'discount_type' => [ 'nullable' ],
-            'promo_code' => [ 'nullable' ],
+            'voucher_type' => [ 'nullable' ],
+            'promo_code' => [ 'nullable', 'unique:vouchers,promo_code,' . $request->id, ],
             'image' => [ 'nullable' ],
             'start_date' => [ 'nullable' ],
             'expired_date' => [ 'nullable' ],
@@ -235,6 +238,7 @@ class VoucherService
     
             $updateVoucher->title = $request->title;
             $updateVoucher->discount_type = $request->discount_type;
+            $updateVoucher->type = $request->voucher_type;
             $updateVoucher->description = $request->description;
             $updateVoucher->promo_code = $request->promo_code;
             $updateVoucher->total_claimable = $request->total_claimable;
@@ -418,6 +422,11 @@ class VoucherService
 
         if ( !empty( $request->status ) ) {
             $model->where( 'status', $request->status );
+            $filter = true;
+        }
+
+        if ( !empty( $request->voucher_type ) ) {
+            $model->where( 'type', $request->voucher_type );
             $filter = true;
         }
 
