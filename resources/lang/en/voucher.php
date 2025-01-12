@@ -44,6 +44,8 @@ return [
     'min_spend_of_x' => 'Minimum spend of RM:title not reach',
     'min_quantity_of_x' => 'Minimum quanitity of :title required',
 
+    'min_quantity_of_y' => 'Please add :title more free item(s)',
+
     'total_claimable' => 'Total Claimable',
     'voucher_type' => 'Voucher Type',
     'public_voucher' => 'Public Voucher',

@@ -905,17 +905,6 @@ class OrderService
                             if ($getProduct && $getProduct->price) {
                                 $orderPrice -= $getProduct->price;
                             }
-                            $getProductMeta->total_price = 0;
-                            $getProductMeta->save();
-   
-                            $updateOrderMeta = OrderMeta::where('order_id', $order->id)
-                            ->where('product_id', $adjustment->get_product)
-                            ->get() 
-                            ->sortBy('total_price') 
-                            ->first();
-
-                            $updateOrderMeta->total_price = 0;
-                            $updateOrderMeta->save();
                         }
                     }
         
@@ -1110,7 +1099,6 @@ class OrderService
             }
 
             $order->total_price = $orderPrice;
-            $order->save();
 
             $userCart->status = 20;
             $userCart->save();
@@ -1122,7 +1110,13 @@ class OrderService
                     'type' => $userWallet->type,
                     'transaction_type' => 10,
                 ] );
+                $order->status = 3;
+
+                // update stock
+                VendingMachineStockService::updateVendingMachineStock( $order->vending_machine_id, $order->orderMetas );
             }
+
+            $order->save();
 
             DB::commit();
 
@@ -1251,13 +1245,26 @@ class OrderService
 
             $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
 
-            
             $x = $cart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
 
             if ( $x < $adjustment->buy_quantity ) {
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                    'errors' => 'voucher',
+                ], 422 );
+            }
+            
+            $y = $cart->cartMetas->whereIn( 'product_id', $adjustment->get_product )->count();
+
+            if (in_array($adjustment->get_product, $adjustment->buy_products)) {
+                $y -= $x;
+            } 
+
+            if ( $y < $adjustment->get_quantity ) {
+                return response()->json( [
+                    'required_amount' => $adjustment->get_quantity,
+                    'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->buy_quantity ] ),
                     'errors' => 'voucher',
                 ], 422 );
             }

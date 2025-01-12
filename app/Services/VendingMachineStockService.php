@@ -187,97 +187,58 @@ class VendingMachineStockService
         ] );
     }
     
-    public static function updateVendingMachineStock( $request ) {
-
-        $request->merge( [
-            'id' => Helper::decode( $request->id ),
-        ] );
-
-         
-        $validator = Validator::make( $request->all(), [
-            'title' => [ 'required' ],
-            'description' => [ 'nullable' ],
-            'image' => [ 'nullable' ],
-            'address_1' => [ 'nullable' ],
-            'address_2' => [ 'nullable' ],
-            'city' => [ 'nullable' ],
-            'state' => [ 'nullable' ],
-            'postcode' => [ 'nullable' ],
-            'thumbnail' => [ 'nullable' ],
-        ] );
-
-        $attributeName = [
-            'title' => __( 'vending_machine_stock.title' ),
-            'description' => __( 'vending_machine_stock.description' ),
-            'image' => __( 'vending_machine_stock.image' ),
-            'thumbnail' => __( 'vending_machine_stock.thumbnail' ),
-            'url_slug' => __( 'vending_machine_stock.url_slug' ),
-            'structure' => __( 'vending_machine_stock.structure' ),
-            'size' => __( 'vending_machine_stock.size' ),
-            'phone_number' => __( 'vending_machine_stock.phone_number' ),
-            'sort' => __( 'vending_machine_stock.sort' ),
-        ];
-
-        foreach( $attributeName as $key => $aName ) {
-            $attributeName[$key] = strtolower( $aName );
-        }
-
-        $validator->setAttributeNames( $attributeName )->validate();
-
+    public static function updateVendingMachineStock($vendingMachineId, $orderMetas)
+    {
         DB::beginTransaction();
-
-        try {
-            $updateVendingMachineStock = VendingMachineStock::find( $request->id );
     
-            $updateVendingMachineStock->title = $request->title;
-            $updateVendingMachineStock->description = $request->description;
-            $updateVendingMachineStock->address_1 = $request->address_1;
-            $updateVendingMachineStock->address_2 = $request->address_2;
-            $updateVendingMachineStock->city = $request->city;
-            $updateVendingMachineStock->state = $request->state;
-            $updateVendingMachineStock->postcode = $request->postcode;
-
-            $image = explode( ',', $request->image );
-            $thumbnail = explode( ',', $request->thumbnail );
-
-            $imageFiles = FileManager::whereIn( 'id', $image )->get();
-            $thumbnailFiles = FileManager::whereIn( 'id', $thumbnail )->get();
-
-            if ( $imageFiles ) {
-                foreach ( $imageFiles as $imageFile ) {
-
-                    $fileName = explode( '/', $imageFile->file );
-                    $fileExtention = pathinfo($fileName[1])['extension'];
-
-                    $target = 'vending_machine_stock/' . $updateVendingMachineStock->id . '/' . $fileName[1];
-                    Storage::disk( 'public' )->move( $imageFile->file, $target );
-
-                   $updateVendingMachineStock->image = $target;
-                   $updateVendingMachineStock->save();
-
-                    $imageFile->status = 10;
-                    $imageFile->save();
-
-                }
+        try {
+            foreach ($orderMetas as $orderMeta) {
+                $froyoStocks = json_decode($orderMeta->froyos, true) ?? [];
+                $syrupStocks = json_decode($orderMeta->syrups, true) ?? [];
+                $toppingStocks = json_decode($orderMeta->toppings, true) ?? [];
+    
+                // Process each type of stock
+                self::processStockUpdates($vendingMachineId, $froyoStocks, 'froyo_id');
+                self::processStockUpdates($vendingMachineId, $syrupStocks, 'syrup_id');
+                self::processStockUpdates($vendingMachineId, $toppingStocks, 'topping_id');
             }
-
-            $updateVendingMachineStock->save();
-
+    
             DB::commit();
-
-        } catch ( \Throwable $th ) {
-
+    
+            return response()->json([
+                'message' => __('template.x_updated', ['title' => Str::singular(__('template.vending_machine_stocks'))]),
+            ]);
+        } catch (\Throwable $th) {
             DB::rollback();
-
-            return response()->json( [
+    
+            return response()->json([
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
-            ], 500 );
+            ], 500);
         }
-
-        return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.vending_machine_stocks' ) ) ] ),
-        ] );
     }
+    
+    private static function processStockUpdates($vendingMachineId, array $stocks, $column)
+    {
+        foreach ($stocks as $stockId) {
+            $vendingMachineStock = VendingMachineStock::where('vending_machine_id', $vendingMachineId)
+                ->where($column, $stockId)
+                ->first();
+    
+            if ($vendingMachineStock) {
+                $vendingMachineStock->old_quantity -= $vendingMachineStock->quantity;
+                $vendingMachineStock->quantity -= 1;
+    
+                // Prevent negative stock values
+                if ($vendingMachineStock->quantity < 0) {
+                    throw new \Exception("Stock quantity for $column: $stockId cannot be negative.");
+                }
+    
+                $vendingMachineStock->save();
+            } else {
+                throw new \Exception("Stock not found for $column: $stockId.");
+            }
+        }
+    }    
 
     public static function allVendingMachineStocks( $request ) {
 
