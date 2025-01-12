@@ -846,7 +846,7 @@ class OrderService
         $validator = Validator::make($request->all(), [
             'cart' => ['required', 'exists:carts,id'],
             'promo_code' => ['nullable', 'exists:vouchers,promo_code'],
-            'payment_method' => ['required', 'in:1,2'],
+            'payment_method' => ['nullable', 'in:1,2'],
         ]);
 
         $user = auth()->user();
