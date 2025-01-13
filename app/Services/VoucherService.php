@@ -648,6 +648,14 @@ class VoucherService
                 $vouchers->where( 'id', 'LIKE', '%' . $request->voucher_id . '%' );
             }
 
+            if ( $request && $request->voucher_type) {
+                $vouchers->where( 'type', $request->voucher_type );
+            }
+
+            if ( $request && $request->discount_type) {
+                $vouchers->where( 'discount_type', $request->discount_type );
+            }
+
             $vouchers = $vouchers->get();
             $claimedVoucherIds = UserVoucher::where('user_id', auth()->user()->id)
             ->pluck('voucher_id')
