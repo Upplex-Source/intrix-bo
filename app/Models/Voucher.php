@@ -97,7 +97,7 @@ class Voucher extends Model
         return $discountTypes[$this->attributes['type']] ?? null;
     }
 
-    public function getVoucherType()
+    public function getVoucherTypeAttribute()
     {
         $discountTypes = [
             '1' => __('voucher.public_voucher'),
