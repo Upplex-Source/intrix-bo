@@ -23,7 +23,8 @@ return [
     'discount_amount' => 'Discount Amount',
     'type' => 'Type',
     'status' => 'Status',
-    'usable_amount' => 'Usable Amount',
+    'usable_amount' => 'Use per user',
+    'validity_days' => 'Validity Days',
     'points_required' => 'Points Required',
     'min_spend' => 'Mininum Spend',
     'min_order' => 'Minimum Order',
@@ -43,12 +44,18 @@ return [
 
     'min_spend_of_x' => 'Minimum spend of RM:title not reach',
     'min_quantity_of_x' => 'Minimum quanitity of :title required',
+    'voucher_you_have_maximum_claimed' => 'You have reached maximum claim for this voucher',
 
     'min_quantity_of_y' => 'Please add :title more free item(s)',
 
     'total_claimable' => 'Total Claimable',
     'voucher_type' => 'Voucher Type',
     'public_voucher' => 'Public Voucher',
-    'user_specific_voucher' => 'User Specific Voucher',
+    'user_specific_voucher' => 'Points Redeem Voucher',
     'login_reward_voucher' => 'Login Reward Voucher',
+    'buy_products' => 'Buy Products',
+    'voucher_claimed' => 'Voucher Claimed',
+    'claim_per_user' => 'Claim Per User',
+    'voucher_fully_claimed' => 'Voucher fully Claimed',
+    'voucher_you_have_maximum_used' => 'You have reached maximum usage for this voucher',
 ];

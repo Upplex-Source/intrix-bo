@@ -23,7 +23,8 @@ use App\Models\{
     Cart,
     CartMeta,
     Order,
-    OrderMeta
+    OrderMeta,
+    UserVoucher,
 };
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -37,7 +38,7 @@ class VoucherService
         $validator = Validator::make( $request->all(), [
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
-            'discount_type' => [ 'nullable' ],
+            'discount_type' => [ 'required' ],
             'voucher_type' => [ 'nullable' ],
             'promo_code' => ['nullable', 'unique:vouchers,promo_code'],
             'image' => [ 'nullable' ],
@@ -45,7 +46,10 @@ class VoucherService
             'expired_date' => [ 'nullable' ],
             'total_claimable' => [ 'nullable' ],
             'points_required' => [ 'nullable' ],
+            'usable_amount' => [ 'nullable' ],
+            'validity_days' => [ 'nullable' ],
             'adjustment_data' => ['required'],
+            'claim_per_user' => ['nullable'],
         ] );
 
         $attributeName = [
@@ -115,6 +119,9 @@ class VoucherService
                 'start_date' => $request->start_date,
                 'expired_date' => $request->expired_date,
                 'buy_x_get_y_adjustment' => $request->adjustment_data,
+                'usable_amount' => $request->usable_amount,
+                'validity_days' => $request->validity_days,
+                'claim_per_user' => $request->claim_per_user,
             ]);
 
             $image = explode( ',', $request->image );
@@ -164,7 +171,7 @@ class VoucherService
         $validator = Validator::make( $request->all(), [
             'title' => [ 'required' ],
             'description' => [ 'nullable' ],
-            'discount_type' => [ 'nullable' ],
+            'discount_type' => [ 'required' ],
             'voucher_type' => [ 'nullable' ],
             'promo_code' => [ 'nullable', 'unique:vouchers,promo_code,' . $request->id, ],
             'image' => [ 'nullable' ],
@@ -172,7 +179,11 @@ class VoucherService
             'expired_date' => [ 'nullable' ],
             'total_claimable' => [ 'nullable' ],
             'points_required' => [ 'nullable' ],
+            'usable_amount' => [ 'nullable' ],
+            'validity_days' => [ 'nullable' ],
             'adjustment_data' => ['required'],
+            'claim_per_user' => ['required'],
+            
         ] );
 
         $attributeName = [
@@ -245,8 +256,11 @@ class VoucherService
             $updateVoucher->points_required = $request->points_required;
             $updateVoucher->start_date = $request->start_date;
             $updateVoucher->expired_date = $request->expired_date;
+            $updateVoucher->usable_amount = $request->usable_amount;
+            $updateVoucher->validity_days = $request->validity_days;
+            $updateVoucher->claim_per_user = $request->claim_per_user;
             $updateVoucher->buy_x_get_y_adjustment = $request->adjustment_data;
-
+            
             $image = explode( ',', $request->image );
 
             $imageFiles = FileManager::whereIn( 'id', $image )->get();
@@ -335,7 +349,6 @@ class VoucherService
 
             return response()->json( $data );
 
-              
     }
 
     public static function allStocksVouchers( $request ) {
@@ -611,7 +624,9 @@ class VoucherService
 
     public static function getVouchers( $request )
     {
-        $vouchers = Voucher::where('status', 10)
+        if( !$request->user_voucher ){
+
+            $vouchers = Voucher::where('status', 10)
             ->where(function ( $query) {
                 $query->where(function ( $query) {
                     $query->whereNull('start_date');
@@ -622,36 +637,67 @@ class VoucherService
                     $query->where('expired_date', '>=', date('Y-m-d 00:00:00'));
                 });
             })
+            ->whereIn( 'type', [1,2] )
             ->orderBy( 'created_at', 'DESC' );
     
-        if ( $request && $request->promo_code) {
-            $vouchers->where( 'promo_code', 'LIKE', '%' . $request->promo_code . '%' );
+            if ( $request && $request->promo_code) {
+                $vouchers->where( 'promo_code', 'LIKE', '%' . $request->promo_code . '%' );
+            }
+
+            if ( $request && $request->voucher_id) {
+                $vouchers->where( 'id', 'LIKE', '%' . $request->voucher_id . '%' );
+            }
+
+            $vouchers = $vouchers->get();
+            $claimedVoucherIds = UserVoucher::where('user_id', auth()->user()->id)
+            ->pluck('voucher_id')
+            ->toArray();
+
+            $vouchers = $vouchers->map(function ($voucher) use ($claimedVoucherIds) {
+                $voucher->claimed = in_array($voucher->id, $claimedVoucherIds) ? 'claimed' : 'unclaim';
+                $voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] );
+                $voucher->append(['decoded_adjustment', 'image_path']);
+                return $voucher;
+            });
+
+        }else {
+            $vouchers = UserVoucher::with( ['voucher'] )->where('status', 10)
+            ->where(function ( $query) {
+                $query->where(function ( $query) {
+                    $query->whereNull('expired_date');
+                });
+                $query->orWhere(function ( $query) {
+                    $query->where('expired_date', '>=', date('Y-m-d 00:00:00'));
+                });
+            })
+            ->orderBy( 'created_at', 'DESC' );
+
+            if (!empty($request->promo_code)) {
+                $voucher->whereHas('voucher', function ($query) use ($request) {
+                    $query->where('promo_code', 'LIKE', '%' . $request->promo_code . '%');
+                });
+            }
+
+            if (!empty($request->voucher_id)) {
+                $vouchers->where( 'id', 'LIKE', '%' . $request->voucher_id . '%' );
+
+            }
+
+            $vouchers = $vouchers->get();
+
+            $vouchers = $vouchers->map(function ($voucher){
+                $voucher->voucher->append(['decoded_adjustment', 'image_path']);
+                $voucher->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] );
+                return $voucher;
+            });
         }
 
-        if ( $request && $request->voucher_id) {
-            $vouchers->where( 'id', 'LIKE', '%' . $request->voucher_id . '%' );
-        }
-    
-        $perPage = empty( $request->per_page) ? 10 : $request->per_page;
-        $vouchers = $vouchers->get();
+        return response()->json( [
+            'message' => '',
+            'message_key' => $request->user_voucher ? 'get_user_voucher_success' : 'get_voucher_success',
+            'data' => $vouchers,
+        ] );
 
-        $vouchers = $vouchers->map(function ($voucher) {
-            $voucher->append(['decoded_adjustment','image_path']);
-            $voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] );
-            return $voucher;
-        });
-
-        $currentPage = request()->get('page', 1);
-        $paginatedVouchers = new \Illuminate\Pagination\LengthAwarePaginator(
-            $vouchers->forPage($currentPage, $perPage),
-            $vouchers->count(),
-            $perPage,
-            $currentPage,
-            ['path' => request()->url(), 'query' => request()->query()]
-        );
-    
-        return response()->json( $paginatedVouchers
-        );
     }
 
     public static function validateVoucher( $request )
@@ -703,22 +749,46 @@ class VoucherService
             ], 422 );
         }
 
-        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->get();
+        // user's usage
+        $user = auth()->user();
+        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
 
         if ( $voucherUsages->count() > $voucher->usable_amount ) {
+            return response()->json( [
+                'message' => 'voucher.voucher_you_have_maximum_used',
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        // total claimable
+        if ( $voucher->total_claimable <= 0 ) {
             return response()->json( [
                 'message' => 'voucher.voucher_fully_claimed',
                 'errors' => 'voucher',
             ], 422 );
         }
 
-        $user = auth()->user();
+        // check is user able to claim this
+        $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->first();
+        if(!$userVoucher){
+            $userPoints = $user->wallets->where( 'type', 2 )->first();
+
+            if ( $userPoints->balance < $voucher->points_required ) {
+    
+                return response()->json( [
+                    'required_amount' => $voucher->points_required,
+                    'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+                    'errors' => 'voucher',
+                ], 422 );
+    
+            }
+        }
+
         $cart = Cart::find( $request->cart );
 
         if ( $voucher->discount_type == 3 ) {
 
             $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-
             
             $x = $cart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
 
@@ -746,6 +816,101 @@ class VoucherService
     
         return response()->json( [
             'message' => 'voucher.voucher_validated',
+        ] );
+    }
+
+    public static function claimVoucher( $request )
+    {
+
+        $validator = Validator::make( $request->all(), [
+            'voucher_id' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'voucher_id' => __( 'voucher.promo_code' ),
+        ];
+        
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        $voucher = Voucher::where( 'id', $request->voucher_id )
+            ->where(function ( $query) {
+                $query->where(function ( $q) {
+                    $q->whereNull('start_date')
+                    ->orWhere('start_date', '<=', Carbon::now());
+                })
+                ->where(function ( $q) {
+                    $q->whereNull('expired_date')
+                    ->orWhere('expired_date', '>=', Carbon::now());
+                });
+        })
+        ->where( 'status', 10 )->first();
+
+        if ( !$voucher ) {
+            return response()->json( [
+                'message' => 'voucher.voucher_not_available',
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->get();
+
+        if ( $voucherUsages->count() > $voucher->usable_amount ) {
+            return response()->json( [
+                'message' => __('voucher.voucher_fully_claimed'),
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        $user = auth()->user();
+
+        $voucherUserClaimed = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->count();
+
+        if ( $voucherUserClaimed >= $voucher->claim_per_user ) {
+            return response()->json( [
+                'message' => __('voucher.voucher_you_have_maximum_claimed'),
+                'errors' => 'voucher',
+            ], 422 );
+        }
+        
+        $userPoints = $user->wallets->where( 'type', 2 )->first();
+
+        if ( $userPoints->balance < $voucher->points_required ) {
+
+            return response()->json( [
+                'required_amount' => $voucher->points_required,
+                'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+                'errors' => 'voucher',
+            ], 422 );
+
+        }
+
+        WalletService::transact( $userPoints, [
+            'amount' => -$voucher->points_required,
+            'remark' => 'Claim Voucher',
+            'type' => $userPoints->type,
+            'transaction_type' => 11,
+        ] );
+
+        UserVoucher::create([
+            'user_id' => $user->id,
+            'voucher_id' => $voucher->id,
+            'expired_date' => Carbon::now()->addDays($voucher->validity_days),
+            'status' => 10,
+            'redeem_from' => 1,
+            'total_left' => 1,
+            'used_at' => null,
+            'secret_code' => strtoupper( \Str::random( 8 ) ),
+        ]);
+
+        $voucher->total_claimable -= 1;
+        $voucher->save();
+    
+        return response()->json( [
+            'message' => 'voucher.voucher_claimed',
         ] );
     }
 

@@ -155,7 +155,7 @@ class Helper {
         "accept-language: en-US,en;q=0.8",
         "content-type: application/json",
     ) ) {
-        
+
         $curl = curl_init();
         
         curl_setopt_array( $curl, array(
@@ -169,8 +169,8 @@ class Helper {
             CURLOPT_POSTFIELDS => $data,
             CURLOPT_HTTPHEADER => $header
         ) );
-        
         $response = curl_exec ($curl );
+
         $error = curl_error( $curl );
         
         curl_close( $curl );
@@ -405,6 +405,18 @@ class Helper {
     public static function generateCartSessionKey()
     {
         return 'CART-' . now()->format('YmdHis');
+    }
+
+    public static function generatePaymentHash( $data ){
+
+        $password = config( 'services.eghl.merchant_password' );
+        $serviceId = config( 'services.eghl.merchant_id' );
+
+        $hashCombine = $password . $serviceId . $data['PaymentID'] . $data['MerchantReturnURL']
+        . $data['Amount'] . $data['CurrencyCode'] . $data['CustIP']
+        . $data['PageTimeout'];
+
+        return hash('sha256', $hashCombine);
     }
     
 }

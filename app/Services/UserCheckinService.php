@@ -504,18 +504,19 @@ class UserCheckinService
                 
                 default:
                     # code...
+                    $voucher = Voucher::find( $rward->voucher_id );
 
                     UserVoucher::create([
                         'user_id' => $user->id,
                         'voucher_id' => $reward->voucher_id,
-                        'expired_date' => null,
+                        'expired_date' => Carbon::now()->addDays($voucher->validity_days),
                         'status' => 10,
                         'redeem_from' => 1,
                         'total_left' => $reward->reward_value,
                         'used_at' => null,
+                        'secret_code' => strtoupper( \Str::random( 8 ) ),
                     ]);
 
-                    $voucher = Voucher::find( $rward->voucher_id );
                     $voucher->total_claimable -= 1;
                     $voucher->save();
 

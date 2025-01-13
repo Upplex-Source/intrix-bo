@@ -26,6 +26,7 @@ class UserVoucher extends Model
         'redeem_from',
         'total_left',
         'used_at',
+        'secret_code',
     ];
 
     public function user()
@@ -70,6 +71,7 @@ class UserVoucher extends Model
         'redeem_from',
         'total_left',
         'used_at',
+        'secret_code',
     ];
 
     protected static $logName = 'user_vouchers';

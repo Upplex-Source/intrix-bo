@@ -37,5 +37,5 @@ return [
     'froyo' => 'Froyo (s)',
     'syrup' => 'Syrup (s)',
     'topping' => 'Topping (s)',
-    'order_details' => 'Order Details'
+    'order_details' => 'Order Details',
 ];

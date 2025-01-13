@@ -34,7 +34,9 @@ class Voucher extends Model
         'min_spend',
         'min_order',
         'buy_x_get_y_adjustment',
-        'total_claimable'
+        'total_claimable',
+        'validity_days',
+        'claim_per_user',
     ];
 
     public function getImagePathAttribute() {
@@ -117,7 +119,9 @@ class Voucher extends Model
         'min_spend',
         'min_order',
         'buy_x_get_y_adjustment',
-        'total_claimable'
+        'total_claimable',
+        'validity_days',
+        'claim_per_user',
     ];
 
     protected static $logName = 'vouchers';

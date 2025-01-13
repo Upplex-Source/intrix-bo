@@ -24,6 +24,7 @@ use App\Models\{
     CartMeta,
     Voucher,
     VoucherUsage,
+    UserVoucher,
 };
 
 use Helper;
@@ -1051,10 +1052,7 @@ class OrderService
                         ->first();                    
 
                         if ($getProductMeta) {
-                            $getProduct = Product::find($adjustment->get_product);
-                            if ($getProduct && $getProduct->price) {
-                                $orderPrice -= $getProduct->price;
-                            }
+                            $orderPrice -= $getProductMeta->total_price;
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
    
@@ -1068,7 +1066,7 @@ class OrderService
                             $updateOrderMeta->save();
                         }
                     }
-        
+
                 } else if ( $voucher->discount_type == 2 ) {
 
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
@@ -1096,6 +1094,41 @@ class OrderService
                     'voucher_id' => $voucher->id,
                     'status' => 10
                 ] );
+
+                // if user have voucher, else
+                $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->where( 'status', 10 )->first();
+
+                if($userVoucher){
+                    $userVoucher->used_at = Carbon::now();
+                    $userVoucher->status = 20;
+                    $userVoucher->total_used += 1;
+                    $userVoucher->total_left -= 1;
+                    $userVoucher->save();
+                }else{
+                    if( $voucher->points_required > 0 ){
+                        WalletService::transact( $userWallet, [
+                            'amount' => -$voucher->points_required,
+                            'remark' => 'Claim Voucher',
+                            'type' => 2,
+                            'transaction_type' => 11,
+                        ] );
+                    }
+
+                    UserVoucher::create([
+                        'user_id' => $user->id,
+                        'voucher_id' => $voucher->id,
+                        'expired_date' => Carbon::now()->addDays($voucher->validity_days),
+                        'status' => 20,
+                        'redeem_from' => 1,
+                        'total_left' => 0,
+                        'used_at' => Carbon::now(),
+                        'secret_code' => strtoupper( \Str::random( 8 ) ),
+                    ]);
+
+                    $voucher->total_claimable -= 1;
+                    $voucher->save();
+                }
+
             }
 
             $order->total_price = $orderPrice;
@@ -1229,16 +1262,40 @@ class OrderService
             ], 422 );
         }
 
-        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->get();
+        $user = auth()->user();
+        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
 
-        if ( $voucherUsages->count() > $voucher->usable_amount ) {
+        if ( $voucherUsages->count() >= $voucher->usable_amount ) {
             return response()->json( [
-                'message' => 'voucher.voucher_fully_claimed',
+                'message' => __('voucher.voucher_you_have_maximum_used'),
                 'errors' => 'voucher',
             ], 422 );
         }
 
-        $user = auth()->user();
+        // total claimable
+        if ( $voucher->total_claimable <= 0 ) {
+            return response()->json( [
+                'message' => __('voucher.voucher_fully_claimed'),
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        // check is user able to claim this
+        $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->where('status',10)->first();
+        if(!$userVoucher){
+            $userPoints = $user->wallets->where( 'type', 2 )->first();
+
+            if ( $userPoints->balance < $voucher->points_required ) {
+    
+                return response()->json( [
+                    'required_amount' => $voucher->points_required,
+                    'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+                    'errors' => 'voucher',
+                ], 422 );
+    
+            }
+        }
+
         $cart = Cart::find( $request->cart );
 
         if ( $voucher->discount_type == 3 ) {
@@ -1258,7 +1315,7 @@ class OrderService
             $y = $cart->cartMetas->whereIn( 'product_id', $adjustment->get_product )->count();
 
             if (in_array($adjustment->get_product, $adjustment->buy_products)) {
-                $y -= $x;
+                $y = $x;
             } 
 
             if ( $y < $adjustment->get_quantity ) {

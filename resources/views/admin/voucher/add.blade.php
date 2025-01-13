@@ -179,7 +179,15 @@ $voucherTypes = $data['voucher_type'];
                 <div class="mb-3 row">
                     <label for="{{ $voucher_create}}_total_claimable" class="col-sm-5 col-form-label">{{ __( 'voucher.total_claimable' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $voucher_create}}_total_claimable">
+                        <input type="number" class="form-control" id="{{ $voucher_create}}_total_claimable" value=1>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_create}}_claim_per_user" class="col-sm-5 col-form-label">{{ __( 'voucher.claim_per_user' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $voucher_create}}_claim_per_user">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -188,6 +196,22 @@ $voucherTypes = $data['voucher_type'];
                     <label for="{{ $voucher_create}}_points_required" class="col-sm-5 col-form-label">{{ __( 'voucher.points_required' ) }}</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $voucher_create}}_points_required">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_create}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $voucher_create}}_usable_amount">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_create}}_validity_days" class="col-sm-5 col-form-label">{{ __( 'voucher.validity_days' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $voucher_create}}_validity_days">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -294,6 +318,9 @@ window.cke_element1 = 'voucher_create_description';
             formData.append( 'points_required', $( fc + '_points_required' ).val() );
             formData.append( 'start_date', $( fc + '_start_date' ).val() );
             formData.append( 'expired_date', $( fc + '_expired_date' ).val() );
+            formData.append( 'usable_amount', $( fc + '_usable_amount' ).val() );
+            formData.append( 'validity_days', $( fc + '_validity_days' ).val() );
+            formData.append( 'claim_per_user', $( fc + '_claim_per_user' ).val() );
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'adjustment_data', JSON.stringify(data) );

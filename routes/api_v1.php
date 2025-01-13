@@ -96,6 +96,7 @@ Route::middleware( 'auth:user' )->group( function() {
 
     Route::prefix( 'vouchers' )->group( function() {
         Route::get( '/', [ VoucherController::class, 'getVouchers' ] );
+        Route::post( 'claim-voucher', [ VoucherController::class, 'claimVoucher' ] );
         Route::post( '/validate', [ VoucherController::class, 'validateVoucher' ] );
     } );
 

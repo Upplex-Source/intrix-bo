@@ -184,11 +184,37 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_edit}}_claim_per_user" class="col-sm-5 col-form-label">{{ __( 'voucher.claim_per_user' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $voucher_edit}}_claim_per_user">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
                 
                 <div class="mb-3 row">
                     <label for="{{ $voucher_edit}}_points_required" class="col-sm-5 col-form-label">{{ __( 'voucher.points_required' ) }}</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $voucher_edit}}_points_required">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                
+                
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_edit}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $voucher_edit}}_usable_amount">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_edit}}_validity_days" class="col-sm-5 col-form-label">{{ __( 'voucher.validity_days' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $voucher_edit}}_validity_days">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -297,6 +323,9 @@ window.cke_element1 = 'voucher_edit_description';
             formData.append( 'points_required', $( fe + '_points_required' ).val() );
             formData.append( 'start_date', $( fe + '_start_date' ).val() );
             formData.append( 'expired_date', $( fe + '_expired_date' ).val() );
+            formData.append( 'usable_amount', $( fe + '_usable_amount' ).val() );
+            formData.append( 'validity_days', $( fe + '_validity_days' ).val() );
+            formData.append( 'claim_per_user', $( fe + '_claim_per_user' ).val() );
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'adjustment_data', JSON.stringify(data) );
@@ -358,6 +387,9 @@ window.cke_element1 = 'voucher_edit_description';
                     $( fe + '_total_claimable' ).val( response.total_claimable );
                     $( fe + '_points_required' ).val( response.points_required );
                     $( fe + '_voucher_type' ).val( response.type );
+                    $( fe + '_usable_amount' ).val( response.usable_amount );
+                    $( fe + '_validity_days' ).val( response.validity_days );
+                    $( fe + '_claim_per_user' ).val( response.claim_per_user );
                     endDate.setDate( response.expired_date );
                     startDate.setDate( response.start_date );
                     editor.setData( response.description );
