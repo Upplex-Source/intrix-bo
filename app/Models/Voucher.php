@@ -99,12 +99,7 @@ class Voucher extends Model
 
     public function getVoucherTypeAttribute()
     {
-        $discountTypes = [
-            '1' => __('voucher.public_voucher'),
-            '2' => __('voucher.user_specific_voucher'),
-        ];
-
-        return $discountTypes[$this->attributes['type']] ?? null;
+        return $this->attributes['type'] ?? null;
     }
     
     public $translatable = [ 'title', 'description' ];
