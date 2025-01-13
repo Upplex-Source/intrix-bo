@@ -13,6 +13,7 @@ class VoucherController extends Controller
 {
     /**
      * 1. Get vouchers 
+     * 
      * <aside class="notice">Get all voucher that is claimable</aside>
      * 
      * <strong>voucher discount type</strong></br>
@@ -36,6 +37,8 @@ class VoucherController extends Controller
      * @queryParam per_page integer Retrieve how many product in a page, default is 10. Example: 10
      * @bodyParam promo_code string The voucher code to be filter. Example: XBMSD22
      * @bodyParam user_voucher integer Retrieve all user's voucher only Example: 1
+     * @bodyParam voucher_type integer The voucher type to be filter Example: 1
+     * @bodyParam discount_type integer The voucher discount type to be filter Example: 2
      * 
      */
     public function getVouchers( Request $request ) {
