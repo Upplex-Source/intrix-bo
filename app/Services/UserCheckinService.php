@@ -442,8 +442,11 @@ class UserCheckinService
         if (!$user) {
             return response()->json(['message' => 'User not found'], 422);
         }
+        $originalStreak = true;
 
         if ( $user->check_in_streak == 7 ) {
+            $reward = self::giveReward($user);
+            $originalStreak = false;
             $user->check_in_streak = 0;
         }
 
@@ -472,7 +475,7 @@ class UserCheckinService
         $user->total_check_in += 1;
         $user->check_in_streak += 1;
     
-        if ($user->check_in_streak != 0 ) {
+        if ($user->check_in_streak != 0 || $originalStreak) {
             $reward = self::giveReward($user);
         }
     
