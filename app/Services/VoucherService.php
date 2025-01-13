@@ -664,7 +664,7 @@ class VoucherService
             $vouchers = $vouchers->map(function ($voucher) use ($claimedVoucherIds) {
                 $voucher->claimed = in_array($voucher->id, $claimedVoucherIds) ? 'claimed' : 'unclaim';
                 $voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] );
-                $voucher->append(['decoded_adjustment', 'image_path']);
+                $voucher->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
                 return $voucher;
             });
 
@@ -694,7 +694,7 @@ class VoucherService
             $vouchers = $vouchers->get();
 
             $vouchers = $vouchers->map(function ($voucher){
-                $voucher->voucher->append(['decoded_adjustment', 'image_path']);
+                $voucher->voucher->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
                 $voucher->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] );
                 return $voucher;
             });
