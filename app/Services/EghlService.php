@@ -170,9 +170,12 @@ class EghlService {
     }
 
     public static function callback( $request ) {
-        
+
+        $url = $request->fullUrl();
+        $baseUrl = parse_url($url, PHP_URL_SCHEME) . "://" . parse_url($url, PHP_URL_HOST) . parse_url($url, PHP_URL_PATH);
+
         ApiLog::create( [
-            'url' => $request->fullUrl(),
+            'url' => $baseUrl,
             'method' => $request->method(),
             'raw_response' => json_encode( $request->all() ),
         ] );
