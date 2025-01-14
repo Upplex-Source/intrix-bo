@@ -500,12 +500,13 @@ class UserCheckinService
 
             switch ($reward->reward_type) {
                 case 1:
-
-                    $data['amount'] = $reward->reward_value;
-                    $data['remark'] = 'Check-in Rewards';
-                    $data['type'] = __( 'wallet.checkin_bonus' );
  
-                    WalletService::transact( $user->wallets->where('type', 2), $data );
+                    WalletService::transact( $user->wallets->where('type', 2)->first(), [
+                        'amount' => $reward->reward_value,
+                        'remark' => 'Check-in Rewards',
+                        'type' => 2,
+                        'transaction_type' => 23,
+                    ] );
                     break;
                 
                 default:
