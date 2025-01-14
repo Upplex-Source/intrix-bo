@@ -62,7 +62,7 @@ class OrderController extends Controller
     /**
      * 3. Retry Payment
      * 
-     * <aside class="notice">retry payment for online payment (unavailable now)</aside>
+     * <aside class="notice">retry payment for online payment</aside>
      * 
      * @authenticated
      * 
