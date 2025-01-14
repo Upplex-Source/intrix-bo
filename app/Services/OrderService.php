@@ -1408,6 +1408,7 @@ class OrderService
 
         $order = Order::where('id', $request->order_id)
             ->where('status', '!=', 3)
+            ->where('user_id', auth()->user()->id )
             ->first();
 
         if (!$order) {
