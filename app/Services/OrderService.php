@@ -1183,7 +1183,7 @@ class OrderService
                     'checkout_url' => null,
                     'payment_url' => $url2,
                     'transaction_id' => null,
-                    'layout_version' => null,
+                    'layout_version' => 'v1',
                     'redirect_url' => null,
                     'notify_url' => null,
                     'order_no' => $order->reference,
