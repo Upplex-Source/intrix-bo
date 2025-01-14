@@ -456,9 +456,9 @@ class UserCheckinService
             ->whereDate('checkin_date', $currentDate)
             ->first();
     
-        // if ($existingCheckin) {
-        //     return response()->json(['message' => 'User has already checked in today'], 422);
-        // }
+        if ($existingCheckin) {
+            return response()->json(['message' => 'User has already checked in today'], 422);
+        }
     
         $lastCheckin = UserCheckin::where('user_id', $user->id)
             ->latest('checkin_date')
