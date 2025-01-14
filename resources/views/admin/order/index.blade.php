@@ -171,7 +171,7 @@ var statusMapper = @json( $data['status'] ),
             { data: null },
             { data: 'created_at' },
             { data: 'reference' },
-            { data: 'user.username' },
+            { data: 'user' },
             { data: 'total_price' },
             { data: 'status' },
             { data: 'encrypted_id' },
@@ -195,6 +195,13 @@ var statusMapper = @json( $data['status'] ),
                     // Calculate the row number dynamically based on the page info
                     const pageInfo = dt_table.page.info();
                     return pageInfo.start + meta.row + 1; // Adjust for 1-based numbering
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "user" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    return data.username ?? '-' + '<br>' + '+60' + data.phone_number;
                 },
             },
             {

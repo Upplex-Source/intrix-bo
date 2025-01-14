@@ -880,70 +880,73 @@ class OrderService
         // check wallet balance 
         $userWallet = $user->wallets->where('type',1)->first();
         
-        if (!$userWallet) {
-            return response()->json([
-                'message' => 'Wallet Not Found',
-                'message_key' => 'wallet_not_found',
-            ]);
-        }else{
-            if( $request->promo_code ){
-                $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
-                $orderPrice = $userCart->total_price;
+        if( $request->payment_method == 1 ){
 
-                if ( $voucher->discount_type == 3 ) {
-
-                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-        
-                    $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
-        
-                    if ( $x >= $adjustment->buy_quantity ) {
-                        $getProductMeta = $userCart->cartMetas
-                        ->where('product_id', $adjustment->get_product)
-                        ->sortBy('total_price')
-                        ->first();                    
-
-                        if ($getProductMeta) {
-                            $getProduct = Product::find($adjustment->get_product);
-                            if ($getProduct && $getProduct->price) {
-                                $orderPrice -= $getProduct->price;
+            if (!$userWallet) {
+                return response()->json([
+                    'message' => 'Wallet Not Found',
+                    'message_key' => 'wallet_not_found',
+                ]);
+            }else{
+                if( $request->promo_code ){
+                    $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+                    $orderPrice = $userCart->total_price;
+    
+                    if ( $voucher->discount_type == 3 ) {
+    
+                        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+            
+                        $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
+            
+                        if ( $x >= $adjustment->buy_quantity ) {
+                            $getProductMeta = $userCart->cartMetas
+                            ->where('product_id', $adjustment->get_product)
+                            ->sortBy('total_price')
+                            ->first();                    
+    
+                            if ($getProductMeta) {
+                                $getProduct = Product::find($adjustment->get_product);
+                                if ($getProduct && $getProduct->price) {
+                                    $orderPrice -= $getProduct->price;
+                                }
                             }
                         }
+            
+                    } else if ( $voucher->discount_type == 2 ) {
+    
+                        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+    
+                        $x = $userCart->total_price;
+    
+                        if ( $x >= $adjustment->buy_quantity ) {
+                            $orderPrice -= floatVal($adjustment->discount_quantity);
+                        }
+            
+                    } else {
+    
+                        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+            
+                        $x = $userCart->total_price;
+            
+                        if ( $x >= $adjustment->buy_quantity ) {
+                            $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity );
+                        }
                     }
-        
-                } else if ( $voucher->discount_type == 2 ) {
-
-                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-
-                    $x = $userCart->total_price;
-
-                    if ( $x >= $adjustment->buy_quantity ) {
-                        $orderPrice -= floatVal($adjustment->discount_quantity);
+    
+                    if( $userWallet->balance < $orderPrice ){
+                        return response()->json([
+                            'message' => 'Balance is not enough, please top up to continue',
+                            'message_key' => 'insufficient_balance',
+                        ]);
                     }
-        
-                } else {
-
-                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-        
-                    $x = $userCart->total_price;
-        
-                    if ( $x >= $adjustment->buy_quantity ) {
-                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity );
+    
+                }else{
+                    if( $userWallet->balance < $userCart->total_price ){
+                        return response()->json([
+                            'message' => 'Balance is not enough, please top up to continue',
+                            'message_key' => 'insufficient_balance',
+                        ]);
                     }
-                }
-
-                if( $userWallet->balance < $orderPrice ){
-                    return response()->json([
-                        'message' => 'Balance is not enough, please top up to continue',
-                        'message_key' => 'insufficient_balance',
-                    ]);
-                }
-
-            }else{
-                if( $userWallet->balance < $userCart->total_price ){
-                    return response()->json([
-                        'message' => 'Balance is not enough, please top up to continue',
-                        'message_key' => 'insufficient_balance',
-                    ]);
                 }
             }
         }

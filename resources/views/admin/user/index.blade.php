@@ -174,7 +174,7 @@ var statusMapper = @json( $data['status'] ),
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "phone_number" ) }}' ),
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
+                    return data ? '+60' + data : '-' ;
                 },
             },
             {

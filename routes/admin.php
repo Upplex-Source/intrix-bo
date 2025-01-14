@@ -42,61 +42,6 @@ use App\Helpers\Helper;
 
 use Carbon\Carbon;
 
-Route::prefix('eghl-test')->group(function () {
-    Route::get('/', function () {
-        $order = Order::latest()->first();
-
-        $data = [
-            'TransactionType' => 'SALE',
-            'PymtMethod' => 'ANY',
-            'ServiceID' => config('services.eghl.merchant_id'),
-            'PaymentID' => $order->reference . '-' . $order->payment_attempt,
-            'OrderNumber' => $order->reference,
-            'PaymentDesc' => $order->reference,
-            'MerchantName' => 'Yobe Froyo',
-            'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
-            'Amount' => $order->total_price,
-            'CurrencyCode' => 'MYR',
-            'CustIP' => request()->ip(),
-            'CustName' => $order->user->username ?? 'Yobe Guest',
-            'HashValue' => '',
-            'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
-            'CustPhone' => $order->user->phone_number,
-            'MerchantTermsURL' => null,
-            'LanguageCode' => 'en',
-            'PageTimeout' => '780',
-        ];
-
-        $data['HashValue'] = Helper::generatePaymentHash($data);
-        $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
-
-        $orderTransaction = OrderTransaction::create( [
-            'order_id' => $order->id,
-            'checkout_id' => null,
-            'checkout_url' => null,
-            'payment_url' => $url2,
-            'transaction_id' => null,
-            'layout_version' => 'v1',
-            'redirect_url' => null,
-            'notify_url' => null,
-            'order_no' => $order->reference,
-            'order_title' => $order->reference,
-            'order_detail' => $order->reference,
-            'amount' => $order->total_price,
-            'currency' => 'MYR',
-            'transaction_type' => 1,
-            'status' => 10,
-        ] );
-
-        $order->payment_url = $url2;
-        $order->order_transaction_id = $orderTransaction->id;
-        $order->save();
-
-        return redirect($url2);
-    });
-});
-
-
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 
     // Protected Route
@@ -526,3 +471,60 @@ Route::prefix( 'eghl' )->group( function() {
     Route::any( 'test-success', [PaymentController::class, 'testSuccess'] )->name( 'payment.testSuccess' );
     Route::any( 'test-failed', [PaymentController::class, 'testFailed'] )->name( 'payment.testFailed' );
 } );
+
+
+if( 1 == 2 ){
+    Route::prefix('eghl-test')->group(function () {
+        Route::get('/', function () {
+            $order = Order::latest()->first();
+    
+            $data = [
+                'TransactionType' => 'SALE',
+                'PymtMethod' => 'ANY',
+                'ServiceID' => config('services.eghl.merchant_id'),
+                'PaymentID' => $order->reference . '-' . $order->payment_attempt,
+                'OrderNumber' => $order->reference,
+                'PaymentDesc' => $order->reference,
+                'MerchantName' => 'Yobe Froyo',
+                'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+                'Amount' => $order->total_price,
+                'CurrencyCode' => 'MYR',
+                'CustIP' => request()->ip(),
+                'CustName' => $order->user->username ?? 'Yobe Guest',
+                'HashValue' => '',
+                'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
+                'CustPhone' => $order->user->phone_number,
+                'MerchantTermsURL' => null,
+                'LanguageCode' => 'en',
+                'PageTimeout' => '780',
+            ];
+    
+            $data['HashValue'] = Helper::generatePaymentHash($data);
+            $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
+    
+            $orderTransaction = OrderTransaction::create( [
+                'order_id' => $order->id,
+                'checkout_id' => null,
+                'checkout_url' => null,
+                'payment_url' => $url2,
+                'transaction_id' => null,
+                'layout_version' => 'v1',
+                'redirect_url' => null,
+                'notify_url' => null,
+                'order_no' => $order->reference,
+                'order_title' => $order->reference,
+                'order_detail' => $order->reference,
+                'amount' => $order->total_price,
+                'currency' => 'MYR',
+                'transaction_type' => 1,
+                'status' => 10,
+            ] );
+    
+            $order->payment_url = $url2;
+            $order->order_transaction_id = $orderTransaction->id;
+            $order->save();
+    
+            return redirect($url2);
+        });
+    });
+}

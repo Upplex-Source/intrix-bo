@@ -270,7 +270,7 @@ if ( $multiSelect ) {
             columns: [
                 { data: null },
                 { data: null },
-                { data: 'user.phone_number' },
+                { data: 'user' },
                 { data: 'type' },
                 { data: 'listing_balance' },
                 { data: 'encrypted_id' },
@@ -299,7 +299,7 @@ if ( $multiSelect ) {
                     targets: parseInt( '{{ Helper::columnIndex( $columns, "user" ) }}' ),
                     orderable: false,
                     render: function( data, type, row, meta ) {
-                        return data;
+                        return data.username ?? '-' + '<br>' + '+60' + data.phone_number;
                     },
                 },
                 {
