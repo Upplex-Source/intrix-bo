@@ -1414,7 +1414,7 @@ class OrderService
         if (!$order) {
             return response()->json([
                 'message' => '',
-                'message_key' => 'order_is_paid',
+                'message_key' => 'not_available',
                 'carts' => []
             ]);
         }
