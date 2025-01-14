@@ -45,19 +45,6 @@ use Carbon\Carbon;
 Route::prefix('eghl-test')->group(function () {
     Route::get('/', function () {
         $order = Order::latest()->first();
-        $response = ApiLog::latest()->first();
-        $decodedResponse = json_decode($response->raw_response);
-        $data2 = json_decode($response->raw_response,true);
-
-        if($decodedResponse->HashValue2 == Helper::generateResponseHash($data2)){
-            $order = Order::where( 'reference', $decodedResponse->OrderNumber )->first(); 
-
-            $order->status = $decodedResponse->TxnStatus == 0 ? 3 : 20;
-            if( $decodedResponse->TxnStatus != 0 ){
-                $order->payment_attempt += 1;
-            }
-            $order->save();
-        }
 
         $data = [
             'TransactionType' => 'SALE',
@@ -80,13 +67,16 @@ Route::prefix('eghl-test')->group(function () {
             'PageTimeout' => '780',
         ];
 
+        $data['HashValue'] = Helper::generatePaymentHash($data);
+        $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
+
         $orderTransaction = OrderTransaction::create( [
             'order_id' => $order->id,
             'checkout_id' => null,
             'checkout_url' => null,
             'payment_url' => $url2,
             'transaction_id' => null,
-            'layout_version' => null,
+            'layout_version' => 'v1',
             'redirect_url' => null,
             'notify_url' => null,
             'order_no' => $order->reference,
@@ -99,11 +89,8 @@ Route::prefix('eghl-test')->group(function () {
         ] );
 
         $order->payment_url = $url2;
-        $order->transaction_id = $orderTransaction->id;
+        $order->order_transaction_id = $orderTransaction->id;
         $order->save();
-
-        $data['HashValue'] = Helper::generatePaymentHash($data);
-        $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
 
         return redirect($url2);
     });

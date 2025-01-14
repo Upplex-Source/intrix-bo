@@ -14,7 +14,7 @@ use Helper;
 
 use Carbon\Carbon;
 
-class Order extends Model
+class OrderTransaction extends Model
 {
     use HasFactory, LogsActivity;
 
