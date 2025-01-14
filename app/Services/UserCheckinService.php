@@ -434,6 +434,8 @@ class UserCheckinService
 
     public static function checkin($request)
     {
+        DB::beginTransaction();
+
         $user = auth()->user();
         $currentDate = now()->format('Y-m-d');
     
@@ -454,15 +456,15 @@ class UserCheckinService
             ->whereDate('checkin_date', $currentDate)
             ->first();
     
-        if ($existingCheckin) {
-            return response()->json(['message' => 'User has already checked in today'], 422);
-        }
+        // if ($existingCheckin) {
+        //     return response()->json(['message' => 'User has already checked in today'], 422);
+        // }
     
         $lastCheckin = UserCheckin::where('user_id', $user->id)
             ->latest('checkin_date')
             ->first();
-    
-        if ($lastCheckin && $lastCheckin->checkin_date->diffInDays(now()) > 1) {
+
+        if ($lastCheckin && Carbon::parse($lastCheckin->checkin_date)->diffInDays(now()) >= 1) {
             $user->check_in_streak = 0;
         }
     
@@ -474,12 +476,13 @@ class UserCheckinService
     
         $user->total_check_in += 1;
         $user->check_in_streak += 1;
-    
         if ($user->check_in_streak != 0 || $originalStreak) {
             $reward = self::giveReward($user);
         }
     
         $user->save();
+
+        DB::commit();
     
         return response()->json([
             'message' => 'checkin_success',

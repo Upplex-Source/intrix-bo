@@ -55,7 +55,7 @@ Route::prefix('eghl-test')->group(function () {
             'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
             'Amount' => $order->total_price,
             'CurrencyCode' => 'MYR',
-            'CustIP' => $_SERVER['REMOTE_HOST'],
+            'CustIP' => request()->ip(),
             'CustName' => $order->user->username ?? 'Yobe Guest',
             'HashValue' => '',
             'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
