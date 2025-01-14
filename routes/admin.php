@@ -468,8 +468,8 @@ Route::prefix( 'eghl' )->group( function() {
     Route::any( 'notify', [ PaymentController::class, 'notifyEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::any( 'query', [ PaymentController::class, 'queryEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::any( 'callback', [PaymentController::class, 'callbackEghl'] )->name( 'payment.callbackEghl' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
-    Route::any( 'success', [PaymentController::class, 'success'] )->name( 'payment.success' );
-    Route::any( 'failed', [PaymentController::class, 'failed'] )->name( 'payment.failed' );
+    Route::any( 'success', [PaymentController::class, 'success'] )->name( 'payment.success' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'failed', [PaymentController::class, 'failed'] )->name( 'payment.failed' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
 } );
 
 
