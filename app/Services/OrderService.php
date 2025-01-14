@@ -1406,7 +1406,9 @@ class OrderService
         
         $validator->validate();
 
-        $order = Order::find( $request->order_id )->where( 'status', '!=', 3 );
+        $order = Order::where('id', $request->order_id)
+            ->where('status', '!=', 3)
+            ->first();
 
         if (!$order) {
             return response()->json([
