@@ -1196,7 +1196,7 @@ class OrderService
                 ] );
 
                 $order->payment_url = $url2;
-                $order->transaction_id = $orderTransaction->id;
+                $order->order_transaction_id = $orderTransaction->id;
 
             }
 
