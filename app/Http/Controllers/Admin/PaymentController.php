@@ -38,7 +38,7 @@ class PaymentController extends Controller
         return EghlService::callback( $request );
     }
 
-    public function testSuccess( Request $request ) {
+    public function success( Request $request ) {
 
         return response()->json( [
             'message' => '',
@@ -49,11 +49,11 @@ class PaymentController extends Controller
         ] );
     }
 
-    public function testFailed( Request $request ) {
+    public function failed( Request $request ) {
 
         return response()->json( [
             'message' => '',
-            'message_key' => 'order_failed',
+            'message_key' => 'order_failed_you_may_retry_payment',
             'data' => [
                 'status' => true
             ],

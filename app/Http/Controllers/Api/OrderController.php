@@ -68,7 +68,7 @@ class OrderController extends Controller
      * 
      * @group Order API
      * 
-     * @queryParam id integer The ID of the order. . Example: 1
+     * @queryParam order_id integer The ID of the order. Example: 1
      */
     public function retryPayment( Request $request ) {
 

@@ -1162,6 +1162,8 @@ class OrderService
                     'PaymentDesc' => $order->reference,
                     'MerchantName' => 'Yobe Froyo',
                     'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+                    'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
+                    'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
                     'Amount' => $order->total_price,
                     'CurrencyCode' => 'MYR',
                     'CustIP' => request()->ip(),
@@ -1393,6 +1395,109 @@ class OrderService
     
         return response()->json( [
             'message' => 'voucher.voucher_validated',
+        ] );
+    }
+
+    public static function retryPayment( $request ) {
+
+        $validator = Validator::make($request->all(), [
+            'order_id' => ['required', 'exists:orders,id'],
+        ]);
+        
+        $validator->validate();
+
+        $order = Order::find( $request->order_id )->where( 'status', '!=', 3 )->first();
+
+        if (!$order) {
+            return response()->json([
+                'message' => '',
+                'message_key' => 'order_is_paid',
+                'carts' => []
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+                
+            $data = [
+                'TransactionType' => 'SALE',
+                'PymtMethod' => 'ANY',
+                'ServiceID' => config('services.eghl.merchant_id'),
+                'PaymentID' => $order->reference . '-' . $order->payment_attempt,
+                'OrderNumber' => $order->reference,
+                'PaymentDesc' => $order->reference,
+                'MerchantName' => 'Yobe Froyo',
+                'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+                'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
+                'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
+                'Amount' => $order->total_price,
+                'CurrencyCode' => 'MYR',
+                'CustIP' => request()->ip(),
+                'CustName' => $order->user->username ?? 'Yobe Guest',
+                'HashValue' => '',
+                'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
+                'CustPhone' => $order->user->phone_number,
+                'MerchantTermsURL' => null,
+                'LanguageCode' => 'en',
+                'PageTimeout' => '780',
+            ];
+
+            $data['HashValue'] = Helper::generatePaymentHash($data);
+            $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
+            
+            $orderTransaction = OrderTransaction::create( [
+                'order_id' => $order->id,
+                'checkout_id' => null,
+                'checkout_url' => null,
+                'payment_url' => $url2,
+                'transaction_id' => null,
+                'layout_version' => 'v1',
+                'redirect_url' => null,
+                'notify_url' => null,
+                'order_no' => $order->reference,
+                'order_title' => $order->reference,
+                'order_detail' => $order->reference,
+                'amount' => $order->total_price,
+                'currency' => 'MYR',
+                'transaction_type' => 1,
+                'status' => 10,
+            ] );
+
+            $order->payment_url = $url2;
+            $order->order_transaction_id = $orderTransaction->id;
+            $order->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'froyo' => $meta->froyos_metas,
+                'syrup' => $meta->syrups_metas,
+                'topping' => $meta->toppings_metas,
+            ];
+        });
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'retry_payment_inititate',
+            'payment_url' => $order->payment_url,
+            'sesion_key' => $order->session_key,
+            'order_id' => $order->id,
+            'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
+            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
+            'order_metas' => $orderMetas
         ] );
     }
 }

@@ -413,7 +413,7 @@ class Helper {
         $serviceId = config( 'services.eghl.merchant_id' );
 
         $hashCombine = $password . $serviceId . $data['PaymentID'] . $data['MerchantReturnURL']
-        . $data['Amount'] . $data['CurrencyCode'] . $data['CustIP']
+        . $data['MerchantApprovalURL'] . $data['MerchantUnApprovalURL']. $data['Amount'] . $data['CurrencyCode'] . $data['CustIP']
         . $data['PageTimeout'];
 
         return hash('sha256', $hashCombine);
