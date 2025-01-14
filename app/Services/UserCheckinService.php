@@ -505,7 +505,7 @@ class UserCheckinService
                     $data['remark'] = 'Check-in Rewards';
                     $data['type'] = __( 'wallet.checkin_bonus' );
  
-                    WalletService::transact( $user->wallet->where('type', 2), $data );
+                    WalletService::transact( $user->wallets->where('type', 2), $data );
                     break;
                 
                 default:
