@@ -33,6 +33,7 @@ class Order extends Model
         'currency',
         'transaction_type',
         'status',
+        'payment_url',
     ];
 
     public function order() {
@@ -62,6 +63,7 @@ class Order extends Model
         'currency',
         'transaction_type',
         'status',
+        'payment_url',
     ];
 
     protected static $logName = 'orders';

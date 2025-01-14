@@ -34,6 +34,8 @@ use App\Http\Controllers\Admin\{
 
 use App\Models\{
     Order,
+    OrderTransaction,
+    ApiLog,
 };
 
 use App\Helpers\Helper;
@@ -43,13 +45,26 @@ use Carbon\Carbon;
 Route::prefix('eghl-test')->group(function () {
     Route::get('/', function () {
         $order = Order::latest()->first();
+        $response = ApiLog::latest()->first();
+        $decodedResponse = json_decode($response->raw_response);
+        $data2 = json_decode($response->raw_response,true);
+
+        if($decodedResponse->HashValue2 == Helper::generateResponseHash($data2)){
+            $order = Order::where( 'reference', $decodedResponse->OrderNumber )->first(); 
+
+            $order->status = $decodedResponse->TxnStatus == 0 ? 3 : 20;
+            if( $decodedResponse->TxnStatus != 0 ){
+                $order->payment_attempt += 1;
+            }
+            $order->save();
+        }
 
         $data = [
             'TransactionType' => 'SALE',
             'PymtMethod' => 'ANY',
             'ServiceID' => config('services.eghl.merchant_id'),
             'PaymentID' => $order->reference . '-' . $order->payment_attempt,
-            'OrderNumber' => '123455kknasdi12314',
+            'OrderNumber' => $order->reference,
             'PaymentDesc' => $order->reference,
             'MerchantName' => 'Yobe Froyo',
             'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
@@ -60,10 +75,32 @@ Route::prefix('eghl-test')->group(function () {
             'HashValue' => '',
             'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
             'CustPhone' => $order->user->phone_number,
-            'MerchantTermsURL' => 'http://merchA.merchdomain.com/terms.html',
+            'MerchantTermsURL' => null,
             'LanguageCode' => 'en',
             'PageTimeout' => '780',
         ];
+
+        $orderTransaction = OrderTransaction::create( [
+            'order_id' => $order->id,
+            'checkout_id' => null,
+            'checkout_url' => null,
+            'payment_url' => $url2,
+            'transaction_id' => null,
+            'layout_version' => null,
+            'redirect_url' => null,
+            'notify_url' => null,
+            'order_no' => $order->reference,
+            'order_title' => $order->reference,
+            'order_detail' => $order->reference,
+            'amount' => $order->total_price,
+            'currency' => 'MYR',
+            'transaction_type' => 1,
+            'status' => 10,
+        ] );
+
+        $order->payment_url = $url2;
+        $order->transaction_id = $orderTransaction->id;
+        $order->save();
 
         $data['HashValue'] = Helper::generatePaymentHash($data);
         $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);

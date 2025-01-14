@@ -15,6 +15,7 @@ use App\Models\{
     FileManager,
     Option,
     Order,
+    OrderTransaction,
     OrderMeta,
     Product,
     Froyo,
@@ -1147,6 +1148,53 @@ class OrderService
 
                 // update stock
                 VendingMachineStockService::updateVendingMachineStock( $order->vending_machine_id, $order->orderMetas );
+            }else {
+                
+                $data = [
+                    'TransactionType' => 'SALE',
+                    'PymtMethod' => 'ANY',
+                    'ServiceID' => config('services.eghl.merchant_id'),
+                    'PaymentID' => $order->reference . '-' . $order->payment_attempt,
+                    'OrderNumber' => $order->reference,
+                    'PaymentDesc' => $order->reference,
+                    'MerchantName' => 'Yobe Froyo',
+                    'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+                    'Amount' => $order->total_price,
+                    'CurrencyCode' => 'MYR',
+                    'CustIP' => request()->ip(),
+                    'CustName' => $order->user->username ?? 'Yobe Guest',
+                    'HashValue' => '',
+                    'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
+                    'CustPhone' => $order->user->phone_number,
+                    'MerchantTermsURL' => null,
+                    'LanguageCode' => 'en',
+                    'PageTimeout' => '780',
+                ];
+
+                $data['HashValue'] = Helper::generatePaymentHash($data);
+                $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
+                
+                $orderTransaction = OrderTransaction::create( [
+                    'order_id' => $order->id,
+                    'checkout_id' => null,
+                    'checkout_url' => null,
+                    'payment_url' => $url2,
+                    'transaction_id' => null,
+                    'layout_version' => null,
+                    'redirect_url' => null,
+                    'notify_url' => null,
+                    'order_no' => $order->reference,
+                    'order_title' => $order->reference,
+                    'order_detail' => $order->reference,
+                    'amount' => $order->total_price,
+                    'currency' => 'MYR',
+                    'transaction_type' => 1,
+                    'status' => 10,
+                ] );
+
+                $order->payment_url = $url2;
+                $order->transaction_id = $orderTransaction->id;
+
             }
 
             $order->save();
@@ -1176,7 +1224,7 @@ class OrderService
         return response()->json( [
             'message' => '',
             'message_key' => 'create_order_success',
-            'payment_url' => route('payment.testSuccess'),
+            'payment_url' => $order->payment_url,
             'sesion_key' => $order->session_key,
             'order_id' => $order->id,
             'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),

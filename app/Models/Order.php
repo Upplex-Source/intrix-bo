@@ -20,6 +20,7 @@ class Order extends Model
 
     protected $fillable = [
         'product_id',
+        'order_transaction_id',
         'product_bundle_id',
         'user_id',
         'vending_machine_id',
@@ -32,6 +33,7 @@ class Order extends Model
         'voucher_id',
         'taxes',
         'payment_attempt',
+        'payment_url',
     ];
 
     public function voucher() {
@@ -72,6 +74,7 @@ class Order extends Model
 
     protected static $logAttributes = [
         'product_id',
+        'order_transaction_id',
         'product_bundle_id',
         'user_id',
         'vending_machine_id',
@@ -84,6 +87,7 @@ class Order extends Model
         'voucher_id',
         'taxes',
         'payment_attempt',
+        'payment_url'
     ];
 
     protected static $logName = 'orders';

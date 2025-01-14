@@ -17,6 +17,8 @@ use App\Models\{
     UserTopup,
     UserWallet,
     AdministratorNotification,
+    OrderTransaction,
+    Order,
 };
 
 use App\Jobs\{
@@ -174,6 +176,19 @@ class EghlService {
             'method' => $request->method(),
             'raw_response' => json_encode( $request->all() ),
         ] );
+
+        // process order
+        $order = Order::where( 'reference', $request->OrderNumber )->first();
+
+        if($request->HashValue2 == Helper::generateResponseHash($request)){
+            $order = Order::where( 'reference', $request->OrderNumber )->first(); 
+
+            $order->status = $request->TxnStatus == 0 ? 3 : 20;
+            if( $request->TxnStatus != 0 ){
+                $order->payment_attempt += 1;
+            }
+            $order->save();
+        }
 
         return response()->json( [
             'message' => '',

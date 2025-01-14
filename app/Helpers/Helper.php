@@ -418,5 +418,17 @@ class Helper {
 
         return hash('sha256', $hashCombine);
     }
+
+    public static function generateResponseHash( $data ){
+
+        $password = config( 'services.eghl.merchant_password' );
+        $serviceId = config( 'services.eghl.merchant_id' );
+
+        $hashCombine = $password . $data['TxnID'] . $serviceId . $data['PaymentID'] . $data['TxnStatus']
+        . $data['Amount'] . $data['CurrencyCode'] . $data['AuthCode']
+        . $data['OrderNumber'];
+
+        return hash('sha256', $hashCombine);
+    }
     
 }
