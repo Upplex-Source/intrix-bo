@@ -92,6 +92,7 @@ Route::middleware( 'auth:user' )->group( function() {
     Route::prefix( 'orders' )->group( function() {
         Route::get( '/', [ OrderController::class, 'getOrder' ] );
         Route::post( 'checkout', [ OrderController::class, 'checkout' ] );
+        Route::post( 'retry-payment', [ OrderController::class, 'retryPayment' ] );
     } );
 
     Route::prefix( 'vouchers' )->group( function() {

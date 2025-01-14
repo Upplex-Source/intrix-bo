@@ -40,42 +40,38 @@ use App\Helpers\Helper;
 
 use Carbon\Carbon;
 
-Route::prefix( 'eghl-test' )->group( function() {
+Route::prefix('eghl-test')->group(function () {
+    Route::get('/', function () {
+        $order = Order::latest()->first();
 
-    $order = Order::latest()->first();
-    
-    $data = [];
-    $data2 = [];
+        $data = [
+            'TransactionType' => 'SALE',
+            'PymtMethod' => 'ANY',
+            'ServiceID' => config('services.eghl.merchant_id'),
+            'PaymentID' => $order->reference . '-' . $order->payment_attempt,
+            'OrderNumber' => '123455kknasdi12314',
+            'PaymentDesc' => $order->reference,
+            'MerchantName' => 'Yobe Froyo',
+            'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+            'Amount' => $order->total_price,
+            'CurrencyCode' => 'MYR',
+            'CustIP' => $_SERVER['REMOTE_HOST'],
+            'CustName' => $order->user->username ?? 'Yobe Guest',
+            'HashValue' => '',
+            'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
+            'CustPhone' => $order->user->phone_number,
+            'MerchantTermsURL' => 'http://merchA.merchdomain.com/terms.html',
+            'LanguageCode' => 'en',
+            'PageTimeout' => '780',
+        ];
 
-    $data = [
-        'TransactionType' => 'SALE',
-        'PymtMethod' => 'ANY',
-        'ServiceID' => config( 'services.eghl.merchant_id' ),
-        'PaymentID' => '123455kknasdi1231',
-        'OrderNumber' => '123455kknasdi1231',
-        'PaymentDesc' => 'Booking No: IJKLMN, Sector: KUL-BKI, First Flight Date: 26 Sep 2012',
-        'MerchantName' => 'Merchant A',
-        'MerchantReturnURL' => 'https://merchA.merchdomain.com/pymtresp.aspx',
-        'Amount' => $order->total_price,
-        'CurrencyCode' => 'MYR',
-        'CustIP' => '192.168.2.35',
-        'CustName' => 'Jason',
-        'HashValue' => '',
-        'CustEmail' => 'Jasonabc@gmail.com',
-        'CustPhone' => $order->user->phone_number,
-        'MerchantTermsURL' => 'http://merchA.merchdomain.com/terms.html',
-        'LanguageCode' => 'en',
-        'PageTimeout' => '780',
-    ];
+        $data['HashValue'] = Helper::generatePaymentHash($data);
+        $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
 
-    $data['HashValue'] = Helper::generatePaymentHash($data);
-    $url2 = config('services.eghl.test_url').'?'.http_build_query($data);
-
-    $post =  Helper::curlPost( $url2, $data2 );
-
-    return $post;
-    
+        return redirect($url2);
+    });
 });
+
 
 Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 

@@ -175,31 +175,13 @@ class EghlService {
             'raw_response' => json_encode( $request->all() ),
         ] );
 
-        $rm = new Eghl( [
-            'clientId' => config( 'services.rm.client_id' ),
-            'clientSecret' => config( 'services.rm.client_secret' ),
-            'privateKey' => config( 'services.rm.private_key' ),
-            'isSandbox' => config( 'services.rm.is_sandbox' ),
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'order_placed',
+            'data' => [
+                'status' => true
+            ],
         ] );
-
-        try {
-
-            $orderId = $request->orderId;
-            $response = $rm->payment->findByOrderId( $orderId );
-
-            if ( $response->status == 'SUCCESS' ) {
-
-                self::processTransaction( $orderId, $response );
-            }
-
-            echo 'Close This - 1';
-
-        } catch ( \Throwable $th ) {
-
-            echo $th->getMessage() . ' ' . $th->getLine();
-
-            echo 'Close This - 2';
-        }
     }
 
     public static function processTransaction( $orderId, $response ) {

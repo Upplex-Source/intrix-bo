@@ -53,5 +53,7 @@ return [
         'test_url' => env( 'EGHL_TEST_URL' ),
         'merchant_id' => env( 'EGHL_MERCHANT_ID' ),
         'merchant_password' => env( 'EGHL_MERCHANT_PASSWORD' ),
+        'staging_callabck_url' => env( 'EGHL_STAGING_CALLBACK' ),
+        'live_callabck_url' => env( 'EGHL_STAGING_LIVE' ),
     ]
 ];

@@ -50,7 +50,7 @@ class OrderController extends Controller
      * @group Order API
      * 
      * @queryParam reference string The unique reference for the order. Example: abcd-1234
-     * @queryParam id string The ID of the order. . Example: abcd-1234
+     * @queryParam id integer The ID of the order. . Example: 1
      * @queryParam status integer The Status of the order. . Example: 1
      * @queryParam per_page integer Retrieve how many insurance quote in a page, default is 10. Example: 10
      */
@@ -59,5 +59,20 @@ class OrderController extends Controller
         return OrderService::getOrder( $request );
     }
 
+    /**
+     * 3. Retry Payment
+     * 
+     * <aside class="notice">retry payment for online payment (unavailable now)</aside>
+     * 
+     * @authenticated
+     * 
+     * @group Order API
+     * 
+     * @queryParam id integer The ID of the order. . Example: 1
+     */
+    public function retryPayment( Request $request ) {
 
+        return OrderService::retryPayment( $request );
+    }
+    
 }

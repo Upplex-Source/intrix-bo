@@ -31,6 +31,7 @@ class Order extends Model
         'status',
         'voucher_id',
         'taxes',
+        'payment_attempt',
     ];
 
     public function voucher() {
@@ -82,6 +83,7 @@ class Order extends Model
         'status',
         'voucher_id',
         'taxes',
+        'payment_attempt',
     ];
 
     protected static $logName = 'orders';
