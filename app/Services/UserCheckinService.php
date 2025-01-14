@@ -464,7 +464,7 @@ class UserCheckinService
             ->latest('checkin_date')
             ->first();
 
-        if ($lastCheckin && Carbon::parse($lastCheckin->checkin_date)->diffInDays(now()) >= 1) {
+        if ($lastCheckin && Carbon::parse($lastCheckin->checkin_date)->diffInDays(now()) > 1) {
             $user->check_in_streak = 0;
         }
     
