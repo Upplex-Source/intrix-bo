@@ -182,11 +182,15 @@ class EghlService {
 
         // process order
         $order = Order::where( 'reference', $request->OrderNumber )->first();
+        $orderStatus = false;
 
         if($request->HashValue2 == Helper::generateResponseHash($request)){
             $order = Order::where( 'reference', $request->OrderNumber )->first(); 
 
             $order->status = $request->TxnStatus == 0 ? 3 : 20;
+            if( $request->TxnStatus == 0 ){
+                $orderStatus = true;
+            }
             if( $request->TxnStatus != 0 ){
                 $order->payment_attempt += 1;
             }
@@ -197,7 +201,7 @@ class EghlService {
             'message' => '',
             'message_key' => 'order_placed',
             'data' => [
-                'status' => true
+                'status' => $orderStatus
             ],
         ] );
     }
