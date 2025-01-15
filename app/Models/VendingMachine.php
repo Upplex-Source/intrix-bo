@@ -69,22 +69,21 @@ class VendingMachine extends Model
         $closingHour = $this->attributes['closing_hour'] 
             ? Carbon::parse($this->attributes['closing_hour'])->format('g:ia') 
             : null;
-    
+       
         // Get current time as a Carbon instance
-        $currentTime = now();
-    
-        // Parse opening and closing times into Carbon instances for comparison
-        $openingTime = $this->attributes['opening_hour'] 
-            ? Carbon::parse($this->attributes['opening_hour']) 
-            : null;
-    
-        $closingTime = $this->attributes['closing_hour'] 
-            ? Carbon::parse($this->attributes['closing_hour']) 
-            : null;
-    
+        $currentTime = now()->addHours(8)->format('g:ia');
+        $start = Carbon::parse($openingHour);
+        $end = Carbon::parse($closingHour);
+        $current = Carbon::parse($currentTime);
+
+        // Handle cases where the end time crosses midnight
+        if ($end->lessThan($start)) {
+            $end->addDay(); // Add a day to the end time to handle the next day
+        }
+
         // Determine if the current time is within the operational range
-        $isInOperation = $openingTime && $closingTime &&
-            $currentTime->between($openingTime, $closingTime);
+        $isInOperation = $start && $end &&
+            $current->between($start, $end);
     
         // Generate operational hours string
         $operationString = $openingHour && $closingHour
@@ -92,7 +91,7 @@ class VendingMachine extends Model
             : "Hours not set";
     
         // Append status
-        $statusString = $isInOperation ? 'In Operation' : '-';
+        $statusString = $isInOperation ? 'In Operation' : 'Please select another machine';
     
         return "{$operationString}, {$statusString}";
     }
