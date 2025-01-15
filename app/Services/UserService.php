@@ -231,9 +231,9 @@ class UserService
         ] );
 
         $validator = Validator::make( $request->all(), [
-            'username' => [ 'required', 'alpha_dash', 'unique:users,username,' . $request->id, new CheckASCIICharacter ],
-            'email' => [ 'required', 'bail', 'unique:users,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
-            'fullname' => [ 'required' ],
+            'username' => [ 'nullable', 'alpha_dash', 'unique:users,username,' . $request->id, new CheckASCIICharacter ],
+            'email' => [ 'nullable', 'bail', 'unique:users,email,' . $request->id, 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
+            'fullname' => [ 'nullable' ],
             'phone_number' => [ 'required', 'digits_between:8,15', function( $attribute, $value, $fail ) use ( $request ) {
                 
                 $exist = User::where( 'phone_number', $value )

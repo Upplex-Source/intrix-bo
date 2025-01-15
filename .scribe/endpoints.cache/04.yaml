@@ -36,8 +36,8 @@ endpoints:
         name: id
         description: 'The ID of the order. .'
         required: false
-        example: abcd-1234
-        type: string
+        example: 1
+        type: integer
         custom: []
       status:
         name: status
@@ -65,8 +65,8 @@ endpoints:
               "line": 43,
               "trace": [
                   {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php",
-                      "line": 144,
+                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php",
+                      "line": 162,
                       "function": "handleMatchedRoute",
                       "class": "Illuminate\\Routing\\AbstractRouteCollection",
                       "type": "->"
@@ -75,7 +75,7 @@ endpoints:
                       "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
                       "line": 673,
                       "function": "match",
-                      "class": "Illuminate\\Routing\\CompiledRouteCollection",
+                      "class": "Illuminate\\Routing\\RouteCollection",
                       "type": "->"
                   },
                   {
@@ -467,5 +467,29 @@ endpoints:
         example: 1
         type: integer
         custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/orders/retry-payment
+    metadata:
+      title: '3. Retry Payment'
+      description: '<aside class="notice">retry payment for online payment</aside>'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      order_id:
+        name: order_id
+        description: 'The ID of the order.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+    bodyParameters: []
     responses: []
     responseFields: []

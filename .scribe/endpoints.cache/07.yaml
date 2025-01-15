@@ -10,14 +10,21 @@ endpoints:
     metadata:
       title: '1. Get vouchers'
       description: |-
+        <aside class="notice">Get all voucher that is claimable</aside>
+
         <strong>voucher discount type</strong></br>
         1: percentage<br>
-        2: fixed amoun<br>
+        2: fixed amount<br>
         3: buy x free y<br>
 
         <strong>voucher type</strong></br>
         1: public voucher<br>
-        2: user specific<br>
+        2: points redeemable<br>
+        3: register reward<br>
+
+        <strong>user_voucher (retrieve user's voucher)</strong></br>
+        1: true<br>
+        2: false<br>
       authenticated: true
       custom: []
     headers:
@@ -40,6 +47,27 @@ endpoints:
         example: XBMSD22
         type: string
         custom: []
+      user_voucher:
+        name: user_voucher
+        description: 'Retrieve all user''s voucher only'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+      voucher_type:
+        name: voucher_type
+        description: 'The voucher type to be filter'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+      discount_type:
+        name: discount_type
+        description: 'The voucher discount type to be filter'
+        required: false
+        example: 2
+        type: integer
+        custom: []
     responses:
       -
         status: 404
@@ -51,8 +79,8 @@ endpoints:
               "line": 43,
               "trace": [
                   {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php",
-                      "line": 144,
+                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php",
+                      "line": 162,
                       "function": "handleMatchedRoute",
                       "class": "Illuminate\\Routing\\AbstractRouteCollection",
                       "type": "->"
@@ -61,7 +89,7 @@ endpoints:
                       "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
                       "line": 673,
                       "function": "match",
-                      "class": "Illuminate\\Routing\\CompiledRouteCollection",
+                      "class": "Illuminate\\Routing\\RouteCollection",
                       "type": "->"
                   },
                   {
@@ -442,6 +470,30 @@ endpoints:
         required: false
         example: XBMSD22
         type: string
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/vouchers/claim-voucher
+    metadata:
+      title: '3. Claim Vouchers'
+      description: ''
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      voucher_id:
+        name: voucher_id
+        description: 'string The voucher_id to be claim.'
+        required: false
+        example: '1'
+        type: required
         custom: []
     responses: []
     responseFields: []

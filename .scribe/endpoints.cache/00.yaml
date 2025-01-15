@@ -261,8 +261,8 @@ endpoints:
               "line": 43,
               "trace": [
                   {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php",
-                      "line": 144,
+                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php",
+                      "line": 162,
                       "function": "handleMatchedRoute",
                       "class": "Illuminate\\Routing\\AbstractRouteCollection",
                       "type": "->"
@@ -271,7 +271,7 @@ endpoints:
                       "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
                       "line": 673,
                       "function": "match",
-                      "class": "Illuminate\\Routing\\CompiledRouteCollection",
+                      "class": "Illuminate\\Routing\\RouteCollection",
                       "type": "->"
                   },
                   {
