@@ -1264,8 +1264,6 @@ class OrderService
                     ], 500 );
                 }
                 $updateOrder->status = 10;
-                
-
                 $updateOrder->save();
                 DB::commit();
                 return response()->json( [

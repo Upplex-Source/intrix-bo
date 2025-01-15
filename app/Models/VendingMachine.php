@@ -71,7 +71,8 @@ class VendingMachine extends Model
             : null;
        
         // Get current time as a Carbon instance
-        $currentTime = now()->addHours(8)->format('g:ia');
+        $currentTime = now()->addHours(8);
+
         $start = Carbon::parse($openingHour);
         $end = Carbon::parse($closingHour);
         $current = Carbon::parse($currentTime);
@@ -83,8 +84,8 @@ class VendingMachine extends Model
 
         // Determine if the current time is within the operational range
         $isInOperation = $start && $end &&
-            $current->between($start, $end);
-    
+            $currentTime->between($start, $end);
+
         // Generate operational hours string
         $operationString = $openingHour && $closingHour
             ? "{$openingHour} - {$closingHour}"
