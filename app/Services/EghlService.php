@@ -183,7 +183,7 @@ class EghlService {
         ] );
 
         // process order
-        if (strpos($request->OrderNumber, 'TOPUP') !== false) {
+        if (strpos($request->OrderNumber, 'TPP') !== false) {
 
             $orderStatus = false;
 

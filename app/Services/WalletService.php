@@ -352,7 +352,7 @@ class WalletService
         try {
 
             $user = auth()->user();
-            $reference = 'TOPUP-' . now()->format('YmdHis');
+            $reference = 'TPP-' . now()->format('YmdHis');
 
             $topupRecord = TopupRecord::create( [
                 'user_id' => $user->id,
