@@ -388,7 +388,10 @@ class WalletService
 
             $data['HashValue'] = Helper::generatePaymentHash($data);
             $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
-
+            
+            $topupRecord->payment_url = $url2;
+            $topupRecord->save();
+            
             DB::commit();
 
         } catch ( \Throwable $th ) {
