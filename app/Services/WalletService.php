@@ -12,6 +12,7 @@ use App\Models\{
     UserTopup,
     Wallet,
     WalletTransaction,
+    TopupRecord,
 };
 
 use Helper;
