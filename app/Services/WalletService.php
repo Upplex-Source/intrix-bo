@@ -374,7 +374,7 @@ class WalletService
                 'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
                 // 'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
                 // 'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
-                'Amount' => floatval($request->topup_amount),
+                'Amount' => Helper::numberFormatV2($request->topup_amount, 2, true),
                 'CurrencyCode' => 'MYR',
                 'CustIP' => request()->ip(),
                 'CustName' => $user->username ?? 'Yobe Guest',
