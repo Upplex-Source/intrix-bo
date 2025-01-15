@@ -350,14 +350,43 @@ class WalletService
 
         try {
 
-            $wallet = Wallet::lockForUpdate()->where( 'user_id', auth()->user()->id )->where( 'type', 1 )->first();
+            $user = auth()->user();
+            $reference = 'TOPUP-' . now()->format('YmdHis');
 
-            self::transact( $wallet, [
+            $topupRecord = TopupRecord::create( [
+                'user_id' => $user->id,
+                'wallet_transaction_id' => null,
+                'reference' => $reference,
                 'amount' => $request->topup_amount,
-                'remark' => '',
-                'type' => $wallet->type,
-                'transaction_type' => 1,
+                'payment_attempt' => 1,
+                'status' => 10,
             ] );
+
+            $data = [
+                'TransactionType' => 'SALE',
+                'PymtMethod' => 'ANY',
+                'ServiceID' => config('services.eghl.merchant_id'),
+                'PaymentID' => $topupRecord->reference . '-' . $topupRecord->payment_attempt,
+                'OrderNumber' => $topupRecord->reference,
+                'PaymentDesc' => 'TOPUP',
+                'MerchantName' => 'Yobe Froyo',
+                'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+                // 'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
+                // 'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
+                'Amount' => $request->topup_amount,
+                'CurrencyCode' => 'MYR',
+                'CustIP' => request()->ip(),
+                'CustName' => $user->username ?? 'Yobe Guest',
+                'HashValue' => '',
+                'CustEmail' => $user->email ?? 'yobeguest@gmail.com',
+                'CustPhone' => $user->phone_number,
+                'MerchantTermsURL' => null,
+                'LanguageCode' => 'en',
+                'PageTimeout' => '780',
+            ];
+
+            $data['HashValue'] = Helper::generatePaymentHash($data);
+            $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
 
             DB::commit();
 
@@ -369,8 +398,8 @@ class WalletService
         }
 
         return response()->json( [
-            'message_key' => 'topup_success',
-            'redirect_url' => route('payment.testSuccess'),
+            'message_key' => 'topup_initiate',
+            'payment_url' => $url2,
         ] );
     }
 

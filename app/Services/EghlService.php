@@ -19,6 +19,8 @@ use App\Models\{
     AdministratorNotification,
     OrderTransaction,
     Order,
+    TopupRecord,
+    WalletTransaction,
 };
 
 use App\Jobs\{
@@ -181,34 +183,66 @@ class EghlService {
         ] );
 
         // process order
-        $order = Order::where( 'reference', $request->OrderNumber )->first();
-        $orderStatus = false;
+        if (strpos($request->OrderNumber, 'TOPUP') !== false) {
 
-        if($request->HashValue2 == Helper::generateResponseHash($request)){
-            $order = Order::where( 'reference', $request->OrderNumber )->first(); 
-            $orderTransaction = OrderTransaction::where( 'order_no', $request->PaymentID )->first(); 
+            $orderStatus = false;
 
-            $order->status = $request->TxnStatus == 0 ? 3 : 20;
-            if( $request->TxnStatus == 0 ){
-                $orderStatus = true;
-                $orderTransaction->status = 11;
+            if($request->HashValue2 == Helper::generateResponseHash($request)){
+                $order = TopupRecord::where( 'reference', $request->OrderNumber )->first(); 
+    
+                $order->status = $request->TxnStatus == 0 ? 3 : 20;
+                if( $request->TxnStatus == 0 ){
+                    $wallet = Wallet::lockForUpdate()->where( 'user_id', $order->user_id )->where( 'type', 1 )->first();
+
+                    WalletService::transact( $wallet, [
+                        'amount' => $order->amount,
+                        'remark' => '',
+                        'type' => $wallet->type,
+                        'transaction_type' => 1,
+                    ] );
+                    $orderStatus = true;
+        
+                }
             }
-            if( $request->TxnStatus != 0 ){
-                $order->payment_attempt += 1;
-                $orderTransaction->status = 20;
+    
+            return response()->json( [
+                'message' => '',
+                'message_key' => 'topup_status',
+                'data' => [
+                    'status' => $orderStatus
+                ],
+            ] );
+        }else{
+
+            $order = Order::where( 'reference', $request->OrderNumber )->first();
+            $orderStatus = false;
+    
+            if($request->HashValue2 == Helper::generateResponseHash($request)){
+                $order = Order::where( 'reference', $request->OrderNumber )->first(); 
+                $orderTransaction = OrderTransaction::where( 'order_no', $request->PaymentID )->first(); 
+    
+                $order->status = $request->TxnStatus == 0 ? 3 : 20;
+                if( $request->TxnStatus == 0 ){
+                    $orderStatus = true;
+                    $orderTransaction->status = 11;
+                }
+                if( $request->TxnStatus != 0 ){
+                    $order->payment_attempt += 1;
+                    $orderTransaction->status = 20;
+                }
+                $order->payment_method = 2;
+                $order->save();
+                $orderTransaction->save();
             }
-            $order->payment_method = 2;
-            $order->save();
-            $orderTransaction->save();
+    
+            return response()->json( [
+                'message' => '',
+                'message_key' => 'order_placed',
+                'data' => [
+                    'status' => $orderStatus
+                ],
+            ] );
         }
-
-        return response()->json( [
-            'message' => '',
-            'message_key' => 'order_placed',
-            'data' => [
-                'status' => $orderStatus
-            ],
-        ] );
     }
 
     public static function processTransaction( $orderId, $response ) {
