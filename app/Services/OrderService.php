@@ -1264,14 +1264,15 @@ class OrderService
                     ], 500 );
                 }
                 $updateOrder->status = 10;
+                
+
+                $updateOrder->save();
+                DB::commit();
                 return response()->json( [
                     'message' => 'Order Pickep Up',
                     'message_key' => 'scan order success',
                 ] );
             }
-
-            $updateOrder->save();
-            DB::commit();
 
             $updateOrder = $updateOrder->paginate(10);
     
