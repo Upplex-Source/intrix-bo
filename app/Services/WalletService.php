@@ -374,7 +374,7 @@ class WalletService
                 'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
                 // 'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
                 // 'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
-                'Amount' => $request->topup_amount,
+                'Amount' => floatval($request->topup_amount),
                 'CurrencyCode' => 'MYR',
                 'CustIP' => request()->ip(),
                 'CustName' => $user->username ?? 'Yobe Guest',
@@ -391,7 +391,7 @@ class WalletService
             
             $topupRecord->payment_url = $url2;
             $topupRecord->save();
-            
+
             DB::commit();
 
         } catch ( \Throwable $th ) {
