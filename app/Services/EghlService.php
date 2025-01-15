@@ -192,7 +192,7 @@ class EghlService {
                 $order = TopupRecord::where( 'reference', $request->OrderNumber )->first(); 
     
                 $order->status = $request->TxnStatus == 0 ? 3 : 20;
-                if( $request->TxnStatus == 0 ){
+                if( $request->TxnStatus == 0 && $order){
                     $wallet = Wallet::lockForUpdate()->where( 'user_id', $order->user_id )->where( 'type', 1 )->first();
 
                     WalletService::transact( $wallet, [
@@ -218,7 +218,7 @@ class EghlService {
             $order = Order::where( 'reference', $request->OrderNumber )->first();
             $orderStatus = false;
     
-            if($request->HashValue2 == Helper::generateResponseHash($request)){
+            if($request->HashValue2 == Helper::generateResponseHash($request) && $order){
                 $order = Order::where( 'reference', $request->OrderNumber )->first(); 
                 $orderTransaction = OrderTransaction::where( 'order_no', $request->PaymentID )->first(); 
     
