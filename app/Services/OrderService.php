@@ -1248,7 +1248,27 @@ class OrderService
                 'orderMetas','vendingMachine','user'
             ] )->where( 'reference', $request->reference )
             ->whereNotIn('status', [10, 20])->first();
-            $updateOrder->status = 10;
+
+            if( !$updateOrder ){
+                return response()->json( [
+                    'message' => 'Order Not found',
+                    'message_key' => 'scan order failed',
+                ], 500 );
+            }
+
+            if( $updateOrder ){
+                if( $updateOrder->status == 1 ){
+                    return response()->json( [
+                        'message' => 'Unpaid Order',
+                        'message_key' => 'scan order failed',
+                    ], 500 );
+                }
+                $updateOrder->status = 10;
+                return response()->json( [
+                    'message' => 'Order Pickep Up',
+                    'message_key' => 'scan order success',
+                ] );
+            }
 
             $updateOrder->save();
             DB::commit();
