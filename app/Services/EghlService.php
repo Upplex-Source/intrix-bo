@@ -21,6 +21,7 @@ use App\Models\{
     Order,
     TopupRecord,
     WalletTransaction,
+    Wallet,
 };
 
 use App\Jobs\{
