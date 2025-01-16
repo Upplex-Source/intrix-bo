@@ -70,6 +70,16 @@
                                                 </ul>
                     
                     <ul id="tocify-header-2" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="promo-code-api">
+                    <a href="#promo-code-api">Promo Code API</a>
+                </li>
+                                    <ul id="tocify-subheader-promo-code-api" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="promo-code-api-GETapi-v1-promo-codes">
+                        <a href="#promo-code-api-GETapi-v1-promo-codes">1. Get promo code</a>
+                    </li>
+                                                    </ul>
+                            </ul>
+                    <ul id="tocify-header-3" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="cart-api">
                     <a href="#cart-api">Cart API</a>
                 </li>
@@ -91,7 +101,7 @@
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-3" class="tocify-header">
+                    <ul id="tocify-header-4" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="check-in-api">
                     <a href="#check-in-api">Check-in API</a>
                 </li>
@@ -107,7 +117,7 @@
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-4" class="tocify-header">
+                    <ul id="tocify-header-5" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="contact-us-api">
                     <a href="#contact-us-api">Contact-Us API</a>
                 </li>
@@ -117,7 +127,7 @@
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-5" class="tocify-header">
+                    <ul id="tocify-header-6" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="menu-api">
                     <a href="#menu-api">Menu API</a>
                 </li>
@@ -139,7 +149,7 @@
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-6" class="tocify-header">
+                    <ul id="tocify-header-7" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="order-api">
                     <a href="#order-api">Order API</a>
                 </li>
@@ -155,7 +165,7 @@
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-7" class="tocify-header">
+                    <ul id="tocify-header-8" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="user-api">
                     <a href="#user-api">User API</a>
                 </li>
@@ -195,7 +205,7 @@
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-8" class="tocify-header">
+                    <ul id="tocify-header-9" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="vending-machine-api">
                     <a href="#vending-machine-api">Vending Machine API</a>
                 </li>
@@ -205,7 +215,7 @@
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-9" class="tocify-header">
+                    <ul id="tocify-header-10" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="voucher-api">
                     <a href="#voucher-api">Voucher API</a>
                 </li>
@@ -214,14 +224,14 @@
                         <a href="#voucher-api-GETapi-v1-vouchers">1. Get vouchers</a>
                     </li>
                                     <li class="tocify-item level-2" data-unique="voucher-api-POSTapi-v1-vouchers-validate">
-                        <a href="#voucher-api-POSTapi-v1-vouchers-validate">2. Validate vouchers</a>
+                        <a href="#voucher-api-POSTapi-v1-vouchers-validate">3. Validate vouchers</a>
                     </li>
                                     <li class="tocify-item level-2" data-unique="voucher-api-POSTapi-v1-vouchers-claim-voucher">
-                        <a href="#voucher-api-POSTapi-v1-vouchers-claim-voucher">3. Claim Vouchers</a>
+                        <a href="#voucher-api-POSTapi-v1-vouchers-claim-voucher">4. Claim Vouchers</a>
                     </li>
                                                     </ul>
                             </ul>
-                    <ul id="tocify-header-10" class="tocify-header">
+                    <ul id="tocify-header-11" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="wallet-api">
                     <a href="#wallet-api">Wallet API</a>
                 </li>
@@ -247,7 +257,7 @@
                             <li><a href="http://github.com/knuckleswtf/scribe">Documentation powered by Scribe ✍</a></li>
                     </ul>
         <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 15 2025</li>
+        <li>Last updated: January 16 2025</li>
     </ul>
 </div>
 
@@ -265,6 +275,514 @@ You can switch the language used with the tabs at the top right (or from the nav
 
         <h1 id="authenticating-requests">Authenticating requests</h1>
 <p>This API is not authenticated.</p>
+
+        <h1 id="promo-code-api">Promo Code API</h1>
+
+    
+
+            <h2 id="promo-code-api-GETapi-v1-promo-codes">1. Get promo code</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<aside class="notice">Get all promo code</aside>
+
+<span id="example-requests-GETapi-v1-promo-codes">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/yobe-backoffice/api/v1/promo-codes?per_page=10&amp;promo_code=XBMSD22&amp;discount_type=2" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/yobe-backoffice/api/v1/promo-codes"
+);
+
+const params = {
+    "per_page": "10",
+    "promo_code": "XBMSD22",
+    "discount_type": "2",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-promo-codes">
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary>
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+ </code></pre>
+        </details>         <pre>
+
+<code class="language-json">{
+    &quot;message&quot;: &quot;&quot;,
+    &quot;exception&quot;: &quot;Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException&quot;,
+    &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\AbstractRouteCollection.php&quot;,
+    &quot;line&quot;: 43,
+    &quot;trace&quot;: [
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
+            &quot;function&quot;: &quot;handleMatchedRoute&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 673,
+            &quot;function&quot;: &quot;match&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 662,
+            &quot;function&quot;: &quot;findRoute&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 651,
+            &quot;function&quot;: &quot;dispatchToRoute&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;dispatch&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 128,
+            &quot;function&quot;: &quot;Illuminate\\Foundation\\Http\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php&quot;,
+            &quot;line&quot;: 59,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Barryvdh\\Debugbar\\Middleware\\InjectDebugbar&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php&quot;,
+            &quot;line&quot;: 21,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php&quot;,
+            &quot;line&quot;: 31,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php&quot;,
+            &quot;line&quot;: 21,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php&quot;,
+            &quot;line&quot;: 40,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\TrimStrings&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php&quot;,
+            &quot;line&quot;: 27,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php&quot;,
+            &quot;line&quot;: 86,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php&quot;,
+            &quot;line&quot;: 38,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Fruitcake\\Cors\\HandleCors&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\fideloper\\proxy\\src\\TrustProxies.php&quot;,
+            &quot;line&quot;: 57,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Fideloper\\Proxy\\TrustProxies&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 103,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php&quot;,
+            &quot;line&quot;: 142,
+            &quot;function&quot;: &quot;then&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php&quot;,
+            &quot;line&quot;: 111,
+            &quot;function&quot;: &quot;sendRequestThroughRouter&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 299,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 287,
+            &quot;function&quot;: &quot;callLaravelOrLumenRoute&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 89,
+            &quot;function&quot;: &quot;makeApiCall&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 45,
+            &quot;function&quot;: &quot;makeResponseCall&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 35,
+            &quot;function&quot;: &quot;makeResponseCallIfConditionsPass&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php&quot;,
+            &quot;line&quot;: 222,
+            &quot;function&quot;: &quot;__invoke&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php&quot;,
+            &quot;line&quot;: 179,
+            &quot;function&quot;: &quot;iterateThroughStrategies&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Extractor&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php&quot;,
+            &quot;line&quot;: 116,
+            &quot;function&quot;: &quot;fetchResponses&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Extractor&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php&quot;,
+            &quot;line&quot;: 123,
+            &quot;function&quot;: &quot;processRoute&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Extractor&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php&quot;,
+            &quot;line&quot;: 80,
+            &quot;function&quot;: &quot;extractEndpointsInfoFromLaravelApp&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php&quot;,
+            &quot;line&quot;: 56,
+            &quot;function&quot;: &quot;extractEndpointsInfoAndWriteToDisk&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Commands\\GenerateDocumentation.php&quot;,
+            &quot;line&quot;: 55,
+            &quot;function&quot;: &quot;get&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php&quot;,
+            &quot;line&quot;: 36,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Commands\\GenerateDocumentation&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php&quot;,
+            &quot;line&quot;: 40,
+            &quot;function&quot;: &quot;Illuminate\\Container\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\BoundMethod&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php&quot;,
+            &quot;line&quot;: 93,
+            &quot;function&quot;: &quot;unwrapIfClosure&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\Util&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php&quot;,
+            &quot;line&quot;: 37,
+            &quot;function&quot;: &quot;callBoundMethod&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\BoundMethod&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php&quot;,
+            &quot;line&quot;: 653,
+            &quot;function&quot;: &quot;call&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\BoundMethod&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php&quot;,
+            &quot;line&quot;: 136,
+            &quot;function&quot;: &quot;call&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\Container&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Command\\Command.php&quot;,
+            &quot;line&quot;: 298,
+            &quot;function&quot;: &quot;execute&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Console\\Command&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php&quot;,
+            &quot;line&quot;: 121,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Command\\Command&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Application.php&quot;,
+            &quot;line&quot;: 1040,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Console\\Command&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Application.php&quot;,
+            &quot;line&quot;: 301,
+            &quot;function&quot;: &quot;doRunCommand&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Application.php&quot;,
+            &quot;line&quot;: 171,
+            &quot;function&quot;: &quot;doRun&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php&quot;,
+            &quot;line&quot;: 94,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php&quot;,
+            &quot;line&quot;: 129,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\artisan&quot;,
+            &quot;line&quot;: 37,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Console\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        }
+    ]
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-v1-promo-codes" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-promo-codes"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-promo-codes"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-promo-codes" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-promo-codes"></code></pre>
+</span>
+<form id="form-GETapi-v1-promo-codes" data-method="GET"
+      data-path="api/v1/promo-codes"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-promo-codes', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-promo-codes"
+                    onclick="tryItOut('GETapi-v1-promo-codes');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-promo-codes"
+                    onclick="cancelTryOut('GETapi-v1-promo-codes');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-promo-codes" hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/promo-codes</code></b>
+        </p>
+                <p>
+            <label id="auth-GETapi-v1-promo-codes" hidden>Authorization header:
+                <b><code>Bearer </code></b><input type="text"
+                                                                name="Authorization"
+                                                                data-prefix="Bearer "
+                                                                data-endpoint="GETapi-v1-promo-codes"
+                                                                data-component="header"></label>
+        </p>
+                    <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                    <p>
+                <b><code>per_page</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="per_page"
+               data-endpoint="GETapi-v1-promo-codes"
+               value="10"
+               data-component="query" hidden>
+    <br>
+<p>Retrieve how many product in a page, default is 10.</p>
+            </p>
+                    <p>
+                <b><code>promo_code</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="promo_code"
+               data-endpoint="GETapi-v1-promo-codes"
+               value="XBMSD22"
+               data-component="query" hidden>
+    <br>
+<p>The promo code to be filter.</p>
+            </p>
+                    <p>
+                <b><code>discount_type</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="discount_type"
+               data-endpoint="GETapi-v1-promo-codes"
+               value="2"
+               data-component="query" hidden>
+    <br>
+<p>The promo discount type to be filter</p>
+            </p>
+                </form>
 
         <h1 id="cart-api">Cart API</h1>
 
@@ -818,8 +1336,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -828,7 +1346,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -1562,8 +2080,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -1572,7 +2090,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -2125,8 +2643,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -2135,7 +2653,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -2732,8 +3250,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -2742,7 +3260,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -3197,8 +3715,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -3207,7 +3725,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -3662,8 +4180,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -3672,7 +4190,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -4127,8 +4645,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -4137,7 +4655,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -4592,8 +5110,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -4602,7 +5120,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -5076,8 +5594,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -5086,7 +5604,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -6091,8 +6609,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -6101,7 +6619,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -7473,8 +7991,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -7483,7 +8001,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -7922,16 +8440,9 @@ content-type: application/json
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost/yobe-backoffice/api/v1/vouchers?per_page=10" \
+    --get "http://localhost/yobe-backoffice/api/v1/vouchers?per_page=10&amp;promo_code=XBMSD22&amp;user_voucher=1&amp;voucher_type=1&amp;discount_type=2" \
     --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --data "{
-    \"promo_code\": \"XBMSD22\",
-    \"user_voucher\": 1,
-    \"voucher_type\": 1,
-    \"discount_type\": 2
-}"
-</code></pre></div>
+    --header "Accept: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -7941,6 +8452,10 @@ content-type: application/json
 
 const params = {
     "per_page": "10",
+    "promo_code": "XBMSD22",
+    "user_voucher": "1",
+    "voucher_type": "1",
+    "discount_type": "2",
 };
 Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
@@ -7950,17 +8465,9 @@ const headers = {
     "Accept": "application/json",
 };
 
-let body = {
-    "promo_code": "XBMSD22",
-    "user_voucher": 1,
-    "voucher_type": 1,
-    "discount_type": 2
-};
-
 fetch(url, {
     method: "GET",
     headers,
-    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -7985,8 +8492,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -7995,7 +8502,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -8403,50 +8910,49 @@ content-type: application/json
     <br>
 <p>Retrieve how many product in a page, default is 10.</p>
             </p>
-                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <p>
-            <b><code>promo_code</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                    <p>
+                <b><code>promo_code</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
                 <input type="text"
                name="promo_code"
                data-endpoint="GETapi-v1-vouchers"
                value="XBMSD22"
-               data-component="body" hidden>
+               data-component="query" hidden>
     <br>
 <p>The voucher code to be filter.</p>
-        </p>
-                <p>
-            <b><code>user_voucher</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+            </p>
+                    <p>
+                <b><code>user_voucher</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
                 <input type="number"
                name="user_voucher"
                data-endpoint="GETapi-v1-vouchers"
                value="1"
-               data-component="body" hidden>
+               data-component="query" hidden>
     <br>
 <p>Retrieve all user's voucher only</p>
-        </p>
-                <p>
-            <b><code>voucher_type</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+            </p>
+                    <p>
+                <b><code>voucher_type</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
                 <input type="number"
                name="voucher_type"
                data-endpoint="GETapi-v1-vouchers"
                value="1"
-               data-component="body" hidden>
+               data-component="query" hidden>
     <br>
 <p>The voucher type to be filter</p>
-        </p>
-                <p>
-            <b><code>discount_type</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+            </p>
+                    <p>
+                <b><code>discount_type</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
                 <input type="number"
                name="discount_type"
                data-endpoint="GETapi-v1-vouchers"
                value="2"
-               data-component="body" hidden>
+               data-component="query" hidden>
     <br>
 <p>The voucher discount type to be filter</p>
-        </p>
-        </form>
+            </p>
+                </form>
 
-            <h2 id="voucher-api-POSTapi-v1-vouchers-validate">2. Validate vouchers</h2>
+            <h2 id="voucher-api-POSTapi-v1-vouchers-validate">3. Validate vouchers</h2>
 
 <p>
 <small class="badge badge-darkred">requires authentication</small>
@@ -8565,7 +9071,7 @@ fetch(url, {
         </p>
         </form>
 
-            <h2 id="voucher-api-POSTapi-v1-vouchers-claim-voucher">3. Claim Vouchers</h2>
+            <h2 id="voucher-api-POSTapi-v1-vouchers-claim-voucher">4. Claim Vouchers</h2>
 
 <p>
 <small class="badge badge-darkred">requires authentication</small>
@@ -8738,8 +9244,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -8748,7 +9254,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {
@@ -9334,8 +9840,8 @@ content-type: application/json
     &quot;line&quot;: 43,
     &quot;trace&quot;: [
         {
-            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\RouteCollection.php&quot;,
-            &quot;line&quot;: 162,
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php&quot;,
+            &quot;line&quot;: 144,
             &quot;function&quot;: &quot;handleMatchedRoute&quot;,
             &quot;class&quot;: &quot;Illuminate\\Routing\\AbstractRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
@@ -9344,7 +9850,7 @@ content-type: application/json
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
             &quot;line&quot;: 673,
             &quot;function&quot;: &quot;match&quot;,
-            &quot;class&quot;: &quot;Illuminate\\Routing\\RouteCollection&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\CompiledRouteCollection&quot;,
             &quot;type&quot;: &quot;-&gt;&quot;
         },
         {

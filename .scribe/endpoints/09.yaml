@@ -1,12 +1,12 @@
-name: 'Check-in API'
+name: 'Wallet API'
 description: ''
 endpoints:
   -
     httpMethods:
       - GET
-    uri: api/v1/checkin
+    uri: api/v1/wallets/transactions
     metadata:
-      title: '1. Get Check-in History'
+      title: '2. Get wallet transactions'
       description: ''
       authenticated: true
       custom: []
@@ -17,7 +17,7 @@ endpoints:
     queryParameters:
       per_page:
         name: per_page
-        description: 'Retrieve how many product in a page, default is 10.'
+        description: 'Retrieve how many my tranasction in a page, default is 10.'
         required: false
         example: 10
         type: integer
@@ -400,10 +400,12 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: api/v1/checkin
+    uri: api/v1/wallets/topup
     metadata:
-      title: '2. Check-in'
-      description: ''
+      title: '3. Topup'
+      description: |-
+        <strong>payment_method</strong><br>
+        1: Payment Gateway
       authenticated: true
       custom: []
     headers:
@@ -411,15 +413,29 @@ endpoints:
       Accept: application/json
     urlParameters: []
     queryParameters: []
-    bodyParameters: []
+    bodyParameters:
+      topup_amount:
+        name: topup_amount
+        description: 'The topup amount.'
+        required: true
+        example: '10'
+        type: numeric
+        custom: []
+      payment_method:
+        name: payment_method
+        description: 'The payment method.'
+        required: true
+        example: 1
+        type: integer
+        custom: []
     responses: []
     responseFields: []
   -
     httpMethods:
       - GET
-    uri: api/v1/checkin/rewards
+    uri: api/v1/wallets
     metadata:
-      title: '3. Get Check-in Rewards'
+      title: '1. Get wallet'
       description: ''
       authenticated: true
       custom: []

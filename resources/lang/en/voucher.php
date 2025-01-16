@@ -50,9 +50,11 @@ return [
 
     'total_claimable' => 'Total Claimable',
     'voucher_type' => 'Voucher Type',
-    'public_voucher' => 'Public Voucher',
+    'public_voucher' => 'Promo Code',
     'user_specific_voucher' => 'Points Redeem Voucher',
     'login_reward_voucher' => 'Login Reward Voucher',
+    'voucher_unclaimed' => 'Please redeem this voucher before use',
+    'voucher_condition_not_met' => 'Voucher Condition Not Met (LGN)',
     'buy_products' => 'Buy Products',
     'voucher_claimed' => 'Voucher Claimed',
     'claim_per_user' => 'Claim Per User',

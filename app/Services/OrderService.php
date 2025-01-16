@@ -1351,22 +1351,42 @@ class OrderService
                 'errors' => 'voucher',
             ], 422 );
         }
-
-        // check is user able to claim this
-        $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->where('status',10)->first();
-        if(!$userVoucher){
-            $userPoints = $user->wallets->where( 'type', 2 )->first();
-
-            if ( $userPoints->balance < $voucher->points_required ) {
-    
-                return response()->json( [
-                    'required_amount' => $voucher->points_required,
-                    'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
-                    'errors' => 'voucher',
-                ], 422 );
-    
+        
+        // check is has claimed this
+        if( $voucher->type != 1 ){
+            $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->where('status',10)->first();
+            if(!$userVoucher){
+                if( $voucher->type == 2 ){
+                    return response()->json( [
+                        'message_key' => 'voucher_unclaimed',
+                        'message' => __('voucher.voucher_unclaimed'),
+                        'errors' => 'voucher',
+                    ], 422 );
+                }else{
+                    return response()->json( [
+                        'message_key' => 'voucher_unclaimed',
+                        'message' => __('voucher.voucher_condition_not_met'),
+                        'errors' => 'voucher',
+                    ], 422 );
+                }
             }
         }
+        
+        // check is user able to claim this
+        // $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->where('status',10)->first();
+        // if(!$userVoucher){
+        //     $userPoints = $user->wallets->where( 'type', 2 )->first();
+
+        //     if ( $userPoints->balance < $voucher->points_required ) {
+    
+        //         return response()->json( [
+        //             'required_amount' => $voucher->points_required,
+        //             'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+        //             'errors' => 'voucher',
+        //         ], 422 );
+    
+        //     }
+        // }
 
         $cart = Cart::find( $request->cart );
 

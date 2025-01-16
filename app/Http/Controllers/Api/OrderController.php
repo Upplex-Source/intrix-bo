@@ -24,7 +24,7 @@ class OrderController extends Controller
      * @group Order API
      * 
      * @bodyParam cart integer required The ID of the cart. Example: 1
-     * @bodyParam promo_code integer The ID of the promotion to apply. Example: 1
+     * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
      * @bodyParam payment_method integer The payment Method. Example: 1
      * 
      */

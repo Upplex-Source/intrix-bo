@@ -7,157 +7,41 @@ servers:
   -
     url: 'http://localhost/yobe-backoffice'
 paths:
-  /api/v1/carts/add:
-    post:
-      summary: '1. Add to cart'
-      description: ''
-      parameters:
-        -
-          in: header
-          name: Content-Type
-          description: ''
-          example: application/json
-          schema:
-            type: string
-        -
-          in: header
-          name: Accept
-          description: ''
-          example: application/json
-          schema:
-            type: string
-      responses: {  }
-      tags:
-        - 'Cart API'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                vending_machine:
-                  type: integer
-                  description: 'The ID of the vending_machine.'
-                  example: 2
-                items:
-                  type: array
-                  description: 'The list of products with their ingredients.'
-                  example:
-                    -
-                      productId: 1
-                      froyo:
-                        - 1
-                        - 2
-                      syrup:
-                        - 3
-                      topping:
-                        - 4
-                        - 5
-                  items:
-                    type: string
-              required:
-                - vending_machine
-                - items
-  /api/v1/carts/update:
-    post:
-      summary: '3. Update cart'
-      description: '<aside class="notice">session_key or cart id can be used to update the cart</aside>'
-      parameters:
-        -
-          in: header
-          name: Content-Type
-          description: ''
-          example: application/json
-          schema:
-            type: string
-        -
-          in: header
-          name: Accept
-          description: ''
-          example: application/json
-          schema:
-            type: string
-      responses: {  }
-      tags:
-        - 'Cart API'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                vending_machine:
-                  type: integer
-                  description: 'The ID of the vending_machine.'
-                  example: 2
-                items:
-                  type: array
-                  description: 'The list of products with their ingredients.'
-                  example:
-                    -
-                      productId: 1
-                      froyo:
-                        - 1
-                        - 2
-                      syrup:
-                        - 3
-                      topping:
-                        - 4
-                        - 5
-                  items:
-                    type: string
-                session_key:
-                  type: string
-                  description: 'The unique identifier for the cart.'
-                  example: abcd-1234
-                id:
-                  type: integer
-                  description: 'The ID of the cart.'
-                  example: 1
-                cart_item:
-                  type: integer
-                  description: 'The ID of the cart item.'
-                  example: 1
-              required:
-                - vending_machine
-                - items
-  /api/v1/carts:
+  /api/v1/promo-codes:
     get:
-      summary: '2. Retrieve user'
-      description: '<aside class="notice">id and session_key can be used to filter out the cart</aside>'
+      summary: '1. Get promo code'
+      description: '<aside class="notice">Get all promo code</aside>'
       parameters:
-        -
-          in: query
-          name: session_key
-          description: 'The unique identifier for the cart.'
-          example: abcd-1234
-          required: false
-          schema:
-            type: string
-            description: 'The unique identifier for the cart.'
-            example: abcd-1234
-        -
-          in: query
-          name: id
-          description: 'The ID of the cart. .'
-          example: abcd-1234
-          required: false
-          schema:
-            type: string
-            description: 'The ID of the cart. .'
-            example: abcd-1234
         -
           in: query
           name: per_page
-          description: 'Retrieve how many insurance quote in a page, default is 10.'
+          description: 'Retrieve how many product in a page, default is 10.'
           example: 10
           required: false
           schema:
             type: integer
-            description: 'Retrieve how many insurance quote in a page, default is 10.'
+            description: 'Retrieve how many product in a page, default is 10.'
             example: 10
+        -
+          in: query
+          name: promo_code
+          description: 'The promo code to be filter.'
+          example: XBMSD22
+          required: false
+          schema:
+            type: string
+            description: 'The promo code to be filter.'
+            example: XBMSD22
+        -
+          in: query
+          name: discount_type
+          description: 'The promo discount type to be filter'
+          example: 2
+          required: false
+          schema:
+            type: integer
+            description: 'The promo discount type to be filter'
+            example: 2
         -
           in: header
           name: Content-Type
@@ -186,8 +70,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -195,7 +79,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -508,8 +392,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -517,7 +401,817 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 662
+                        function: findRoute
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 651
+                        function: dispatchToRoute
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                        line: 167
+                        function: dispatch
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 128
+                        function: 'Illuminate\Foundation\Http\{closure}'
+                        class: Illuminate\Foundation\Http\Kernel
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\barryvdh\laravel-debugbar\src\Middleware\InjectDebugbar.php'
+                        line: 59
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Barryvdh\Debugbar\Middleware\InjectDebugbar
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                        line: 21
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php'
+                        line: 31
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                        line: 21
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php'
+                        line: 40
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\TrimStrings
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php'
+                        line: 27
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\ValidatePostSize
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php'
+                        line: 86
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\fruitcake\laravel-cors\src\HandleCors.php'
+                        line: 38
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Fruitcake\Cors\HandleCors
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\fideloper\proxy\src\TrustProxies.php'
+                        line: 57
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Fideloper\Proxy\TrustProxies
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 103
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                        line: 142
+                        function: then
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                        line: 111
+                        function: sendRequestThroughRouter
+                        class: Illuminate\Foundation\Http\Kernel
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 299
+                        function: handle
+                        class: Illuminate\Foundation\Http\Kernel
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 287
+                        function: callLaravelOrLumenRoute
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 89
+                        function: makeApiCall
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 45
+                        function: makeResponseCall
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 35
+                        function: makeResponseCallIfConditionsPass
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                        line: 222
+                        function: __invoke
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                        line: 179
+                        function: iterateThroughStrategies
+                        class: Knuckles\Scribe\Extracting\Extractor
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                        line: 116
+                        function: fetchResponses
+                        class: Knuckles\Scribe\Extracting\Extractor
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                        line: 123
+                        function: processRoute
+                        class: Knuckles\Scribe\Extracting\Extractor
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                        line: 80
+                        function: extractEndpointsInfoFromLaravelApp
+                        class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                        line: 56
+                        function: extractEndpointsInfoAndWriteToDisk
+                        class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Commands\GenerateDocumentation.php'
+                        line: 55
+                        function: get
+                        class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                        line: 36
+                        function: handle
+                        class: Knuckles\Scribe\Commands\GenerateDocumentation
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\Util.php'
+                        line: 40
+                        function: 'Illuminate\Container\{closure}'
+                        class: Illuminate\Container\BoundMethod
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                        line: 93
+                        function: unwrapIfClosure
+                        class: Illuminate\Container\Util
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                        line: 37
+                        function: callBoundMethod
+                        class: Illuminate\Container\BoundMethod
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\Container.php'
+                        line: 653
+                        function: call
+                        class: Illuminate\Container\BoundMethod
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                        line: 136
+                        function: call
+                        class: Illuminate\Container\Container
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Command\Command.php'
+                        line: 298
+                        function: execute
+                        class: Illuminate\Console\Command
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                        line: 121
+                        function: run
+                        class: Symfony\Component\Console\Command\Command
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Application.php'
+                        line: 1040
+                        function: run
+                        class: Illuminate\Console\Command
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Application.php'
+                        line: 301
+                        function: doRunCommand
+                        class: Symfony\Component\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Application.php'
+                        line: 171
+                        function: doRun
+                        class: Symfony\Component\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Console\Application.php'
+                        line: 94
+                        function: run
+                        class: Symfony\Component\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php'
+                        line: 129
+                        function: run
+                        class: Illuminate\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\artisan'
+                        line: 37
+                        function: handle
+                        class: Illuminate\Foundation\Console\Kernel
+                        type: '->'
+                    items:
+                      type: object
+      tags:
+        - 'Promo Code API'
+  /api/v1/carts/add:
+    post:
+      summary: '1. Add to cart'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'Cart API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vending_machine:
+                  type: integer
+                  description: 'The ID of the vending_machine.'
+                  example: 2
+                items:
+                  type: array
+                  description: 'The list of products with their ingredients.'
+                  example:
+                    -
+                      productId: 1
+                      froyo:
+                        - 1
+                        - 2
+                      syrup:
+                        - 3
+                      topping:
+                        - 4
+                        - 5
+                  items:
+                    type: string
+              required:
+                - vending_machine
+                - items
+  /api/v1/carts/update:
+    post:
+      summary: '3. Update cart'
+      description: '<aside class="notice">session_key or cart id can be used to update the cart</aside>'
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'Cart API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                vending_machine:
+                  type: integer
+                  description: 'The ID of the vending_machine.'
+                  example: 2
+                items:
+                  type: array
+                  description: 'The list of products with their ingredients.'
+                  example:
+                    -
+                      productId: 1
+                      froyo:
+                        - 1
+                        - 2
+                      syrup:
+                        - 3
+                      topping:
+                        - 4
+                        - 5
+                  items:
+                    type: string
+                session_key:
+                  type: string
+                  description: 'The unique identifier for the cart.'
+                  example: abcd-1234
+                id:
+                  type: integer
+                  description: 'The ID of the cart.'
+                  example: 1
+                cart_item:
+                  type: integer
+                  description: 'The ID of the cart item.'
+                  example: 1
+              required:
+                - vending_machine
+                - items
+  /api/v1/carts:
+    get:
+      summary: '2. Retrieve user'
+      description: '<aside class="notice">id and session_key can be used to filter out the cart</aside>'
+      parameters:
+        -
+          in: query
+          name: session_key
+          description: 'The unique identifier for the cart.'
+          example: abcd-1234
+          required: false
+          schema:
+            type: string
+            description: 'The unique identifier for the cart.'
+            example: abcd-1234
+        -
+          in: query
+          name: id
+          description: 'The ID of the cart. .'
+          example: abcd-1234
+          required: false
+          schema:
+            type: string
+            description: 'The ID of the cart. .'
+            example: abcd-1234
+        -
+          in: query
+          name: per_page
+          description: 'Retrieve how many insurance quote in a page, default is 10.'
+          example: 10
+          required: false
+          schema:
+            type: integer
+            description: 'Retrieve how many insurance quote in a page, default is 10.'
+            example: 10
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        404:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                  exception: Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+                  file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\AbstractRouteCollection.php'
+                  line: 43
+                  trace:
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
+                      function: handleMatchedRoute
+                      class: Illuminate\Routing\AbstractRouteCollection
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 673
+                      function: match
+                      class: Illuminate\Routing\CompiledRouteCollection
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 662
+                      function: findRoute
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 651
+                      function: dispatchToRoute
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                      line: 167
+                      function: dispatch
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 128
+                      function: 'Illuminate\Foundation\Http\{closure}'
+                      class: Illuminate\Foundation\Http\Kernel
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\barryvdh\laravel-debugbar\src\Middleware\InjectDebugbar.php'
+                      line: 59
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Barryvdh\Debugbar\Middleware\InjectDebugbar
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                      line: 21
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php'
+                      line: 31
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                      line: 21
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php'
+                      line: 40
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\TrimStrings
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php'
+                      line: 27
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\ValidatePostSize
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php'
+                      line: 86
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\fruitcake\laravel-cors\src\HandleCors.php'
+                      line: 38
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Fruitcake\Cors\HandleCors
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\fideloper\proxy\src\TrustProxies.php'
+                      line: 57
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Fideloper\Proxy\TrustProxies
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 103
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                      line: 142
+                      function: then
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                      line: 111
+                      function: sendRequestThroughRouter
+                      class: Illuminate\Foundation\Http\Kernel
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 299
+                      function: handle
+                      class: Illuminate\Foundation\Http\Kernel
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 287
+                      function: callLaravelOrLumenRoute
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 89
+                      function: makeApiCall
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 45
+                      function: makeResponseCall
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 35
+                      function: makeResponseCallIfConditionsPass
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                      line: 222
+                      function: __invoke
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                      line: 179
+                      function: iterateThroughStrategies
+                      class: Knuckles\Scribe\Extracting\Extractor
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                      line: 116
+                      function: fetchResponses
+                      class: Knuckles\Scribe\Extracting\Extractor
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                      line: 123
+                      function: processRoute
+                      class: Knuckles\Scribe\Extracting\Extractor
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                      line: 80
+                      function: extractEndpointsInfoFromLaravelApp
+                      class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                      line: 56
+                      function: extractEndpointsInfoAndWriteToDisk
+                      class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\knuckleswtf\scribe\src\Commands\GenerateDocumentation.php'
+                      line: 55
+                      function: get
+                      class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                      line: 36
+                      function: handle
+                      class: Knuckles\Scribe\Commands\GenerateDocumentation
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\Util.php'
+                      line: 40
+                      function: 'Illuminate\Container\{closure}'
+                      class: Illuminate\Container\BoundMethod
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                      line: 93
+                      function: unwrapIfClosure
+                      class: Illuminate\Container\Util
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                      line: 37
+                      function: callBoundMethod
+                      class: Illuminate\Container\BoundMethod
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Container\Container.php'
+                      line: 653
+                      function: call
+                      class: Illuminate\Container\BoundMethod
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                      line: 136
+                      function: call
+                      class: Illuminate\Container\Container
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Command\Command.php'
+                      line: 298
+                      function: execute
+                      class: Illuminate\Console\Command
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                      line: 121
+                      function: run
+                      class: Symfony\Component\Console\Command\Command
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Application.php'
+                      line: 1040
+                      function: run
+                      class: Illuminate\Console\Command
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Application.php'
+                      line: 301
+                      function: doRunCommand
+                      class: Symfony\Component\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\symfony\console\Application.php'
+                      line: 171
+                      function: doRun
+                      class: Symfony\Component\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Console\Application.php'
+                      line: 94
+                      function: run
+                      class: Symfony\Component\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php'
+                      line: 129
+                      function: run
+                      class: Illuminate\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\yobe-backoffice\artisan'
+                      line: 37
+                      function: handle
+                      class: Illuminate\Foundation\Console\Kernel
+                      type: '->'
+                properties:
+                  message:
+                    type: string
+                    example: ''
+                  exception:
+                    type: string
+                    example: Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+                  file:
+                    type: string
+                    example: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\AbstractRouteCollection.php'
+                  line:
+                    type: integer
+                    example: 43
+                  trace:
+                    type: array
+                    example:
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
+                        function: handleMatchedRoute
+                        class: Illuminate\Routing\AbstractRouteCollection
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 673
+                        function: match
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -934,8 +1628,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -943,7 +1637,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -1256,8 +1950,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -1265,7 +1959,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -1619,8 +2313,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -1628,7 +2322,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -1941,8 +2635,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -1950,7 +2644,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -2333,8 +3027,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -2342,7 +3036,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -2655,8 +3349,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -2664,7 +3358,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -2997,8 +3691,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -3006,7 +3700,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -3319,8 +4013,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -3328,7 +4022,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -3661,8 +4355,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -3670,7 +4364,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -3983,8 +4677,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -3992,7 +4686,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -4325,8 +5019,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -4334,7 +5028,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -4647,8 +5341,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -4656,7 +5350,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -4989,8 +5683,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -4998,7 +5692,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -5311,8 +6005,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -5320,7 +6014,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -5693,8 +6387,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -5702,7 +6396,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -6015,8 +6709,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -6024,7 +6718,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -6491,8 +7185,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -6500,7 +7194,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -6813,8 +7507,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -6822,7 +7516,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -7530,8 +8224,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -7539,7 +8233,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -7852,8 +8546,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -7861,7 +8555,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -8177,6 +8871,46 @@ paths:
             description: 'Retrieve how many product in a page, default is 10.'
             example: 10
         -
+          in: query
+          name: promo_code
+          description: 'The voucher code to be filter.'
+          example: XBMSD22
+          required: false
+          schema:
+            type: string
+            description: 'The voucher code to be filter.'
+            example: XBMSD22
+        -
+          in: query
+          name: user_voucher
+          description: 'Retrieve all user''s voucher only'
+          example: 1
+          required: false
+          schema:
+            type: integer
+            description: 'Retrieve all user''s voucher only'
+            example: 1
+        -
+          in: query
+          name: voucher_type
+          description: 'The voucher type to be filter'
+          example: 1
+          required: false
+          schema:
+            type: integer
+            description: 'The voucher type to be filter'
+            example: 1
+        -
+          in: query
+          name: discount_type
+          description: 'The voucher discount type to be filter'
+          example: 2
+          required: false
+          schema:
+            type: integer
+            description: 'The voucher discount type to be filter'
+            example: 2
+        -
           in: header
           name: Content-Type
           description: ''
@@ -8204,8 +8938,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -8213,7 +8947,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -8526,8 +9260,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -8535,7 +9269,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -8835,32 +9569,9 @@ paths:
                       type: object
       tags:
         - 'Voucher API'
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                promo_code:
-                  type: string
-                  description: 'The voucher code to be filter.'
-                  example: XBMSD22
-                user_voucher:
-                  type: integer
-                  description: 'Retrieve all user''s voucher only'
-                  example: 1
-                voucher_type:
-                  type: integer
-                  description: 'The voucher type to be filter'
-                  example: 1
-                discount_type:
-                  type: integer
-                  description: 'The voucher discount type to be filter'
-                  example: 2
   /api/v1/vouchers/validate:
     post:
-      summary: '2. Validate vouchers'
+      summary: '3. Validate vouchers'
       description: ''
       parameters:
         -
@@ -8899,7 +9610,7 @@ paths:
                 - cart
   /api/v1/vouchers/claim-voucher:
     post:
-      summary: '3. Claim Vouchers'
+      summary: '4. Claim Vouchers'
       description: ''
       parameters:
         -
@@ -8973,8 +9684,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -8982,7 +9693,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -9295,8 +10006,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -9304,7 +10015,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -9677,8 +10388,8 @@ paths:
                   line: 43
                   trace:
                     -
-                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                      line: 162
+                      file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                      line: 144
                       function: handleMatchedRoute
                       class: Illuminate\Routing\AbstractRouteCollection
                       type: '->'
@@ -9686,7 +10397,7 @@ paths:
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                       line: 673
                       function: match
-                      class: Illuminate\Routing\RouteCollection
+                      class: Illuminate\Routing\CompiledRouteCollection
                       type: '->'
                     -
                       file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -9999,8 +10710,8 @@ paths:
                     type: array
                     example:
                       -
-                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\RouteCollection.php'
-                        line: 162
+                        file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\CompiledRouteCollection.php'
+                        line: 144
                         function: handleMatchedRoute
                         class: Illuminate\Routing\AbstractRouteCollection
                         type: '->'
@@ -10008,7 +10719,7 @@ paths:
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
                         line: 673
                         function: match
-                        class: Illuminate\Routing\RouteCollection
+                        class: Illuminate\Routing\CompiledRouteCollection
                         type: '->'
                       -
                         file: 'C:\xampp\htdocs\yobe-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
@@ -10309,6 +11020,9 @@ paths:
       tags:
         - 'Wallet API'
 tags:
+  -
+    name: 'Promo Code API'
+    description: ''
   -
     name: 'Cart API'
     description: ''

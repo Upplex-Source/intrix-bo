@@ -101,6 +101,10 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::post( '/validate', [ VoucherController::class, 'validateVoucher' ] );
     } );
 
+    Route::prefix( 'promo-codes' )->group( function() {
+        Route::get( '/', [ VoucherController::class, 'getPromoCode' ] );
+    } );
+
     Route::prefix( 'checkin' )->group( function() {
         Route::get( '/', [ CheckinController::class, 'getCheckinHistory' ] );
         Route::post( '', [ CheckinController::class, 'checkin' ] );

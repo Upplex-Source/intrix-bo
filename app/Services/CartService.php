@@ -14,6 +14,7 @@ use App\Models\{
     Syrup,
     Topping,
     Product,
+    Voucher,
 };
 
 use App\Services\{
@@ -43,7 +44,7 @@ class CartService {
     
         // Start by querying carts for the authenticated user
         $query = Cart::where('user_id', $user->id)
-            ->with(['cartMetas', 'vendingMachine'])
+            ->with(['cartMetas', 'vendingMachine', 'voucher'])
             ->where('status', 10)
             ->orderBy('created_at', 'DESC');
     
@@ -63,6 +64,11 @@ class CartService {
         // Modify each cart and its related data
         $userCarts->getCollection()->transform(function ($cart) {
             // Make vending machine attributes hidden and add additional attributes
+            if($cart->voucher){
+                $cart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
+                ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
+            }
+
             $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
                 ->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)
                 ->setAttribute('image_path', $cart->vendingMachine->image_path);
@@ -100,6 +106,7 @@ class CartService {
         $validator = Validator::make($request->all(), [
             'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
             'items' => ['nullable', 'array'],
+            '' => ['nullable', 'array'],
             'items.*.product' => ['required', 'exists:products,id'],
             'items.*.froyo' => ['nullable', 'array'],
             'items.*.froyo.*' => ['exists:froyos,id'], // Validate each froyo ID
@@ -107,6 +114,7 @@ class CartService {
             'items.*.syrup.*' => ['exists:syrups,id'], // Validate each syrup ID
             'items.*.topping' => ['nullable', 'array'],
             'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
+            'promo_code' => ['nullable', 'exists:vouchers,promo_code'],
         ]);
 
         if (isset($request->items)) {
@@ -174,6 +182,7 @@ class CartService {
         try {
         
             $orderPrice = 0;
+            $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
 
             $cart = Cart::create( [
                 'user_id' => auth()->user()->id,
@@ -185,10 +194,10 @@ class CartService {
                 'discount' => 0,
                 'status' => 10,
                 'session_key' => Helper::generateCartSessionKey(),
+                'voucher_id' => $voucher ? $voucher->id :null,
             ] );
 
             if(isset($request->items)){
-
                 foreach ( $request->items as $product ) {
 
                     $froyos = $product['froyo'];
@@ -307,6 +316,7 @@ class CartService {
             'items.*.topping' => ['nullable', 'array'],
             'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
             'cart_item' => ['nullable', 'exists:cart_metas,id'],
+            'promo_code' => ['nullable', 'exists:vouchers,promo_code'],
         ] );
 
         if (isset($request->items)) {
@@ -400,6 +410,10 @@ class CartService {
             $orderPrice = 0;
 
             $updateCart->vending_machine_id = $request->vending_machine;
+
+            $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
+
+            $updateCart->voucher_id = $voucher ? $voucher->id :null;
             
             if ($request->has('cart_item')) {
                 $cartMeta = CartMeta::find($request->cart_item);
@@ -538,6 +552,8 @@ class CartService {
             }
     
             $updateCart->total_price = $orderPrice;
+            $updateCart->save();
+            DB::commit();
 
         } catch ( \Throwable $th ) {
 

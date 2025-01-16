@@ -35,10 +35,10 @@ class VoucherController extends Controller
      * @group Voucher API
      * 
      * @queryParam per_page integer Retrieve how many product in a page, default is 10. Example: 10
-     * @bodyParam promo_code string The voucher code to be filter. Example: XBMSD22
-     * @bodyParam user_voucher integer Retrieve all user's voucher only Example: 1
-     * @bodyParam voucher_type integer The voucher type to be filter Example: 1
-     * @bodyParam discount_type integer The voucher discount type to be filter Example: 2
+     * @queryParam promo_code string The voucher code to be filter. Example: XBMSD22
+     * @queryParam user_voucher integer Retrieve all user's voucher only Example: 1
+     * @queryParam voucher_type integer The voucher type to be filter Example: 1
+     * @queryParam discount_type integer The voucher discount type to be filter Example: 2
      * 
      */
     public function getVouchers( Request $request ) {
@@ -47,7 +47,27 @@ class VoucherController extends Controller
     }
 
     /**
-     * 2. Validate vouchers
+     * 1. Get promo code 
+     * 
+     * <aside class="notice">Get all promo code</aside>
+     * 
+     * @authenticated
+     * 
+     * @group Promo Code API
+     * 
+     * @queryParam per_page integer Retrieve how many product in a page, default is 10. Example: 10
+     * @queryParam promo_code string The promo code to be filter. Example: XBMSD22
+     * @queryParam discount_type integer The promo discount type to be filter Example: 2
+     * 
+     */
+    public function getPromoCode( Request $request ) {
+
+        $request->merge(['voucher_type' => 1, 'user_voucher' => null]);
+        return VoucherService::getVouchers( $request );
+    }
+
+    /**
+     * 3. Validate vouchers
      * 
      * @authenticated
      * 
@@ -63,7 +83,7 @@ class VoucherController extends Controller
     }
 
     /**
-     * 3. Claim Vouchers
+     * 4. Claim Vouchers
      * 
      * @authenticated
      * 

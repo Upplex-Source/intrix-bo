@@ -28,6 +28,7 @@ class CartController extends Controller
      * @bodyParam items.*.syrup.* integer A syrup ID. Example: 3
      * @bodyParam items.*.topping array An array of topping IDs. Pass an empty array if no topping is selected. Example: [4, 5]
      * @bodyParam items.*.topping.* integer A topping ID. Example: 4
+     * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
      * 
      */
     public function addToCart( Request $request ) {
@@ -36,7 +37,7 @@ class CartController extends Controller
     }
 
     /**
-     * 2. Retrieve user 
+     * 2. Retrieve cart 
      * 
      * <aside class="notice">id and session_key can be used to filter out the cart</aside>
      * 

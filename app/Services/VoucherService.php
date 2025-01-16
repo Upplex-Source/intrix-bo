@@ -855,6 +855,7 @@ class VoucherService
                     ->orWhere('expired_date', '>=', Carbon::now());
                 });
         })
+        ->where( 'type', 2 )
         ->where( 'status', 10 )->first();
 
         if ( !$voucher ) {
