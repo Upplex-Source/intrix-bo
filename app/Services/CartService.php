@@ -176,6 +176,27 @@ class CartService {
             return response()->json(['errors' => $formattedErrors], 422);
         }
         
+        // check voucher type
+        
+        if ( $request->promo_code ) {
+
+            $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+
+            if( !$voucher ){
+                return response()->json( [
+                    'message' => 'Voucher not found',
+                    'message_key' => 'voucher_not_found',
+                ] );
+            }
+
+            if( $voucher->type == 1 ){
+                return response()->json( [
+                    'message' => 'Voucher Not applicable to cart',
+                    'message_key' => 'voucher_not_applicable_to_cart',
+                ] );
+            }
+        }
+        
         $validator->validate();
 
         DB::beginTransaction();
