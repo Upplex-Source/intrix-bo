@@ -36,6 +36,19 @@ class Order extends Model
         'payment_url',
     ];
 
+    public function getOrderStatusLabelAttribute()
+    {
+        $discountTypes = [
+            '1' => __( 'datatables.order_placed' ),
+            '2' => __( 'datatables.order_pending_payment' ),
+            '3' => __( 'datatables.order_paid' ),
+            '10' => __( 'datatables.order_completed' ),
+            '20' => __( 'datatables.order_canceled' ),
+        ];
+
+        return $discountTypes[$this->attributes['status']] ?? null;
+    }
+
     public function voucher() {
         return $this->belongsTo( Voucher::class, 'voucher_id' );
     }

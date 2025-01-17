@@ -56,10 +56,6 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::post( 'delete-verification', [ UserController::class, 'deleteVerification' ] );
         Route::post( 'delete-confirm', [ UserController::class, 'deleteConfirm' ] );
         Route::post( '/update', [ UserController::class, 'updateUserApi' ] );
-
-        if( 1 == 2 ){
-            Route::get( '/update-password', [ UserController::class, 'updateUserPassword' ] );
-        }
     } );
     
     Route::prefix( 'wallets' )->group( function() {

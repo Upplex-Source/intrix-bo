@@ -63,7 +63,7 @@ class WalletService
         $filter = false;
 
         if ( !empty( $request->user ) ) {
-            $model->where( 'users.phone_number', 'LIKE', "%$request->phone_number%" );
+            $model->where( 'users.phone_number', 'LIKE', "%$request->user%" );
             $filter = true;
         }
 

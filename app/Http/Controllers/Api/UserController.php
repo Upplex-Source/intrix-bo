@@ -123,8 +123,9 @@ class UserController extends Controller {
      * 
      * @authenticated
      * 
-     * @bodyParam username string required The fullname to update. Example: John Wick
-     * @bodyParam date_of_birth string required The date of birth to update. Example: 2022-01-01
+     * @bodyParam username string The username to update. Example: John
+     * @bodyParam email string The email to update. Example: john@email.com
+     * @bodyParam date_of_birth string The date of birth to update. Example: 2022-01-01
      * 
      */
     public function updateUserApi( Request $request ) {
@@ -148,22 +149,6 @@ class UserController extends Controller {
     public function updateUserPassword( Request $request ) {
 
         return UserService::updateUserPassword( $request );
-    }
-
-    /**
-     * 8. Check Phone Number (Pre-request Otp)
-     * @sort 8
-     * 
-     * Validate a phone number
-     * 
-     * @group User API
-     * 
-     * @bodyParam phone_number string required The phone_number for login. Example: 0123982334
-     * 
-     */
-    public function checkPhoneNumber( Request $request ) {
-
-        return UserService::checkPhoneNumber( $request );
     }
 
     /**

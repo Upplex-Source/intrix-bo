@@ -190,6 +190,15 @@ class OrderService
             $filter = true;
         }
 
+        if ( !empty( $request->user ) ) {
+            $model->where( function ( $query ) use ( $request ) {
+                $query->whereHas( 'user', function ( $q ) use ( $request ) {
+                    $q->where( 'phone_number', 'LIKE', '%' . $request->user . '%' );
+                });
+            });
+            $filter = true;
+        }
+
         if ( !empty( $request->status ) ) {
             $model->where( 'orders.status', $request->status );
             $filter = true;
@@ -813,6 +822,8 @@ class OrderService
     
         // Modify each order and its related data
         $userOrders->getCollection()->transform(function ($order) {
+            $order->append( ['order_status_label'] );
+
             $order->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
                 ->setAttribute('operational_hour', $order->vendingMachine->operational_hour)
                 ->setAttribute('image_path', $order->vendingMachine->image_path);
@@ -830,7 +841,7 @@ class OrderService
             });
     
             $order->orderMetas = $orderMetas;
-            $order->qr_code = $order->status != 20 ? self::generateQrCode($order) : null;
+            $order->qr_code = $order->status != 20 && in_array($order->status, [3, 10]) ? self::generateQrCode($order) : null;
             return $order;
         });
     

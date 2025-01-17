@@ -110,7 +110,7 @@ $columns = [
                     targets: parseInt( '{{ Helper::columnIndex( $columns, "user" ) }}' ),
                     orderable: false,
                     render: function( data, type, row, meta ) {
-                        return data;
+                        return data.username ?? '-' + '<br>' + '+60' + data;
                     },
                 },
                 {

@@ -669,7 +669,8 @@ class VoucherService
             });
 
         }else {
-            $vouchers = UserVoucher::with( ['voucher'] )->where('status', 10)
+            $vouchers = UserVoucher::with( ['voucher'] )
+            ->where( 'user_id', auth()->user()->id )
             ->where(function ( $query) {
                 $query->where(function ( $query) {
                     $query->whereNull('expired_date');
@@ -678,7 +679,7 @@ class VoucherService
                     $query->where('expired_date', '>=', date('Y-m-d 00:00:00'));
                 });
             })
-            ->orderBy( 'created_at', 'DESC' );
+            ->orderBy( 'total_left', 'DESC' );
 
             if (!empty($request->promo_code)) {
                 $voucher->whereHas('voucher', function ($query) use ($request) {
@@ -688,12 +689,12 @@ class VoucherService
 
             if (!empty($request->voucher_id)) {
                 $vouchers->where( 'id', 'LIKE', '%' . $request->voucher_id . '%' );
-
             }
 
             $vouchers = $vouchers->get();
 
             $vouchers = $vouchers->map(function ($voucher){
+                $voucher->append( ['voucher_status_label'] );
                 $voucher->voucher->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
                 $voucher->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] );
                 return $voucher;

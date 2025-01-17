@@ -290,6 +290,11 @@ class CartService {
             ];
         });
 
+        if($cart->voucher){
+            $cart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
+            ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
+        }
+
         return response()->json( [
             'message' => '',
             'message_key' => 'add_to_cart_success',
@@ -297,7 +302,8 @@ class CartService {
             'cart_id' => $cart->id,
             'vending_machine' => $cart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $cart->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($cart->total_price, 2, true),
-            'cart_metas' => $cartMetas
+            'cart_metas' => $cartMetas,
+            'voucher' => $cart->voucher,
         ] );
     }
 

@@ -998,12 +998,14 @@ class UserService
 
         $validator = Validator::make( $request->all(), [
             'username' => [ 'nullable', 'unique:users,username,' . auth()->user()->id, ],
-            'date_of_birth' => 'nullable',
+            'email' => [ 'nullable', 'unique:users,email,' . auth()->user()->id, ],
+            'date_of_birth' => ['nullable', 'date'],
         ] );
 
         $attributeName = [
             'username' => __( 'user.username' ),
             'date_of_birth' => __( 'user.date_of_birth' ),
+            'email' => __( 'user.email' ),
         ];
 
         foreach ( $attributeName as $key => $aName ) {
@@ -1015,11 +1017,13 @@ class UserService
         $updateUser = User::find( auth()->user()->id );
         $updateUser->username = $request->username;
         $updateUser->date_of_birth = $request->date_of_birth;
+        $updateUser->email = $request->email;
         $updateUser->save();
 
         return response()->json( [
             'message' => __( 'user.user_updated' ),
             'message_key' => 'update_user_success',
+            'data' => $updateUser
         ] );
     }
 

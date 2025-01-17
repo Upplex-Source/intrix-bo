@@ -29,6 +29,10 @@ class UserVoucher extends Model
         'secret_code',
     ];
 
+    protected $hidden = [
+        'secret_code'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -55,6 +59,18 @@ class UserVoucher extends Model
         ];
 
         return $rewardTypes[$this->attributes['redeem_from']] ?? null;
+    }
+
+    public function getVoucherStatusLabelAttribute()
+    {
+
+        $statuses = [
+            10 => __('voucher.active'),
+            20 => __('voucher.used'),
+            21 => __('voucher.expired'),
+        ];
+
+        return $statuses[$this->attributes['status']] ?? null;
     }
 
     public $translatable = [ 'title', 'description' ];

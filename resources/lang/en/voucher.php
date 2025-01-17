@@ -41,6 +41,9 @@ return [
     'discount' => 'Discount',
     'get_quantity' => 'Get',
     'get_product' => 'Get',
+    'used' => 'Used',
+    'expired' => 'Expired',
+    'active' => 'Active',
 
     'min_spend_of_x' => 'Minimum spend of RM:title not reach',
     'min_quantity_of_x' => 'Minimum quanitity of :title required',
