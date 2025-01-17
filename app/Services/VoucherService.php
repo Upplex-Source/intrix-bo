@@ -861,7 +861,8 @@ class VoucherService
 
         if ( !$voucher ) {
             return response()->json( [
-                'message' => 'voucher.voucher_not_available',
+                'message_key' => 'voucher_not_available',
+                'message' => __('voucher.voucher_not_available'),
                 'errors' => 'voucher',
             ], 422 );
         }
@@ -870,6 +871,7 @@ class VoucherService
 
         if ( $voucherUsages->count() > $voucher->usable_amount ) {
             return response()->json( [
+                'message_key' => 'voucher_fully_claimed',
                 'message' => __('voucher.voucher_fully_claimed'),
                 'errors' => 'voucher',
             ], 422 );
@@ -881,6 +883,7 @@ class VoucherService
 
         if ( $voucherUserClaimed >= $voucher->claim_per_user ) {
             return response()->json( [
+                'message_key' => 'voucher_you_have_maximum_claimed',
                 'message' => __('voucher.voucher_you_have_maximum_claimed'),
                 'errors' => 'voucher',
             ], 422 );
@@ -905,7 +908,7 @@ class VoucherService
             'transaction_type' => 11,
         ] );
 
-        UserVoucher::create([
+        $userVoucher = UserVoucher::create([
             'user_id' => $user->id,
             'voucher_id' => $voucher->id,
             'expired_date' => Carbon::now()->addDays($voucher->validity_days),
@@ -920,7 +923,9 @@ class VoucherService
         $voucher->save();
     
         return response()->json( [
+            'message_key' => __('voucher.voucher_claimed'),
             'message' => 'voucher.voucher_claimed',
+            'data' => $userVoucher
         ] );
     }
 
