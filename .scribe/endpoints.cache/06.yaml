@@ -630,30 +630,6 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: api/v1/users/check-phone-number
-    metadata:
-      title: '8. Check Phone Number (Pre-request Otp)'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      phone_number:
-        name: phone_number
-        description: 'The phone_number for login.'
-        required: true
-        example: '0123982334'
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
     uri: api/v1/users/delete-verification
     metadata:
       title: '11. Delete Verification'
@@ -716,16 +692,61 @@ endpoints:
     bodyParameters:
       username:
         name: username
-        description: 'The fullname to update.'
-        required: true
-        example: 'John Wick'
+        description: 'The username to update.'
+        required: false
+        example: John
+        type: string
+        custom: []
+      email:
+        name: email
+        description: 'The email to update.'
+        required: false
+        example: john@email.com
         type: string
         custom: []
       date_of_birth:
         name: date_of_birth
         description: 'The date of birth to update.'
-        required: true
+        required: false
         example: '2022-01-01'
+        type: string
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/users/update-password
+    metadata:
+      title: '7. Update user password'
+      description: ''
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      old_password:
+        name: old_password
+        description: 'The old password of current user.'
+        required: true
+        example: 1234abcd
+        type: string
+        custom: []
+      password:
+        name: password
+        description: 'The new password to change.'
+        required: true
+        example: abcd1234
+        type: string
+        custom: []
+      password_confirmation:
+        name: password_confirmation
+        description: 'The confirm password of new password to change.'
+        required: true
+        example: abcd1234
         type: string
         custom: []
     responses: []

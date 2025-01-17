@@ -453,9 +453,9 @@ endpoints:
         custom: []
       promo_code:
         name: promo_code
-        description: 'The ID of the promotion to apply.'
+        description: 'The ID of the promotion/voucher to apply.'
         required: false
-        example: 1
+        example: 0
         type: integer
         custom: []
       payment_method:
