@@ -115,7 +115,17 @@ class CartService {
             'items.*.syrup.*' => ['exists:syrups,id'], // Validate each syrup ID
             'items.*.topping' => ['nullable', 'array'],
             'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
-            'promo_code' => ['nullable', 'exists:vouchers,promo_code'],
+             'promo_code' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    $existsInPromoCode = \DB::table('vouchers')->where('promo_code', $value)->exists();
+                    $existsInId = \DB::table('vouchers')->where('id', $value)->exists();
+
+                    if (!$existsInPromoCode && !$existsInId) {
+                        $fail(__('The :attribute must exist in either the promo_code or id column.'));
+                    }
+                },
+            ],
         ]);
 
         if (isset($request->items)) {

@@ -858,7 +858,17 @@ class OrderService
 
         $validator = Validator::make($request->all(), [
             'cart' => ['required', 'exists:carts,id'],
-            'promo_code' => ['nullable', 'exists:vouchers,promo_code'],
+             'promo_code' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    $existsInPromoCode = \DB::table('vouchers')->where('promo_code', $value)->exists();
+                    $existsInId = \DB::table('vouchers')->where('id', $value)->exists();
+
+                    if (!$existsInPromoCode && !$existsInId) {
+                        $fail(__('The :attribute must exist in either the promo_code or id column.'));
+                    }
+                },
+            ],
             'payment_method' => ['nullable', 'in:1,2'],
         ]);
 
