@@ -739,7 +739,8 @@ class VoucherService
         $validator->stopOnFirstFailure( true )->validate();
 
         $voucher = Voucher::where('status', 10)
-            ->where('promo_code', $request->promo_code)
+            ->where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)
             ->where(function ( $query) {
                 $query->where(function ( $q) {
                     $q->whereNull('start_date')

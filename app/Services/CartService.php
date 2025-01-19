@@ -185,7 +185,8 @@ class CartService {
         // check voucher type
         if ( $request->promo_code ) {
 
-            $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+            $voucher = Voucher::where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)->first();
 
             if( !$voucher ){
                 return response()->json( [
@@ -276,7 +277,8 @@ class CartService {
             $cart->load('cartMetas');
 
             if( $request->promo_code ){
-                $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+                $voucher = Voucher::where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)->first();
 
                 if ( $voucher->discount_type == 3 ) {
 
@@ -377,7 +379,17 @@ class CartService {
             'items.*.topping' => ['nullable', 'array'],
             'items.*.topping.*' => ['exists:toppings,id'], // Validate each topping ID
             'cart_item' => ['nullable', 'exists:cart_metas,id'],
-            'promo_code' => ['nullable', 'exists:vouchers,promo_code'],
+            'promo_code' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    $existsInPromoCode = \DB::table('vouchers')->where('promo_code', $value)->exists();
+                    $existsInId = \DB::table('vouchers')->where('id', $value)->exists();
+
+                    if (!$existsInPromoCode && !$existsInId) {
+                        $fail(__('The :attribute must exist in either the promo_code or id column.'));
+                    }
+                },
+            ],
         ] );
 
         if (isset($request->items)) {
@@ -447,7 +459,8 @@ class CartService {
         // check voucher type
         if ( $request->promo_code ) {
 
-            $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+            $voucher = Voucher::where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)->first();
 
             if( !$voucher ){
                 return response()->json( [
@@ -588,7 +601,8 @@ class CartService {
                     DB::commit();
 
                     if( $request->promo_code ){
-                        $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+                        $voucher = Voucher::where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)->first();
 
                         if ( $voucher->discount_type == 3 ) {
         
@@ -681,7 +695,8 @@ class CartService {
                 $updateCart->load( ['cartMetas'] );
 
                 if( $request->promo_code ){
-                    $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+                    $voucher = Voucher::where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)->first();
 
                     if ( $voucher->discount_type == 3 ) {
     
@@ -924,7 +939,8 @@ class CartService {
     public static function validateCartVoucher( $request ){
 
         $voucher = Voucher::where('status', 10)
-            ->where('promo_code', $request->promo_code)
+            ->where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)
             ->where(function ( $query) {
                 $query->where(function ( $q) {
                     $q->whereNull('start_date')
@@ -1065,7 +1081,8 @@ class CartService {
     public static function checkCartEligibility( $request, $cartMeta ){
 
         $voucher = Voucher::where('status', 10)
-            ->where('promo_code', $request->promo_code)
+            ->where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)
             ->where(function ( $query) {
                 $query->where(function ( $q) {
                     $q->whereNull('start_date')

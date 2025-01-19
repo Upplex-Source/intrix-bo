@@ -900,7 +900,8 @@ class OrderService
                 ]);
             }else{
                 if( $request->promo_code ){
-                    $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+                    $voucher = Voucher::where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)->first();
                     $orderPrice = $userCart->total_price;
     
                     if ( $voucher->discount_type == 3 ) {
@@ -1052,7 +1053,8 @@ class OrderService
             }
 
             if( $request->promo_code ){
-                $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+                $voucher = Voucher::where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)->first();
 
                 if ( $voucher->discount_type == 3 ) {
 
@@ -1354,7 +1356,8 @@ class OrderService
 
     public static function validateVoucher( $request ){
         $voucher = Voucher::where('status', 10)
-            ->where('promo_code', $request->promo_code)
+            ->where( 'id', $request->promo_code )
+            ->orWhere('promo_code', $request->promo_code)
             ->where(function ( $query) {
                 $query->where(function ( $q) {
                     $q->whereNull('start_date')
