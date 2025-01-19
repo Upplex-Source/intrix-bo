@@ -6,20 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\{
-    ProductService,
+    ProductBundleService,
     WarehouseService,
 };
 
 use App\Models\{
-    Product,
+    ProductBundle,
 };
 
 class ProductBundleController extends Controller
 {
     public function index( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.menus' );
-        $this->data['content'] = 'admin.product.index';
+        $this->data['header']['title'] = __( 'template.product_bundles' );
+        $this->data['content'] = 'admin.product_bundle.index';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -28,7 +28,7 @@ class ProductBundleController extends Controller
             ],
             [
                 'url' => '',
-                'text' => __( 'template.menus' ),
+                'text' => __( 'template.product_bundles' ),
                 'class' => 'active',
             ],
         ];
@@ -42,8 +42,8 @@ class ProductBundleController extends Controller
 
     public function add( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] );
-        $this->data['content'] = 'admin.product.add';
+        $this->data['header']['title'] = __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.product_bundles' ) ) ] );
+        $this->data['content'] = 'admin.product_bundle.add';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -51,30 +51,24 @@ class ProductBundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.product.index' ),
-                'text' => __( 'template.menus' ),
+                'url' => route( 'admin.module_parent.product_bundle.index' ),
+                'text' => __( 'template.product_bundles' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] ),
+                'text' => __( 'template.add_x', [ 'title' => \Str::singular( __( 'template.product_bundles' ) ) ] ),
                 'class' => 'active',
             ],
         ];
-
-        $this->data['data']['barcodes'] = Product::getPredefinedBarcodeSymbologies();
-        $this->data['data']['product_types'] = Product::getPredefinedProductTypes();
-        $this->data['data']['unit_types'] = Product::getPredefinedUnits();
-        $this->data['data']['tax_methods'] = Product::getPredefinedTaxMethods();
-        $this->data['data']['warehouses'] = WarehouseService::getWareHouses( $request );
 
         return view( 'admin.main' )->with( $this->data );
     }
 
     public function edit( Request $request ) {
 
-        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] );
-        $this->data['content'] = 'admin.product.edit';
+        $this->data['header']['title'] = __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.product_bundles' ) ) ] );
+        $this->data['content'] = 'admin.product_bundle.edit';
         $this->data['breadcrumb'] = [
             [
                 'url' => route( 'admin.dashboard' ),
@@ -82,62 +76,51 @@ class ProductBundleController extends Controller
                 'class' => '',
             ],
             [
-                'url' => route( 'admin.module_parent.product.index' ),
-                'text' => __( 'template.menus' ),
+                'url' => route( 'admin.module_parent.product_bundle.index' ),
+                'text' => __( 'template.product_bundles' ),
                 'class' => '',
             ],
             [
                 'url' => '',
-                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.menus' ) ) ] ),
+                'text' => __( 'template.edit_x', [ 'title' => \Str::singular( __( 'template.product_bundles' ) ) ] ),
                 'class' => 'active',
             ],
         ];
 
-        $this->data['data']['barcodes'] = Product::getPredefinedBarcodeSymbologies();
-        $this->data['data']['product_types'] = Product::getPredefinedProductTypes();
-        $this->data['data']['unit_types'] = Product::getPredefinedUnits();
-        $this->data['data']['tax_methods'] = Product::getPredefinedTaxMethods();
-        $this->data['data']['warehouses'] = WarehouseService::getWareHouses( $request );
-
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function allProducts( Request $request ) {
+    public function allProductBundles( Request $request ) {
 
-        return ProductService::allProducts( $request );
+        return ProductBundleService::allProductBundles( $request );
     }
 
-    public function oneProduct( Request $request ) {
+    public function oneProductBundle( Request $request ) {
 
-        return ProductService::oneProduct( $request );
+        return ProductBundleService::oneProductBundle( $request );
     }
 
-    public function createProduct( Request $request ) {
+    public function createProductBundle( Request $request ) {
 
-        return ProductService::createProduct( $request );
+        return ProductBundleService::createProductBundle( $request );
     }
 
-    public function updateProduct( Request $request ) {
-        return ProductService::updateProduct( $request );
+    public function updateProductBundle( Request $request ) {
+        return ProductBundleService::updateProductBundle( $request );
     }
 
-    public function updateProductStatus( Request $request ) {
+    public function updateProductBundleStatus( Request $request ) {
 
-        return ProductService::updateProductStatus( $request );
+        return ProductBundleService::updateProductBundleStatus( $request );
     }
 
-    public function removeProductGalleryImage( Request $request ) {
+    public function removeProductBundleGalleryImage( Request $request ) {
 
-        return ProductService::removeProductGalleryImage( $request );
+        return ProductBundleService::removeProductBundleGalleryImage( $request );
     }
 
     public function ckeUpload( Request $request ) {
 
-        return ProductService::ckeUpload( $request );
-    }
-
-    public function generateProductCode( Request $request ) {
-
-        return ProductService::generateProductCode( $request );
+        return ProductBundleService::ckeUpload( $request );
     }
 }

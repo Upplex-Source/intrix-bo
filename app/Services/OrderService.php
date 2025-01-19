@@ -1446,8 +1446,12 @@ class OrderService
             $y = $cart->cartMetas->whereIn( 'product_id', $adjustment->get_product )->count();
 
             if (in_array($adjustment->get_product, $adjustment->buy_products)) {
-                $y = $x;
-            } 
+                if( $adjustment->buy_quantity == $adjustment->get_quantity ){
+                    $y = $x;
+                } else {
+                    $y -= $adjustment->buy_quantity;
+                }
+            }
 
             if ( $y < $adjustment->get_quantity ) {
                 return response()->json( [

@@ -29,7 +29,7 @@ class Helper {
     }
 
     public static function assetVersion() {
-        return '?v=1.05';
+        return '?v=1.06';
     }
 
     public static function wallets() {
@@ -173,7 +173,7 @@ class Helper {
         $response = curl_exec ($curl );
 
         $error = curl_error( $curl );
-        
+
         curl_close( $curl );
         
         if( $error ) {

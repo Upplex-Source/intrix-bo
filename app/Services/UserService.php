@@ -127,6 +127,11 @@ class UserService
             $filter = true;
         }
 
+        if ( !empty( $request->title ) ) {
+            $model->where( 'phone_number', 'LIKE', '%' . $request->title . '%' );
+            $filter = true;
+        }
+
         if ( !empty( $request->custom_search ) ) {
             $model->where( 'email', 'LIKE', '%' . $request->custom_search . '%' );
             $filter = true;

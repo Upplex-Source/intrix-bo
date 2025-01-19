@@ -108,7 +108,6 @@ class CartService {
         $validator = Validator::make($request->all(), [
             'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
             'items' => ['nullable', 'array'],
-            '' => ['nullable', 'array'],
             'items.*.product' => ['required', 'exists:products,id'],
             'items.*.froyo' => ['nullable', 'array'],
             'items.*.froyo.*' => ['exists:froyos,id'], // Validate each froyo ID
@@ -124,12 +123,12 @@ class CartService {
                 foreach ($request->items as $index => $item) {
                     // Fetch the product and its default quantities
                     $product = Product::find($item['product']);
-        
+
                     if (!$product) {
                         $validator->errors()->add("items.$index.product", 'Invalid product ID.');
                         continue;
                     }
-        
+
                     // Check froyo quantity
                     if (isset($item['froyo']) && count($item['froyo']) > $product->default_froyo_quantity) {
                         $validator->errors()->add("items.$index.froyo", "You can select up to {$product->default_froyo_quantity} froyos.");
@@ -152,9 +151,10 @@ class CartService {
             $rawErrors = $validator->errors()->toArray();
             $formattedErrors = [
                 'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
+                'promo_code' => $rawErrors['promo_code'][0] ?? null, // Include promo_code error
                 'items' => []
             ];
-        
+
             foreach ($rawErrors as $key => $messages) {
                 // Handle items validation errors
                 if (preg_match('/items\.(\d+)\.(\w+)/', $key, $matches)) {
@@ -174,7 +174,11 @@ class CartService {
             if (!$formattedErrors['vending_machine']) {
                 unset($formattedErrors['vending_machine']);
             }
-        
+
+            if (!$formattedErrors['promo_code']) {
+                unset($formattedErrors['promo_code']);
+            }
+
             return response()->json(['errors' => $formattedErrors], 422);
         }
         
@@ -409,6 +413,7 @@ class CartService {
             $rawErrors = $validator->errors()->toArray();
             $formattedErrors = [
                 'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
+                'promo_code' => $rawErrors['promo_code'][0] ?? null, // Include promo_code error
                 'items' => []
             ];
         
@@ -430,6 +435,10 @@ class CartService {
             // Remove null vending machine error if not present
             if (!$formattedErrors['vending_machine']) {
                 unset($formattedErrors['vending_machine']);
+            }
+
+            if (!$formattedErrors['promo_code']) {
+                unset($formattedErrors['promo_code']);
             }
         
             return response()->json(['errors' => $formattedErrors], 422);
@@ -458,6 +467,39 @@ class CartService {
 
             if ($test->getStatusCode() === 422) {
                 return $test;
+            }
+        }
+
+        // validate delete cart item
+        if ($request->has('cart_item')) {
+            $cartMeta = CartMeta::find($request->cart_item);
+            if (!$cartMeta) {
+                return response()->json(['message' => 'Cart item not found.'], 404);
+            }
+
+            if( !$request->items && $request->promo_codes){
+                $cartMetaToDelete = CartMeta::find($request->cart_item);
+
+                if ($cartMetaToDelete) {
+                    $cart = $cartMetaToDelete->cart;
+            
+                    $remainingCartMetas = $cart->cartMetas->where('id', '!=', $cartMetaToDelete->id);
+            
+                    if( $request->promo_code || $cart->voucher_id ){
+                        $isEligible = self::checkCartEligibility($request, $remainingCartMetas);
+
+                        if ($isEligible->getStatusCode() === 422) {
+                            return $isEligible;
+                        }
+
+                        if (!$isEligible) {
+                            return response()->json([
+                                'message' => 'Deleting this item will make the cart ineligible.',
+                                'errors' => 'cart_ineligible',
+                            ], 422);
+                        }
+                    }
+                }
             }
         }
 
@@ -492,6 +534,7 @@ class CartService {
         
             $orderPrice = 0;
 
+            $updateCart->load( ['cartMetas'] );
             $updateCart->vending_machine_id = $request->vending_machine;
 
             $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
@@ -503,37 +546,93 @@ class CartService {
                 if (!$cartMeta) {
                     return response()->json(['message' => 'Cart item not found.'], 404);
                 }
-    
-                // Update specific cart item
-                $product = Product::find($cartMeta->product_id);
-                $froyos = $request->items[0]['froyo'] ?? [];
-                $syrups = $request->items[0]['syrup'] ?? [];
-                $toppings = $request->items[0]['topping'] ?? [];
-    
-                // Calculate new total price for this cart item
-                $metaPrice = 0;
-                $metaPrice += $product->price ?? 0;
+                
+                if( !$request->items ){
+                    $orderPrice -= $cartMeta->total_price;
+                    $orderPrice += $updateCart->cartMetas->sum('total_price') ?? 0;
+                    $cartMeta->delete();
+                }else{
+                    // Update specific cart item
+                    $product = Product::find($cartMeta->product_id);
+                    $froyos = $request->items[0]['froyo'] ?? [];
+                    $syrups = $request->items[0]['syrup'] ?? [];
+                    $toppings = $request->items[0]['topping'] ?? [];
+        
+                    // Calculate new total price for this cart item
+                    $metaPrice = 0;
+                    $metaPrice += $product->price ?? 0;
+                    $orderPrice -= $cartMeta->total_price;
+                    $orderPrice += $updateCart->cartMetas->sum('total_price') ?? 0;
 
-                // new calculation 
-                $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
-                $orderPrice += $froyoPrices;
-                $metaPrice += $froyoPrices;
+                    // new calculation 
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                    // $orderPrice += $froyoPrices;
+                    $metaPrice += $froyoPrices;
 
-                $syrupPrices = Syrup::whereIn('id', $froyos)->sum('price');
-                $orderPrice += $syrupPrices;
-                $metaPrice += $syrupPrices;
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                    // $orderPrice += $syrupPrices;
+                    $metaPrice += $syrupPrices;
 
-                $toppingPrices = Topping::whereIn('id', $froyos)->sum('price');
-                $orderPrice += $toppingPrices;
-                $metaPrice += $toppingPrices;
+                    $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                    // $orderPrice += $toppingPrices;
+                    $metaPrice += $toppingPrices;
 
-                $cartMeta->froyos = json_encode($froyos);
-                $cartMeta->syrups = json_encode($syrups);
-                $cartMeta->toppings = json_encode($toppings);
-                $cartMeta->total_price = $metaPrice;
-                $cartMeta->save();
-    
-                $orderPrice += $metaPrice;
+                    $cartMeta->froyos = json_encode($froyos);
+                    $cartMeta->syrups = json_encode($syrups);
+                    $cartMeta->toppings = json_encode($toppings);
+                    $cartMeta->total_price = $metaPrice;
+                    $cartMeta->save();
+
+                    $orderPrice += $metaPrice;
+
+                    DB::commit();
+
+                    if( $request->promo_code ){
+                        $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
+
+                        if ( $voucher->discount_type == 3 ) {
+        
+                            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+                
+                            $requestedProductIds = $updateCart->cartMetas->pluck('product_id');
+
+                            $x = $requestedProductIds->intersect($adjustment->buy_products)->count();
+
+                            if ( $x >= $adjustment->buy_quantity ) {
+                                $getProductMeta = $updateCart->cartMetas
+                                ->where('product_id', $adjustment->get_product)
+                                ->sortBy('total_price')
+                                ->first();                    
+        
+                                if ($getProductMeta) {
+                                    $orderPrice -= $getProductMeta->total_price;
+                                    // $getProductMeta->total_price = 0;
+                                    $getProductMeta->save();
+                                }
+                            }
+        
+                        } else if ( $voucher->discount_type == 2 ) {
+        
+                            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+                
+                            $x = $updateCart->total_price;
+                            if ( $x >= $adjustment->buy_quantity ) {
+                                $orderPrice -= $adjustment->discount_quantity;
+                            }
+                
+                        } else {
+        
+                            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+                
+                            $x = $updateCart->total_price;
+                            if ( $x >= $adjustment->buy_quantity ) {
+                                $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity );
+                            }
+                        }
+        
+                        $updateCart->voucher_id = $voucher->id;
+                    }
+                }
     
             } else {
                 // Update the entire cart, deleting all previous items
@@ -579,22 +678,24 @@ class CartService {
                     $orderMeta->save();
                 }
 
+                $updateCart->load( ['cartMetas'] );
+
                 if( $request->promo_code ){
                     $voucher = Voucher::where( 'promo_code', $request->promo_code )->first();
-    
+
                     if ( $voucher->discount_type == 3 ) {
     
                         $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
             
                         $requestedProductIds = collect($request->input('items'))->pluck('product');
                         $x = $requestedProductIds->intersect($adjustment->buy_products)->count();
-            
+
                         if ( $x >= $adjustment->buy_quantity ) {
                             $getProductMeta = $updateCart->cartMetas
                             ->where('product_id', $adjustment->get_product)
                             ->sortBy('total_price')
                             ->first();                    
-    
+
                             if ($getProductMeta) {
                                 $orderPrice -= $getProductMeta->total_price;
                                 $getProductMeta->total_price = 0;
@@ -621,7 +722,7 @@ class CartService {
                         }
                     }
     
-                    $cart->voucher_id = $voucher->id;
+                    $updateCart->voucher_id = $voucher->id;
                 }
 
                 DB::commit();
@@ -821,6 +922,148 @@ class CartService {
     }
 
     public static function validateCartVoucher( $request ){
+
+        $voucher = Voucher::where('status', 10)
+            ->where('promo_code', $request->promo_code)
+            ->where(function ( $query) {
+                $query->where(function ( $q) {
+                    $q->whereNull('start_date')
+                    ->orWhere('start_date', '<=', Carbon::now());
+                })
+                ->where(function ( $q) {
+                    $q->whereNull('expired_date')
+                    ->orWhere('expired_date', '>=', Carbon::now());
+                });
+        })->first();
+
+        if ( !$voucher ) {
+            return response()->json( [
+                'message' => 'voucher.voucher_not_available',
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        $user = auth()->user();
+        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
+
+        if ( $voucherUsages->count() >= $voucher->usable_amount ) {
+            return response()->json( [
+                'message' => __('voucher.voucher_you_have_maximum_used'),
+                'errors' => 'voucher',
+            ], 422 );
+        }
+
+        // total claimable
+        if ( $voucher->total_claimable <= 0 ) {
+            return response()->json( [
+                'message' => __('voucher.voucher_fully_claimed'),
+                'errors' => 'voucher',
+            ], 422 );
+        }
+        
+        // check is has claimed this
+        if( $voucher->type != 1 ){
+            $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->where('status',10)->first();
+            if(!$userVoucher){
+                if( $voucher->type == 2 ){
+                    return response()->json( [
+                        'message_key' => 'voucher_unclaimed',
+                        'message' => __('voucher.voucher_unclaimed'),
+                        'errors' => 'voucher',
+                    ], 422 );
+                }else{
+                    return response()->json( [
+                        'message_key' => 'voucher_unclaimed',
+                        'message' => __('voucher.voucher_condition_not_met'),
+                        'errors' => 'voucher',
+                    ], 422 );
+                }
+            }
+        }
+
+        if( !$request->cart_item ){
+
+            if ( $voucher->discount_type == 3 ) {
+
+                $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+    
+                $requestedProductIds = collect($request->input('items'))->pluck('product');
+                $x = $requestedProductIds->intersect($adjustment->buy_products)->count();
+    
+                if ( $x < $adjustment->buy_quantity ) {
+                    return response()->json( [
+                        'required_amount' => $adjustment->buy_quantity,
+                        'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                        'errors' => 'voucher',
+                    ], 422 );
+                }
+                
+                $y = $requestedProductIds->intersect($adjustment->get_product)->count();
+    
+                if (in_array($adjustment->get_product, $adjustment->buy_products)) {
+                    if( $adjustment->buy_quantity == $adjustment->get_quantity ){
+                        $y = $x;
+                    } else {
+                        $y -= $adjustment->buy_quantity;
+                    }
+                } 
+    
+                if ( $y < $adjustment->get_quantity ) {
+                    return response()->json( [
+                        'required_amount' => $adjustment->get_quantity,
+                        'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity ] ),
+                        'errors' => 'voucher',
+                    ], 422 );
+                }
+    
+            } else {
+    
+                $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+                $orderPrice = 0;
+                if(isset($request->items)){
+                    foreach ( $request->items as $product ) {
+    
+                        $froyos = $product['froyo'];
+                        $froyoCount = count($froyos);
+                        $syrups = $product['syrup'];
+                        $syrupCount = count($syrups);
+                        $toppings = $product['topping'];
+                        $toppingCount = count($toppings);
+                        $product = Product::find($product['product']);
+                        $metaPrice = 0;
+        
+                        $orderPrice += $product->price ?? 0;
+        
+                        // new calculation 
+                        $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                        $orderPrice += $froyoPrices;
+    
+                        $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                        $orderPrice += $syrupPrices;
+    
+                        $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                        $orderPrice += $toppingPrices;
+                    }
+                }
+    
+                if ( $orderPrice < $adjustment->buy_quantity ) {
+                    return response()->json( [
+                        'required_amount' => $adjustment->buy_quantity,
+                        'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                        'errors' => 'voucher',
+                    ], 422 );
+                }
+    
+            }
+        }
+    
+        return response()->json( [
+            'message' => 'voucher.voucher_validated',
+        ] );
+    }
+
+    public static function checkCartEligibility( $request, $cartMeta ){
+
         $voucher = Voucher::where('status', 10)
             ->where('promo_code', $request->promo_code)
             ->where(function ( $query) {
@@ -883,11 +1126,11 @@ class CartService {
 
             $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
 
-            // $x = $cart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
-            $requestedProductIds = collect($request->input('items'))->pluck('product');
+            $requestedProductIds = $cartMeta->pluck('product_id');
             $x = $requestedProductIds->intersect($adjustment->buy_products)->count();
-
+ 
             if ( $x < $adjustment->buy_quantity ) {
+
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity ] ),
@@ -898,7 +1141,11 @@ class CartService {
             $y = $requestedProductIds->intersect($adjustment->get_product)->count();
 
             if (in_array($adjustment->get_product, $adjustment->buy_products)) {
-                $y = $x;
+                if( $adjustment->buy_quantity == $adjustment->get_quantity ){
+                    $y = $x;
+                } else {
+                    $y -= $adjustment->buy_quantity;
+                }
             } 
 
             if ( $y < $adjustment->get_quantity ) {

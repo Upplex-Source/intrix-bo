@@ -133,7 +133,6 @@ class VoucherUsageService
     }
 
     public static function allVoucherUsages( $request ) {
-
         $voucher_usages = VoucherUsage::with( ['user','voucher','order'] )->select( 'voucher_usages.*');
 
         $filterObject = self::filter( $request, $voucher_usages );

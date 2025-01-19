@@ -389,7 +389,7 @@ $taxTypes = $data['tax_types'];
                             let taxRate = 0.06;
                             let subtotal = product.product.price * product.quantity;
                             let tax = subtotal * taxRate;
-                ;
+
                             productTable.append(`
                                 <tr id="product-${product.product.id}">
                                     <td>${index + 1}</td>

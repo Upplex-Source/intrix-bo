@@ -160,6 +160,9 @@ return [
     'settings' => 'Settings',
     'user_vouchers' => 'User Vouchers',
     'voucher_usages' => 'Voucher Usages',
+    'product_bundles' => 'Product Bundles',
+    'user_bundles' => 'User Bundles',
+    'user_bundle_histories' => 'User Bundle Histories',
 
     'tax_methods' => 'Tax Methods',
     'workmanships' => 'Workmanships',
