@@ -805,7 +805,7 @@ class VoucherService
             if ( $x < $adjustment->buy_quantity ) {
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
-                    'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                    'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
                     'errors' => 'voucher',
                 ], 422 );
             }
@@ -817,7 +817,7 @@ class VoucherService
             if ( $cart->total_price < $adjustment->buy_quantity ) {
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
-                    'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                    'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
                     'errors' => 'voucher',
                 ], 422 );
             }

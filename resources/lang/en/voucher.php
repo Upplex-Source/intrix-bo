@@ -49,7 +49,7 @@ return [
     'min_quantity_of_x' => 'Minimum quanitity of :title required',
     'voucher_you_have_maximum_claimed' => 'You have reached maximum claim for this voucher',
 
-    'min_quantity_of_y' => 'Please add :title more free item(s)',
+    'min_quantity_of_y' => 'Please add :title free item(s)',
 
     'total_claimable' => 'Total Claimable',
     'voucher_type' => 'Voucher Type',
