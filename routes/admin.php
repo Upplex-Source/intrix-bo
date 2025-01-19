@@ -28,6 +28,8 @@ use App\Http\Controllers\Admin\{
     OrderController,
     PaymentController,
     VoucherController,
+    UserVoucherController,
+    VoucherUsageController,
     UserCheckinController,
     CheckinRewardController,
 };
@@ -440,6 +442,45 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-maintenance-setting', [ SettingController::class, 'updateMaintenanceSetting' ] )->name( 'admin.setting.updateMaintenanceSetting' );
             } );
 
+            Route::prefix( 'user-vouchers' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view vouchers' ] ], function() {
+                    Route::get( '/', [ UserVoucherController::class, 'index' ] )->name( 'admin.module_parent.user_voucher.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add vouchers' ] ], function() {
+                    Route::get( 'add', [ UserVoucherController::class, 'add' ] )->name( 'admin.user_voucher.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit vouchers' ] ], function() {
+                    Route::get( 'edit', [ UserVoucherController::class, 'edit' ] )->name( 'admin.user_voucher.edit' );
+                } );
+    
+                Route::post( 'all-user-vouchers', [ UserVoucherController::class, 'allUserVouchers' ] )->name( 'admin.user_voucher.allUserVouchers' );
+                Route::post( 'one-user-voucher', [ UserVoucherController::class, 'oneUserVoucher' ] )->name( 'admin.user_voucher.oneUserVoucher' );
+                Route::post( 'create-user-voucher', [ UserVoucherController::class, 'createUserVoucher' ] )->name( 'admin.user_voucher.createUserVoucher' );
+                Route::post( 'update-user-voucher', [ UserVoucherController::class, 'updateUserVoucher' ] )->name( 'admin.user_voucher.updateUserVoucher' );
+                Route::post( 'update-user-user-voucher-status', [ UserVoucherController::class, 'updateUserVoucherStatus' ] )->name( 'admin.user_voucher.updateUserVoucherStatus' );
+                Route::post( 'remove-user-user-voucher-gallery-image', [ UserVoucherController::class, 'removeUserVoucherGalleryImage' ] )->name( 'admin.user_voucher.removeUserVoucherGalleryImage' );
+                Route::post( 'ckeUpload', [ UserVoucherController::class, 'ckeUpload' ] )->name( 'admin.user_voucher.ckeUpload' );
+            } );
+
+            Route::prefix( 'voucher-usages' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view vouchers' ] ], function() {
+                    Route::get( '/', [ VoucherUsageController::class, 'index' ] )->name( 'admin.module_parent.voucher_usage.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add vouchers' ] ], function() {
+                    Route::get( 'add', [ VoucherUsageController::class, 'add' ] )->name( 'admin.voucher_usage.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit vouchers' ] ], function() {
+                    Route::get( 'edit', [ VoucherUsageController::class, 'edit' ] )->name( 'admin.voucher_usage.edit' );
+                } );
+    
+                Route::post( 'all-voucher-usages', [ VoucherUsageController::class, 'allVoucherUsages' ] )->name( 'admin.voucher_usage.allVoucherUsages' );
+                Route::post( 'one-voucher-usage', [ VoucherUsageController::class, 'oneVoucherUsage' ] )->name( 'admin.voucher_usage.oneVoucherUsage' );
+                Route::post( 'create-voucher-usage', [ VoucherUsageController::class, 'createVoucherUsage' ] )->name( 'admin.voucher_usage.createVoucherUsage' );
+                Route::post( 'update-voucher-usage', [ VoucherUsageController::class, 'updateVoucherUsage' ] )->name( 'admin.voucher_usage.updateVoucherUsage' );
+                Route::post( 'update-voucher-usage-status', [ VoucherUsageController::class, 'updateVoucherUsageStatus' ] )->name( 'admin.voucher_usage.updateVoucherUsageStatus' );
+                Route::post( 'remove-voucher-usage-gallery-image', [ VoucherUsageController::class, 'removeVoucherUsageGalleryImage' ] )->name( 'admin.voucher_usage.removeVoucherUsageGalleryImage' );
+                Route::post( 'ckeUpload', [ VoucherUsageController::class, 'ckeUpload' ] )->name( 'admin.voucher_usage.ckeUpload' );
+            } );
 
         } );
         

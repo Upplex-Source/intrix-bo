@@ -158,6 +158,8 @@ return [
     'checkins' => 'Check-ins',
     'checkin_calendar' => 'Check-in Calendar',
     'settings' => 'Settings',
+    'user_vouchers' => 'User Vouchers',
+    'voucher_usages' => 'Voucher Usages',
 
     'tax_methods' => 'Tax Methods',
     'workmanships' => 'Workmanships',

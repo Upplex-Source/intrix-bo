@@ -48,7 +48,7 @@ class VoucherUsage extends Model
 
     public function voucher()
     {
-        return $this->belongsTo(User::class, 'voucher_id');
+        return $this->belongsTo(Voucher::class, 'voucher_id');
     }
 
     public function getEncryptedIdAttribute() {

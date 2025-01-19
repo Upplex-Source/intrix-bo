@@ -41,6 +41,8 @@ return [
     'action' => 'Action',
 
     'status' => 'Status',
+    'success' => 'Success',
+    'failed' => 'Failed',
     'activate' => 'Activate',
     'activated' => 'Activated',
     'suspend' => 'Suspend',

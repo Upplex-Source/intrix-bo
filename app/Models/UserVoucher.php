@@ -51,6 +51,11 @@ class UserVoucher extends Model
         return Helper::encode( $this->attributes['id'] );
     }
 
+    public function getUsedAtDateOnlyAttribute()
+    {
+        return $this->attributes['used_at'] ? $this->attributes['used_at']->format('Y-m-d') : null;
+    }
+
     public function getRedeemFromLabelAttribute()
     {
         $rewardTypes = [

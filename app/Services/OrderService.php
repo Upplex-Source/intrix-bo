@@ -1160,6 +1160,34 @@ class OrderService
                 ] );
                 $order->status = 3;
 
+                // assign purchasing bonus
+                $spendingBonus = Option::getSpendingSettings();
+                if( $spendingBonus ){
+
+                    $userBonusWallet = $user->wallets->where( 'type', 2 )->first();
+
+                    WalletService::transact( $userBonusWallet, [
+                        'amount' => $order->total_price * $spendingBonus->option_value,
+                        'remark' => 'Register Bonus',
+                        'type' => 2,
+                        'transaction_type' => 22,
+                    ] );
+                }
+
+                // assign referral's purchasing bonus
+                $referralSpendingBonus = Option::getReferralSpendingSettings();
+                if( $user->referral && $referralSpendingBonus){
+
+                    $referralWallet = $user->referral->wallets->where('type',2)->first();
+
+                    WalletService::transact( $referralWallet, [
+                        'amount' => $order->total_price * $referralSpendingBonus->option_value,
+                        'remark' => 'Register Bonus',
+                        'type' => $referralWallet->type,
+                        'transaction_type' => 22,
+                    ] );
+                }
+
                 // update stock
                 VendingMachineStockService::updateVendingMachineStock( $order->vending_machine_id, $order->orderMetas );
             }else {

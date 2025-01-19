@@ -904,7 +904,7 @@ class CartService {
             if ( $y < $adjustment->get_quantity ) {
                 return response()->json( [
                     'required_amount' => $adjustment->get_quantity,
-                    'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->buy_quantity ] ),
+                    'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity ] ),
                     'errors' => 'voucher',
                 ], 422 );
             }

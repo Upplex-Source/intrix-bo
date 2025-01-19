@@ -28,6 +28,10 @@ class Option extends Model
         return self::where('option_name', 'REFERRAL_SPENDING')->first();
     }
 
+    public static function getSpendingSettings(){
+        return self::where('option_name', 'CONVERTION_RATE')->first();
+    }
+
     protected function serializeDate( DateTimeInterface $date ) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }

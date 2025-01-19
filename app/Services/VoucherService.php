@@ -77,7 +77,7 @@ class VoucherService
         
             $validator = Validator::make($adjustmentData, [
                 'buy_products' => ['required', 'array'],
-                'buy_quantity' => ['required', 'numeric', 'min:1'], // Added numeric and min validation
+                'buy_quantity' => ['required', 'numeric', 'min:0'], // Added numeric and min validation
                 'get_quantity' => ['required', 'numeric', 'min:1'], // Added numeric and min validation
                 'get_product' => ['required', 'exists:products,id'],
             ]);
@@ -923,9 +923,9 @@ class VoucherService
         $voucher->save();
     
         return response()->json( [
-            'message_key' => __('voucher.voucher_claimed'),
-            'message' => 'voucher.voucher_claimed',
-            'data' => $userVoucher
+            'message' => __('voucher.voucher_claimed'),
+            'message_key' => 'voucher_claimed',
+            'data' => $userVoucher->load(['voucher'])
         ] );
     }
 

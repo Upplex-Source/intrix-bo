@@ -38,4 +38,6 @@ return [
     'promo_code_bonus' => 'Promo Code Bonus',
     'affiliate_bonus' => 'Affiliate Bonus',
     'checkin_bonus' => 'Check-in Bonus',
+    'order_bonus' => 'Order Complete Bonus',
+    'referral_order_bonus' => 'Referral order Complete Bonus',
 ];
