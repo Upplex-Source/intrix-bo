@@ -743,7 +743,6 @@ class ProductBundleService
         
             $orderPrice = 0;
             $user = auth()->user();
-            $bundle = ProductBundle::find( $request->bundle_id );
 
             $userBundle = UserBundle::where('id', $request->user_bundle_id)
             ->where('status', 20)
@@ -752,7 +751,7 @@ class ProductBundleService
 
             $bundleTransaction = UserBundleTransaction::create( [
                 'user_id' => $user->id,
-                'product_bundle_id' => $bundle->id,
+                'product_bundle_id' => $userBundle->product_bundle_id,
                 'user_bundle_id' => $userBundle->id,
                 'reference' => Helper::generateBundleReference(),
                 'price' => $bundle->price,
