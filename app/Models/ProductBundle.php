@@ -31,7 +31,7 @@ class ProductBundle extends Model
 
     public function productBundleMetas()
     {
-        return $this->hasMany(productBundleMeta::class);
+        return $this->hasMany(ProductBundleMeta::class);
     }
 
     public function getImagePathAttribute() {
