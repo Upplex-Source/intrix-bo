@@ -1198,12 +1198,15 @@ class OrderService
 
                     $referralWallet = $user->referral->wallets->where('type',2)->first();
 
-                    WalletService::transact( $referralWallet, [
-                        'amount' => $order->total_price * $referralSpendingBonus->option_value,
-                        'remark' => 'Referral Purchasing Bonus',
-                        'type' => $referralWallet->type,
-                        'transaction_type' => 22,
-                    ] );
+                    if($referralWallet){
+                        WalletService::transact( $referralWallet, [
+                            'amount' => $order->total_price * $referralSpendingBonus->option_value,
+                            'remark' => 'Referral Purchasing Bonus',
+                            'type' => $referralWallet->type,
+                            'transaction_type' => 22,
+                        ] );
+                    }
+                    
                 }
 
                 // update stock

@@ -645,12 +645,15 @@ class ProductBundleService
 
                     $referralWallet = $user->referral->wallets->where('type',2)->first();
 
-                    WalletService::transact( $referralWallet, [
-                        'amount' => $bundle->price * $referralSpendingBonus->option_value,
-                        'remark' => 'Referral Purchase Bonus',
-                        'type' => $referralWallet->type,
-                        'transaction_type' => 22,
-                    ] );
+                    if($referralWallet){
+                        WalletService::transact( $referralWallet, [
+                            'amount' => $bundle->price * $referralSpendingBonus->option_value,
+                            'remark' => 'Referral Purchase Bonus',
+                            'type' => $referralWallet->type,
+                            'transaction_type' => 22,
+                        ] );
+                    }
+                    
                 }
             }else {
                 
