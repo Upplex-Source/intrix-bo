@@ -714,7 +714,7 @@ class OrderService
 
             return response()->json( [
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
-                'message_key' => 'create_froyo_failed',
+                'message_key' => 'update_order_failed',
             ], 500 );
         }
     }
@@ -1302,8 +1302,10 @@ class OrderService
 
             if( !$updateOrder ){
                 return response()->json( [
-                    'message' => 'Order Not found',
-                    'message_key' => 'scan order failed',
+                    'errors' => [
+                        'message' => 'Order Not found',
+                        'message_key' => 'scan order failed',
+                    ]
                 ], 500 );
             }
 
@@ -1318,8 +1320,11 @@ class OrderService
                 $updateOrder->save();
                 DB::commit();
                 return response()->json( [
-                    'message' => 'Order Pickep Up',
-                    'message_key' => 'scan order success',
+                    
+                    'errors' => [
+                        'message' => 'Order Pickep Up',
+                        'message_key' => 'scan order success',
+                    ]
                 ] );
             }
 
@@ -1381,8 +1386,11 @@ class OrderService
 
         if ( !$voucher ) {
             return response()->json( [
-                'message' => 'voucher.voucher_not_available',
-                'errors' => 'voucher',
+                'message_key' => 'voucher_not_available',
+                'message' => __('voucher.voucher_not_available'),
+                'errors' => [
+                    'voucher' => __('voucher.voucher_not_available')
+                ]
             ], 422 );
         }
 
@@ -1391,16 +1399,22 @@ class OrderService
 
         if ( $voucherUsages->count() >= $voucher->usable_amount ) {
             return response()->json( [
+                'message_key' => 'voucher_you_have_maximum_used',
                 'message' => __('voucher.voucher_you_have_maximum_used'),
-                'errors' => 'voucher',
+                'errors' => [
+                    'voucher' => __('voucher.voucher_you_have_maximum_used')
+                ]
             ], 422 );
         }
 
         // total claimable
         if ( $voucher->total_claimable <= 0 ) {
             return response()->json( [
+                'message_key' => 'voucher_fully_claimed',
                 'message' => __('voucher.voucher_fully_claimed'),
-                'errors' => 'voucher',
+                'errors' => [
+                    'voucher' => __('voucher.voucher_fully_claimed')
+                ]
             ], 422 );
         }
         
@@ -1412,13 +1426,17 @@ class OrderService
                     return response()->json( [
                         'message_key' => 'voucher_unclaimed',
                         'message' => __('voucher.voucher_unclaimed'),
-                        'errors' => 'voucher',
+                        'errors' => [
+                            'voucher' => __('voucher.voucher_unclaimed')
+                        ]
                     ], 422 );
                 }else{
                     return response()->json( [
-                        'message_key' => 'voucher_unclaimed',
+                        'message_key' => 'voucher_condition_not_met',
                         'message' => __('voucher.voucher_condition_not_met'),
-                        'errors' => 'voucher',
+                        'errors' => [
+                            'voucher' => __('voucher.voucher_condition_not_met')
+                        ]
                     ], 422 );
                 }
             }
@@ -1452,7 +1470,10 @@ class OrderService
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                    'message_key' => 'voucher.min_quantity_of_x',
+                    'errors' => [
+                        'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                    ]
                 ], 422 );
             }
             
@@ -1470,7 +1491,10 @@ class OrderService
                 return response()->json( [
                     'required_amount' => $adjustment->get_quantity,
                     'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                    'message_key' => 'voucher.min_quantity_of_y',
+                        'errors' => [
+                            'voucher' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        ]
                 ], 422 );
             }
 
@@ -1482,7 +1506,10 @@ class OrderService
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                    'message_key' => 'voucher.min_spend_of_x',
+                    'errors' => [
+                        'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                    ]
                 ], 422 );
             }
 

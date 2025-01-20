@@ -202,6 +202,9 @@ class CartService {
                 return response()->json( [
                     'message' => 'Voucher not found',
                     'message_key' => 'voucher_not_found',
+                    'errors' => [
+                        'voucher' => 'Voucher not found'
+                    ]
                 ] );
             }
 
@@ -209,6 +212,9 @@ class CartService {
                 return response()->json( [
                     'message' => 'Voucher Not applicable to cart',
                     'message_key' => 'voucher_not_applicable_to_cart',
+                    'errors' => [
+                        'voucher' => 'Voucher Not applicable to cart'
+                    ]
                 ] );
             }
 
@@ -476,6 +482,9 @@ class CartService {
                 return response()->json( [
                     'message' => 'Voucher not found',
                     'message_key' => 'voucher_not_found',
+                    'errors' => [
+                        'voucher' => 'Voucher not found'
+                    ]
                 ] );
             }
 
@@ -483,6 +492,9 @@ class CartService {
                 return response()->json( [
                     'message' => 'Voucher Not applicable to cart',
                     'message_key' => 'voucher_not_applicable_to_cart',
+                    'errors' => [
+                        'voucher' => 'Voucher Not applicable to cart'
+                    ]
                 ] );
             }
 
@@ -516,10 +528,14 @@ class CartService {
                         }
 
                         if (!$isEligible) {
-                            return response()->json([
+                            
+                            return response()->json( [
                                 'message' => 'Deleting this item will make the cart ineligible.',
-                                'errors' => 'cart_ineligible',
-                            ], 422);
+                                'message_key' => 'cart_ineligible',
+                                'errors' => [
+                                    'cart' => 'Deleting this item will make the cart ineligible.',
+                                ]
+                            ], 422 );
                         }
                     }
                 }
@@ -546,8 +562,11 @@ class CartService {
 
         if ( !$updateCart ) {
             return response()->json( [
-                'message' => '',
+                'message' => 'Cart not found',
                 'message_key' => 'cart_not_found',
+                'errors' => [
+                    'cart' => 'Cart not found'
+                ]
             ] );
         }
 
@@ -819,6 +838,9 @@ class CartService {
             return response()->json( [
                 'message' => '',
                 'message_key' => 'cart_not_found',
+                'errors' => [
+                    'cart' => 'Cart not found'
+                ]
             ] );
         }
 
@@ -866,6 +888,9 @@ class CartService {
             return response()->json( [
                 'message' => '',
                 'message_key' => 'cart_not_found',
+                'errors' => [
+                    'cart' => 'Cart not found'
+                ]
             ] );
         }
 
@@ -964,8 +989,11 @@ class CartService {
 
         if ( !$voucher ) {
             return response()->json( [
-                'message' => 'voucher.voucher_not_available',
-                'errors' => 'voucher',
+                'message_key' => 'voucher_not_available',
+                'message' => __('voucher.voucher_not_available'),
+                'errors' => [
+                    'voucher' => __('voucher.voucher_not_available')
+                ]
             ], 422 );
         }
 
@@ -974,16 +1002,22 @@ class CartService {
 
         if ( $voucherUsages->count() >= $voucher->usable_amount ) {
             return response()->json( [
+                'message_key' => 'voucher_you_have_maximum_used',
                 'message' => __('voucher.voucher_you_have_maximum_used'),
-                'errors' => 'voucher',
+                'errors' => [
+                    'voucher' => __('voucher.voucher_you_have_maximum_used')
+                ]
             ], 422 );
         }
 
         // total claimable
         if ( $voucher->total_claimable <= 0 ) {
             return response()->json( [
+                'message_key' => 'voucher_fully_claimed',
                 'message' => __('voucher.voucher_fully_claimed'),
-                'errors' => 'voucher',
+                'errors' => [
+                    'voucher' => __('voucher.voucher_fully_claimed')
+                ]
             ], 422 );
         }
         
@@ -995,13 +1029,17 @@ class CartService {
                     return response()->json( [
                         'message_key' => 'voucher_unclaimed',
                         'message' => __('voucher.voucher_unclaimed'),
-                        'errors' => 'voucher',
+                        'errors' => [
+                            'voucher' => __('voucher.voucher_unclaimed')
+                        ]
                     ], 422 );
                 }else{
                     return response()->json( [
-                        'message_key' => 'voucher_unclaimed',
+                        'message_key' => 'voucher_condition_not_met',
                         'message' => __('voucher.voucher_condition_not_met'),
-                        'errors' => 'voucher',
+                        'errors' => [
+                            'voucher' => __('voucher.voucher_condition_not_met')
+                        ]
                     ], 422 );
                 }
             }
@@ -1020,7 +1058,10 @@ class CartService {
                     return response()->json( [
                         'required_amount' => $adjustment->buy_quantity,
                         'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                        'errors' => 'voucher',
+                        'message_key' => 'voucher.min_quantity_of_x',
+                        'errors' => [
+                            'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        ]
                     ], 422 );
                 }
                 
@@ -1038,7 +1079,10 @@ class CartService {
                     return response()->json( [
                         'required_amount' => $adjustment->get_quantity,
                         'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->get_product[0] )->value( 'title' ) ] ),
-                        'errors' => 'voucher',
+                        'message_key' => 'voucher.min_quantity_of_y',
+                        'errors' => [
+                            'voucher' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        ]
                     ], 422 );
                 }
     
@@ -1076,7 +1120,10 @@ class CartService {
                     return response()->json( [
                         'required_amount' => $adjustment->buy_quantity,
                         'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                        'errors' => 'voucher',
+                        'message_key' => 'voucher.min_spend_of_x',
+                        'errors' => [
+                            'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        ]
                     ], 422 );
                 }
     
@@ -1107,7 +1154,10 @@ class CartService {
         if ( !$voucher ) {
             return response()->json( [
                 'message' => 'voucher.voucher_not_available',
-                'errors' => 'voucher',
+                'message_key' => 'voucher.voucher_not_available',
+                'errors' => [
+                    'voucher' => __( 'voucher.voucher_not_available' )
+                ]
             ], 422 );
         }
 
@@ -1117,7 +1167,10 @@ class CartService {
         if ( $voucherUsages->count() >= $voucher->usable_amount ) {
             return response()->json( [
                 'message' => __('voucher.voucher_you_have_maximum_used'),
-                'errors' => 'voucher',
+                'message_key' => 'voucher.voucher_you_have_maximum_used',
+                'errors' => [
+                    'voucher' => __( 'voucher.voucher_you_have_maximum_used' )
+                ]
             ], 422 );
         }
 
@@ -1125,7 +1178,10 @@ class CartService {
         if ( $voucher->total_claimable <= 0 ) {
             return response()->json( [
                 'message' => __('voucher.voucher_fully_claimed'),
-                'errors' => 'voucher',
+               'message_key' => 'voucher.voucher_fully_claimed',
+                'errors' => [
+                    'voucher' => __( 'voucher.voucher_fully_claimed' )
+                ]
             ], 422 );
         }
         
@@ -1137,13 +1193,17 @@ class CartService {
                     return response()->json( [
                         'message_key' => 'voucher_unclaimed',
                         'message' => __('voucher.voucher_unclaimed'),
-                        'errors' => 'voucher',
+                        'errors' => [
+                            'voucher' => __( 'voucher.voucher_unclaimed' )
+                        ]
                     ], 422 );
                 }else{
                     return response()->json( [
                         'message_key' => 'voucher_unclaimed',
                         'message' => __('voucher.voucher_condition_not_met'),
-                        'errors' => 'voucher',
+                        'errors' => [
+                            'voucher' => __( 'voucher.voucher_condition_not_met' )
+                        ]
                     ], 422 );
                 }
             }
@@ -1161,7 +1221,10 @@ class CartService {
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                    'message_key' => 'voucher.min_quantity_of_x',
+                    'errors' => [
+                        'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
+                    ]
                 ], 422 );
             }
             
@@ -1179,7 +1242,10 @@ class CartService {
                 return response()->json( [
                     'required_amount' => $adjustment->get_quantity,
                     'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->get_product[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                    'message_key' => 'voucher.min_quantity_of_y',
+                    'errors' => [
+                        'voucher' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                    ]
                 ], 422 );
             }
 
@@ -1217,7 +1283,10 @@ class CartService {
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                    'message_key' => 'voucher.min_spend_of_x',
+                    'errors' => [
+                        'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                    ]
                 ], 422 );
             }
 

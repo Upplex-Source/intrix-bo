@@ -754,8 +754,11 @@ class VoucherService
 
         if ( !$voucher ) {
             return response()->json( [
-                'message' => 'voucher.voucher_not_available',
-                'errors' => 'voucher',
+                'message_key' => 'voucher_not_available',
+                'message' => __('voucher.voucher_not_available'),
+                'errors' => [
+                    'voucher' => __('voucher.voucher_not_available')
+                ]
             ], 422 );
         }
 
@@ -765,16 +768,22 @@ class VoucherService
 
         if ( $voucherUsages->count() > $voucher->usable_amount ) {
             return response()->json( [
-                'message' => 'voucher.voucher_you_have_maximum_used',
-                'errors' => 'voucher',
+                'message_key' => 'voucher_you_have_maximum_used',
+                'message' => __('voucher.voucher_you_have_maximum_used'),
+                'errors' => [
+                    'voucher' => __('voucher.voucher_you_have_maximum_used')
+                ]
             ], 422 );
         }
 
         // total claimable
         if ( $voucher->total_claimable <= 0 ) {
             return response()->json( [
-                'message' => 'voucher.voucher_fully_claimed',
-                'errors' => 'voucher',
+                'message_key' => 'voucher_fully_claimed',
+                'message' => __('voucher.voucher_fully_claimed'),
+                'errors' => [
+                    'voucher' => __('voucher.voucher_fully_claimed')
+                ]
             ], 422 );
         }
 
@@ -784,11 +793,13 @@ class VoucherService
             $userPoints = $user->wallets->where( 'type', 2 )->first();
 
             if ( $userPoints->balance < $voucher->points_required ) {
-    
+
                 return response()->json( [
-                    'required_amount' => $voucher->points_required,
+                    'message_key' => 'minimum_points_required',
                     'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
-                    'errors' => 'voucher',
+                    'errors' => [
+                        'voucher' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+                    ]
                 ], 422 );
     
             }
@@ -804,9 +815,12 @@ class VoucherService
 
             if ( $x < $adjustment->buy_quantity ) {
                 return response()->json( [
-                    'required_amount' => $adjustment->buy_quantity,
-                    'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                   'required_amount' => $adjustment->buy_quantity,
+                        'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
+                        'message_key' => 'voucher.min_quantity_of_x',
+                        'errors' => [
+                            'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        ]
                 ], 422 );
             }
 
@@ -818,7 +832,10 @@ class VoucherService
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'errors' => 'voucher',
+                    'message_key' => 'voucher.min_spend_of_x',
+                    'errors' => [
+                        'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
+                    ]
                 ], 422 );
             }
 
@@ -864,7 +881,9 @@ class VoucherService
             return response()->json( [
                 'message_key' => 'voucher_not_available',
                 'message' => __('voucher.voucher_not_available'),
-                'errors' => 'voucher',
+                'errors' => [
+                    'voucher' => __('voucher.voucher_not_available'),
+                ]
             ], 422 );
         }
 
@@ -874,7 +893,9 @@ class VoucherService
             return response()->json( [
                 'message_key' => 'voucher_fully_claimed',
                 'message' => __('voucher.voucher_fully_claimed'),
-                'errors' => 'voucher',
+                'errors' => [
+                    'voucher' => __('voucher.voucher_fully_claimed'),
+                ]
             ], 422 );
         }
 
@@ -886,7 +907,9 @@ class VoucherService
             return response()->json( [
                 'message_key' => 'voucher_you_have_maximum_claimed',
                 'message' => __('voucher.voucher_you_have_maximum_claimed'),
-                'errors' => 'voucher',
+                'errors' => [
+                    'voucher' => __('voucher.voucher_you_have_maximum_claimed'),
+                ]
             ], 422 );
         }
         
@@ -897,7 +920,10 @@ class VoucherService
             return response()->json( [
                 'required_amount' => $voucher->points_required,
                 'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
-                'errors' => 'voucher',
+                'message_key' => 'minimum_points_is_required',
+                'errors' => [
+                    'voucher' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+                ]
             ], 422 );
 
         }

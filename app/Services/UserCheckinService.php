@@ -442,7 +442,13 @@ class UserCheckinService
         $user = User::find($user->id);
     
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 422);
+            return response()->json( [
+                'message' => 'User not found',
+                'message_key' => 'user_not_found',
+                'errors' => [
+                    'user' => 'User not found',
+                ]
+            ], 422 );
         }
         $originalStreak = true;
 
@@ -457,7 +463,13 @@ class UserCheckinService
             ->first();
     
         if ($existingCheckin) {
-            return response()->json(['message' => 'User has already checked in today'], 422);
+            return response()->json( [
+                'message' => 'User has already checked in today',
+                'message_key' => 'user_already_checked_in',
+                'errors' => [
+                    'user' => 'User has already checked in today',
+                ]
+            ], 422 );
         }
     
         $lastCheckin = UserCheckin::where('user_id', $user->id)
