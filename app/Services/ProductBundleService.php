@@ -607,6 +607,16 @@ class ProductBundleService
             ] );
 
             if( $request->payment_method == 1 ){
+
+                $userBundle = UserBundle::create([
+                    'user_id' => $user->id,
+                    'product_bundle_id' => $bundle->id,
+                    'status' => 10,
+                    'total_cups' => $bundle->productBundleMetas->first()->quantity,
+                    'cups_left' => $bundle->productBundleMetas->first()->quantity,
+                    'last_used' => null,
+                ]);
+                
                 WalletService::transact( $userWallet, [
                     'amount' => -$bundle->price,
                     'remark' => 'Bundle Purchased: ' . $bundle->title,
@@ -622,7 +632,7 @@ class ProductBundleService
 
                     WalletService::transact( $userBonusWallet, [
                         'amount' => $bundle->price * $spendingBonus->option_value,
-                        'remark' => 'Register Bonus',
+                        'remark' => 'Purchase Bonus',
                         'type' => 2,
                         'transaction_type' => 22,
                     ] );
@@ -636,7 +646,7 @@ class ProductBundleService
 
                     WalletService::transact( $referralWallet, [
                         'amount' => $bundle->price * $referralSpendingBonus->option_value,
-                        'remark' => 'Register Bonus',
+                        'remark' => 'Referral Purchase Bonus',
                         'type' => $referralWallet->type,
                         'transaction_type' => 22,
                     ] );

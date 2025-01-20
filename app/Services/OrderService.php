@@ -1186,7 +1186,7 @@ class OrderService
 
                     WalletService::transact( $userBonusWallet, [
                         'amount' => $order->total_price * $spendingBonus->option_value,
-                        'remark' => 'Register Bonus',
+                        'remark' => 'Purchasing Bonus',
                         'type' => 2,
                         'transaction_type' => 22,
                     ] );
@@ -1200,7 +1200,7 @@ class OrderService
 
                     WalletService::transact( $referralWallet, [
                         'amount' => $order->total_price * $referralSpendingBonus->option_value,
-                        'remark' => 'Register Bonus',
+                        'remark' => 'Referral Purchasing Bonus',
                         'type' => $referralWallet->type,
                         'transaction_type' => 22,
                     ] );

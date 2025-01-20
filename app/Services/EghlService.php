@@ -22,6 +22,10 @@ use App\Models\{
     TopupRecord,
     WalletTransaction,
     Wallet,
+    UserBundle,
+    ProductBundle,
+    UserBundleTransaction,
+    Option,
 };
 
 use App\Jobs\{
@@ -213,6 +217,32 @@ class EghlService {
                     'status' => $orderStatus
                 ],
             ] );
+        }else if( strpos($request->OrderNumber, 'BDL') !== false ){
+            $order = Order::where( 'reference', $request->OrderNumber )->first();
+            $orderStatus = false;
+    
+            if($request->HashValue2 == Helper::generateResponseHash($request) && $order){
+                $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first(); 
+    
+                if( $request->TxnStatus == 0 ){
+                    $userBundle = UserBundle::create([
+                        'user_id' => $bundle->user_id,
+                        'product_bundle_id' => $bundle->product_bundle_id,
+                        'status' => 10,
+                        'total_cups' => $bundle->productBundle->productBundleMetas->first()->quantity,
+                        'cups_left' => $bundle->productBundle->productBundleMetas->first()->quantity,
+                        'last_used' => null,
+                    ]);
+                }
+            }
+    
+            return response()->json( [
+                'message' => '',
+                'message_key' => 'bundle_purchased',
+                'data' => [
+                    'status' => $orderStatus
+                ],
+            ] );
         }else{
 
             $order = Order::where( 'reference', $request->OrderNumber )->first();
@@ -234,6 +264,35 @@ class EghlService {
                 $order->payment_method = 2;
                 $order->save();
                 $orderTransaction->save();
+
+                // assign purchasing bonus
+                $spendingBonus = Option::getSpendingSettings();
+                $user = $order->user;
+                if( $spendingBonus ){
+
+                    $userBonusWallet = $user->wallets->where( 'type', 2 )->first();
+
+                    WalletService::transact( $userBonusWallet, [
+                        'amount' => $order->total_price * $spendingBonus->option_value,
+                        'remark' => 'Purchasing Bonus',
+                        'type' => 2,
+                        'transaction_type' => 22,
+                    ] );
+                }
+
+                // assign referral's purchasing bonus
+                $referralSpendingBonus = Option::getReferralSpendingSettings();
+                if( $user->referral && $referralSpendingBonus){
+
+                    $referralWallet = $user->referral->wallets->where('type',2)->first();
+
+                    WalletService::transact( $referralWallet, [
+                        'amount' => $order->total_price * $referralSpendingBonus->option_value,
+                        'remark' => 'Referral Purchasing Bonus',
+                        'type' => $referralWallet->type,
+                        'transaction_type' => 22,
+                    ] );
+                }
             }
     
             return response()->json( [
