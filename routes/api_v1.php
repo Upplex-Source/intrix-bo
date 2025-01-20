@@ -112,6 +112,11 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::get( '/', [ ProductBundleController::class, 'getBundles' ] );
         Route::post( 'buy', [ ProductBundleController::class, 'buyBundle' ] );
         Route::post( 'retry-payment', [ ProductBundleController::class, 'retryPayment' ] );
+
+        Route::post( 'get-added-cup', [ ProductBundleController::class, 'getAddedCup' ] );
+        Route::post( 'add-cup', [ ProductBundleController::class, 'addCup' ] );
+        Route::post( 'edit-cup', [ ProductBundleController::class, 'editCup' ] );
+        Route::post( 'checkout', [ ProductBundleController::class, 'checkout' ] );
     } );
     
 });

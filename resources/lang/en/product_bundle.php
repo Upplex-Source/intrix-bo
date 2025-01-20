@@ -25,6 +25,10 @@ return [
     'product' => 'Product',
     'quantity' => 'Quantity',
     'validity_days' => 'Validity Days',
-    'expired_at' => 'Expired At'
+    'expired_at' => 'Expired At',
+
+    'active', 'Active',
+    'pending_payment', 'Pending payment',
+    'expired', 'Expired',
 
 ];

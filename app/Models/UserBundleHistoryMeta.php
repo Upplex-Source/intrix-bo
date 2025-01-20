@@ -14,33 +14,49 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class UserBundle extends Model
+class UserBundleHistoryMeta extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
+    protected $table = 'user_bundle_histories_metas';
+
     protected $fillable = [
-        'user_id',
-        'product_bundle_id',
-        'total_cups',
-        'cups_left',
-        'last_used',
+        'user_bundle_history_id',
+        'product_id',
+        'froyo_id',
+        'syrup_id',
+        'topping_id',
+        'bundle_selections',
         'status',
-        'payment_attempt',
-        'payment_url',
     ];
 
     protected $hidden = [
         'secret_code'
     ];
 
-    public function user()
+    public function userBundleHistory()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(UserBundleHistory::class, 'user_bundle_history_id');
     }
 
-    public function productBundle()
+    public function product()
     {
-        return $this->belongsTo(ProductBundle::class, 'product_bundle_id');
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function froyo()
+    {
+        return $this->belongsTo(Froyo::class, 'froyo_id');
+    }
+
+    public function syrup()
+    {
+        return $this->belongsTo(Syrup::class, 'syrup_id');
+    }
+
+    public function topping()
+    {
+        return $this->belongsTo(Topping::class, 'topping_id');
     }
 
     public function getImagePathAttribute() {
@@ -70,9 +86,9 @@ class UserBundle extends Model
     {
 
         $statuses = [
-            10 => __('product_bundle.active'),
-            20 => __('product_bundle.pending_payment'),
-            21 => __('product_bundle.expired'),
+            10 => __('bundle.active'),
+            20 => __('bundle.used'),
+            21 => __('bundle.expired'),
         ];
 
         return $statuses[$this->attributes['status']] ?? null;
@@ -85,17 +101,16 @@ class UserBundle extends Model
     }
 
     protected static $logAttributes = [
-        'user_id',
-        'product_bundle_id',
-        'total_cups',
-        'cups_left',
-        'last_used',
+        'user_bundle_history_id',
+        'product_id',
+        'froyo_id',
+        'syrup_id',
+        'topping_id',
+        'bundle_selections',
         'status',
-        'payment_attempt',
-        'payment_url',
     ];
 
-    protected static $logName = 'user_bundles';
+    protected static $logName = 'user_bundle_history_meta';
 
     protected static $logOnlyDirty = true;
 
@@ -104,6 +119,6 @@ class UserBundle extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} user bundles";
+        return "{$eventName} user bundle history meta";
     }
 }

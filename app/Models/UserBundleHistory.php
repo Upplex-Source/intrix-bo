@@ -22,12 +22,23 @@ class UserBundleHistory extends Model
         'user_id',
         'product_bundle_id',
         'bundle_selections',
+        'user_bundle_id',
         'status',
     ];
 
     protected $hidden = [
         'secret_code'
     ];
+
+    public function userBundleHistoryMetas()
+    {
+        return $this->hasMany(UserBundleHistoryMeta::class, 'user_bundle_history_id');
+    }
+
+    public function userBundle()
+    {
+        return $this->belongsTo(UserBundle::class, 'user_bundle_id');
+    }
 
     public function user()
     {
@@ -84,6 +95,7 @@ class UserBundleHistory extends Model
         'user_id',
         'product_bundle_id',
         'bundle_selections',
+        'user_bundle_id',
         'status',
     ];
 

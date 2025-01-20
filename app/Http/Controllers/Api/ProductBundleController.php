@@ -39,6 +39,8 @@ class ProductBundleController extends Controller
     /**
      * 2. Buy Bundle
      * 
+     * <aside class="notice">Buy bundle of later use</aside>
+     * 
      * <strong>payment_method</strong><br>
      * 1: yobe wallet<br>
      * 2: payment gateway<br>
@@ -59,7 +61,7 @@ class ProductBundleController extends Controller
      /**
      * 3. Retry Payment
      * 
-     * <aside class="notice">retry payment for online payment</aside>
+     * <aside class="notice">retry payment for online payment, from previous buy bundle</aside>
      * 
      * @authenticated
      * 

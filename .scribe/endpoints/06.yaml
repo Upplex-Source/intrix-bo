@@ -1,110 +1,41 @@
-name: 'User API'
+name: 'Promo Code API'
 description: ''
 endpoints:
   -
     httpMethods:
-      - POST
-    uri: api/v1/users
-    metadata:
-      title: '1. Create an user'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      identifier:
-        name: identifier
-        description: 'The temporary user ID during request OTP.'
-        required: true
-        example: eyJpdiI...
-        type: string
-        custom: []
-      phone_number:
-        name: phone_number
-        description: 'The phone_number for register.'
-        required: true
-        example: '0123982334'
-        type: string
-        custom: []
-      otp_code:
-        name: otp_code
-        description: 'The otp for register.'
-        required: true
-        example: '123456'
-        type: string
-        custom: []
-      password:
-        name: password
-        description: 'The password for register.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'The confirmation password.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-      invitation_code:
-        name: invitation_code
-        description: 'The invitation code of referral.'
-        required: false
-        example: AASSCC
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/login
-    metadata:
-      title: '2. Login an user - Email'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      phone_number:
-        name: phone_number
-        description: 'The phone_number for login.'
-        required: true
-        example: '0123982334'
-        type: string
-        custom: []
-      password:
-        name: password
-        description: 'The password for login.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
       - GET
-    uri: api/v1/users
+    uri: api/v1/promo-codes
     metadata:
-      title: '5. Get user'
-      description: ''
+      title: '1. Get promo code'
+      description: '<aside class="notice">Get all promo code</aside>'
       authenticated: true
       custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
-    queryParameters: []
+    queryParameters:
+      per_page:
+        name: per_page
+        description: 'Retrieve how many product in a page, default is 10.'
+        required: false
+        example: 10
+        type: integer
+        custom: []
+      promo_code:
+        name: promo_code
+        description: 'The promo code to be filter.'
+        required: false
+        example: XBMSD22
+        type: string
+        custom: []
+      discount_type:
+        name: discount_type
+        description: 'The promo discount type to be filter'
+        required: false
+        example: 2
+        type: integer
+        custom: []
     bodyParameters: []
     responses:
       -
@@ -479,273 +410,4 @@ endpoints:
           cache-control: 'no-cache, private'
           content-type: application/json
         description: null
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/otp
-    metadata:
-      title: '3. Request an OTP'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      phone_number:
-        name: phone_number
-        description: 'The phone_number for login.'
-        required: true
-        example: '0123982334'
-        type: string
-        custom: []
-      request_type:
-        name: request_type
-        description: 'The request type for OTP.'
-        required: true
-        example: 1
-        type: integer
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/otp/resend
-    metadata:
-      title: '4. Resend an OTP'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      identifier:
-        name: identifier
-        description: 'The temporary user ID during request OTP.'
-        required: true
-        example: eyJpdiI...
-        type: string
-        custom: []
-      phone_number:
-        name: phone_number
-        description: 'The phone_number for login.'
-        required: true
-        example: '0123982334'
-        type: string
-        custom: []
-      request_type:
-        name: request_type
-        description: 'The request type for OTP.'
-        required: true
-        example: 2
-        type: integer
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/reset-password
-    metadata:
-      title: '10. Reset Password'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      phone_number:
-        name: phone_number
-        description: 'The phone_number for login.'
-        required: true
-        example: '0123982334'
-        type: string
-        custom: []
-      identifier:
-        name: identifier
-        description: 'The unique_identifier from forgot password.'
-        required: true
-        example: WLnvrJw6YYK
-        type: string
-        custom: []
-      otp_code:
-        name: otp_code
-        description: 'The otp code to verify password reset.'
-        required: false
-        example: '123456'
-        type: string
-        custom: []
-      password:
-        name: password
-        description: 'The new password to perform password reset.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'The new password confirmation to perform password reset.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/forgot-password
-    metadata:
-      title: '9. Forgot Password (Request Otp)'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      phone_number:
-        name: phone_number
-        description: 'The phone_number for login.'
-        required: true
-        example: '0123982334'
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/delete-verification
-    metadata:
-      title: '11. Delete Verification'
-      description: ''
-      authenticated: true
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      password:
-        name: password
-        description: 'The password to perform account delete checking.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/delete-confirm
-    metadata:
-      title: '12. Delete Confirm'
-      description: ''
-      authenticated: true
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      password:
-        name: password
-        description: 'The password to perform account delete checking.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/update
-    metadata:
-      title: '6. Update user'
-      description: ''
-      authenticated: true
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      username:
-        name: username
-        description: 'The username to update.'
-        required: false
-        example: John
-        type: string
-        custom: []
-      email:
-        name: email
-        description: 'The email to update.'
-        required: false
-        example: john@email.com
-        type: string
-        custom: []
-      date_of_birth:
-        name: date_of_birth
-        description: 'The date of birth to update.'
-        required: false
-        example: '2022-01-01'
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/users/update-password
-    metadata:
-      title: '7. Update user password'
-      description: ''
-      authenticated: true
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      old_password:
-        name: old_password
-        description: 'The old password of current user.'
-        required: true
-        example: 1234abcd
-        type: string
-        custom: []
-      password:
-        name: password
-        description: 'The new password to change.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'The confirm password of new password to change.'
-        required: true
-        example: abcd1234
-        type: string
-        custom: []
-    responses: []
     responseFields: []

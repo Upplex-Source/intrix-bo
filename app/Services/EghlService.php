@@ -228,6 +228,7 @@ class EghlService {
                     $userBundle = $bundle->userBundle;
                     $userBundle->status = 10;
                     $userBundle->save();
+                    $bundleStatus = true;
                 }
             }
     
