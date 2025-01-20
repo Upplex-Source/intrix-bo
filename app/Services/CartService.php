@@ -189,7 +189,7 @@ class CartService {
                 unset($formattedErrors['promo_code']);
             }
 
-            return response()->json(['errors' => $formattedErrors], 422);
+            return response()->json(["message"=> "The given data was invalid.",'errors' => $formattedErrors], 422);
         }
         
         // check voucher type
@@ -469,7 +469,7 @@ class CartService {
                 unset($formattedErrors['promo_code']);
             }
         
-            return response()->json(['errors' => $formattedErrors], 422);
+            return response()->json(["message"=> "The given data was invalid.",'errors' => $formattedErrors], 422);
         }
 
         // check voucher type
