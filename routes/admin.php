@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\{
     UserCheckinController,
     CheckinRewardController,
     ProductBundleController,
+    UserBundleController,
 };
 
 use App\Models\{
@@ -501,6 +502,26 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-product-bundle-status', [ ProductBundleController::class, 'updateproductBundleStatus' ] )->name( 'admin.product_bundle.updateproductBundleStatus' );
                 Route::post( 'remove-product-bundle-gallery-image', [ ProductBundleController::class, 'removeproductBundleGalleryImage' ] )->name( 'admin.product_bundle.removeproductBundleGalleryImage' );
                 Route::post( 'ckeUpload', [ ProductBundleController::class, 'ckeUpload' ] )->name( 'admin.product_bundle.ckeUpload' );
+            } );
+
+            Route::prefix( 'user-bundles' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view vouchers' ] ], function() {
+                    Route::get( '/', [ UserBundleController::class, 'index' ] )->name( 'admin.module_parent.user_bundle.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add vouchers' ] ], function() {
+                    Route::get( 'add', [ UserBundleController::class, 'add' ] )->name( 'admin.user_bundle.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit vouchers' ] ], function() {
+                    Route::get( 'edit', [ UserBundleController::class, 'edit' ] )->name( 'admin.user_bundle.edit' );
+                } );
+    
+                Route::post( 'all-user-bundles', [ UserBundleController::class, 'alluserBundles' ] )->name( 'admin.user_bundle.alluserBundles' );
+                Route::post( 'one-user-bundle', [ UserBundleController::class, 'oneuserBundle' ] )->name( 'admin.user_bundle.oneuserBundle' );
+                Route::post( 'create-user-bundle', [ UserBundleController::class, 'createuserBundle' ] )->name( 'admin.user_bundle.createuserBundle' );
+                Route::post( 'update-user-bundle', [ UserBundleController::class, 'updateuserBundle' ] )->name( 'admin.user_bundle.updateuserBundle' );
+                Route::post( 'update-user-bundle-status', [ UserBundleController::class, 'updateuserBundleStatus' ] )->name( 'admin.user_bundle.updateuserBundleStatus' );
+                Route::post( 'remove-user-bundle-gallery-image', [ UserBundleController::class, 'removeuserBundleGalleryImage' ] )->name( 'admin.user_bundle.removeuserBundleGalleryImage' );
+                Route::post( 'ckeUpload', [ UserBundleController::class, 'ckeUpload' ] )->name( 'admin.user_bundle.ckeUpload' );
             } );
 
         } );

@@ -45,6 +45,8 @@ class ProductBundleService
             'image' => [ 'nullable' ],
             'products' => [ 'required' ],
             'quantity' => [ 'required', 'min:1' ],
+            'validity_days' => [ 'nullable', 'min:1' ],
+            
         ] );
 
         $attributeName = [
@@ -72,6 +74,7 @@ class ProductBundleService
                 'description' => $request->description,
                 'price' => $request->price,
                 'discount_price' => $request->discount_price,
+                'validity_days' => $request->validity_days,
                 'status' => 10,
             ]);
 
@@ -141,6 +144,7 @@ class ProductBundleService
             'image' => [ 'nullable' ],
             'products' => [ 'required' ],
             'quantity' => [ 'required', 'min:1' ],
+            'validity_days' => [ 'nullable', 'min:1' ],
         ] );
 
         $attributeName = [
@@ -172,6 +176,7 @@ class ProductBundleService
             $updateProductBundle->title = $request->title ?? $updateProductBundle->title;
             $updateProductBundle->description = $request->description ?? $updateProductBundle->description;
             $updateProductBundle->price = $request->price ?? $updateProductBundle->price;
+            $updateProductBundle->validity_days = $request->validity_days ?? $updateProductBundle->validity_days;
             $updateProductBundle->discount_price = $request->discount_price ?? $updateProductBundle->discount_price;
 
             $image = explode( ',', $request->image );

@@ -24,5 +24,7 @@ return [
     'product_id' => 'Product',
     'product' => 'Product',
     'quantity' => 'Quantity',
+    'validity_days' => 'Validity Days',
+    'expired_at' => 'Expired At'
 
 ];

@@ -623,6 +623,7 @@ class CartService {
                     $cartMeta->syrups = json_encode($syrups);
                     $cartMeta->toppings = json_encode($toppings);
                     $cartMeta->total_price = $metaPrice;
+
                     $cartMeta->save();
 
                     $orderPrice += $metaPrice;
@@ -631,7 +632,7 @@ class CartService {
 
                     if( $request->promo_code ){
                         $voucher = Voucher::where( 'id', $request->promo_code )
-            ->orWhere('promo_code', $request->promo_code)->first();
+                        ->orWhere('promo_code', $request->promo_code)->first();
 
                         if ( $voucher->discount_type == 3 ) {
         
@@ -646,10 +647,10 @@ class CartService {
                                 ->where('product_id', $adjustment->get_product)
                                 ->sortBy('total_price')
                                 ->first();                    
-        
+
                                 if ($getProductMeta) {
                                     $orderPrice -= $getProductMeta->total_price;
-                                    // $getProductMeta->total_price = 0;
+                                    $getProductMeta->total_price = 0;
                                     $getProductMeta->save();
                                 }
                             }
@@ -725,7 +726,7 @@ class CartService {
 
                 if( $request->promo_code ){
                     $voucher = Voucher::where( 'id', $request->promo_code )
-            ->orWhere('promo_code', $request->promo_code)->first();
+                    ->orWhere('promo_code', $request->promo_code)->first();
 
                     if ( $voucher->discount_type == 3 ) {
     

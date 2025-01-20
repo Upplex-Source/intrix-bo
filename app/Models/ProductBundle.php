@@ -25,7 +25,8 @@ class ProductBundle extends Model
         'price',
         'image',
         'discount_price',
-        'status'
+        'status',
+        'validity_days',
     ];
 
     public function productBundleMetas()
@@ -54,7 +55,8 @@ class ProductBundle extends Model
         'price',
         'image',
         'discount_price',
-        'status'
+        'status',
+        'validity_days',
     ];
 
     protected static $logName = 'categories';

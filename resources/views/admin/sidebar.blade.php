@@ -121,7 +121,7 @@
                                 @endcan
 
                                 @can( 'view Products' )
-                                <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\ProductController' || $controller == 'App\Http\Controllers\Admin\ProductBundleController') ? 'active current-page' : '' }}">
+                                <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\ProductController' || $controller == 'App\Http\Controllers\Admin\ProductBundleController' || $controller == 'App\Http\Controllers\Admin\UserBundleController') ? 'active current-page' : '' }}">
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
                                         <span class="nk-menu-icon"><em class="icon ni ni-centos"></em></span>
                                         <span class="nk-menu-text">{{ __( 'template.menus' ) }}</span>
@@ -130,10 +130,13 @@
                                         <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
                                             <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.menus' ) }}</span></a>
                                         </li>
-                                    </ul>
-                                    <ul class="nk-menu-sub">
+                                        
                                         <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductBundleController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
                                             <a href="{{ route( 'admin.module_parent.product_bundle.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.product_bundles' ) }}</span></a>
+                                        </li>
+                                        
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\UserBundleController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.user_bundle.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.user_bundles' ) }}</span></a>
                                         </li>
                                     </ul>
                                 </li>

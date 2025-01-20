@@ -68,6 +68,11 @@ $columns = [
     ],
     [
         'type' => 'default',
+        'id' => 'validity_days',
+        'title' => __( 'product_bundle.validity_days' ),
+    ],
+    [
+        'type' => 'default',
         'id' => 'price',
         'title' => __( 'product_bundle.price' ),
     ],
@@ -130,6 +135,7 @@ var statusMapper = @json( $data['status'] ),
             { data: 'title' },
             { data: 'product_bundle_metas' },
             { data: 'product_bundle_metas' },
+            { data: 'validity_days' },
             { data: 'price' },
             { data: 'status' },
             { data: 'encrypted_id' },
@@ -228,6 +234,12 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return statusMapper[data];
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "validity_days" ) }}' ),
+                render: function( data, type, row, meta ) {
+                    return data ? data : '-';
                 },
             },
             {
