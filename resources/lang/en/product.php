@@ -25,4 +25,7 @@ return [
     "status" => "Status",
     'validity_days' => 'Validity Days',
 
+    'active' => 'Active',
+    'pending_payment' => 'Pending Payment',
+    'expired' => 'Expired',
 ];

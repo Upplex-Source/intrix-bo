@@ -25,6 +25,8 @@ class UserBundle extends Model
         'cups_left',
         'last_used',
         'status',
+        'payment_attempt',
+        'payment_url',
     ];
 
     protected $hidden = [
@@ -68,9 +70,9 @@ class UserBundle extends Model
     {
 
         $statuses = [
-            10 => __('bundle.active'),
-            20 => __('bundle.used'),
-            21 => __('bundle.expired'),
+            10 => __('product_bundle.active'),
+            20 => __('product_bundle.used'),
+            21 => __('product_bundle.expired'),
         ];
 
         return $statuses[$this->attributes['status']] ?? null;
@@ -89,6 +91,8 @@ class UserBundle extends Model
         'cups_left',
         'last_used',
         'status',
+        'payment_attempt',
+        'payment_url',
     ];
 
     protected static $logName = 'user_bundles';

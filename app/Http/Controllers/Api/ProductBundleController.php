@@ -23,7 +23,7 @@ class ProductBundleController extends Controller
      * 
      * @authenticated
      * 
-     * @group Voucher API
+     * @group Bundle API
      * 
      * @queryParam per_page integer Retrieve how many product in a page, default is 10. Example: 10
      * @queryParam bundle_id integer The bundle id to be filter. Example: 1
@@ -45,7 +45,7 @@ class ProductBundleController extends Controller
      * 
      * @authenticated
      * 
-     * @group Voucher API
+     * @group Bundle API
      * 
      * @bodyParam bundle_id required integer The bundle_id to be claim. Example: 1
      * @bodyParam payment_method integer The payment Method. Example: 1
@@ -54,5 +54,21 @@ class ProductBundleController extends Controller
     public function buyBundle( Request $request ) {
 
         return ProductBundleService::buyBundle( $request );
+    }
+
+     /**
+     * 3. Retry Payment
+     * 
+     * <aside class="notice">retry payment for online payment</aside>
+     * 
+     * @authenticated
+     * 
+     * @group Bundle API
+     * 
+     * @queryParam user_bundle_id integer The ID of the bundle. Example: 1
+     */
+    public function retryPayment( Request $request ) {
+
+        return ProductBundleService::retryPayment( $request );
     }
 }

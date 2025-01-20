@@ -111,6 +111,7 @@ Route::middleware( 'auth:user' )->group( function() {
     Route::prefix( 'bundles' )->group( function() {
         Route::get( '/', [ ProductBundleController::class, 'getBundles' ] );
         Route::post( 'buy', [ ProductBundleController::class, 'buyBundle' ] );
+        Route::post( 'retry-payment', [ ProductBundleController::class, 'retryPayment' ] );
     } );
     
 });

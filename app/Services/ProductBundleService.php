@@ -538,6 +538,7 @@ class ProductBundleService
             $productbundles = $productbundles->get();
 
             $productbundles = $productbundles->map(function ($productbundle){
+                $productbundle->append( ['bundle_status_label'] );
                 $productbundle->productBundle->append( ['image_path'] );
                 return $productbundle;
             });
@@ -597,9 +598,21 @@ class ProductBundleService
             $userWallet = $user->wallets->where( 'type', 1 )->first();
             $bundle = ProductBundle::find( $request->bundle_id );
 
+            $userBundle = UserBundle::create([
+                'user_id' => $user->id,
+                'product_bundle_id' => $bundle->id,
+                'status' => $request->payment_method == 1 ? 10 : 20,
+                'total_cups' => $bundle->productBundleMetas->first()->quantity,
+                'cups_left' => $bundle->productBundleMetas->first()->quantity,
+                'last_used' => null,
+                'payment_attempt' => 1,
+                'payment_url' => 'null',
+            ]);
+
             $bundleTransaction = UserBundleTransaction::create( [
                 'user_id' => $user->id,
                 'product_bundle_id' => $bundle->id,
+                'user_bundle_id' => $userBundle->id,
                 'reference' => Helper::generateBundleReference(),
                 'price' => $bundle->price,
                 'status' => 10,
@@ -608,15 +621,6 @@ class ProductBundleService
             ] );
 
             if( $request->payment_method == 1 ){
-
-                $userBundle = UserBundle::create([
-                    'user_id' => $user->id,
-                    'product_bundle_id' => $bundle->id,
-                    'status' => 10,
-                    'total_cups' => $bundle->productBundleMetas->first()->quantity,
-                    'cups_left' => $bundle->productBundleMetas->first()->quantity,
-                    'last_used' => null,
-                ]);
                 
                 WalletService::transact( $userWallet, [
                     'amount' => -$bundle->price,
@@ -683,10 +687,12 @@ class ProductBundleService
                 $data['HashValue'] = Helper::generatePaymentHash($data);
                 $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
                 $bundleTransaction->payment_url = $url2;
+                $userBundle->payment_url = $url2;
 
             }
 
             $bundleTransaction->save();
+            $userBundle->save();
 
             DB::commit();
 
@@ -701,8 +707,106 @@ class ProductBundleService
         
         return response()->json( [
             'message' => '',
-            'message_key' => 'purchase_bundle_success',
+            'message_key' => $request->payment_method == 1  ? 'please proceed to payment' : 'purchase_bundle_success' ,
             'payment_url' => $bundleTransaction->payment_url,
+            'bundle' => $userBundle,
+        ] );
+    }
+
+    public static function retryPayment( $request ) {
+
+        $validator = Validator::make($request->all(), [
+            'user_bundle_id' => ['required', 'exists:user_bundles,id'],
+        ]);
+
+        $user = auth()->user();
+        
+        $bundle = UserBundle::where('id', $request->user_bundle_id)
+        ->where('status', 20)
+        ->where('user_id', auth()->user()->id )
+        ->first();
+
+        if (!$bundle) {
+            return response()->json([
+                'message' => '',
+                'message_key' => 'bundle_not_available',
+                'errors' => [
+                    'order' => 'bundle not available'
+                ]
+            ]);
+        }
+
+        $validator->validate();
+
+        DB::beginTransaction();
+        try {
+        
+            $orderPrice = 0;
+            $user = auth()->user();
+            $bundle = ProductBundle::find( $request->bundle_id );
+
+            $userBundle = UserBundle::where('id', $request->user_bundle_id)
+            ->where('status', 20)
+            ->where('user_id', auth()->user()->id )
+            ->first();
+
+            $bundleTransaction = UserBundleTransaction::create( [
+                'user_id' => $user->id,
+                'product_bundle_id' => $bundle->id,
+                'user_bundle_id' => $userBundle->id,
+                'reference' => Helper::generateBundleReference(),
+                'price' => $bundle->price,
+                'status' => 10,
+                'payment_attempt' => 1,
+                'payment_url' => 'null',
+            ] );
+                
+            $data = [
+                'TransactionType' => 'SALE',
+                'PymtMethod' => 'ANY',
+                'ServiceID' => config('services.eghl.merchant_id'),
+                'PaymentID' => $bundleTransaction->reference . '-' . $bundleTransaction->payment_attempt,
+                'OrderNumber' => $bundleTransaction->reference,
+                'PaymentDesc' => $bundleTransaction->reference,
+                'MerchantName' => 'Yobe Froyo',
+                'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+                'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
+                'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
+                'Amount' => $bundleTransaction->price,
+                'CurrencyCode' => 'MYR',
+                'CustIP' => request()->ip(),
+                'CustName' => $bundleTransaction->user->username ?? 'Yobe Guest',
+                'HashValue' => '',
+                'CustEmail' => $bundleTransaction->user->email ?? 'yobeguest@gmail.com',
+                'CustPhone' => $bundleTransaction->user->phone_number,
+                'MerchantTermsURL' => null,
+                'LanguageCode' => 'en',
+                'PageTimeout' => '780',
+            ];
+
+            $data['HashValue'] = Helper::generatePaymentHash($data);
+            $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
+            $bundleTransaction->payment_url = $url2;
+            $userBundle->payment_url = $url2;
+            $bundleTransaction->save();
+            $userBundle->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+        
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'please proceed to payment',
+            'payment_url' => $bundleTransaction->payment_url,
+            'bundle' => $userBundle,
         ] );
     }
 

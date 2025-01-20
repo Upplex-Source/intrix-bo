@@ -218,21 +218,16 @@ class EghlService {
                 ],
             ] );
         }else if( strpos($request->OrderNumber, 'BDL') !== false ){
-            $order = Order::where( 'reference', $request->OrderNumber )->first();
-            $orderStatus = false;
+            $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first();
+            $bundleStatus = false;
     
             if($request->HashValue2 == Helper::generateResponseHash($request) && $order){
                 $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first(); 
     
                 if( $request->TxnStatus == 0 ){
-                    $userBundle = UserBundle::create([
-                        'user_id' => $bundle->user_id,
-                        'product_bundle_id' => $bundle->product_bundle_id,
-                        'status' => 10,
-                        'total_cups' => $bundle->productBundle->productBundleMetas->first()->quantity,
-                        'cups_left' => $bundle->productBundle->productBundleMetas->first()->quantity,
-                        'last_used' => null,
-                    ]);
+                    $userBundle = $bundle->userBundle;
+                    $userBundle->status = 10;
+                    $userBundle->save();
                 }
             }
     
@@ -240,7 +235,7 @@ class EghlService {
                 'message' => '',
                 'message_key' => 'bundle_purchased',
                 'data' => [
-                    'status' => $orderStatus
+                    'status' => $bundleStatus
                 ],
             ] );
         }else{

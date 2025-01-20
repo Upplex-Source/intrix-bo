@@ -21,6 +21,7 @@ class UserBundleTransaction extends Model
     protected $fillable = [
         'user_id',
         'product_bundle_id',
+        'user_bundle_id',
         'reference',
         'status',
         'payment_attempt',
@@ -31,6 +32,11 @@ class UserBundleTransaction extends Model
     protected $hidden = [
         'secret_code'
     ];
+
+    public function userBundle()
+    {
+        return $this->belongsTo(UserBundle::class, 'user_bundle_id');
+    }
 
     public function user()
     {
@@ -86,6 +92,7 @@ class UserBundleTransaction extends Model
     protected static $logAttributes = [
         'user_id',
         'product_bundle_id',
+        'user_bundle_id',
         'reference',
         'status',
         'payment_attempt',
