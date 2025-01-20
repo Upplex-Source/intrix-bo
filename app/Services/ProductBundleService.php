@@ -754,7 +754,7 @@ class ProductBundleService
                 'product_bundle_id' => $userBundle->product_bundle_id,
                 'user_bundle_id' => $userBundle->id,
                 'reference' => Helper::generateBundleReference(),
-                'price' => $bundle->price,
+                'price' => $userBundle->productBundle->price,
                 'status' => 10,
                 'payment_attempt' => 1,
                 'payment_url' => 'null',
