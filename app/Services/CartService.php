@@ -629,7 +629,7 @@ class CartService {
                     $orderPrice += $metaPrice;
 
                     DB::commit();
-
+                    $updateCart->load( ['cartMetas'] );
                     if( $request->promo_code ){
                         $voucher = Voucher::where( 'id', $request->promo_code )
                         ->orWhere('promo_code', $request->promo_code)->first();
