@@ -564,7 +564,7 @@ class ProductBundleService
         // check wallet balance 
         $userWallet = $user->wallets->where('type',1)->first();
         $bundle = ProductBundle::find( $request->bundle_id );
-        dd();
+
         if( $request->payment_method == 1 ){
 
             if (!$userWallet) {
