@@ -26,6 +26,7 @@ use App\Models\{
     User,
     UserBundle,
     UserBundleTransaction,
+    Option,
 };
 
 use Barryvdh\DomPDF\Facade\Pdf;
