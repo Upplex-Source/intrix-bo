@@ -221,7 +221,7 @@ class EghlService {
             $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first();
             $bundleStatus = false;
     
-            if($request->HashValue2 == Helper::generateResponseHash($request) && $order){
+            if($request->HashValue2 == Helper::generateResponseHash($request) && $bundle){
                 $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first(); 
     
                 if( $request->TxnStatus == 0 ){
