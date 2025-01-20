@@ -959,6 +959,9 @@ class OrderService
                         return response()->json([
                             'message' => 'Balance is not enough, please top up to continue',
                             'message_key' => 'insufficient_balance',
+                            'errors' => [
+                                'wallet' => 'Balance is not enough, please top up to continue',
+                            ]
                         ]);
                     }
     
@@ -967,6 +970,9 @@ class OrderService
                         return response()->json([
                             'message' => 'Balance is not enough, please top up to continue',
                             'message_key' => 'insufficient_balance',
+                            'errors' => [
+                                'wallet' => 'Balance is not enough, please top up to continue',
+                            ]
                         ]);
                     }
                 }

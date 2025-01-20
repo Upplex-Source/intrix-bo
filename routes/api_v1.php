@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\{
     OrderController,
     VoucherController,
     CheckinController,
+    ProductBundleController,
 };
 
 use Illuminate\Support\Facades\Route;
@@ -106,4 +107,10 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::post( '', [ CheckinController::class, 'checkin' ] );
         Route::get( 'rewards', [ CheckinController::class, 'getCheckinRewards' ] );
     } );
+
+    Route::prefix( 'bundles' )->group( function() {
+        Route::get( '/', [ ProductBundleController::class, 'getBundles' ] );
+        Route::post( 'buy', [ ProductBundleController::class, 'buyBundle' ] );
+    } );
+    
 });

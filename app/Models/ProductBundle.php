@@ -42,6 +42,19 @@ class ProductBundle extends Model
         return Helper::encode( $this->attributes['id'] );
     }
 
+    public function getExpiredDateAttribute() {
+        if (!isset($this->attributes['created_at'])) {
+            return null; // Return null or handle this scenario as needed
+        }
+    
+        $createdAt = Carbon::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at'])
+            ->setTimezone('Asia/Kuala_Lumpur');
+    
+        $validityDays = (int) ($this->attributes['validity_days'] ?? 0);
+    
+        return $createdAt->addDays($validityDays)->format('Y-m-d');
+    }    
+
     public $translatable = [ 'title', 'description' ];
 
     protected function serializeDate( DateTimeInterface $date ) {

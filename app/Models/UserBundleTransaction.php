@@ -14,15 +14,18 @@ use App\Traits\HasTranslations;
 
 use Helper;
 
-class UserBundleHistory extends Model
+class UserBundleTransaction extends Model
 {
     use HasFactory, LogsActivity, HasTranslations;
 
     protected $fillable = [
         'user_id',
         'product_bundle_id',
-        'bundle_selections',
+        'reference',
         'status',
+        'payment_attempt',
+        'price',
+        'payment_url',
     ];
 
     protected $hidden = [
@@ -83,8 +86,11 @@ class UserBundleHistory extends Model
     protected static $logAttributes = [
         'user_id',
         'product_bundle_id',
-        'bundle_selections',
+        'reference',
         'status',
+        'payment_attempt',
+        'price',
+        'payment_url',
     ];
 
     protected static $logName = 'user_bundle_transactions';

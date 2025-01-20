@@ -72,6 +72,14 @@ $product_bundle_edit = 'product_bundle_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                
+                <div class="mb-3 row">
+                    <label for="{{ $product_bundle_edit }}_validity_days" class="col-sm-5 form-label">{{ __( 'product.validity_days' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $product_bundle_edit }}_validity_days">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
 
                 <div class="mb-3 row">
                     <label for="{{ $product_bundle_edit }}_price" class="col-sm-5 form-label">{{ __( 'product.price' ) }}</label>
@@ -154,12 +162,13 @@ window.cke_element1 = 'product_bundle_edit_description';
             formData.append( 'price', $( fe + '_price' ).val() );
             formData.append( 'discount_price', $( fe + '_discount_price' ).val() );
             formData.append( 'quantity', $( fe + '_quantity' ).val()  );
+            formData.append( 'validity_days', $( fe + '_validity_days' ).val()  );
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.product_bundle.updateproductBundle' ) }}',
+                url: '{{ route( 'admin.product_bundle.updateProductBundle' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -241,7 +250,7 @@ window.cke_element1 = 'product_bundle_edit_description';
 
             $.ajax( {
 
-                url: '{{ route( 'admin.product_bundle.oneproductBundle' ) }}',
+                url: '{{ route( 'admin.product_bundle.oneProductBundle' ) }}',
                 type: 'POST',
                 data: {
                     'id': '{{ request( 'id' ) }}',
@@ -252,7 +261,8 @@ window.cke_element1 = 'product_bundle_edit_description';
                     $( fe + '_code' ).val( response.code );
                     $( fe + '_title' ).val( response.title );
                     $( fe + '_price' ).val( response.price );
-                    $( fe + '_discount_price' ).val( response.discount_price );
+                    $( fe + '_price' ).val( response.price );
+                    $( fe + '_validity_days' ).val( response.validity_days );
                     editor.setData( response.description );
 
                     response.product_bundle_metas.forEach((product, index) => {

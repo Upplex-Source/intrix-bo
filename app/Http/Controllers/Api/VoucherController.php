@@ -89,7 +89,7 @@ class VoucherController extends Controller
      * 
      * @group Voucher API
      * 
-     * @bodyParam voucher_id required string The voucher_id to be claim. Example: 1
+     * @bodyParam voucher_id required integer The voucher_id to be claim. Example: 1
      * 
      */
     public function claimVoucher( Request $request ) {

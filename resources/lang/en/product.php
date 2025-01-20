@@ -23,5 +23,6 @@ return [
     "default_syrup_quantity" => "Default Syrup Quantity",
     "default_topping_quantity" => "Default Topping Quantity",
     "status" => "Status",
+    'validity_days' => 'Validity Days',
 
 ];

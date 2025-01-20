@@ -72,6 +72,14 @@ $product_bundle_create = 'product_bundle_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                
+                <div class="mb-3 row">
+                    <label for="{{ $product_bundle_create }}_validity_days" class="col-sm-5 form-label">{{ __( 'product.validity_days' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $product_bundle_create }}_validity_days">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
 
                 <div class="mb-3 row">
                     <label for="{{ $product_bundle_create }}_price" class="col-sm-5 form-label">{{ __( 'product.price' ) }}</label>
@@ -153,12 +161,14 @@ window.cke_element1 = 'product_bundle_create_description';
             formData.append( 'price', $( fc + '_price' ).val() );
             formData.append( 'discount_price', $( fc + '_discount_price' ).val() );
             formData.append( 'quantity', $( fc + '_quantity' ).val()  );
+            formData.append( 'validity_days', $( fc + '_validity_days' ).val()  );
+            
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.product_bundle.createproductBundle' ) }}',
+                url: '{{ route( 'admin.product_bundle.createProductBundle' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,

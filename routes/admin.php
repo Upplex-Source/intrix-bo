@@ -495,12 +495,12 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                     Route::get( 'edit', [ ProductBundleController::class, 'edit' ] )->name( 'admin.product_bundle.edit' );
                 } );
     
-                Route::post( 'all-product-bundles', [ ProductBundleController::class, 'allproductBundles' ] )->name( 'admin.product_bundle.allproductBundles' );
-                Route::post( 'one-product-bundle', [ ProductBundleController::class, 'oneproductBundle' ] )->name( 'admin.product_bundle.oneproductBundle' );
-                Route::post( 'create-product-bundle', [ ProductBundleController::class, 'createproductBundle' ] )->name( 'admin.product_bundle.createproductBundle' );
-                Route::post( 'update-product-bundle', [ ProductBundleController::class, 'updateproductBundle' ] )->name( 'admin.product_bundle.updateproductBundle' );
-                Route::post( 'update-product-bundle-status', [ ProductBundleController::class, 'updateproductBundleStatus' ] )->name( 'admin.product_bundle.updateproductBundleStatus' );
-                Route::post( 'remove-product-bundle-gallery-image', [ ProductBundleController::class, 'removeproductBundleGalleryImage' ] )->name( 'admin.product_bundle.removeproductBundleGalleryImage' );
+                Route::post( 'all-product-bundles', [ ProductBundleController::class, 'allProductBundles' ] )->name( 'admin.product_bundle.allProductBundles' );
+                Route::post( 'one-product-bundle', [ ProductBundleController::class, 'oneProductBundle' ] )->name( 'admin.product_bundle.oneProductBundle' );
+                Route::post( 'create-product-bundle', [ ProductBundleController::class, 'createProductBundle' ] )->name( 'admin.product_bundle.createProductBundle' );
+                Route::post( 'update-product-bundle', [ ProductBundleController::class, 'updateProductBundle' ] )->name( 'admin.product_bundle.updateProductBundle' );
+                Route::post( 'update-product-bundle-status', [ ProductBundleController::class, 'updateProductBundleStatus' ] )->name( 'admin.product_bundle.updateProductBundleStatus' );
+                Route::post( 'remove-product-bundle-gallery-image', [ ProductBundleController::class, 'removeProductBundleGalleryImage' ] )->name( 'admin.product_bundle.removeProductBundleGalleryImage' );
                 Route::post( 'ckeUpload', [ ProductBundleController::class, 'ckeUpload' ] )->name( 'admin.product_bundle.ckeUpload' );
             } );
 
@@ -515,12 +515,12 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                     Route::get( 'edit', [ UserBundleController::class, 'edit' ] )->name( 'admin.user_bundle.edit' );
                 } );
     
-                Route::post( 'all-user-bundles', [ UserBundleController::class, 'alluserBundles' ] )->name( 'admin.user_bundle.alluserBundles' );
-                Route::post( 'one-user-bundle', [ UserBundleController::class, 'oneuserBundle' ] )->name( 'admin.user_bundle.oneuserBundle' );
-                Route::post( 'create-user-bundle', [ UserBundleController::class, 'createuserBundle' ] )->name( 'admin.user_bundle.createuserBundle' );
-                Route::post( 'update-user-bundle', [ UserBundleController::class, 'updateuserBundle' ] )->name( 'admin.user_bundle.updateuserBundle' );
-                Route::post( 'update-user-bundle-status', [ UserBundleController::class, 'updateuserBundleStatus' ] )->name( 'admin.user_bundle.updateuserBundleStatus' );
-                Route::post( 'remove-user-bundle-gallery-image', [ UserBundleController::class, 'removeuserBundleGalleryImage' ] )->name( 'admin.user_bundle.removeuserBundleGalleryImage' );
+                Route::post( 'all-user-bundles', [ UserBundleController::class, 'allUserBundles' ] )->name( 'admin.user_bundle.allUserBundles' );
+                Route::post( 'one-user-bundle', [ UserBundleController::class, 'oneuUserBundle' ] )->name( 'admin.user_bundle.oneuUserBundle' );
+                Route::post( 'create-user-bundle', [ UserBundleController::class, 'createUserBundle' ] )->name( 'admin.user_bundle.createUserBundle' );
+                Route::post( 'update-user-bundle', [ UserBundleController::class, 'updateUserBundle' ] )->name( 'admin.user_bundle.updateUserBundle' );
+                Route::post( 'update-user-bundle-status', [ UserBundleController::class, 'updateUserBundleStatus' ] )->name( 'admin.user_bundle.updateUserBundleStatus' );
+                Route::post( 'remove-user-bundle-gallery-image', [ UserBundleController::class, 'removeUserBundleGalleryImage' ] )->name( 'admin.user_bundle.removeUserBundleGalleryImage' );
                 Route::post( 'ckeUpload', [ UserBundleController::class, 'ckeUpload' ] )->name( 'admin.user_bundle.ckeUpload' );
             } );
 

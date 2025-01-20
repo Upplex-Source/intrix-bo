@@ -402,6 +402,11 @@ class Helper {
     {
         return 'ODR-' . now()->format('YmdHis');
     }
+
+    public static function generateBundleReference()
+    {
+        return 'BDL-' . now()->format('YmdHis');
+    }
     
     public static function generateCartSessionKey()
     {

@@ -23,4 +23,7 @@ return [
     'product_bundle_id' => 'Product Bundle',
     'product_bundle' => 'Product Bundle',
 
+    'title' => 'Title',
+    'quantity' => 'Quantity',
+
 ];

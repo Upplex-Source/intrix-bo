@@ -1,16 +1,16 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.product_bundles' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.user_bundles' ) }}</h3>
         </div><!-- .nk-block-head-content -->
-        @can( 'add product_bundles' )
+        @can( 'add user_bundles' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
                 <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
                         <li class="nk-block-tools-opt">
-                            <a href="{{ route( 'admin.product_bundle.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
+                            <a href="{{ route( 'admin.user_bundle.add' ) }}" class="btn btn-primary">{{ __( 'template.add' ) }}</a>
                         </li>
                     </ul>
                 </div>
@@ -39,42 +39,21 @@ $columns = [
         'title' => __( 'datatables.created_date' ),
     ],
     [
-        'type' => 'default',
-        'id' => 'image',
-        'title' => __( 'product.image' ),
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'user_bundle.user' ) ] ),
+        'id' => 'user',
+        'title' => __( 'user_bundle.user' ),
     ],
     [
         'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product_bundle.code' ) ] ),
-        'id' => 'code',
-        'title' => __( 'product_bundle.code' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product_bundle.title' ) ] ),
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'user_bundle.title' ) ] ),
         'id' => 'title',
-        'title' => __( 'product_bundle.title' ),
-    ],
-    [
-        'type' => 'input',
-        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product_bundle.product' ) ] ),
-        'id' => 'product',
-        'title' => __( 'product_bundle.product' ),
+        'title' => __( 'user_bundle.title' ),
     ],
     [
         'type' => 'default',
-        'id' => 'quantity',
-        'title' => __( 'product_bundle.quantity' ),
-    ],
-    [
-        'type' => 'default',
-        'id' => 'validity_days',
-        'title' => __( 'product_bundle.validity_days' ),
-    ],
-    [
-        'type' => 'default',
-        'id' => 'price',
-        'title' => __( 'product_bundle.price' ),
+        'id' => 'cups_left',
+        'title' => __( 'user_bundle.cups_left' ),
     ],
     [
         'type' => 'select',
@@ -82,15 +61,15 @@ $columns = [
         'id' => 'status',
         'title' => __( 'datatables.status' ),
     ],
-    [
-        'type' => 'default',
-        'id' => 'dt_action',
-        'title' => __( 'datatables.action' ),
-    ],
+    // [
+    //     'type' => 'default',
+    //     'id' => 'dt_action',
+    //     'title' => __( 'datatables.action' ),
+    // ],
 ];
 ?>
 
-<x-data-tables id="voucher_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
+<x-data-tables id="bundle_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <script>
 
@@ -104,7 +83,7 @@ window['{{ $column['id'] }}'] = '';
 
 var statusMapper = @json( $data['status'] ),
     dt_table,
-    dt_table_name = '#voucher_table',
+    dt_table_name = '#bundle_table',
     dt_table_config = {
         language: {
             'lengthMenu': '{{ __( "datatables.lengthMenu" ) }}',
@@ -118,11 +97,11 @@ var statusMapper = @json( $data['status'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.product_bundle.allProductBundles' ) }}',
+            url: '{{ route( 'admin.user_bundle.allUserBundles' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'product_bundles',
+            dataSrc: 'user_bundles',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
@@ -130,15 +109,11 @@ var statusMapper = @json( $data['status'] ),
             { data: null },
             { data: null },
             { data: 'created_at' },
-            { data: 'image_path' },
-            { data: 'code' },
-            { data: 'title' },
-            { data: 'product_bundle_metas' },
-            { data: 'product_bundle_metas' },
-            { data: 'validity_days' },
-            { data: 'price' },
+            { data: 'user' },
+            { data: 'product_bundle' },
+            { data: 'cups_left' },
             { data: 'status' },
-            { data: 'encrypted_id' },
+            // { data: 'encrypted_id' },
         ],
         columnDefs: [
 
@@ -169,57 +144,28 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "image" ) }}' ),
-                orderable: false,
-                render: function( data, type, row, meta ) {
-                    if ( data ) {
-
-                        return '<img src="' + ( data ? data : '{{ asset( 'admin/images/placeholder.png' ) }}' ) + '" width="75px" />';
-
-                    } else {
-
-                        return '<img src="' + '{{ asset( 'admin/images/placeholder.png' ) }}' + '" width="75px" />'
-                        
-                    }
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "code" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "user" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
+                    return data.username ?? '-' + '<br>' + '+60' + data.phone_number;
                 },
             },
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "title" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
+                    return data.title ? data.title : '-' ;
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "price" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "cups_left" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
                     return data ? data : '-' ;
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "product" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data[0].product ? data[0].product.title : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "quantity" ) }}' ),
-                width: '10%',
-                render: function( data, type, row, meta ) {
-                    return data[0].quantity ? data[0].quantity : '-' ;
-                },
-            },
-            {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "voucher_type" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "bundle_type" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return typeMapper[data.type];
                 },
@@ -237,26 +183,20 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "validity_days" ) }}' ),
-                render: function( data, type, row, meta ) {
-                    return data ? data : '-';
-                },
-            },
-            {
                 targets: parseInt( '{{ count( $columns ) - 1 }}' ),
                 orderable: false,
                 width: '1%',
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
 
-                    @canany( [ 'edit product_bundles', 'delete product_bundles' ] )
+                    @canany( [ 'edit user_bundles', 'delete user_bundles' ] )
                     let edit, status = '';
 
-                    @can( 'edit product_bundles' )
+                    @can( 'edit user_bundles' )
                     edit = '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
-                    @can( 'delete product_bundles' )
+                    @can( 'delete user_bundles' )
                     status = row['status'] == 10 ? 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
@@ -297,13 +237,13 @@ var statusMapper = @json( $data['status'] ),
         } );
 
         $( document ).on( 'click', '.dt-edit', function() {
-            window.location.href = '{{ route( 'admin.product_bundle.edit' ) }}?id=' + $( this ).data( 'id' );
+            window.location.href = '{{ route( 'admin.user_bundle.edit' ) }}?id=' + $( this ).data( 'id' );
         } );
 
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.product_bundle.updateProductBundleStatus' ) }}',
+                url: '{{ route( 'admin.user_bundle.updateUserBundleStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),

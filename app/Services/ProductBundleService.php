@@ -24,6 +24,8 @@ use App\Models\{
     Topping,
     ProductBundleMeta,
     User,
+    UserBundle,
+    UserBundleTransaction,
 };
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -485,4 +487,209 @@ class ProductBundleService
             ], 500 );
         }
     }
+
+    public static function getBundles( $request )
+    {
+        if( !$request->user_bundle ){
+
+            $productbundles = ProductBundle::with( ['productbundleMetas.product'] )
+            ->where('status', 10)
+            ->orderBy( 'created_at', 'DESC' );
+    
+            if ( $request && $request->title) {
+                $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
+            }
+
+            if ( $request && $request->bundle_id) {
+                $productbundles->where( 'id', 'LIKE', '%' . $request->bundle_id . '%' );
+            }
+
+            $productbundles = $productbundles->get();
+            $claimedBundleIds = UserBundle::where('user_id', auth()->user()->id)
+            ->pluck('product_bundle_id')
+            ->toArray();
+
+            $productbundles = $productbundles->map(function ($productbundle) use ($claimedBundleIds) {
+                $productbundle->claimed = in_array($productbundle->id, $claimedBundleIds) ? 'purchased' : 'not purchased';
+                $productbundle->append( ['image_path'] );
+
+                if($productbundle->productbundleMetas){
+                    foreach($productbundle->productbundleMetas as $pbmt){
+                        $pbmt->product->append( ['image_path'] );
+                    }
+                }
+                return $productbundle;
+            });
+
+        }else {
+            $productbundles = UserBundle::with( ['productBundle'] )
+            ->where( 'user_id', auth()->user()->id )
+            ->orderBy( 'cups_left', 'DESC' );
+
+            if ( $request && $request->title) {
+                $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
+            }
+
+            if ( $request && $request->bundle_id) {
+                $productbundles->where( 'id', 'LIKE', '%' . $request->bundle_id . '%' );
+            }
+
+            $productbundles = $productbundles->get();
+
+            $productbundles = $productbundles->map(function ($productbundle){
+                $productbundle->productBundle->append( ['image_path'] );
+                return $productbundle;
+            });
+        }
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => $request->user_bundle ? 'get_user_bundle_success' : 'get_product_bundle_success',
+            'data' => $productbundles,
+        ] );
+
+    }
+
+    public static function buyBundle( $request ) {
+
+        $validator = Validator::make($request->all(), [
+            'bundle_id' => ['required', 'exists:product_bundles,id'],
+            'payment_method' => ['nullable', 'in:1,2'],
+        ]);
+
+        $user = auth()->user();
+        
+        $validator->validate();
+        
+        // check wallet balance 
+        $userWallet = $user->wallets->where('type',1)->first();
+        $bundle = ProductBundle::find( $request->bundle_id );
+        dd();
+        if( $request->payment_method == 1 ){
+
+            if (!$userWallet) {
+                return response()->json([
+                    'message' => 'Wallet Not Found',
+                    'message_key' => 'wallet_not_found',
+                    'errors' => [
+                        'wallet' => 'Wallet not found',
+                    ]
+                ]);
+            }else{
+                if( $userWallet->balance < $bundle->price ){
+                    return response()->json([
+                        'message' => 'Balance is not enough, please top up to continue',
+                        'message_key' => 'insufficient_balance',
+                        'errors' => [
+                            'wallet' => 'Balance is not enough, please top up to continue',
+                        ]
+                    ]);
+                }
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+        
+            $orderPrice = 0;
+            $user = auth()->user();
+            $userWallet = $user->wallets->where( 'type', 1 )->first();
+            $bundle = ProductBundle::find( $request->bundle_id );
+
+            $bundleTransaction = UserBundleTransaction::create( [
+                'user_id' => $user->id,
+                'product_bundle_id' => $bundle->id,
+                'reference' => Helper::generateBundleReference(),
+                'price' => $bundle->price,
+                'status' => 10,
+                'payment_attempt' => 1,
+                'payment_url' => 'null',
+            ] );
+
+            if( $request->payment_method == 1 ){
+                WalletService::transact( $userWallet, [
+                    'amount' => -$bundle->price,
+                    'remark' => 'Bundle Purchased: ' . $bundle->title,
+                    'type' => $userWallet->type,
+                    'transaction_type' => 10,
+                ] );
+
+                // assign purchasing bonus
+                $spendingBonus = Option::getSpendingSettings();
+                if( $spendingBonus ){
+
+                    $userBonusWallet = $user->wallets->where( 'type', 2 )->first();
+
+                    WalletService::transact( $userBonusWallet, [
+                        'amount' => $bundle->price * $spendingBonus->option_value,
+                        'remark' => 'Register Bonus',
+                        'type' => 2,
+                        'transaction_type' => 22,
+                    ] );
+                }
+
+                // assign referral's purchasing bonus
+                $referralSpendingBonus = Option::getReferralSpendingSettings();
+                if( $user->referral && $referralSpendingBonus){
+
+                    $referralWallet = $user->referral->wallets->where('type',2)->first();
+
+                    WalletService::transact( $referralWallet, [
+                        'amount' => $bundle->price * $referralSpendingBonus->option_value,
+                        'remark' => 'Register Bonus',
+                        'type' => $referralWallet->type,
+                        'transaction_type' => 22,
+                    ] );
+                }
+            }else {
+                
+                $data = [
+                    'TransactionType' => 'SALE',
+                    'PymtMethod' => 'ANY',
+                    'ServiceID' => config('services.eghl.merchant_id'),
+                    'PaymentID' => $bundleTransaction->reference . '-' . $bundleTransaction->payment_attempt,
+                    'OrderNumber' => $bundleTransaction->reference,
+                    'PaymentDesc' => $bundleTransaction->reference,
+                    'MerchantName' => 'Yobe Froyo',
+                    'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
+                    'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
+                    'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
+                    'Amount' => $bundleTransaction->price,
+                    'CurrencyCode' => 'MYR',
+                    'CustIP' => request()->ip(),
+                    'CustName' => $bundleTransaction->user->username ?? 'Yobe Guest',
+                    'HashValue' => '',
+                    'CustEmail' => $bundleTransaction->user->email ?? 'yobeguest@gmail.com',
+                    'CustPhone' => $bundleTransaction->user->phone_number,
+                    'MerchantTermsURL' => null,
+                    'LanguageCode' => 'en',
+                    'PageTimeout' => '780',
+                ];
+
+                $data['HashValue'] = Helper::generatePaymentHash($data);
+                $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
+                $bundleTransaction->payment_url = $url2;
+
+            }
+
+            $bundleTransaction->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+        
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'purchase_bundle_success',
+            'payment_url' => $bundleTransaction->payment_url,
+        ] );
+    }
+
 }
