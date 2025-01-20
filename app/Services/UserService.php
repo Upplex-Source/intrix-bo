@@ -662,7 +662,9 @@ class UserService
                     'data' => [
                         'message_key' => 'user_exist',
                         'message' => __('user.user_exist'),
-                        'data' => null,
+                        'errors' => [
+                            'user' => __('user.user_exist'),
+                        ]
                     ]
                 ];
 
@@ -672,7 +674,9 @@ class UserService
                 return response()->json([
                     'message' => __('user.user_not_found'),
                     'message_key' => __('user.get_user_failed'),
-                    'data' => null,
+                    'errors' => [
+                        'user' => __('user.user_not_found'),
+                    ]
                 ], 422 );
             }
 
@@ -1302,7 +1306,9 @@ class UserService
                 return response()->json([
                     'message' => __('user.invalid_password'),
                     'message_key' => 'invalid_password',
-                    'data' => null,
+                    'errors' => [
+                        'user' => __('user.invalid_password'),
+                    ]
                 ], 422);
             }
     
@@ -1354,7 +1360,9 @@ class UserService
                 return response()->json([
                     'message' => __('user.invalid_password'),
                     'message_key' => 'invalid_password',
-                    'data' => null,
+                    'errors' => [
+                        'user' => __('user.invalid_password'),
+                    ]
                 ], 422);
             }
     
