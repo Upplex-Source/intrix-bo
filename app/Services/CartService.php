@@ -254,7 +254,7 @@ class CartService {
             $isValid = true;
             $error = 0;
             
-            if ( count($request->items) > $bundleRules['quantity'] ) {
+            if ( ( isset( $request->items ) ? count($request->items) : 0 ) > $bundleRules['quantity'] ) {
                 return response()->json( [
                     'message' => 'Product exceeeds bundle quantity',
                     'message_key' => 'product_exceeds_bundle_quantity',
@@ -703,10 +703,10 @@ class CartService {
             $cartMetaCount = Cart::find($request->id)->cartMetas->count();
 
             if( $request->cart_item ){
-                $cartMetaCount -= count($request->items);
+                $cartMetaCount -= ( isset( $request->items ) ? count($request->items) : 0 );
             }
             
-            if ( count($request->items) + $cartMetaCount > $bundleRules['quantity'] ) {
+            if ( ( isset( $request->items ) ? count($request->items) : 0 ) + $cartMetaCount > $bundleRules['quantity'] ) {
                 return response()->json( [
                     'message' => 'Product exceeeds bundle quantity',
                     'message_key' => 'product_exceeds_bundle_quantity',

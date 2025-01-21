@@ -863,7 +863,7 @@ class OrderService
 
         $validator = Validator::make($request->all(), [
             'cart' => ['required', 'exists:carts,id'],
-             'promo_code' => [
+            'promo_code' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
                     $existsInPromoCode = \DB::table('vouchers')->where('promo_code', $value)->exists();
