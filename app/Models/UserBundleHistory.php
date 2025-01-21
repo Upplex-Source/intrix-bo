@@ -23,6 +23,8 @@ class UserBundleHistory extends Model
         'product_bundle_id',
         'bundle_selections',
         'user_bundle_id',
+        'batch',
+        'claimed_cups',
         'status',
     ];
 
@@ -96,6 +98,8 @@ class UserBundleHistory extends Model
         'product_bundle_id',
         'bundle_selections',
         'user_bundle_id',
+        'batch',
+        'claimed_cups',
         'status',
     ];
 

@@ -800,7 +800,7 @@ class OrderService
     
         // Start by querying orders for the authenticated user
         $query = Order::where('user_id', $user->id)
-            ->with(['orderMetas', 'vendingMachine'])
+            ->with(['orderMetas', 'vendingMachine', 'voucher', 'productBundle'])
             ->orderBy('created_at', 'DESC');
     
         // Apply filters
@@ -911,7 +911,7 @@ class OrderService
             }else{
                 if( $request->promo_code ){
                     $voucher = Voucher::where( 'id', $request->promo_code )
-            ->orWhere('promo_code', $request->promo_code)->first();
+                    ->orWhere('promo_code', $request->promo_code)->first();
                     $orderPrice = $userCart->total_price;
     
                     if ( $voucher->discount_type == 3 ) {
@@ -985,11 +985,12 @@ class OrderService
             $orderPrice = 0;
             $user = auth()->user();
             $userWallet = $user->wallets->where( 'type', 1 )->first();
+            $bundle = ProductBundle::where( 'id', $request->bundle )->where( 'status', 10 )->first();
 
             $order = Order::create( [
                 'user_id' => $user->id,
                 'product_id' => null,
-                'product_bundle_id' => null,
+                'product_bundle_id' => $userCart->product_bundle_id,
                 'outlet_id' => null,
                 'vending_machine_id' => $userCart->vending_machine_id,
                 'total_price' => $orderPrice,
@@ -1070,7 +1071,7 @@ class OrderService
 
             if( $request->promo_code ){
                 $voucher = Voucher::where( 'id', $request->promo_code )
-            ->orWhere('promo_code', $request->promo_code)->first();
+                    ->orWhere('promo_code', $request->promo_code)->first();
 
                 if ( $voucher->discount_type == 3 ) {
 
@@ -1164,6 +1165,19 @@ class OrderService
 
             }
 
+            $order->load( ['orderMetas'] );
+
+            if( $bundle ){
+
+                $orderMetas = $order->orderMetas;
+
+                foreach( $orderMetas as $orderMeta ){
+                    $orderMeta->total_price = 0;
+                    $orderMeta->save();
+                }
+                $orderPrice = $bundle->price;
+            }
+
             $order->total_price = $orderPrice;
 
             $userCart->status = 20;
@@ -1207,6 +1221,33 @@ class OrderService
                         ] );
                     }
                     
+                }
+
+                // create bundle
+                if( $order->product_bundle_id ){
+                            
+                    $userBundle = UserBundle::create([
+                        'user_id' => $user->id,
+                        'product_bundle_id' => $bundle->id,
+                        'status' => $request->payment_method == 1 ? 10 : 20,
+                        'total_cups' => $bundle->productBundleMetas->first()->quantity,
+                        'cups_left' => $bundle->productBundleMetas->first()->quantity - count( $order->orderMetas ),
+                        'last_used' => Carbon::now(),
+                        'payment_attempt' => 1,
+                        'payment_url' => 'null',
+                    ]);
+
+                    $bundleTransaction = UserBundleTransaction::create( [
+                        'user_id' => $user->id,
+                        'product_bundle_id' => $bundle->id,
+                        'user_bundle_id' => $userBundle->id,
+                        'reference' => Helper::generateBundleReference(),
+                        'price' => $bundle->price,
+                        'status' => 10,
+                        'payment_attempt' => 1,
+                        'payment_url' => 'null',
+                    ] );
+
                 }
 
                 // update stock

@@ -801,6 +801,10 @@ paths:
                   type: string
                   description: 'The ID of the promotion/voucher to apply.'
                   example: BUY1FREE1
+                bundle:
+                  type: string
+                  description: 'The ID of the bundle to apply ( not usable together with voucher ).'
+                  example: '1'
               required:
                 - vending_machine
                 - items
@@ -869,6 +873,14 @@ paths:
                   type: integer
                   description: 'The ID of the promotion/voucher to apply.'
                   example: 0
+                cart:
+                  type: integer
+                  description: 'The ID of the promotion/voucher to apply.'
+                  example: 0
+                bundle:
+                  type: string
+                  description: 'The ID of the bundle to apply ( not usable together with voucher ).'
+                  example: '1'
               required:
                 - vending_machine
                 - items

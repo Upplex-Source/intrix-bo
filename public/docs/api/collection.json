@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Laravel",
-        "_postman_id": "010c7d0a-1b5c-4ef6-85bd-6f79933000dc",
+        "_postman_id": "95649f5b-ea49-4959-9923-479210ff85ae",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -141,7 +141,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"vending_machine\":2,\"items\":[{\"productId\":1,\"froyo\":[1,2],\"syrup\":[3],\"topping\":[4,5]}],\"promo_code\":\"BUY1FREE1\"}"
+                            "raw": "{\"vending_machine\":2,\"items\":[{\"productId\":1,\"froyo\":[1,2],\"syrup\":[3],\"topping\":[4,5]}],\"promo_code\":\"BUY1FREE1\",\"bundle\":\"1\"}"
                         },
                         "description": ""
                     },
@@ -169,7 +169,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"vending_machine\":2,\"items\":[{\"productId\":1,\"froyo\":[1,2],\"syrup\":[3],\"topping\":[4,5]}],\"session_key\":\"abcd-1234\",\"id\":1,\"cart_item\":1,\"promo_code\":0}"
+                            "raw": "{\"vending_machine\":2,\"items\":[{\"productId\":1,\"froyo\":[1,2],\"syrup\":[3],\"topping\":[4,5]}],\"session_key\":\"abcd-1234\",\"id\":1,\"cart_item\":1,\"promo_code\":0,\"cart\":0,\"bundle\":\"1\"}"
                         },
                         "description": "<aside class=\"notice\">session_key or cart id can be used to update the cart<\/aside>"
                     },

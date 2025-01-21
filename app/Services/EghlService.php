@@ -247,7 +247,8 @@ class EghlService {
             if($request->HashValue2 == Helper::generateResponseHash($request) && $order){
                 $order = Order::where( 'reference', $request->OrderNumber )->first(); 
                 $orderTransaction = OrderTransaction::where( 'order_no', $request->PaymentID )->first(); 
-    
+                $bundle = $order->productBundle;
+
                 $order->status = $request->TxnStatus == 0 ? 3 : 20;
                 if( $request->TxnStatus == 0 ){
                     $orderStatus = true;
@@ -260,6 +261,32 @@ class EghlService {
                 $order->payment_method = 2;
                 $order->save();
                 $orderTransaction->save();
+
+                if( $order->product_bundle_id ){
+                            
+                    $userBundle = UserBundle::create([
+                        'user_id' => $order->user->id,
+                        'product_bundle_id' => $bundle->id,
+                        'status' => $request->payment_method == 1 ? 10 : 20,
+                        'total_cups' => $bundle->productBundleMetas->first()->quantity,
+                        'cups_left' => $bundle->productBundleMetas->first()->quantity - count( $order->orderMetas ),
+                        'last_used' => Carbon::now(),
+                        'payment_attempt' => 1,
+                        'payment_url' => 'null',
+                    ]);
+
+                    $bundleTransaction = UserBundleTransaction::create( [
+                        'user_id' => $order->user->id,
+                        'product_bundle_id' => $bundle->id,
+                        'user_bundle_id' => $userBundle->id,
+                        'reference' => Helper::generateBundleReference(),
+                        'price' => $bundle->price,
+                        'status' => 10,
+                        'payment_attempt' => 1,
+                        'payment_url' => 'null',
+                    ] );
+
+                }
 
                 // assign purchasing bonus
                 $spendingBonus = Option::getSpendingSettings();

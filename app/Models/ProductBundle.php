@@ -37,6 +37,24 @@ class ProductBundle extends Model
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
     }
+    
+    public function getBundleRulesAttribute()
+    {
+        $meta = $this->productBundleMetas->first(function ($meta) {
+            return isset($meta->quantity, $meta->product);
+        });
+    
+        if ($meta) {
+            $meta->product->append(['image_path']); // Append custom attributes if needed
+            return [
+                'product' => $meta->product,
+                'quantity' => $meta->quantity,
+            ];
+        }
+    
+        return null; // Return null if no matching meta is found
+    }
+    
 
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );

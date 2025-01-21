@@ -267,7 +267,7 @@
                             <li><a href="http://github.com/knuckleswtf/scribe">Documentation powered by Scribe ✍</a></li>
                     </ul>
         <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 20 2025</li>
+        <li>Last updated: January 21 2025</li>
     </ul>
 </div>
 
@@ -969,7 +969,8 @@ fetch(url, {
             ]
         }
     ],
-    \"promo_code\": \"BUY1FREE1\"
+    \"promo_code\": \"BUY1FREE1\",
+    \"bundle\": \"1\"
 }"
 </code></pre></div>
 
@@ -1002,7 +1003,8 @@ let body = {
             ]
         }
     ],
-    "promo_code": "BUY1FREE1"
+    "promo_code": "BUY1FREE1",
+    "bundle": "1"
 };
 
 fetch(url, {
@@ -1168,6 +1170,16 @@ fetch(url, {
     <br>
 <p>The ID of the promotion/voucher to apply.</p>
         </p>
+                <p>
+            <b><code>bundle</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="bundle"
+               data-endpoint="POSTapi-v1-carts-add"
+               value="1"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the bundle to apply ( not usable together with voucher ).</p>
+        </p>
         </form>
 
             <h2 id="cart-api-POSTapi-v1-carts-update">3. Update cart</h2>
@@ -1208,7 +1220,9 @@ fetch(url, {
     \"session_key\": \"abcd-1234\",
     \"id\": 1,
     \"cart_item\": 1,
-    \"promo_code\": 0
+    \"promo_code\": 0,
+    \"cart\": 0,
+    \"bundle\": \"1\"
 }"
 </code></pre></div>
 
@@ -1244,7 +1258,9 @@ let body = {
     "session_key": "abcd-1234",
     "id": 1,
     "cart_item": 1,
-    "promo_code": 0
+    "promo_code": 0,
+    "cart": 0,
+    "bundle": "1"
 };
 
 fetch(url, {
@@ -1439,6 +1455,26 @@ fetch(url, {
                data-component="body" hidden>
     <br>
 <p>The ID of the promotion/voucher to apply.</p>
+        </p>
+                <p>
+            <b><code>cart</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="cart"
+               data-endpoint="POSTapi-v1-carts-update"
+               value="0"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the promotion/voucher to apply.</p>
+        </p>
+                <p>
+            <b><code>bundle</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="bundle"
+               data-endpoint="POSTapi-v1-carts-update"
+               value="1"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the bundle to apply ( not usable together with voucher ).</p>
         </p>
         </form>
 

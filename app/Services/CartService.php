@@ -17,6 +17,11 @@ use App\Models\{
     Voucher,
     VoucherUsage,
     UserVoucher,
+    ProductBundle,
+    ProductBundleMeta,
+    UserBundle,
+    UserBundleHistory,
+    UserBundleHistoryMeta,
 };
 
 use App\Services\{
@@ -46,7 +51,7 @@ class CartService {
     
         // Start by querying carts for the authenticated user
         $query = Cart::where('user_id', $user->id)
-            ->with(['cartMetas', 'vendingMachine', 'voucher'])
+            ->with(['cartMetas', 'vendingMachine', 'voucher', 'productBundle'])
             ->where('status', 10)
             ->orderBy('created_at', 'DESC');
     
@@ -101,11 +106,11 @@ class CartService {
             'carts' => $userCarts,
         ]);
     }
-    
 
     public static function addToCart( $request ) {
 
         $validator = Validator::make($request->all(), [
+            'bundle' => [ 'nullable', 'exists:product_bundles,id'  ],
             'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
             'items' => ['nullable', 'array'],
             'items.*.product' => ['required', 'exists:products,id'],
@@ -127,6 +132,16 @@ class CartService {
                 },
             ],
         ]);
+
+        if ($request->bundle && $request->promo_code) {
+            return response()->json( [
+                'message' => 'Bundle cant be used together with promotion',
+                'message_key' => 'bundle_not_available',
+                'errors' => [
+                    'voucher' => 'Bundle cant be used together with promotion',
+                ]
+            ] );
+        }
 
         if (isset($request->items)) {
             $validator->after(function ($validator) use ($request) {
@@ -224,6 +239,98 @@ class CartService {
                 return $test;
             }
         }
+
+        // validate bundle product
+        if( $request->bundle ){
+
+            $bundle = ProductBundle::where( 'id', $request->bundle )->where( 'status', 10 )->first();
+            $bundleRules = $bundle->bundle_rules;
+
+            $isValid = true;
+            $error = 0;
+            
+            if ( count($request->items) > $bundleRules['quantity'] ) {
+                return response()->json( [
+                    'message' => 'Product exceeeds bundle quantity',
+                    'message_key' => 'product_exceeds_bundle_quantity',
+                    'errors' => [
+                        'voucher' => 'Product exceeeds bundle quantity',
+                    ]
+                ] );
+            }
+
+            foreach ($request->items as $item) {
+                if ($item['product'] !== $bundleRules['product']->id) {
+                    $isValid = false;
+                    $error = 1;
+                    break;
+                }
+
+                $validator = Validator::make([], []); // Initialize an empty validator
+
+                foreach ($request->items as $index => $item) {
+                    $product = $bundleRules['product']; // Access the product object from bundle rules
+                
+                    // Check froyo quantity
+                    if (isset($item['froyo']) && count($item['froyo']) > $product->default_froyo_quantity) {
+                        $validator->errors()->add(
+                            "items.$index.froyo",
+                            "You can select up to {$product->default_froyo_quantity} froyo(s)."
+                        );
+                    }
+                
+                    // Check syrup quantity
+                    if (isset($item['syrup']) && count($item['syrup']) > $product->default_syrup_quantity) {
+                        $validator->errors()->add(
+                            "items.$index.syrup",
+                            "You can select up to {$product->default_syrup_quantity} syrup(s)."
+                        );
+                    }
+                
+                    // Check topping quantity
+                    if (isset($item['topping']) && count($item['topping']) > $product->default_topping_quantity) {
+                        $validator->errors()->add(
+                            "items.$index.topping",
+                            "You can select up to {$product->default_topping_quantity} topping(s)."
+                        );
+                    }
+                
+                    // Check if product ID matches bundle rule's product ID
+                    if ($item['product'] !== $product->id) {
+                        $validator->errors()->add(
+                            "items.$index.product",
+                            "The product ID must match the bundle's product ID: {$product->id}."
+                        );
+                    }
+                }
+                
+                // If errors are present, return them in the response
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 400);
+                }
+            }
+
+            if (!$isValid) {
+
+                if( $error == 1 ){
+                    return response()->json( [
+                        'message' => 'Product not available in bundle',
+                        'message_key' => 'product_not_available_in_bundle',
+                        'errors' => [
+                            'voucher' => 'Product not available in bundle',
+                        ]
+                    ] );
+                } else {
+                    return response()->json( [
+                        'message' => 'Bundle cant be used together with promotion',
+                        'message_key' => 'bundle_not_available',
+                        'errors' => [
+                            'voucher' => 'Bundle cant be used together with promotion',
+                        ]
+                    ] );
+                }
+            }
+        }
         
         $validator->validate();
 
@@ -232,6 +339,7 @@ class CartService {
         
             $orderPrice = 0;
             $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
+            $bundle = ProductBundle::where( 'id', $request->bundle )->where( 'status', 10 )->first();
 
             $cart = Cart::create( [
                 'user_id' => auth()->user()->id,
@@ -244,6 +352,7 @@ class CartService {
                 'status' => 10,
                 'session_key' => Helper::generateCartSessionKey(),
                 'voucher_id' => $voucher ? $voucher->id :null,
+                'product_bundle_id' => $bundle ? $bundle->id :null,
             ] );
 
             if(isset($request->items)){
@@ -294,7 +403,7 @@ class CartService {
 
             if( $request->promo_code ){
                 $voucher = Voucher::where( 'id', $request->promo_code )
-            ->orWhere('promo_code', $request->promo_code)->first();
+                ->orWhere('promo_code', $request->promo_code)->first();
 
                 if ( $voucher->discount_type == 3 ) {
 
@@ -339,6 +448,18 @@ class CartService {
                 $cart->voucher_id = $voucher->id;
             }
 
+            // handle bundle
+            if( $bundle ){
+
+                $cartMetas = $cart->cartMetas;
+
+                foreach( $cartMetas as $cartMeta ){
+                    $cartMeta->total_price = 0;
+                    $cartMeta->save();
+                }
+                $orderPrice = $bundle->price;
+            }
+
             $cart->total_price = $orderPrice;
             $cart->save();
             DB::commit();
@@ -377,6 +498,7 @@ class CartService {
             'total' => Helper::numberFormatV2($cart->total_price, 2, true),
             'cart_metas' => $cartMetas,
             'voucher' => $cart->voucher,
+            'bundle' => $cart->productBundle,
         ] );
     }
 
@@ -384,6 +506,7 @@ class CartService {
 
         $validator = Validator::make( $request->all(), [
             'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
+            'bundle' => [ 'nullable', 'exists:product_bundles,id'  ],
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
             'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
             'items' => ['nullable', 'array'],
@@ -407,6 +530,16 @@ class CartService {
                 },
             ],
         ] );
+
+        if ($request->bundle && $request->promo_code) {
+            return response()->json( [
+                'message' => 'Bundle cant be used together with promotion',
+                'message_key' => 'bundle_not_available',
+                'errors' => [
+                    'voucher' => 'Bundle cant be used together with promotion',
+                ]
+            ] );
+        }
 
         if (isset($request->items)) {
             $validator->after(function ($validator) use ($request) {
@@ -509,7 +642,13 @@ class CartService {
         if ($request->has('cart_item')) {
             $cartMeta = CartMeta::find($request->cart_item);
             if (!$cartMeta) {
-                return response()->json(['message' => 'Cart item not found.'], 404);
+                return response()->json( [
+                    'message' => 'Cart item not found.',
+                    'message_key' => 'cart_not_found',
+                    'errors' => [
+                        'cart' => 'Cart item not found.',
+                    ]
+                ]);
             }
 
             if( !$request->items && $request->promo_codes){
@@ -538,6 +677,104 @@ class CartService {
                             ], 422 );
                         }
                     }
+                }
+            }
+        }
+
+        // validate bundle product
+        if( $request->bundle ){
+
+            $bundle = ProductBundle::where( 'id', $request->bundle )->where( 'status', 10 )->first();
+            $bundleRules = $bundle->bundle_rules;
+
+            $isValid = true;
+            $error = 0;
+
+            $cartMetaCount = Cart::find($request->id)->cartMetas->count();
+
+            if( $request->cart_item ){
+                $cartMetaCount -= count($request->items);
+            }
+            
+            if ( count($request->items) + $cartMetaCount > $bundleRules['quantity'] ) {
+                return response()->json( [
+                    'message' => 'Product exceeeds bundle quantity',
+                    'message_key' => 'product_exceeds_bundle_quantity',
+                    'errors' => [
+                        'voucher' => 'Product exceeeds bundle quantity',
+                    ]
+                ] );
+            }
+
+            foreach ($request->items as $item) {
+                if ($item['product'] !== $bundleRules['product']->id) {
+                    $isValid = false;
+                    $error = 1;
+                    break;
+                }
+
+                $validator = Validator::make([], []); // Initialize an empty validator
+
+                foreach ($request->items as $index => $item) {
+                    $product = $bundleRules['product']; // Access the product object from bundle rules
+                
+                    // Check froyo quantity
+                    if (isset($item['froyo']) && count($item['froyo']) > $product->default_froyo_quantity) {
+                        $validator->errors()->add(
+                            "items.$index.froyo",
+                            "You can select up to {$product->default_froyo_quantity} froyo(s)."
+                        );
+                    }
+                
+                    // Check syrup quantity
+                    if (isset($item['syrup']) && count($item['syrup']) > $product->default_syrup_quantity) {
+                        $validator->errors()->add(
+                            "items.$index.syrup",
+                            "You can select up to {$product->default_syrup_quantity} syrup(s)."
+                        );
+                    }
+                
+                    // Check topping quantity
+                    if (isset($item['topping']) && count($item['topping']) > $product->default_topping_quantity) {
+                        $validator->errors()->add(
+                            "items.$index.topping",
+                            "You can select up to {$product->default_topping_quantity} topping(s)."
+                        );
+                    }
+                
+                    // Check if product ID matches bundle rule's product ID
+                    if ($item['product'] !== $product->id) {
+                        $validator->errors()->add(
+                            "items.$index.product",
+                            "The product ID must match the bundle's product ID: {$product->id}."
+                        );
+                    }
+                }
+                
+                // If errors are present, return them in the response
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 400);
+                }
+            }
+
+            if (!$isValid) {
+
+                if( $error == 1 ){
+                    return response()->json( [
+                        'message' => 'Product not available in bundle',
+                        'message_key' => 'product_not_available_in_bundle',
+                        'errors' => [
+                            'voucher' => 'Product not available in bundle',
+                        ]
+                    ] );
+                } else {
+                    return response()->json( [
+                        'message' => 'Bundle cant be used together with promotion',
+                        'message_key' => 'bundle_not_available',
+                        'errors' => [
+                            'voucher' => 'Bundle cant be used together with promotion',
+                        ]
+                    ] );
                 }
             }
         }
@@ -580,13 +817,21 @@ class CartService {
             $updateCart->vending_machine_id = $request->vending_machine;
 
             $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
+            $bundle = ProductBundle::where( 'id', $request->bundle )->where( 'status', 10 )->first();
 
             $updateCart->voucher_id = $voucher ? $voucher->id :null;
+            $updateCart->product_bundle_id = $bundle ? $bundle->id :null;
             
             if ($request->has('cart_item')) {
                 $cartMeta = CartMeta::find($request->cart_item);
                 if (!$cartMeta) {
-                    return response()->json(['message' => 'Cart item not found.'], 404);
+                    return response()->json( [
+                        'message' => 'Cart item not found.',
+                        'message_key' => 'cart_not_found',
+                        'errors' => [
+                            'cart' => 'Cart item not found.',
+                        ]
+                    ]);
                 }
                 
                 if( !$request->items ){
@@ -771,6 +1016,18 @@ class CartService {
                 }
 
                 DB::commit();
+            }
+
+            // handle bundle
+            if( $bundle ){
+
+                $cartMetas = $updateCart->cartMetas;
+
+                foreach( $cartMetas as $cartMeta ){
+                    $cartMeta->total_price = 0;
+                    $cartMeta->save();
+                }
+                $orderPrice = $bundle->price;
             }
     
             $updateCart->total_price = $orderPrice;

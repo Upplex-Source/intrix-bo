@@ -101,6 +101,13 @@ endpoints:
         example: BUY1FREE1
         type: string
         custom: []
+      bundle:
+        name: bundle
+        description: 'The ID of the bundle to apply ( not usable together with voucher ).'
+        required: false
+        example: '1'
+        type: string
+        custom: []
     responses: []
     responseFields: []
   -
@@ -223,6 +230,20 @@ endpoints:
         required: false
         example: 0
         type: integer
+        custom: []
+      cart:
+        name: cart
+        description: 'The ID of the promotion/voucher to apply.'
+        required: false
+        example: 0
+        type: integer
+        custom: []
+      bundle:
+        name: bundle
+        description: 'The ID of the bundle to apply ( not usable together with voucher ).'
+        required: false
+        example: '1'
+        type: string
         custom: []
     responses: []
     responseFields: []

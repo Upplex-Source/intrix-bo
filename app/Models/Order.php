@@ -34,6 +34,7 @@ class Order extends Model
         'taxes',
         'payment_attempt',
         'payment_url',
+        'user_bundle_id',
     ];
 
     public function getOrderStatusLabelAttribute()
@@ -55,6 +56,10 @@ class Order extends Model
 
     public function product() {
         return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function userBundle() {
+        return $this->belongsTo( UserBundle::class, 'user_bundle_id' );
     }
 
     public function productBundle() {
@@ -100,7 +105,8 @@ class Order extends Model
         'voucher_id',
         'taxes',
         'payment_attempt',
-        'payment_url'
+        'payment_url',
+        'user_bundle_id',
     ];
 
     protected static $logName = 'orders';

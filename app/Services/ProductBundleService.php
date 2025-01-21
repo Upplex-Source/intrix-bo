@@ -493,8 +493,7 @@ class ProductBundleService
     {
         if( !$request->user_bundle ){
 
-            $productbundles = ProductBundle::with( ['productbundleMetas.product'] )
-            ->where('status', 10)
+            $productbundles = ProductBundle::where('status', 10)
             ->orderBy( 'created_at', 'DESC' );
     
             if ( $request && $request->title) {
@@ -512,13 +511,7 @@ class ProductBundleService
 
             $productbundles = $productbundles->map(function ($productbundle) use ($claimedBundleIds) {
                 $productbundle->claimed = in_array($productbundle->id, $claimedBundleIds) ? 'purchased' : 'not purchased';
-                $productbundle->append( ['image_path'] );
-
-                if($productbundle->productbundleMetas){
-                    foreach($productbundle->productbundleMetas as $pbmt){
-                        $pbmt->product->append( ['image_path'] );
-                    }
-                }
+                $productbundle->append( ['image_path','bundle_rules'] );
                 return $productbundle;
             });
 
@@ -539,11 +532,11 @@ class ProductBundleService
 
             $productbundles = $productbundles->map(function ($productbundle){
                 $productbundle->append( ['bundle_status_label'] );
-                $productbundle->productBundle->append( ['image_path'] );
+                $productbundle->productBundle->append( ['image_path','bundle_rules'] );
+                $productbundle->bundle_rules = $productbundle->productBundle->bundle_rules;
                 return $productbundle;
             });
         }
-
         return response()->json( [
             'message' => '',
             'message_key' => $request->user_bundle ? 'get_user_bundle_success' : 'get_product_bundle_success',
