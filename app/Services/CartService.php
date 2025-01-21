@@ -585,7 +585,6 @@ class CartService {
             });
         }
 
-
         if ($validator->fails()) {
             $rawErrors = $validator->errors()->toArray();
             $formattedErrors = [
@@ -1092,6 +1091,8 @@ class CartService {
             'vending_machine' => $updateCart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $updateCart->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($updateCart->total_price, 2, true),
             'cart_metas' => $cartMetas,
+            'voucher' => $cart->voucher,
+            'bundle' => $cart->productBundle,
         ] );
     }
 

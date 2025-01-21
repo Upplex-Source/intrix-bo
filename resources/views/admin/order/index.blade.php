@@ -93,14 +93,30 @@ $columns = [
                     <input type="text" class="form-control-plaintext" id="{{ $order_view }}_email" readonly>
                 </div>
             </div>
+            
+            <div class="mb-3 row d-flex justify-content-between bundle">
+                <label class="col-sm-5 col-form-label"> {{ __( 'order.bundle' ) }}</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}_bundle" readonly>
+                </div>
+            </div>
+            
+            <div class="mb-3 row d-flex justify-content-between bundle">
+                <label class="col-sm-5 col-form-label"> {{ __( 'order.cups_left' ) }}</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}cups_left" readonly>
+                </div>
+            </div>
+
             <div class="mb-3 row d-flex justify-content-between">
                 <label class="col-sm-5 col-form-label">Payment Method</label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control-plaintext" id="{{ $order_view }}_type" readonly>
                 </div>
             </div>
+            
             <div class="mb-3 row">
-                <label for="{{ $order_view }}_status" class="col-sm-5 col-form-label">{{ __( 'mt5.status' ) }}</label>
+                <label for="{{ $order_view }}_status" class="col-sm-5 col-form-label">{{ __( 'order.status' ) }}</label>
                 <div class="col-sm-7">
                     <select class="form-select form-select-sm" id="{{ $order_view }}_status">
                         @foreach ( $data[ 'status' ] as $key => $status)

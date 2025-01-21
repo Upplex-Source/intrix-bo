@@ -222,7 +222,7 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'orderMetas','vendingMachine','user'
+            'orderMetas','vendingMachine','user', 'productBundle', 'userBundle'
         ] )->find( $request->id );
 
         $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour)->setAttribute('image_path', $order->vendingMachine->image_path);
@@ -1253,6 +1253,9 @@ class OrderService
                         'payment_url' => 'null',
                     ] );
 
+                    $order->user_bundle_id = $userBundle->id;
+                    $order->save();
+
                 }
 
                 // update stock
@@ -1340,7 +1343,9 @@ class OrderService
             'order_id' => $order->id,
             'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
-            'order_metas' => $orderMetas
+            'order_metas' => $orderMetas,
+            'voucher' => $order->voucher,
+            'bundle' => $order->productBundle,
         ] );
     }
 

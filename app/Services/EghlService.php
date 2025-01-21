@@ -285,6 +285,9 @@ class EghlService {
                         'payment_attempt' => 1,
                         'payment_url' => 'null',
                     ] );
+                    
+                    $order->user_bundle_id = $userBundle->id;
+                    $order->save();
 
                 }
 

@@ -38,4 +38,7 @@ return [
     'syrup' => 'Syrup (s)',
     'topping' => 'Topping (s)',
     'order_details' => 'Order Details',
+    'status' => 'Status',
+    'bundle' => 'Bundle',
+    'cups_left' => 'Cups Left',
 ];
