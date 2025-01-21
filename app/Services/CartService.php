@@ -244,15 +244,15 @@ class CartService {
                 ] , 422);
             }
 
-            if( $voucher->type == 1 ){
-                return response()->json( [
-                    'message' => 'Voucher Not applicable to cart',
-                    'message_key' => 'voucher_not_applicable_to_cart',
-                    'errors' => [
-                        'voucher' => 'Voucher Not applicable to cart'
-                    ]
-                ] , 422);
-            }
+            // if( $voucher->type == 1 ){
+            //     return response()->json( [
+            //         'message' => 'Voucher Not applicable to cart',
+            //         'message_key' => 'voucher_not_applicable_to_cart',
+            //         'errors' => [
+            //             'voucher' => 'Voucher Not applicable to cart'
+            //         ]
+            //     ] , 422);
+            // }
 
             $test = self::validateCartVoucher($request);
 
@@ -796,15 +796,15 @@ class CartService {
                 ] , 422);
             }
 
-            if( $voucher->type == 1 ){
-                return response()->json( [
-                    'message' => 'Voucher Not applicable to cart',
-                    'message_key' => 'voucher_not_applicable_to_cart',
-                    'errors' => [
-                        'voucher' => 'Voucher Not applicable to cart'
-                    ]
-                ], 422 );
-            }
+            // if( $voucher->type == 1 ){
+            //     return response()->json( [
+            //         'message' => 'Voucher Not applicable to cart',
+            //         'message_key' => 'voucher_not_applicable_to_cart',
+            //         'errors' => [
+            //             'voucher' => 'Voucher Not applicable to cart'
+            //         ]
+            //     ], 422 );
+            // }
 
             $test = self::validateCartVoucher($request);
 
