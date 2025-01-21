@@ -53,6 +53,8 @@ class OrderController extends Controller
      * @queryParam id integer The ID of the order. . Example: 1
      * @queryParam status integer The Status of the order. . Example: 1
      * @queryParam per_page integer Retrieve how many insurance quote in a page, default is 10. Example: 10
+     * @queryParam user_bundle integer Retrieve User Bundle bought within order. Example: 1
+     * 
      */
     public function getOrder( Request $request ) {
 

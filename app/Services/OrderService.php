@@ -821,7 +821,7 @@ class OrderService
             $query->where('reference', $request->reference);
         }
     
-        if ($request->has('bundle')) {
+        if ($request->has('user_bundle')) {
             $query->whereHas('userBundle');
         }
     
@@ -848,6 +848,10 @@ class OrderService
                     'topping' => $meta->toppings_metas,
                 ];
             });
+
+            if( $order->userBundle ) {
+                $order->userBundle->productBundle->append( ['image_path','bundle_rules'] );
+            }
     
             $order->orderMetas = $orderMetas;
             $order->qr_code = $order->status != 20 && in_array($order->status, [3, 10]) ? self::generateQrCode($order) : null;
