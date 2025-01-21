@@ -371,10 +371,10 @@ class CartService {
             // check own bundle's cups left
             if ( ( isset( $request->items ) ? count($request->items) : 0 ) > $userBundle->cups_left ) {
                 return response()->json( [
-                    'message' => 'You have no cups left',
+                    'message' => 'You have redeemed all cups from bundle',
                     'message_key' => 'no_cups_left',
                     'errors' => [
-                        'voucher' => 'You have no cups left',
+                        'voucher' => 'You have redeemed all cups from bundle',
                     ]
                 ] );
             }
@@ -974,10 +974,10 @@ class CartService {
             // check own bundle's cups left
             if ( $cartMetaCount > $userBundle->cups_left ) {
                 return response()->json( [
-                    'message' => 'You have no cups left',
+                    'message' => 'You have redeemed all cups from bundle',
                     'message_key' => 'no_cups_left',
                     'errors' => [
-                        'voucher' => 'You have no cups left',
+                        'voucher' => 'You have redeemed all cups from bundle',
                     ]
                 ] );
             }

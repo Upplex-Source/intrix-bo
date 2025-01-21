@@ -1334,6 +1334,9 @@ class OrderService
                 $order->payment_url = $url2;
                 $order->order_transaction_id = $orderTransaction->id;
 
+                if( $order->userBundle ){
+                    $order->status = 3;
+                }
             }
 
             $order->save();
