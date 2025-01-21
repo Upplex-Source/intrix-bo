@@ -1134,8 +1134,8 @@ class OrderService
         
                     $x = $userCart->total_price;
                     if ( $x >= $adjustment->buy_quantity ) {
-                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                         $order->discount = ( $orderPrice * $adjustment->discount_quantity / 100 );
+                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                     }
                 }
 

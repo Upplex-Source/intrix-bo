@@ -579,8 +579,8 @@ class CartService {
         
                     $x = $orderPrice;
                     if ( $x >= $adjustment->buy_quantity ) {
-                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                         $cart->discount = ( $orderPrice * $adjustment->discount_quantity / 100 );
+                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                     }
                 }
 
@@ -1215,7 +1215,8 @@ class CartService {
                             $x = $updateCart->total_price;
                             if ( $x >= $adjustment->buy_quantity ) {
                                 $orderPrice -= $adjustment->discount_quantity;
-        }                       $updateCart->discount = $adjustment->discount_quantity;
+                                $updateCart->discount = $adjustment->discount_quantity;
+                            }
                 
                         } else {
         
@@ -1223,8 +1224,9 @@ class CartService {
                 
                             $x = $updateCart->total_price;
                             if ( $x >= $adjustment->buy_quantity ) {
+                                $updateCart->discount = ( $orderPrice * $adjustment->discount_quantity / 100 );
                                 $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
-        }                       $updateCart->discount = ( $orderPrice * $adjustment->discount_quantity / 100 );
+                            }
                         }
         
                         $updateCart->voucher_id = $voucher->id;
