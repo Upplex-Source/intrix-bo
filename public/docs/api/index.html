@@ -970,7 +970,8 @@ fetch(url, {
         }
     ],
     \"promo_code\": \"BUY1FREE1\",
-    \"bundle\": \"1\"
+    \"bundle\": 1,
+    \"user_bundle\": 2
 }"
 </code></pre></div>
 
@@ -1004,7 +1005,8 @@ let body = {
         }
     ],
     "promo_code": "BUY1FREE1",
-    "bundle": "1"
+    "bundle": 1,
+    "user_bundle": 2
 };
 
 fetch(url, {
@@ -1171,14 +1173,24 @@ fetch(url, {
 <p>The ID of the promotion/voucher to apply.</p>
         </p>
                 <p>
-            <b><code>bundle</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
-                <input type="text"
+            <b><code>bundle</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
                name="bundle"
                data-endpoint="POSTapi-v1-carts-add"
                value="1"
                data-component="body" hidden>
     <br>
 <p>The ID of the bundle to apply ( not usable together with voucher ).</p>
+        </p>
+                <p>
+            <b><code>user_bundle</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="user_bundle"
+               data-endpoint="POSTapi-v1-carts-add"
+               value="2"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the user's bundle to apply ( not usable together with bundle/voucher ).</p>
         </p>
         </form>
 
@@ -1222,7 +1234,8 @@ fetch(url, {
     \"cart_item\": 1,
     \"promo_code\": 0,
     \"cart\": 0,
-    \"bundle\": \"1\"
+    \"bundle\": 1,
+    \"user_bundle\": 2
 }"
 </code></pre></div>
 
@@ -1260,7 +1273,8 @@ let body = {
     "cart_item": 1,
     "promo_code": 0,
     "cart": 0,
-    "bundle": "1"
+    "bundle": 1,
+    "user_bundle": 2
 };
 
 fetch(url, {
@@ -1467,14 +1481,24 @@ fetch(url, {
 <p>The ID of the promotion/voucher to apply.</p>
         </p>
                 <p>
-            <b><code>bundle</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
-                <input type="text"
+            <b><code>bundle</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
                name="bundle"
                data-endpoint="POSTapi-v1-carts-update"
                value="1"
                data-component="body" hidden>
     <br>
 <p>The ID of the bundle to apply ( not usable together with voucher ).</p>
+        </p>
+                <p>
+            <b><code>user_bundle</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="user_bundle"
+               data-endpoint="POSTapi-v1-carts-update"
+               value="2"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the user's bundle to apply ( not usable together with bundle/voucher ).</p>
         </p>
         </form>
 

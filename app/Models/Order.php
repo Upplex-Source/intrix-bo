@@ -35,6 +35,7 @@ class Order extends Model
         'payment_attempt',
         'payment_url',
         'user_bundle_id',
+        'tax',
     ];
 
     public function getOrderStatusLabelAttribute()
@@ -107,6 +108,7 @@ class Order extends Model
         'payment_attempt',
         'payment_url',
         'user_bundle_id',
+        'tax',
     ];
 
     protected static $logName = 'orders';

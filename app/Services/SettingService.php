@@ -65,7 +65,8 @@ class SettingService {
             ['CONVERTION_RATE',
             'REFERRAL_REGISTER',
             'REFERRAL_SPENDING',
-            'REGISTER_BONUS'])->get();
+            'REGISTER_BONUS',
+            'TAXES'])->get();
 
         return $settings;
     }
@@ -86,6 +87,7 @@ class SettingService {
             'referral_register_bonus_points' => [ 'required', 'numeric', 'gte:0' ],
             'referral_spending_bonus_points' => [ 'required', 'numeric', 'gte:0' ],
             'register_bonus' => [ 'required', 'numeric', 'gte:0' ],
+            'taxes' => [ 'required', 'numeric', 'gte:0' ],
         ] );
 
         $attributeName = [
@@ -105,6 +107,7 @@ class SettingService {
                 'REFERRAL_REGISTER' => $request->referral_register_bonus_points,
                 'REFERRAL_SPENDING' => $request->referral_spending_bonus_points,
                 'REGISTER_BONUS' => $request->register_bonus,
+                'TAXES' => $request->taxes,
             ];
             
             foreach ($options as $option_name => $option_value) {

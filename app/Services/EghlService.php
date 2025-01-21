@@ -257,6 +257,12 @@ class EghlService {
                 if( $request->TxnStatus != 0 ){
                     $order->payment_attempt += 1;
                     $orderTransaction->status = 20;
+
+                    if( $order->userBundle ){
+                        $userBundle = $order->userBundle;
+                        $userBundle->cups_left += count( $order->orderMetas );
+                        $userBundle->save();
+                    }
                 }
                 $order->payment_method = 2;
                 $order->save();

@@ -64,6 +64,10 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::get( 'transactions', [ WalletController::class, 'getWalletTransactions' ] );
         Route::post( 'topup', [ WalletController::class, 'topup' ] );
     } );
+
+    Route::prefix( 'points' )->group( function() {
+        Route::get( 'histories', [ WalletController::class, 'getPointsHistories' ] );
+    } );
     
     // New API routes
     Route::prefix( 'vending-machines' )->group( function() {

@@ -45,6 +45,13 @@ $setting = 'setting';
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
+                                <div class="mb-3 row">
+                                    <label for="{{ $setting }}_taxes" class="col-sm-5 col-form-label">{{ __( 'setting.taxes' ) }}</label>
+                                    <div class="col-sm-7">
+                                        <input type="number" class="form-control form-control-sm" id="{{ $setting }}_taxes">
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+                                </div>
                                 <div class="text-end">
                                     <button class="btn btn-sm btn-primary" id="bs_save">{{ __( 'template.save_changes' ) }}</button>
                                 </div>
@@ -84,6 +91,7 @@ $setting = 'setting';
                     referral_register_bonus_points: $( s + '_referral_register_bonus_points' ).val(),
                     register_bonus: $( s + '_register_bonus' ).val(),
                     referral_spending_bonus_points: $( s + '_referral_spending_bonus_points' ).val(),
+                    taxes: $( s + '_taxes' ).val(),
                     _token: '{{ csrf_token() }}',
                 },
                 success: function( response ) {
@@ -131,6 +139,10 @@ $setting = 'setting';
 
                             if (item.option_name === "REGISTER_BONUS") {
                                 $( s + '_register_bonus').val( item.option_value );
+                            }
+
+                            if (item.option_name === "TAXES") {
+                                $( s + '_taxes').val( item.option_value );
                             }
                         });
                     }

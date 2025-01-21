@@ -107,8 +107,15 @@ endpoints:
         name: bundle
         description: 'The ID of the bundle to apply ( not usable together with voucher ).'
         required: false
-        example: '1'
-        type: string
+        example: 1
+        type: integer
+        custom: []
+      user_bundle:
+        name: user_bundle
+        description: 'The ID of the user''s bundle to apply ( not usable together with bundle/voucher ).'
+        required: false
+        example: 2
+        type: integer
         custom: []
     responses: []
     responseFields: []
@@ -244,8 +251,15 @@ endpoints:
         name: bundle
         description: 'The ID of the bundle to apply ( not usable together with voucher ).'
         required: false
-        example: '1'
-        type: string
+        example: 1
+        type: integer
+        custom: []
+      user_bundle:
+        name: user_bundle
+        description: 'The ID of the user''s bundle to apply ( not usable together with bundle/voucher ).'
+        required: false
+        example: 2
+        type: integer
         custom: []
     responses: []
     responseFields: []

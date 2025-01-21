@@ -45,4 +45,5 @@ return [
     'register_bonus' => 'Register bonus points',
     'referral_register_bonus_points' => 'Referral Register bonus points',
     'referral_spending_bonus_points' => 'Referral Spending bonus points',
+    'taxes' => 'Taxes',
 ];

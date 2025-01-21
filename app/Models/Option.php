@@ -32,6 +32,10 @@ class Option extends Model
         return self::where('option_name', 'CONVERTION_RATE')->first();
     }
 
+    public static function getTaxesSettings(){
+        return self::where('option_name', 'TAXES')->first();
+    }
+
     protected function serializeDate( DateTimeInterface $date ) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }

@@ -995,6 +995,8 @@ class OrderService
             $user = auth()->user();
             $userWallet = $user->wallets->where( 'type', 1 )->first();
             $bundle = ProductBundle::where( 'id', $userCart->product_bundle_id )->where( 'status', 10 )->first();
+            $userBundle = UserBundle::where( 'id', $userCart->user_bundle_id )->where( 'status', 10 )->first();
+            $taxSettings = Option::getTaxesSettings();
 
             $order = Order::create( [
                 'user_id' => $user->id,
@@ -1002,10 +1004,12 @@ class OrderService
                 'product_bundle_id' => $userCart->product_bundle_id,
                 'outlet_id' => null,
                 'vending_machine_id' => $userCart->vending_machine_id,
+                'user_bundle_id' => $userCart->user_bundle_id,
                 'total_price' => $orderPrice,
                 'discount' => 0,
                 'status' => 1,
                 'reference' => Helper::generateOrderReference(),
+                'tax' => 0,
             ] );
 
             foreach ( $userCart->cartMetas as $cartProduct ) {
@@ -1187,7 +1191,20 @@ class OrderService
                 $orderPrice = $bundle->price;
             }
 
+            if( $userBundle ){
+
+                $orderMetas = $order->orderMetas;
+
+                foreach( $orderMetas as $orderMeta ){
+                    $orderMeta->total_price = 0;
+                    $orderMeta->save();
+                }
+                $orderPrice = 0;
+            }
+
             $order->total_price = $orderPrice;
+            $order->tax = $taxSettings ? (($taxSettings->option_value/100) * $order->total_price) : 0;
+            $order->total_price += $order->tax;
 
             $userCart->status = 20;
             $userCart->save();

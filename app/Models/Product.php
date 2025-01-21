@@ -28,7 +28,11 @@ class Product extends Model
         'default_froyo_quantity',
         'default_syrup_quantity',
         'default_topping_quantity',
-        'status'
+        'status',
+        'free_froyo_quantity',
+        'free_syrup_quantity',
+        'free_topping_quantity',
+        'product_type',
     ];
 
     public function getImagePathAttribute() {
@@ -55,7 +59,11 @@ class Product extends Model
         'default_froyo_quantity',
         'default_syrup_quantity',
         'default_topping_quantity',
-        'status'
+        'status',
+        'free_froyo_quantity',
+        'free_syrup_quantity',
+        'free_topping_quantity',
+        'product_type',
     ];
 
     protected static $logName = 'categories';

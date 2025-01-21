@@ -774,6 +774,10 @@ class UserService
     // Api
     public static function registerUser( $request ) {
 
+        $request->merge( [
+            'phone_number' => ltrim($request->phone_number, '0'),
+        ] );
+
         try {
             $request->merge( [
                 'identifier' => Crypt::decryptString( $request->identifier ),
