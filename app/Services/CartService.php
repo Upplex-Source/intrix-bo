@@ -694,7 +694,7 @@ class CartService {
                 'errors' => [
                     'voucher' => 'Promo code, bundle, and user bundle cannot be used together.'
                 ]
-            ]);
+            ], 422);
         }
 
         if (isset($request->items)) {
@@ -790,7 +790,7 @@ class CartService {
                     'errors' => [
                         'voucher' => 'Voucher not found'
                     ]
-                ] );
+                ] , 422);
             }
 
             if( $voucher->type == 1 ){
@@ -800,7 +800,7 @@ class CartService {
                     'errors' => [
                         'voucher' => 'Voucher Not applicable to cart'
                     ]
-                ] );
+                ], 422 );
             }
 
             $test = self::validateCartVoucher($request);
@@ -820,7 +820,7 @@ class CartService {
                     'errors' => [
                         'cart' => 'Cart item not found.',
                     ]
-                ]);
+                ], 422);
             }
 
             if( !$request->items && $request->promo_codes){
@@ -875,7 +875,7 @@ class CartService {
                     'errors' => [
                         'voucher' => 'Product exceeeds bundle quantity',
                     ]
-                ] );
+                ] , 422);
             }
 
             foreach ($request->items as $item) {
@@ -938,7 +938,7 @@ class CartService {
                         'errors' => [
                             'voucher' => 'Product not available in bundle',
                         ]
-                    ] );
+                    ] , 422);
                 } else {
                     return response()->json( [
                         'message' => 'Bundle cant be used together with promotion',
@@ -946,7 +946,7 @@ class CartService {
                         'errors' => [
                             'voucher' => 'Bundle cant be used together with promotion',
                         ]
-                    ] );
+                    ] , 422);
                 }
             }
         }
@@ -968,7 +968,7 @@ class CartService {
                     'errors' => [
                         'voucher' => 'User Bundle Not Found',
                     ]
-                ] );
+                ] , 422);
             }
 
             // check own bundle's cups left
@@ -979,7 +979,7 @@ class CartService {
                     'errors' => [
                         'voucher' => 'You have redeemed all cups from bundle',
                     ]
-                ] );
+                ] , 422);
             }
 
             $bundleRules = $userBundle->productBundle->bundle_rules;
@@ -994,7 +994,7 @@ class CartService {
                     'errors' => [
                         'voucher' => 'Product exceeeds bundle quantity',
                     ]
-                ] );
+                ] , 422);
             }
             
             if ( ( isset( $request->items ) ? count($request->items) : 0 ) > $bundleRules['quantity'] ) {
@@ -1004,7 +1004,7 @@ class CartService {
                     'errors' => [
                         'voucher' => 'Product exceeeds bundle quantity',
                     ]
-                ] );
+                ] , 422);
             }
 
             foreach ($request->items as $item) {
@@ -1067,7 +1067,7 @@ class CartService {
                         'errors' => [
                             'voucher' => 'Product not available in bundle',
                         ]
-                    ] );
+                    ] , 422);
                 } else {
                     return response()->json( [
                         'message' => 'Bundle cant be used together with promotion',
@@ -1075,7 +1075,7 @@ class CartService {
                         'errors' => [
                             'voucher' => 'Bundle cant be used together with promotion',
                         ]
-                    ] );
+                    ] , 422);
                 }
             }
         }
@@ -1105,7 +1105,7 @@ class CartService {
                 'errors' => [
                     'cart' => 'Cart not found'
                 ]
-            ] );
+            ] , 422);
         }
 
         DB::beginTransaction();
@@ -1134,7 +1134,7 @@ class CartService {
                         'errors' => [
                             'cart' => 'Cart item not found.',
                         ]
-                    ]);
+                    ], 422);
                 }
                 
                 if( !$request->items ){
@@ -1420,7 +1420,7 @@ class CartService {
                 'errors' => [
                     'cart' => 'Cart not found'
                 ]
-            ] );
+            ], 422 );
         }
 
         DB::beginTransaction();
@@ -1470,7 +1470,7 @@ class CartService {
                 'errors' => [
                     'cart' => 'Cart not found'
                 ]
-            ] );
+            ], 422 );
         }
 
         DB::beginTransaction();

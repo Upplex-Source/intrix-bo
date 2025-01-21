@@ -19,9 +19,9 @@ return [
     "price" => "Price",
     "image" => "Image",
     "discount_price" => "Discount Price",
-    "default_froyo_quantity" => "Default Froyo Quantity",
-    "default_syrup_quantity" => "Default Syrup Quantity",
-    "default_topping_quantity" => "Default Topping Quantity",
+    "default_froyo_quantity" => "Maximum Froyo Quantity",
+    "default_syrup_quantity" => "Maximum Syrup Quantity",
+    "default_topping_quantity" => "Maximum Topping Quantity",
     "status" => "Status",
     'validity_days' => 'Validity Days',
 
