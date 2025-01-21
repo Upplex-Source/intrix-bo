@@ -306,12 +306,18 @@ class WalletService
 
     public static function getWalletTransactions( $request ) {
 
-        $walletTranasctions = WalletTransaction::where( 'user_id', auth()->user()->id )
+        $walletTransactions = WalletTransaction::where( 'user_id', auth()->user()->id )
             ->orderBy( 'created_at', 'DESC' );
 
-        $walletTranasctions = $walletTranasctions->paginate( empty( $request->per_page ) ? 10 : $request->per_page );
+        if( $request->type ) {
+            $walletTransactions->whereHas('wallet', function ($query) {
+                $query->where('type', 2);
+            });
+        }
 
-        foreach ( $walletTranasctions->items() as $wt ) {
+        $walletTransactions = $walletTransactions->paginate( empty( $request->per_page ) ? 10 : $request->per_page );
+
+        foreach ( $walletTransactions->items() as $wt ) {
 
             $wt->makeHidden( [
                 'type',
@@ -326,7 +332,7 @@ class WalletService
             ] );
         }
 
-        return response()->json( $walletTranasctions );
+        return response()->json( $walletTransactions );
     }
 
     public static function topup( $request ) {

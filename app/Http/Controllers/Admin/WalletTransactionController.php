@@ -23,8 +23,6 @@ class WalletTransactionController extends Controller
             'title' => __( 'template.list' ),
             'mobile_title' => __( 'template.wallet_transactions' ),
         ];
-        $this->data['data']['wallet'][''] = __( 'datatables.all_x' );
-        $this->data['data']['transaction_type'][''] = __( 'datatables.all_x' );
 
         foreach ( Helper::wallets() as $key => $wallet ) {
             $this->data['data']['wallet'][$key] = $wallet;

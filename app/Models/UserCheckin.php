@@ -30,7 +30,7 @@ class UserCheckin extends Model
     }
 
     public function getImagePathAttribute() {
-        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' );
+        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
     }
     
     public function getEncryptedIdAttribute() {

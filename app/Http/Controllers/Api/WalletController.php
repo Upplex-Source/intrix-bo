@@ -59,4 +59,23 @@ class WalletController extends Controller
 
         return WalletService::topup( $request );
     }
+
+    /**
+     * 1. Get points history
+     * 
+     * @group Yobe Points API
+     * 
+     * @authenticated
+     * 
+     * @queryParam per_page integer Retrieve how many my tranasction in a page, default is 10. Example: 10
+     * 
+     */   
+    public function getPointsHistories( Request $request ) {
+
+        $request->merge( [
+            'type' => 2
+        ] );
+        
+        return WalletService::getWalletTransactions( $request );
+    }
 }

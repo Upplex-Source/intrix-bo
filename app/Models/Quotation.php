@@ -69,7 +69,7 @@ class Quotation extends Model
     }
 
     public function getAttachmentPathAttribute() {
-        return $this->attributes['attachment'] ? asset( 'storage/' . $this->attributes['attachment'] ) : asset( 'admin/images/placeholder.png' );
+        return $this->attributes['attachment'] ? asset( 'storage/' . $this->attributes['attachment'] ) : asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
     }
     
     public function getEncryptedIdAttribute() {
