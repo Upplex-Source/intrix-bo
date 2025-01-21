@@ -30,6 +30,7 @@ use App\Models\{
     UserBundle,
     UserBundleHistory,
     UserBundleHistoryMeta,
+    UserBundleTransaction,
 };
 
 use Helper;
