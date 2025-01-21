@@ -271,7 +271,7 @@ window.cke_element1 = 'product_bundle_edit_description';
                         productSelect2.trigger( 'change' );
                     });
 
-                    $( fe + 'quantity' ).val( response.product_bundle_metas[0].quantity );
+                    $( fe + '_quantity' ).val( response.product_bundle_metas[0].quantity );
 
                     const dropzone = new Dropzone( fe + '_image', {
                         url: '{{ route( 'admin.file.upload' ) }}',
