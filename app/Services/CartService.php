@@ -177,6 +177,7 @@ class CartService {
             $formattedErrors = [
                 'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
                 'promo_code' => $rawErrors['promo_code'][0] ?? null, // Include promo_code error
+                'bundle' => $rawErrors['bundle'][0] ?? null, // Include bundle error
                 'items' => []
             ];
 
@@ -202,6 +203,10 @@ class CartService {
 
             if (!$formattedErrors['promo_code']) {
                 unset($formattedErrors['promo_code']);
+            }
+
+            if (!$formattedErrors['bundle']) {
+                unset($formattedErrors['bundle']);
             }
 
             return response()->json(["message"=> "The given data was invalid.",'errors' => $formattedErrors], 422);
@@ -575,6 +580,7 @@ class CartService {
             $formattedErrors = [
                 'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
                 'promo_code' => $rawErrors['promo_code'][0] ?? null, // Include promo_code error
+                'bundle' => $rawErrors['bundle'][0] ?? null, // Include bundle error
                 'items' => []
             ];
         
@@ -600,6 +606,10 @@ class CartService {
 
             if (!$formattedErrors['promo_code']) {
                 unset($formattedErrors['promo_code']);
+            }
+
+            if (!$formattedErrors['bundle']) {
+                unset($formattedErrors['bundle']);
             }
         
             return response()->json(["message"=> "The given data was invalid.",'errors' => $formattedErrors], 422);
