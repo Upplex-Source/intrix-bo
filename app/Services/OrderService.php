@@ -975,7 +975,7 @@ class OrderService
                             'errors' => [
                                 'wallet' => 'Balance is not enough, please top up to continue',
                             ]
-                        ]);
+                        ], 422);
                     }
     
                 }else{
@@ -986,7 +986,7 @@ class OrderService
                             'errors' => [
                                 'wallet' => 'Balance is not enough, please top up to continue',
                             ]
-                        ]);
+                        ], 422);
                     }
                 }
             }
@@ -1629,7 +1629,7 @@ class OrderService
                 'errors' => [
                     'order' => 'order not available'
                 ]
-            ]);
+            ], 422);
         }
 
         DB::beginTransaction();

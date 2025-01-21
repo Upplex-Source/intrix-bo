@@ -569,7 +569,7 @@ class ProductBundleService
                     'errors' => [
                         'wallet' => 'Wallet not found',
                     ]
-                ]);
+                ], 422);
             }else{
                 if( $userWallet->balance < $bundle->price ){
                     return response()->json([
@@ -578,7 +578,7 @@ class ProductBundleService
                         'errors' => [
                             'wallet' => 'Balance is not enough, please top up to continue',
                         ]
-                    ]);
+                    ], 422);
                 }
             }
         }
@@ -726,7 +726,7 @@ class ProductBundleService
                 'errors' => [
                     'order' => 'bundle not available'
                 ]
-            ]);
+            ], 422);
         }
 
         $validator->validate();
