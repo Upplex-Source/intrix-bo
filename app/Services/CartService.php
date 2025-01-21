@@ -199,7 +199,7 @@ class CartService {
                     $formattedErrors['items'][$index][$field] = $messages[0]; // Add the first error message
                 }
             }
-        
+
             // Remove null vending machine error if not present
             if (!$formattedErrors['vending_machine']) {
                 unset($formattedErrors['vending_machine']);
@@ -215,7 +215,7 @@ class CartService {
 
             return response()->json(["message"=> "The given data was invalid.",'errors' => $formattedErrors], 422);
         }
-        
+
         // check voucher type
         if ( $request->promo_code ) {
 
@@ -554,12 +554,14 @@ class CartService {
             ] );
         }
 
+
         if (isset($request->items)) {
             $validator->after(function ($validator) use ($request) {
+
                 foreach ($request->items as $index => $item) {
                     // Fetch the product and its default quantities
+
                     $product = Product::find($item['product']);
-        
                     if (!$product) {
                         $validator->errors()->add("items.$index.product", 'Invalid product ID.');
                         continue;
@@ -582,15 +584,18 @@ class CartService {
                 }
             });
         }
-        
+
+
         if ($validator->fails()) {
             $rawErrors = $validator->errors()->toArray();
             $formattedErrors = [
                 'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
                 'promo_code' => $rawErrors['promo_code'][0] ?? null, // Include promo_code error
                 'bundle' => $rawErrors['bundle'][0] ?? null, // Include bundle error
+                'cart_item' => $rawErrors['cart_item'][0] ?? null, // Include bundle error
                 'items' => []
             ];
+
         
             foreach ($rawErrors as $key => $messages) {
                 // Handle items validation errors
@@ -606,7 +611,7 @@ class CartService {
                     $formattedErrors['items'][$index][$field] = $messages[0]; // Add the first error message
                 }
             }
-        
+
             // Remove null vending machine error if not present
             if (!$formattedErrors['vending_machine']) {
                 unset($formattedErrors['vending_machine']);
@@ -619,10 +624,13 @@ class CartService {
             if (!$formattedErrors['bundle']) {
                 unset($formattedErrors['bundle']);
             }
-        
+
+            if (!$formattedErrors['cart_item']) {
+                unset($formattedErrors['cart_item']);
+            }
+
             return response()->json(["message"=> "The given data was invalid.",'errors' => $formattedErrors], 422);
         }
-
         // check voucher type
         if ( $request->promo_code ) {
 
