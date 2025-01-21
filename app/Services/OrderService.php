@@ -989,7 +989,7 @@ class OrderService
             $orderPrice = 0;
             $user = auth()->user();
             $userWallet = $user->wallets->where( 'type', 1 )->first();
-            $bundle = ProductBundle::where( 'id', $request->bundle )->where( 'status', 10 )->first();
+            $bundle = ProductBundle::where( 'id', $userCart->product_bundle_id )->where( 'status', 10 )->first();
 
             $order = Order::create( [
                 'user_id' => $user->id,
