@@ -909,7 +909,7 @@ class OrderService
         
         // check wallet balance 
         $userWallet = $user->wallets->where('type',1)->first();
-        
+
         if( $request->payment_method == 1 ){
 
             if (!$userWallet) {
@@ -1350,6 +1350,7 @@ class OrderService
             'order_metas' => $orderMetas,
             'voucher' => $order->voucher,
             'bundle' => $order->productBundle,
+            'user_bundle' => $order->userBundle,
         ] );
     }
 

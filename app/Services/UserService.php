@@ -887,12 +887,14 @@ class UserService
 
                 $referralWallet = $referral->wallets->where('type',2)->first();
 
-                WalletService::transact( $referralWallet, [
-                    'amount' => $referralBonus->option_value,
-                    'remark' => 'Register Bonus',
-                    'type' => $referralWallet->type,
-                    'transaction_type' => 22,
-                ] );
+                if( $referralWallet ) {
+                    WalletService::transact( $referralWallet, [
+                        'amount' => $referralBonus->option_value,
+                        'remark' => 'Register Bonus',
+                        'type' => $referralWallet->type,
+                        'transaction_type' => 22,
+                    ] );
+                }
             }
 
             $currentTmpUser = TmpUser::find( $request->identifier );
@@ -933,7 +935,7 @@ class UserService
                 $user = User::where( 'phone_number', request( 'phone_number' ) )->first();
 
                 if ( !$user ) {
-                    $fail( __( 'user.user_wrong_user_password' ) );
+                    $fail( __( 'user.user_wrong_user' ) );
                     return 0;
                 }
 

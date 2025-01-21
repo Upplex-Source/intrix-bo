@@ -41,7 +41,7 @@ return [
     'user_updated' => 'User Updated',
     'old_password_not_match' => 'User old password does not match',
     'user_password_updated' => 'User password update success',
-    'user_wrong_user_password' => 'Wrong username or password',
+    'user_wrong_user_password' => 'Wrong phone number or password',
     
 
     'invalid_otp' => 'Invalid_otp',
