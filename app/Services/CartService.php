@@ -649,7 +649,7 @@ class CartService {
             'vending_machine' => $cart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $cart->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($cart->total_price, 2, true),
             'cart_metas' => $cartMetas,
-            'discount' => $cart->discount,
+            'discount' =>  Helper::numberFormatV2($cart->discount, 2, true),
             'voucher' => $cart->voucher,
             'bundle' => $cart->productBundle,
             'user_bundle' => $cart->userBundle,
