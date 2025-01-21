@@ -557,6 +557,7 @@ class CartService {
                         if ($getProductMeta) {
                             $orderPrice -= $getProductMeta->total_price;
                             $getProductMeta->total_price = 0;
+                            $cart->discount = $getProductMeta->total_price;
                             $getProductMeta->save();
                         }
                     }
@@ -569,6 +570,7 @@ class CartService {
 
                     if ( $x >= $adjustment->buy_quantity ) {
                         $orderPrice -= $adjustment->discount_quantity;
+                        $cart->discount = $adjustment->discount_quantity;
                     }
         
                 } else {
@@ -578,6 +580,7 @@ class CartService {
                     $x = $orderPrice;
                     if ( $x >= $adjustment->buy_quantity ) {
                         $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
+                        $cart->discount = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                     }
                 }
 
@@ -1200,6 +1203,7 @@ class CartService {
                                     $orderPrice -= $getProductMeta->total_price;
                                     $getProductMeta->total_price = 0;
                                     $getProductMeta->save();
+                                    $updateCart->discount = $getProductMeta->total_price;
                                 }
                             }
         
@@ -1210,7 +1214,7 @@ class CartService {
                             $x = $updateCart->total_price;
                             if ( $x >= $adjustment->buy_quantity ) {
                                 $orderPrice -= $adjustment->discount_quantity;
-                            }
+        }                       $updateCart->discount = $adjustment->discount_quantity;
                 
                         } else {
         
@@ -1219,7 +1223,7 @@ class CartService {
                             $x = $updateCart->total_price;
                             if ( $x >= $adjustment->buy_quantity ) {
                                 $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity );
-                            }
+        }                       $updateCart->discount = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                         }
         
                         $updateCart->voucher_id = $voucher->id;

@@ -852,7 +852,7 @@ class OrderService
             if( $order->userBundle ) {
                 $order->userBundle->productBundle->append( ['image_path','bundle_rules'] );
             }
-            
+
             $order->qr_code = $order->status != 20 && in_array($order->status, [3, 10]) ? self::generateQrCode($order) : null;
             return $order;
         });
@@ -897,7 +897,7 @@ class OrderService
                 'message' => '',
                 'message_key' => 'cart_is_empty',
                 'carts' => []
-            ]);
+            ], 422);
         }
         
         $validator->validate();
@@ -1105,6 +1105,7 @@ class OrderService
                             $orderPrice -= $getProductMeta->total_price;
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
+                            $order->discount = $getProductMeta->total_price;
    
                             $updateOrderMeta = OrderMeta::where('order_id', $order->id)
                             ->where('product_id', $adjustment->get_product)
@@ -1124,6 +1125,7 @@ class OrderService
                     $x = $userCart->total_price;
                     if ( $x >= $adjustment->buy_quantity ) {
                         $orderPrice -= $adjustment->discount_quantity;
+                        $order->discount = $adjustment->discount_quantity;
                     }
         
                 } else {
@@ -1133,6 +1135,7 @@ class OrderService
                     $x = $userCart->total_price;
                     if ( $x >= $adjustment->buy_quantity ) {
                         $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity );
+                        $order->discount = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                     }
                 }
 
