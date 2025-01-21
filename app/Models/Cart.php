@@ -32,6 +32,7 @@ class Cart extends Model
         'voucher_id',
         'taxes',
         'session_key',
+        'user_bundle_id',
     ];
 
     protected $hidden = [
@@ -48,6 +49,10 @@ class Cart extends Model
 
     public function product() {
         return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function userBundle() {
+        return $this->belongsTo( UserBundle::class, 'user_bundle_id' );
     }
 
     public function productBundle() {
@@ -96,6 +101,7 @@ class Cart extends Model
         'voucher_id',
         'taxes',
         'session_key',
+        'user_bundle_id',
     ];
 
     protected static $logName = 'carts';

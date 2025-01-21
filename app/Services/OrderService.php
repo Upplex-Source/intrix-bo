@@ -805,7 +805,7 @@ class OrderService
     
         // Start by querying orders for the authenticated user
         $query = Order::where('user_id', $user->id)
-            ->with(['orderMetas', 'vendingMachine', 'voucher', 'productBundle'])
+            ->with(['orderMetas', 'vendingMachine', 'voucher', 'productBundle', 'userBundle'])
             ->orderBy('created_at', 'DESC');
     
         // Apply filters
@@ -819,6 +819,10 @@ class OrderService
     
         if ($request->has('reference')) {
             $query->where('reference', $request->reference);
+        }
+    
+        if ($request->has('bundle')) {
+            $query->whereHas('userBundle');
         }
     
         // Use paginate instead of get

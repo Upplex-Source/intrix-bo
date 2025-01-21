@@ -267,7 +267,7 @@ class EghlService {
                     $userBundle = UserBundle::create([
                         'user_id' => $order->user->id,
                         'product_bundle_id' => $bundle->id,
-                        'status' => $request->payment_method == 1 ? 10 : 20,
+                        'status' => 10,
                         'total_cups' => $bundle->productBundleMetas->first()->quantity,
                         'cups_left' => $bundle->productBundleMetas->first()->quantity - count( $order->orderMetas ),
                         'last_used' => Carbon::now(),
@@ -285,7 +285,7 @@ class EghlService {
                         'payment_attempt' => 1,
                         'payment_url' => 'null',
                     ] );
-                    
+
                     $order->user_bundle_id = $userBundle->id;
                     $order->save();
 
