@@ -109,6 +109,10 @@ class CartService {
 
     public static function addToCart( $request ) {
 
+        if( !isset( $request->items ) ) {
+            $request->merge(['items'=> []]);
+        }
+
         $validator = Validator::make($request->all(), [
             'bundle' => [ 'nullable', 'exists:product_bundles,id'  ],
             'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
@@ -508,6 +512,10 @@ class CartService {
     }
 
     public static function updateCart( $request ) {
+
+        if( !isset( $request->items ) ) {
+            $request->merge(['items'=> []]);
+        }
 
         $validator = Validator::make( $request->all(), [
             'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
