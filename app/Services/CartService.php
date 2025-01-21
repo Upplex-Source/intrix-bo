@@ -121,7 +121,7 @@ class CartService {
         $validator = Validator::make($request->all(), [
             'bundle' => [ 'nullable', 'exists:product_bundles,id'  ],
             'user_bundle' => [ 'nullable', 'exists:user_bundles,id'  ],
-            'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
+            'vending_machine' => [ 'nullable', 'exists:vending_machines,id'  ],
             'items' => ['nullable', 'array'],
             'items.*.product' => ['required', 'exists:products,id'],
             'items.*.froyo' => ['nullable', 'array'],
@@ -663,7 +663,7 @@ class CartService {
             'user_bundle' => [ 'nullable', 'exists:user_bundles,id'  ],
             'bundle' => [ 'nullable', 'exists:product_bundles,id'  ],
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
-            'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
+            'vending_machine' => [ 'nullable', 'exists:vending_machines,id'  ],
             'items' => ['nullable', 'array'],
             'items.*.product' => ['required', 'exists:products,id'],
             'items.*.froyo' => ['nullable', 'array'],

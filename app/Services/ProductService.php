@@ -503,7 +503,7 @@ class ProductService
 
     public static function getMenus( $request ) {
 
-        $products = Product::select( 'products.*' )->where('status', 10);
+        $products = Product::select( 'products.*' )->where('status', 10)->where('product_type', 1);
 
         $filterObject = self::filter( $request, $products );
         $product = $filterObject['model'];

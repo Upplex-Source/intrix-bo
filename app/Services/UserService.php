@@ -1392,4 +1392,78 @@ class UserService
             ], 500);
         }
     }
+    
+
+    public static function getNotifications( $request ) {
+
+        $notifications = UserNotification::select(
+            'user_notifications.*',
+            // DB::raw( '( SELECT COUNT(*) FROM user_notification_seens AS a WHERE a.user_notification_id = user_notifications.id AND a.user_id = ' .request()->user()->id. ' ) as is_read' )
+            DB::raw( 'CASE WHEN user_notification_seens.id > 0 THEN 1 ELSE 0 END as is_read' )
+        )->where( function( $query ) {
+            $query->where( 'user_notifications.status', 10 );
+            $query->where( 'user_notifications.is_broadcast', 10 );
+            $query->orWhere( 'user_notification_users.user_id', auth()->user()->id );
+        } );
+
+        $notifications->leftJoin( 'user_notification_users', function( $query ) {
+            $query->on( 'user_notification_users.user_notification_id', '=', 'user_notifications.id' );
+            // $query->on( 'user_notification_users.user_id', '=', DB::raw( auth()->user()->id ) );
+        } );
+
+        // $notifications->leftJoin( 'user_notification_seens', 'user_notification_seens.user_notification_id', '=', 'user_notifications.id' );
+        $notifications->leftJoin( 'user_notification_seens', function( $query ) {
+            $query->on( 'user_notification_seens.user_notification_id', '=', 'user_notifications.id' );
+            $query->on( 'user_notification_seens.user_id', '=', DB::raw( auth()->user()->id ) );
+        } );
+
+        $notifications->when( !empty( $request->type ), function( $query ) {
+            return $query->where( 'user_notifications.type', request( 'type' ) );
+        } );
+
+        $notifications->when( $request->is_read != '' , function( $query ) {
+            if ( request( 'is_read' ) == 0 ) {
+                return $query->whereNull( 'user_notification_seens.id' );
+            } else {
+                return $query->where( 'user_notification_seens.id', '>', 0 );
+            }
+        } );
+
+        $notifications->orderBy( 'user_notifications.created_at', 'DESC' );
+
+        $notifications = $notifications->simplePaginate( empty( $request->per_page ) ? 100 : $request->per_page );
+
+        return response()->json( $notifications );
+    }
+
+    public static function getNotification( $request ) {
+
+        $notification = UserNotification::find( $request->notification );
+
+        return response()->json( [
+            'data' => $notification,
+        ] );
+    }
+
+    public static function updateNotificationSeen( $request ) {
+
+        $notification = UserNotification::find( $request->notification );
+        if ( !$notification ) {
+            return response()->json( [
+                'message' => '',
+            ] );
+        }
+
+        UserNotificationSeen::firstOrCreate( [
+            'user_notification_id' => $request->notification,
+            'user_id' => auth()->user()->id,
+        ], [
+            'user_notification_id' => $request->notification,
+            'user_id' => auth()->user()->id,
+        ] );
+
+        return response()->json( [
+            'message' => __( 'api.notification_seen' ),
+        ] );
+    }
 }

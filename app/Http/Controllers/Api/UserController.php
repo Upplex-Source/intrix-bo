@@ -217,4 +217,52 @@ class UserController extends Controller {
         return UserService::deleteConfirm( $request );
     }
 
+     /**
+     * 13. Get notifications
+     * 
+     * <strong>is_read</strong><br>
+     * 0: New<br>
+     * 1: Read<br>
+     * 
+     * @group User API
+     * 
+     * @authenticated
+     * 
+     * @queryParam is_read integer Leave empty for all. Example: 2
+     * @queryParam per_page integer Show how many record in a page. Leave blank for default (100). Example: 5
+     * 
+     */
+    public function getNotifications( Request $request ) {
+
+        return UserService::getNotifications( $request );
+    }
+
+    /**
+     * 14. Get notification
+     * 
+     * @group User API
+     * 
+     * @authenticated
+     * 
+     * @queryParam notification integer required The notification ID of notification. Example: 5
+     * 
+     */
+    public function getNotification( Request $request ) {
+
+        return UserService::getNotification( $request );
+    }
+
+    /**
+     * 15. Update notification seen
+     * 
+     * @group User API
+     * 
+     * @bodyParam notification integer required The notification ID of notification. Example: 5
+     * 
+     */ 
+    public function updateNotificationSeen( Request $request ) {
+
+        return UserService::updateNotificationSeen( $request );
+    }
+
 }

@@ -275,7 +275,7 @@ class OrderService
 
         $validator = Validator::make( $request->all(), [
             'user' => [ 'required', 'exists:users,id'  ],
-            'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
+            'vending_machine' => [ 'nullable', 'exists:vending_machines,id'  ],
             'products' => [ 'nullable' ],
             'products.*.productId' => [ 'nullable', 'exists:products,id' ],
             'products.*.froyo' => [ 'nullable', 'exists:froyos,id' ],
@@ -422,7 +422,7 @@ class OrderService
         $validator = Validator::make( $request->all(), [
             'id' => [ 'required', 'exists:orders,id'  ],
             'user' => [ 'required', 'exists:users,id'  ],
-            'vending_machine' => [ 'required', 'exists:vending_machines,id'  ],
+            'vending_machine' => [ 'nullable', 'exists:vending_machines,id'  ],
             'products' => [ 'nullable' ],
             'products.*.productId' => [ 'nullable', 'exists:products,id' ],
             'products.*.froyo' => [ 'nullable', 'exists:froyos,id' ],
@@ -852,8 +852,7 @@ class OrderService
             if( $order->userBundle ) {
                 $order->userBundle->productBundle->append( ['image_path','bundle_rules'] );
             }
-    
-            $order->orderMetas = $orderMetas;
+            
             $order->qr_code = $order->status != 20 && in_array($order->status, [3, 10]) ? self::generateQrCode($order) : null;
             return $order;
         });

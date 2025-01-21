@@ -57,6 +57,12 @@ Route::middleware( 'auth:user' )->group( function() {
         Route::post( 'delete-verification', [ UserController::class, 'deleteVerification' ] );
         Route::post( 'delete-confirm', [ UserController::class, 'deleteConfirm' ] );
         Route::post( '/update', [ UserController::class, 'updateUserApi' ] );
+
+        if( 1 == 2 ){
+            Route::get( 'notifications', [ UserController::class, 'getNotifications' ] );
+            Route::get( 'notification', [ UserController::class, 'getNotification' ] );
+            Route::post( 'notification', [ UserController::class, 'updateNotificationSeen' ] );
+        }
     } );
     
     Route::prefix( 'wallets' )->group( function() {
