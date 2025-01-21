@@ -26,6 +26,10 @@ use App\Models\{
     Voucher,
     VoucherUsage,
     UserVoucher,
+    ProductBundle,
+    UserBundle,
+    UserBundleHistory,
+    UserBundleHistoryMeta,
 };
 
 use Helper;
