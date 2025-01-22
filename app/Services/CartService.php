@@ -939,9 +939,9 @@ class CartService {
             }
 
             if( !$request->cart_item && $request->items ){
-                $cartMetaCount -= count($request->items);
+                $cartMetaCount = 0;
             }
-            
+
             if ( ( isset( $request->items ) ? count($request->items) : 0 ) + $cartMetaCount > $bundleRules['quantity'] ) {
                 return response()->json( [
                     'message' => 'Product exceeeds bundle quantity',
