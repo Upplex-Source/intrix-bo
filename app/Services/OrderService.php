@@ -1101,7 +1101,7 @@ class OrderService
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
         
                     $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
-        
+
                     if ( $x >= $adjustment->buy_quantity ) {
                         $getProductMeta = $userCart->cartMetas
                         ->where('product_id', $adjustment->get_product)
@@ -1109,8 +1109,8 @@ class OrderService
                         ->first();                    
 
                         if ($getProductMeta) {
-                            $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
-                            $order->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
+                            $orderPrice -= Helper::numberFormatV2($getProductMeta->product->price,2,false,true);
+                            $order->discount = Helper::numberFormatV2($getProductMeta->product->price,2,false,true);
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
    

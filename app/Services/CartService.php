@@ -892,7 +892,7 @@ class CartService {
                     $cartMetaToDelete->toppings = json_encode($toppings);
                     $cartMetaToDelete->total_price = $metaPrice;
                     $cartMetaToDelete->save();
-                    
+
                     $remainingCartMetas = $cart->cartMetas;
 
                     if( $request->promo_code || $cart->voucher_id ){
@@ -1242,8 +1242,27 @@ class CartService {
                     $orderPrice += $metaPrice;
                     $updateCart->subtotal = $orderPrice;
 
+                    // update all other cartsMeta
+                    $remainingCartMetas = $updateCart->cartMetas->where('id', '!=', $cartMeta->id);
+                    foreach( $remainingCartMetas as $rcm ){
+
+                        $rcm->total_price = 0;
+                        $rcm->total_price += $rcm->product->price;
+
+                        $froyoPrices = Froyo::whereIn('id', json_decode($rcm->froyos, true))->sum('price');
+                        $rcm->total_price += $froyoPrices;
+    
+                        $syrupPrices = Syrup::whereIn('id', json_decode($rcm->syrups, true))->sum('price');
+                        $rcm->total_price += $syrupPrices;
+    
+                        $toppingPrices = Topping::whereIn('id', json_decode($rcm->toppings, true))->sum('price');
+                        $rcm->total_price += $toppingPrices;
+                        $rcm->save();
+                    }
+
                     DB::commit();
                     $updateCart->load( ['cartMetas'] );
+
                     if( $request->promo_code ){
                         $voucher = Voucher::where( 'id', $request->promo_code )
                         ->orWhere('promo_code', $request->promo_code)->first();
@@ -1263,8 +1282,8 @@ class CartService {
                                 ->first();                    
 
                                 if ($getProductMeta) {
-                                    $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                     $updateCart->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
+                                    $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                     $getProductMeta->total_price = 0;
                                     $getProductMeta->save();
                                 }
