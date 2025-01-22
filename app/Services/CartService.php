@@ -151,7 +151,9 @@ class CartService {
                 'message' => 'Invalid combination of bundle and promotion.',
                 'message_key' => 'bundle_not_available',
                 'errors' => [
-                    'voucher' => 'Promo code, bundle, and user bundle cannot be used together.'
+                    'voucher' => 'Promo code, bundle, and user bundle cannot be used together.',
+                    // 'bundle' => 'Promo code, bundle, and user bundle cannot be used together.',
+                    // 'user_bundle' => 'Promo code, bundle, and user bundle cannot be used together.',
                 ]
             ], 422);
         }
@@ -277,7 +279,7 @@ class CartService {
                     'message' => 'Product exceeeds bundle quantity',
                     'message_key' => 'product_exceeds_bundle_quantity',
                     'errors' => [
-                        'voucher' => 'Product exceeeds bundle quantity',
+                        'bundle' => 'Product exceeeds bundle quantity',
                     ]
                 ] , 422);
             }
@@ -340,7 +342,7 @@ class CartService {
                         'message' => 'Product not available in bundle',
                         'message_key' => 'product_not_available_in_bundle',
                         'errors' => [
-                            'voucher' => 'Product not available in bundle',
+                            'bundle' => 'Product not available in bundle',
                         ]
                     ] , 422);
                 } else {
@@ -348,7 +350,7 @@ class CartService {
                         'message' => 'Bundle cant be used together with promotion',
                         'message_key' => 'bundle_not_available',
                         'errors' => [
-                            'voucher' => 'Bundle cant be used together with promotion',
+                            'bundle' => 'Bundle cant be used together with promotion',
                         ]
                     ] , 422);
                 }
@@ -365,7 +367,7 @@ class CartService {
                     'message' => 'User Bundle Not Found',
                     'message_key' => 'user_bundle_not_found',
                     'errors' => [
-                        'voucher' => 'User Bundle Not Found',
+                        'user_bundle' => 'User Bundle Not Found',
                     ]
                 ], 422 );
             }
@@ -376,7 +378,7 @@ class CartService {
                     'message' => 'You have redeemed all cups from bundle',
                     'message_key' => 'no_cups_left',
                     'errors' => [
-                        'voucher' => 'You have redeemed all cups from bundle',
+                        'user_bundle' => 'You have redeemed all cups from bundle',
                     ]
                 ], 422 );
             }
@@ -391,7 +393,7 @@ class CartService {
                     'message' => 'Product exceeeds bundle quantity',
                     'message_key' => 'product_exceeds_bundle_quantity',
                     'errors' => [
-                        'voucher' => 'Product exceeeds bundle quantity',
+                        'user_bundle' => 'Product exceeeds bundle quantity',
                     ]
                 ] , 422);
             }
@@ -454,7 +456,7 @@ class CartService {
                         'message' => 'Product not available in bundle',
                         'message_key' => 'product_not_available_in_bundle',
                         'errors' => [
-                            'voucher' => 'Product not available in bundle',
+                            'bundle' => 'Product not available in bundle',
                         ]
                     ] , 422);
                 } else {
@@ -462,7 +464,7 @@ class CartService {
                         'message' => 'Bundle cant be used together with promotion',
                         'message_key' => 'bundle_not_available',
                         'errors' => [
-                            'voucher' => 'Bundle cant be used together with promotion',
+                            'bundle' => 'Bundle cant be used together with promotion',
                         ]
                     ] , 422);
                 }
@@ -600,6 +602,8 @@ class CartService {
                     $cartMeta->save();
                 }
                 $orderPrice = $bundle->price;
+                $cart->subtotal = $orderPrice;
+
             }
 
             if( $request->user_bundle ){
@@ -611,6 +615,8 @@ class CartService {
                     $cartMeta->save();
                 }
                 $orderPrice = 0;
+                $cart->subtotal = $orderPrice;
+
                 $userBundle->cups_left -= count( $cart->cartMetas );
                 $userBundle->save();
             }
@@ -937,7 +943,7 @@ class CartService {
                     'message' => 'Product exceeeds bundle quantity',
                     'message_key' => 'product_exceeds_bundle_quantity',
                     'errors' => [
-                        'voucher' => 'Product exceeeds bundle quantity',
+                        'bundle' => 'Product exceeeds bundle quantity',
                     ]
                 ] , 422);
             }
@@ -1000,7 +1006,7 @@ class CartService {
                         'message' => 'Product not available in bundle',
                         'message_key' => 'product_not_available_in_bundle',
                         'errors' => [
-                            'voucher' => 'Product not available in bundle',
+                            'bundle' => 'Product not available in bundle',
                         ]
                     ] , 422);
                 } else {
@@ -1008,7 +1014,7 @@ class CartService {
                         'message' => 'Bundle cant be used together with promotion',
                         'message_key' => 'bundle_not_available',
                         'errors' => [
-                            'voucher' => 'Bundle cant be used together with promotion',
+                            'bundle' => 'Bundle cant be used together with promotion',
                         ]
                     ] , 422);
                 }
@@ -1030,7 +1036,7 @@ class CartService {
                     'message' => 'User Bundle Not Found',
                     'message_key' => 'user_bundle_not_found',
                     'errors' => [
-                        'voucher' => 'User Bundle Not Found',
+                        'user_bundle' => 'User Bundle Not Found',
                     ]
                 ] , 422);
             }
@@ -1041,7 +1047,7 @@ class CartService {
                     'message' => 'You have redeemed all cups from bundle',
                     'message_key' => 'no_cups_left',
                     'errors' => [
-                        'voucher' => 'You have redeemed all cups from bundle',
+                        'user_bundle' => 'You have redeemed all cups from bundle',
                     ]
                 ] , 422);
             }
@@ -1056,7 +1062,7 @@ class CartService {
                     'message' => 'Product exceeeds bundle quantity',
                     'message_key' => 'product_exceeds_bundle_quantity',
                     'errors' => [
-                        'voucher' => 'Product exceeeds bundle quantity',
+                        'user_bundle' => 'Product exceeeds bundle quantity',
                     ]
                 ] , 422);
             }
@@ -1066,7 +1072,7 @@ class CartService {
                     'message' => 'Product exceeeds bundle quantity',
                     'message_key' => 'product_exceeds_bundle_quantity',
                     'errors' => [
-                        'voucher' => 'Product exceeeds bundle quantity',
+                        'user_bundle' => 'Product exceeeds bundle quantity',
                     ]
                 ] , 422);
             }
@@ -1129,7 +1135,7 @@ class CartService {
                         'message' => 'Product not available in bundle',
                         'message_key' => 'product_not_available_in_bundle',
                         'errors' => [
-                            'voucher' => 'Product not available in bundle',
+                            'bundle' => 'Product not available in bundle',
                         ]
                     ] , 422);
                 } else {
@@ -1137,7 +1143,7 @@ class CartService {
                         'message' => 'Bundle cant be used together with promotion',
                         'message_key' => 'bundle_not_available',
                         'errors' => [
-                            'voucher' => 'Bundle cant be used together with promotion',
+                            'bundle' => 'Bundle cant be used together with promotion',
                         ]
                     ] , 422);
                 }
@@ -1422,6 +1428,8 @@ class CartService {
                     $cartMeta->save();
                 }
                 $orderPrice = $bundle->price;
+                $updateCart->subtotal = $orderPrice;
+
             }
 
             if( $request->user_bundle ){
@@ -1433,6 +1441,8 @@ class CartService {
                     $cartMeta->save();
                 }
                 $orderPrice = 0;
+                $updateCart->subtotal = $orderPrice;
+
                 if( ( isset( $request->items ) ? count($request->items) : 0 ) > count( $updateCart->cartMetas ) ){
                     $userBundle->cups_left -= count( $updateCart->cartMetas );
                     $userBundle->save();

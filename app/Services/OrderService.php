@@ -1215,6 +1215,7 @@ class OrderService
                     $orderMeta->save();
                 }
                 $orderPrice = $bundle->price;
+                $order->subtotal = $orderPrice;
             }
 
             if( $userBundle ){
@@ -1226,6 +1227,8 @@ class OrderService
                     $orderMeta->save();
                 }
                 $orderPrice = 0;
+                $order->subtotal = $orderPrice;
+
             }
 
             $order->total_price = Helper::numberFormatV2($orderPrice,2,false,true);
