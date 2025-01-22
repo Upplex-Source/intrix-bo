@@ -120,6 +120,7 @@ var statusMapper = @json( $data['status'] ),
             {
                 // Add checkboxes to the first column
                 targets: 0,
+                width: '1%',
                 orderable: false,
                 className: 'text-center',
                 render: function (data, type, row) {

@@ -308,7 +308,7 @@ class EghlService {
                         'amount' => $order->total_price * $spendingBonus->option_value,
                         'remark' => 'Purchasing Bonus',
                         'type' => 2,
-                        'transaction_type' => 22,
+                        'transaction_type' => 24,
                     ] );
                 }
 

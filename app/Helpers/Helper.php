@@ -60,7 +60,7 @@ class Helper {
             '21' => __( 'wallet.promo_code_bonus' ),
             '22' => __( 'wallet.affiliate_bonus' ),
             '23' => __( 'wallet.check_in_bonus' ),
-            '24' => __( 'wallet.check_in_bonus' ),
+            '24' => __( 'wallet.purchasing_bonus' ),
         ];
     }
 

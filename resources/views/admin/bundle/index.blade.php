@@ -136,10 +136,10 @@ var statusMapper = @json( $data['status'] ),
             { data: 'encrypted_id' },
         ],
         columnDefs: [
-
             {
                 // Add checkboxes to the first column
                 targets: 0,
+                width: '1%',
                 orderable: false,
                 className: 'text-center',
                 render: function (data, type, row) {
@@ -149,7 +149,7 @@ var statusMapper = @json( $data['status'] ),
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "dt_no" ) }}' ),
                 orderable: false,
-                width: '1%',
+                width: '10%',
                 render: function (data, type, row, meta) {
                     // Calculate the row number dynamically based on the page info
                     const pageInfo = dt_table.page.info();

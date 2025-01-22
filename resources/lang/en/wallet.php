@@ -40,4 +40,5 @@ return [
     'checkin_bonus' => 'Check-in Bonus',
     'order_bonus' => 'Order Complete Bonus',
     'referral_order_bonus' => 'Referral order Complete Bonus',
+    'purchasing_bonus' => 'Purchasing Bonus'
 ];
