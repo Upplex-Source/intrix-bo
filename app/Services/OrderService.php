@@ -1568,7 +1568,7 @@ class OrderService
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] ,
+                    'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] . '_' .  Product::find( $adjustment->buy_products[0] )->value( 'title' ) ,
                     'errors' => [
                         'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
                     ]
