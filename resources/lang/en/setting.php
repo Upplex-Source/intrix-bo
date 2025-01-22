@@ -37,7 +37,7 @@ return [
     'verify_mfa_subtitle' => 'Use an authentication code from your authenticator app.',
 
     'maintenance_settings' => 'Maintenance Settings',
-    'bonus_settings' => 'Bonus Settings',
+    'bonus_settings' => 'Sites Settings',
     'points_convertion' => 'Points Convertion',
     'convertion_rate' => 'Points Convertion',
 

@@ -38,6 +38,10 @@ class Order extends Model
         'tax',
     ];
 
+    protected $hidden = [
+        'taxes'
+    ];
+
     public function getOrderStatusLabelAttribute()
     {
         $discountTypes = [

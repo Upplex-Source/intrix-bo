@@ -613,6 +613,8 @@ class CartService {
             }
 
             $cart->total_price = $orderPrice;
+            $cart->tax = $taxSettings ? (($taxSettings->option_value/100) * $cart->total_price) : 0;
+
             $cart->save();
             DB::commit();
 
@@ -1526,6 +1528,7 @@ class CartService {
             }
 
             $updateCart->total_price = $orderPrice;
+            $updateCart->tax = $taxSettings ? (($taxSettings->option_value/100) * $updateCart->total_price) : 0;
             $updateCart->save();
 
             DB::commit();
