@@ -494,6 +494,15 @@ class UserCheckinService
     
         $user->save();
 
+        // notification
+        UserService::createUserNotification(
+            $user->id,
+            'notification.user_checkin_success',
+            'notification.user_checkin_success_content',
+            'user_checkin',
+            'user_checkin'
+        );
+
         DB::commit();
     
         return response()->json([

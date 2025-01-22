@@ -1310,6 +1310,15 @@ class OrderService
 
                 // update stock
                 VendingMachineStockService::updateVendingMachineStock( $order->vending_machine_id, $order->orderMetas );
+
+                // notification
+                UserService::createUserNotification(
+                    $order->user->id,
+                    'notification.user_order_success',
+                    'notification.user_order_success_content',
+                    'order',
+                    'order'
+                );
             }else {
                 
                 $data = [

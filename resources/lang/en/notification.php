@@ -13,15 +13,38 @@ return [
     |
     */
 
-    'vehicles_x_expiring_title' => ':plate :type Expires Soon!',
-    'vehicles_x_expiring_content' => ':plate :type is about to expire in one month, this is the final notice before it expires, please proceed to renew it. Thank you.',
-    'road_tax' => 'Road Tax',
-    'insurance' => 'Insurance',
-    'permit' => 'Permit',
-    'inspection' => 'Inspection',
-
-    'notifications' => 'Notifications',
-    'x_new_notification' => '<span id="totalNewNotifications">:total</span> New Notifications',
-    'mark_all_as_read' => 'Mark all as read',
-    'no_notification' => 'No Notification',
+    'notification_seen' => 'Updated notification seen',
+    'register_success' => 'Register Success',
+    'register_success_content' => 'Welcome to Yobe!',
+    
+    'topup_success' => 'Topup Success',
+    'topup_success_content' => 'Topup Success! Enjoy Your Froyo Now!',
+    
+    'topup_failed' => 'Topup Failed',
+    'topup_failed_content' => 'Topup Failed! Please Try Again',
+    
+    'user_bundle_success' => 'User Bundle Purchase Success',
+    'user_bundle_success_content' => 'User Bundle Purchase Success! Enjoy Your Froyo Bundle Now!',
+    
+    'user_bundle_failed' => 'User Bundle Purchase Failed',
+    'user_bundle_failed_content' => 'User Bundle Purchase Failed! Please Try Again',
+    
+    'user_order_success' => 'Order Success',
+    'user_order_success_content' => 'Order Success! Enjoy Your Froyo Now!',
+    
+    'user_order_failed' => 'Order Failed',
+    'user_order_failed_content' => 'Order Failed! Please Try Again',
+    
+    'user_voucher_success' => 'Claim Vocher Success',
+    'user_voucher_success_content' => 'Claim Vocher Success! Enjoy Your Froyo Deals Not!',
+    
+    'user_checkin_success' => 'Checkin Success',
+    'user_checkin_success_content' => 'Checkin Success! Yobe Welcomes You Today',
+    
+    // template
+    // 'topup_success' => 'Topup Success',
+    // 'topup_success_content' => 'Topup Success! Enjoy Your Froyo Now!',
+    
+    // 'topup_failed' => 'Topup Failed',
+    // 'topup_failed_content' => 'Topup Failed! Please Try Again',
 ];

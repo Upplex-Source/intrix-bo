@@ -462,3 +462,27 @@ endpoints:
         custom: []
     responses: []
     responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/bundles/retry-payment
+    metadata:
+      title: '3. Retry Payment'
+      description: '<aside class="notice">retry payment for online payment, from previous buy bundle</aside>'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      user_bundle_id:
+        name: user_bundle_id
+        description: 'The ID of the bundle.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+    bodyParameters: []
+    responses: []
+    responseFields: []

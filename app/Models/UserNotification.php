@@ -91,10 +91,10 @@ class UserNotification extends Model
     {
         $user = request()->user();
 
-        $value = str_replace('{username}', $user->username, $value);
-        $value = str_replace('{fullname}', $user->fullname, $value);
-        $value = str_replace('{phone_number}', $user->phone_number, $value);
-        $value = str_replace('{email}', $user->email, $value);
+        $value = str_replace('{username}', $user->username ?? null, $value);
+        $value = str_replace('{fullname}', $user->fullname ?? null, $value);
+        $value = str_replace('{phone_number}', $user->phone_number ?? null, $value);
+        $value = str_replace('{email}', $user->email ?? null, $value);
 
         return $value;
     }

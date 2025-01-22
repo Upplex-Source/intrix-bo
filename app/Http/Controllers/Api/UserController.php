@@ -228,8 +228,9 @@ class UserController extends Controller {
      * 
      * @authenticated
      * 
-     * @queryParam is_read integer Leave empty for all. Example: 2
+     * @queryParam is_read integer Leave empty for all. Example: 1
      * @queryParam per_page integer Show how many record in a page. Leave blank for default (100). Example: 5
+     * @queryParam notification integer required The notification ID of notification. Example: 5
      * 
      */
     public function getNotifications( Request $request ) {
@@ -238,22 +239,7 @@ class UserController extends Controller {
     }
 
     /**
-     * 14. Get notification
-     * 
-     * @group User API
-     * 
-     * @authenticated
-     * 
-     * @queryParam notification integer required The notification ID of notification. Example: 5
-     * 
-     */
-    public function getNotification( Request $request ) {
-
-        return UserService::getNotification( $request );
-    }
-
-    /**
-     * 15. Update notification seen
+     * 14. Update notification seen
      * 
      * @group User API
      * 

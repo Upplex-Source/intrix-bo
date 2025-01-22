@@ -955,6 +955,15 @@ class VoucherService
         $voucher->total_claimable -= 1;
         $voucher->save();
     
+        // notification
+        UserService::createUserNotification(
+            $user->id,
+            'notification.user_voucher_success',
+            'notification.user_voucher_success_content',
+            'voucher',
+            'voucher'
+        );
+
         return response()->json( [
             'message' => __('voucher.voucher_claimed'),
             'message_key' => 'voucher_claimed',

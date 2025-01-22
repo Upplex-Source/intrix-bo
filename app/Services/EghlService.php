@@ -26,6 +26,9 @@ use App\Models\{
     ProductBundle,
     UserBundleTransaction,
     Option,
+    UserNotification,
+    UserNotificationUser,
+    UserNotificationSeen,
 };
 
 use App\Jobs\{
@@ -206,7 +209,25 @@ class EghlService {
                         'transaction_type' => 1,
                     ] );
                     $orderStatus = true;
+
+                    UserService::createUserNotification(
+                        $order->user->id,
+                        'notification.topup_success',
+                        'notification.topup_success_content',
+                        'topup',
+                        'wallet'
+                    );
         
+                }
+
+                if( $request->TxnStatus != 0 ) {
+                    UserService::createUserNotification(
+                        $order->user->id,
+                        'notification.topup_failed',
+                        'notification.topup_failed_content',
+                        'topup',
+                        'wallet'
+                    );
                 }
             }
     
@@ -229,7 +250,25 @@ class EghlService {
                     $userBundle->status = 10;
                     $userBundle->save();
                     $bundleStatus = true;
+
+                    UserService::createUserNotification(
+                        $order->user->id,
+                        'notification.user_bundle_success',
+                        'notification.user_bundle_success_content',
+                        'user_bundle',
+                        'user_bundle'
+                    );
+
+                }else {
+                    UserService::createUserNotification(
+                        $order->user->id,
+                        'notification.user_bundle_failed',
+                        'notification.user_bundle_failed_content',
+                        'user_bundle',
+                        'user_bundle'
+                    );
                 }
+                
             }
     
             return response()->json( [
@@ -250,10 +289,81 @@ class EghlService {
                 $bundle = $order->productBundle;
 
                 $order->status = $request->TxnStatus == 0 ? 3 : 20;
+
                 if( $request->TxnStatus == 0 ){
                     $orderStatus = true;
                     $orderTransaction->status = 11;
+
+                    UserService::createUserNotification(
+                        $order->user->id,
+                        'notification.user_order_success',
+                        'notification.user_order_success_content',
+                        'order',
+                        'order'
+                    );
+                    
+                    if( $order->product_bundle_id ){
+                                
+                        $userBundle = UserBundle::create([
+                            'user_id' => $order->user->id,
+                            'product_bundle_id' => $bundle->id,
+                            'status' => 10,
+                            'total_cups' => $bundle->productBundleMetas->first()->quantity,
+                            'cups_left' => $bundle->productBundleMetas->first()->quantity - count( $order->orderMetas ),
+                            'last_used' => Carbon::now(),
+                            'payment_attempt' => 1,
+                            'payment_url' => 'null',
+                        ]);
+
+                        $bundleTransaction = UserBundleTransaction::create( [
+                            'user_id' => $order->user->id,
+                            'product_bundle_id' => $bundle->id,
+                            'user_bundle_id' => $userBundle->id,
+                            'reference' => Helper::generateBundleReference(),
+                            'price' => $bundle->price,
+                            'status' => 10,
+                            'payment_attempt' => 1,
+                            'payment_url' => 'null',
+                        ] );
+
+                        $order->user_bundle_id = $userBundle->id;
+                        $order->save();
+
+                    }
+
+                    // assign purchasing bonus
+                    $spendingBonus = Option::getSpendingSettings();
+                    $user = $order->user;
+                    if( $spendingBonus ){
+
+                        $userBonusWallet = $user->wallets->where( 'type', 2 )->first();
+
+                        WalletService::transact( $userBonusWallet, [
+                            'amount' => $order->total_price * $spendingBonus->option_value,
+                            'remark' => 'Purchasing Bonus',
+                            'type' => 2,
+                            'transaction_type' => 24,
+                        ] );
+                    }
+
+                    // assign referral's purchasing bonus
+                    $referralSpendingBonus = Option::getReferralSpendingSettings();
+                    if( $user->referral && $referralSpendingBonus){
+
+                        $referralWallet = $user->referral->wallets->where('type',2)->first();
+
+                        if($referralWallet){
+                            WalletService::transact( $referralWallet, [
+                                'amount' => $order->total_price * $referralSpendingBonus->option_value,
+                                'remark' => 'Referral Purchasing Bonus',
+                                'type' => $referralWallet->type,
+                                'transaction_type' => 22,
+                            ] );
+                        }
+                    }
+
                 }
+
                 if( $request->TxnStatus != 0 ){
                     $order->payment_attempt += 1;
                     $orderTransaction->status = 20;
@@ -263,70 +373,20 @@ class EghlService {
                         $userBundle->cups_left += count( $order->orderMetas );
                         $userBundle->save();
                     }
+
+                    UserService::createUserNotification(
+                        $order->user->id,
+                        'notification.user_order_failed',
+                        'notification.user_order_failed_content',
+                        'order',
+                        'order'
+                    );
+
                 }
+                
                 $order->payment_method = 2;
                 $order->save();
                 $orderTransaction->save();
-
-                if( $order->product_bundle_id ){
-                            
-                    $userBundle = UserBundle::create([
-                        'user_id' => $order->user->id,
-                        'product_bundle_id' => $bundle->id,
-                        'status' => 10,
-                        'total_cups' => $bundle->productBundleMetas->first()->quantity,
-                        'cups_left' => $bundle->productBundleMetas->first()->quantity - count( $order->orderMetas ),
-                        'last_used' => Carbon::now(),
-                        'payment_attempt' => 1,
-                        'payment_url' => 'null',
-                    ]);
-
-                    $bundleTransaction = UserBundleTransaction::create( [
-                        'user_id' => $order->user->id,
-                        'product_bundle_id' => $bundle->id,
-                        'user_bundle_id' => $userBundle->id,
-                        'reference' => Helper::generateBundleReference(),
-                        'price' => $bundle->price,
-                        'status' => 10,
-                        'payment_attempt' => 1,
-                        'payment_url' => 'null',
-                    ] );
-
-                    $order->user_bundle_id = $userBundle->id;
-                    $order->save();
-
-                }
-
-                // assign purchasing bonus
-                $spendingBonus = Option::getSpendingSettings();
-                $user = $order->user;
-                if( $spendingBonus ){
-
-                    $userBonusWallet = $user->wallets->where( 'type', 2 )->first();
-
-                    WalletService::transact( $userBonusWallet, [
-                        'amount' => $order->total_price * $spendingBonus->option_value,
-                        'remark' => 'Purchasing Bonus',
-                        'type' => 2,
-                        'transaction_type' => 24,
-                    ] );
-                }
-
-                // assign referral's purchasing bonus
-                $referralSpendingBonus = Option::getReferralSpendingSettings();
-                if( $user->referral && $referralSpendingBonus){
-
-                    $referralWallet = $user->referral->wallets->where('type',2)->first();
-
-                    if($referralWallet){
-                        WalletService::transact( $referralWallet, [
-                            'amount' => $order->total_price * $referralSpendingBonus->option_value,
-                            'remark' => 'Referral Purchasing Bonus',
-                            'type' => $referralWallet->type,
-                            'transaction_type' => 22,
-                        ] );
-                    }
-                }
             }
     
             return response()->json( [

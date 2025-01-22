@@ -372,6 +372,26 @@ class CartService {
                 ], 422 );
             }
 
+            if ( !isset( $request->items ) ) {
+                return response()->json( [
+                    'message' => 'Please add item to bundle',
+                    'message_key' => 'please_add_item_to_bundle',
+                    'errors' => [
+                        'user_bundle' => 'Please add item to bundle',
+                    ]
+                ], 422 );
+            }
+
+            if ( count( $request->items ) == 0 ) {
+                return response()->json( [
+                    'message' => 'Please add item to bundle',
+                    'message_key' => 'please_add_item_to_bundle',
+                    'errors' => [
+                        'user_bundle' => 'Please add item to bundle',
+                    ]
+                ], 422 );
+            }
+
             // check own bundle's cups left
             if ( ( isset( $request->items ) ? count($request->items) : 0 ) > $userBundle->cups_left ) {
                 return response()->json( [

@@ -25,6 +25,9 @@ use App\Models\{
     Wallet,
     Option,
     WalletTransaction,
+    UserNotification,
+    UserNotificationSeen,
+    UserNotificationUser,
 };
 
 use App\Rules\CheckASCIICharacter;
@@ -905,6 +908,14 @@ class UserService
             $currentTmpUser->status = 10;
             $currentTmpUser->save();
 
+            self::createUserNotification(
+                $createUser->id,
+                'notification.register_success',
+                'notification.register_success_content',
+                'register',
+                'home'
+            );
+
             DB::commit();
 
         } catch ( \Throwable $th ) {
@@ -1429,6 +1440,10 @@ class UserService
             }
         } );
 
+        $notifications->when( $request->notification != '' , function( $query ) use( $request ) {
+            return $query->where( 'user_notifications.id', $request->notification );
+        } );
+
         $notifications->orderBy( 'user_notifications.created_at', 'DESC' );
 
         $notifications = $notifications->simplePaginate( empty( $request->per_page ) ? 100 : $request->per_page );
@@ -1463,7 +1478,28 @@ class UserService
         ] );
 
         return response()->json( [
-            'message' => __( 'api.notification_seen' ),
+            'message' => __( 'notification.notification_seen' ),
         ] );
+    }
+
+    public static function createUserNotification( $user, $title = null, $content = null, $slug = null, $key = null ){
+
+        $createNotification = UserNotification::create( [
+            'type' => 2,
+            'title' => $title,
+            'content' => $content,
+            'url_slug' => $slug ? \Str::slug( $slug ) : null,
+            'system_title' => NULL,
+            'system_content' => NULL,
+            'system_data' => NULL,
+            'meta_data' => NULL,
+            'key' => $key,
+        ] );
+
+        $createUserNotificationUser = UserNotificationUser::create( [
+            'user_notification_id' => $createNotification->id,
+            'user_id' => $user,
+        ] );
+
     }
 }
