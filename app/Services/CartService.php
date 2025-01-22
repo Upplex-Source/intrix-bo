@@ -1154,7 +1154,7 @@ class CartService {
                     $cartMeta->delete();
                 }else{
                     // Update specific cart item
-                    $product = Product::find($cartMeta->product_id);
+                    $product = Product::find($request->items[0]['product']);
                     $froyos = $request->items[0]['froyo'] ?? [];
                     $syrups = $request->items[0]['syrup'] ?? [];
                     $toppings = $request->items[0]['topping'] ?? [];
@@ -1178,6 +1178,7 @@ class CartService {
                     // $orderPrice += $toppingPrices;
                     $metaPrice += $toppingPrices;
 
+                    $cartMeta->product = $product->id;
                     $cartMeta->froyos = json_encode($froyos);
                     $cartMeta->syrups = json_encode($syrups);
                     $cartMeta->toppings = json_encode($toppings);
