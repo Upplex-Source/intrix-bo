@@ -74,9 +74,9 @@ class UserVoucherService
 
                 $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->get();
 
-                if ( $voucherUsages->count() > $voucher->usable_amount ) {
-                    $validator->errors()->add('voucher', __('Voucher usage has reached its limit'));
-                }
+                // if ( $voucherUsages->count() > $voucher->usable_amount ) {
+                //     $validator->errors()->add('voucher', __('Voucher usage has reached its limit'));
+                // }
 
                 if ( $voucher->total_claimable <= 0 ) {
                     $validator->errors()->add('voucher', __('Voucher has fully claimed'));

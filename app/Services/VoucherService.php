@@ -893,7 +893,7 @@ class VoucherService
             ], 422 );
         }
 
-        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->get();
+        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
 
         if ( $voucherUsages->count() > $voucher->usable_amount ) {
             return response()->json( [
