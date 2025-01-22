@@ -742,6 +742,7 @@ class CartService {
 
         if ($validator->fails()) {
             $rawErrors = $validator->errors()->toArray();
+
             $formattedErrors = [
                 'vending_machine' => $rawErrors['vending_machine'][0] ?? null, // Include vending machine error
                 'promo_code' => $rawErrors['promo_code'][0] ?? null, // Include promo_code error
@@ -836,7 +837,34 @@ class CartService {
                 ], 422);
             }
 
-            if( !$request->items && $request->promo_codes){
+            if( !$request->items && $request->promo_codes ){
+                $cartMetaToDelete = CartMeta::find($request->cart_item);
+
+                if ($cartMetaToDelete) {
+                    $cart = $cartMetaToDelete->cart;
+            
+                    $remainingCartMetas = $cart->cartMetas->where('id', '!=', $cartMetaToDelete->id);
+            
+                    if( $request->promo_code || $cart->voucher_id ){
+                        $isEligible = self::checkCartEligibility($request, $remainingCartMetas);
+
+                        if ($isEligible->getStatusCode() === 422) {
+                            return $isEligible;
+                        }
+
+                        if (!$isEligible) {
+                            
+                            return response()->json( [
+                                'message' => 'Deleting this item will make the cart ineligible.',
+                                'message_key' => 'cart_ineligible',
+                                'errors' => [
+                                    'cart' => 'Deleting this item will make the cart ineligible.',
+                                ]
+                            ], 422 );
+                        }
+                    }
+                }
+            } else {
                 $cartMetaToDelete = CartMeta::find($request->cart_item);
 
                 if ($cartMetaToDelete) {
