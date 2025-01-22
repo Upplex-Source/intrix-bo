@@ -939,7 +939,7 @@ class CartService {
             }
 
             if( !$request->cart_item && $request->items ){
-                $cartMetaCount = count($request->items);
+                $cartMetaCount -= count($request->items);
             }
             
             if ( ( isset( $request->items ) ? count($request->items) : 0 ) + $cartMetaCount > $bundleRules['quantity'] ) {
