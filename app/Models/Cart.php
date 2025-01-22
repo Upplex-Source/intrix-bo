@@ -34,6 +34,7 @@ class Cart extends Model
         'session_key',
         'user_bundle_id',
         'tax',
+        'subtotal',
     ];
 
     protected $hidden = [
@@ -104,6 +105,7 @@ class Cart extends Model
         'session_key',
         'user_bundle_id',
         'tax',
+        'subtotal',
     ];
 
     protected static $logName = 'carts';

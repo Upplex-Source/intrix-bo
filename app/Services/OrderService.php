@@ -1085,6 +1085,8 @@ class OrderService
                 $cartProduct->save();
             }
 
+            $order->subtotal = $orderPrice;
+
             if( $request->promo_code || $userCart->voucher_id ){
 
                 if( $request->promo_code ) {

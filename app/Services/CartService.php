@@ -537,6 +537,7 @@ class CartService {
             
             // load relationship for later use
             $cart->load('cartMetas');
+            $cart->subtotal = $orderPrice;
 
             if( $request->promo_code ){
                 $voucher = Voucher::where( 'id', $request->promo_code )
@@ -653,6 +654,7 @@ class CartService {
             'vending_machine' => $cart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $cart->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($cart->total_price, 2, true),
             'cart_metas' => $cartMetas,
+            'subtotal' => $cart->subtotal,
             'discount' =>  Helper::numberFormatV2($cart->discount, 2, true),
             'tax' =>  Helper::numberFormatV2($cart->tax, 2, true),
             'voucher' => $cart->voucher,
@@ -1184,6 +1186,7 @@ class CartService {
                     $cartMeta->save();
 
                     $orderPrice += $metaPrice;
+                    $updateCart->subtotal = $orderPrice;
 
                     DB::commit();
                     $updateCart->load( ['cartMetas'] );
@@ -1403,6 +1406,7 @@ class CartService {
             'vending_machine' => $updateCart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $updateCart->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($updateCart->total_price, 2, true),
             'cart_metas' => $cartMetas,
+            'subtotal' => $updateCart->subtotal,
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2, true),
             'tax' =>  Helper::numberFormatV2($updateCart->tax, 2, true),
             'voucher' => $updateCart->voucher,
