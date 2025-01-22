@@ -99,7 +99,7 @@ class CartService {
             
             if( !$cart->tax ) {
                 $taxSettings = Option::getTaxesSettings();
-                $cart->tax = Helper::numberFormatV2( ( $taxSettings ? (($taxSettings->option_value/100) * $cart->total_price) : 0 ), 2, true);
+                $cart->tax = Helper::numberFormatV2( ( $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * $cart->total_price) : 0 ), 2, true);
             }
     
             return $cart;
@@ -616,7 +616,8 @@ class CartService {
 
             $cart->total_price = $orderPrice;
             $taxSettings = Option::getTaxesSettings();
-            $cart->tax = $taxSettings ? (($taxSettings->option_value/100) * Helper::numberFormatV2($cart->total_price,2)) : 0;
+            $cart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($cart->total_price,2)) : 0;
+            
             $cart->total_price += Helper::numberFormatV2($cart->tax, 2);
             $cart->save();
             DB::commit();
@@ -1369,7 +1370,7 @@ class CartService {
     
             $updateCart->total_price = $orderPrice;
             $taxSettings = Option::getTaxesSettings();
-            $updateCart->tax = $taxSettings ? (($taxSettings->option_value/100) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;
+            $updateCart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;
             $updateCart->total_price += Helper::numberFormatV2($updateCart->tax,2);
 
             $updateCart->save();
@@ -1543,7 +1544,7 @@ class CartService {
             $updateCart->total_price = $orderPrice;
             $taxSettings = Option::getTaxesSettings();
 
-            $updateCart->tax = $taxSettings ? (($taxSettings->option_value/100) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;
+            $updateCart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;
             $updateCart->total_price += Helper::numberFormatV2($updateCart->tax,2);
             $updateCart->save();
 

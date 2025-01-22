@@ -1216,7 +1216,7 @@ class OrderService
             }
 
             $order->total_price = $orderPrice;
-            $order->tax = $taxSettings ? (($taxSettings->option_value/100) * Helper::numberFormatV2($order->total_price,2)) : 0;
+            $order->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($order->total_price,2)) : 0;
             $order->total_price += Helper::numberFormatV2($order->tax,2);
 
             $userCart->status = 20;
