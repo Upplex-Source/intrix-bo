@@ -613,6 +613,8 @@ class CartService {
             }
 
             $cart->total_price = $orderPrice;
+            $taxSettings = Option::getTaxesSettings();
+
             $cart->tax = $taxSettings ? (($taxSettings->option_value/100) * $cart->total_price) : 0;
 
             $cart->save();
@@ -1528,6 +1530,8 @@ class CartService {
             }
 
             $updateCart->total_price = $orderPrice;
+            $taxSettings = Option::getTaxesSettings();
+
             $updateCart->tax = $taxSettings ? (($taxSettings->option_value/100) * $updateCart->total_price) : 0;
             $updateCart->save();
 
