@@ -1455,7 +1455,7 @@ class CartService {
                 $orderPrice = 0;
                 $updateCart->subtotal = $orderPrice;
 
-                if( ( isset( $request->items ) ? count($request->items) : 0 ) > count( $updateCart->cartMetas ) ){
+                if( !$request->cart_item ){
                     $userBundle->cups_left -= count( $updateCart->cartMetas );
                     $userBundle->save();
                 }
