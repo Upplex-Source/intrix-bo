@@ -1093,7 +1093,7 @@ class OrderService
                     $voucher = Voucher::where( 'id', $request->promo_code )
                     ->orWhere('promo_code', $request->promo_code)->first();
                 }else if( $userCart->voucher_id ) {
-                    $voucher = Voucher::where( 'id', $request->voucher_id )->first();
+                    $voucher = Voucher::where( 'id', $userCart->voucher_id )->first();
                 }
 
                 if ( $voucher->discount_type == 3 ) {
