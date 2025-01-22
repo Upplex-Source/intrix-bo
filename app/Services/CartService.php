@@ -1207,6 +1207,8 @@ class CartService {
             $updateCart->product_bundle_id = $bundle ? $bundle->id :null;
             $updateCart->user_bundle_id = $userBundle ? $userBundle->id :null;
             
+            $updateCart->load( ['cartMetas'] );
+
             if ($request->has('cart_item')) {
                 $cartMeta = CartMeta::find($request->cart_item);
                 if (!$cartMeta) {
