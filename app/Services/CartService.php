@@ -97,9 +97,10 @@ class CartService {
             // Attach the cart metas to the cart object
             $cart->cartMetas = $cartMetas;
             
-            $taxSettings = Option::getTaxesSettings();
-
-            $cart->tax = Helper::numberFormatV2( ( $taxSettings ? (($taxSettings->option_value/100) * $cart->total_price) : 0 ), 2, true);
+            if( !$cart->tax ) {
+                $taxSettings = Option::getTaxesSettings();
+                $cart->tax = Helper::numberFormatV2( ( $taxSettings ? (($taxSettings->option_value/100) * $cart->total_price) : 0 ), 2, true);
+            }
     
             return $cart;
         });
@@ -614,9 +615,8 @@ class CartService {
 
             $cart->total_price = $orderPrice;
             $taxSettings = Option::getTaxesSettings();
-
             $cart->tax = $taxSettings ? (($taxSettings->option_value/100) * $cart->total_price) : 0;
-
+            $cart->total_price += $cart->tax;
             $cart->save();
             DB::commit();
 
@@ -1364,6 +1364,10 @@ class CartService {
             }
     
             $updateCart->total_price = $orderPrice;
+            $taxSettings = Option::getTaxesSettings();
+            $updateCart->tax = $taxSettings ? (($taxSettings->option_value/100) * $updateCart->total_price) : 0;
+            $updateCart->total_price += $updateCart->tax;
+
             $updateCart->save();
             DB::commit();
 
@@ -1535,6 +1539,7 @@ class CartService {
             $taxSettings = Option::getTaxesSettings();
 
             $updateCart->tax = $taxSettings ? (($taxSettings->option_value/100) * $updateCart->total_price) : 0;
+            $updateCart->total_price += $updateCart->tax;
             $updateCart->save();
 
             DB::commit();
