@@ -854,6 +854,7 @@ class OrderService
             }
 
             $order->qr_code = $order->status != 20 && in_array($order->status, [3, 10]) ? self::generateQrCode($order) : null;
+            $order->cup_used = count( $order->orderMetas );
             return $order;
         });
     
