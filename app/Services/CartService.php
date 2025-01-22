@@ -1178,7 +1178,7 @@ class CartService {
                     // $orderPrice += $toppingPrices;
                     $metaPrice += $toppingPrices;
 
-                    $cartMeta->product = $product->id;
+                    $cartMeta->product_id = $product->id;
                     $cartMeta->froyos = json_encode($froyos);
                     $cartMeta->syrups = json_encode($syrups);
                     $cartMeta->toppings = json_encode($toppings);
