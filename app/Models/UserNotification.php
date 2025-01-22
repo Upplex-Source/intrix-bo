@@ -10,13 +10,14 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-use App\Traits\HasTranslations;
-
+// use App\Traits\HasTranslations;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use Helper;
 
 class UserNotification extends Model
 {
-    use HasFactory, LogsActivity, HasTranslations;
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
         'user_id',
@@ -36,6 +37,32 @@ class UserNotification extends Model
         'path',
         'encrypted_id',
     ];
+
+    public function setTitleAttribute($value)
+    {
+        $languages = array_keys(Config::get('languages'));
+
+        $translations = [];
+        foreach ($languages as $lang) {
+            App::setLocale($lang);
+            $translations[$lang] = __($value);
+        }
+
+        $this->attributes['title'] = json_encode($translations);
+    }
+
+    public function setContentAttribute($value)
+    {
+        $languages = array_keys(Config::get('languages'));
+
+        $translations = [];
+        foreach ($languages as $lang) {
+            App::setLocale($lang);
+            $translations[$lang] = __($value);
+        }
+
+        $this->attributes['content'] = json_encode($translations);
+    }
 
     public function UserNotificationUsers() {
         return $this->hasMany( UserNotificationUser::class, 'user_notification_id' );
@@ -86,7 +113,7 @@ class UserNotification extends Model
         return __( $this->attributes['system_content'], $metaData ? $metaData : [] );
     }
 
-    public $translatable = [ 'title', 'content' ];
+    // public $translatable = [ 'title', 'content' ];
 
     protected function serializeDate(DateTimeInterface $date) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );

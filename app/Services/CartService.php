@@ -23,6 +23,7 @@ use App\Models\{
     UserBundleHistory,
     UserBundleHistoryMeta,
     Option,
+    UserNotification,
 };
 
 use App\Services\{
@@ -557,7 +558,7 @@ class CartService {
                         ->first();                    
 
                         if ($getProductMeta) {
-                            $orderPrice -= $getProductMeta->total_price;
+                            $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                             $cart->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
@@ -1211,7 +1212,7 @@ class CartService {
                                 ->first();                    
 
                                 if ($getProductMeta) {
-                                    $orderPrice -= $getProductMeta->total_price;
+                                    $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                     $updateCart->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                     $getProductMeta->total_price = 0;
                                     $getProductMeta->save();
@@ -1307,7 +1308,7 @@ class CartService {
                             ->first();                    
 
                             if ($getProductMeta) {
-                                $orderPrice -= $getProductMeta->total_price;
+                                $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                 $updateCart->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                 $getProductMeta->total_price = 0;
                                 $getProductMeta->save();

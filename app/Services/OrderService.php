@@ -1109,7 +1109,7 @@ class OrderService
                         ->first();                    
 
                         if ($getProductMeta) {
-                            $orderPrice -= $getProductMeta->total_price;
+                            $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                             $order->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
