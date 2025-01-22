@@ -1376,6 +1376,7 @@ class OrderService
 
                 if( $order->userBundle ){
                     $order->status = 3;
+                    $order->payment_url = null;
                 }
             }
 
