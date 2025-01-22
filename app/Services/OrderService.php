@@ -1113,13 +1113,13 @@ class OrderService
                             $discount = 0;
                             $discount += $getProductMeta->product->price;
 
-                            $froyoPrices = Froyo::whereIn('id', json_decode($getproductmeta->froyos, true))->sum('price');
+                            $froyoPrices = Froyo::whereIn('id', json_decode($getProductMeta->froyos, true))->sum('price');
                             $discount += $froyoPrices;
         
-                            $syrupPrices = Syrup::whereIn('id', json_decode($getproductmeta->syrups, true))->sum('price');
+                            $syrupPrices = Syrup::whereIn('id', json_decode($getProductMeta->syrups, true))->sum('price');
                             $discount += $syrupPrices;
         
-                            $toppingPrices = Topping::whereIn('id', json_decode($getproductmeta->toppings, true))->sum('price');
+                            $toppingPrices = Topping::whereIn('id', json_decode($getProductMeta->toppings, true))->sum('price');
                             $discount += $toppingPrices;
 
                             $orderPrice -= Helper::numberFormatV2($discount,2,false,true);
