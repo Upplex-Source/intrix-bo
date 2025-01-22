@@ -27,8 +27,8 @@ return [
     'validity_days' => 'Validity Days',
     'expired_at' => 'Expired At',
 
-    'active', 'Active',
-    'pending_payment', 'Pending payment',
-    'expired', 'Expired',
+    'active' => 'Active',
+    'pending_payment' => 'Pending payment',
+    'expired' => 'Expired',
 
 ];
