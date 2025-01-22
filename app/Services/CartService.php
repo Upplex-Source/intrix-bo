@@ -619,7 +619,7 @@ class CartService {
             $taxSettings = Option::getTaxesSettings();
             $cart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($cart->total_price,2)) : 0;
             
-            // $cart->total_price += Helper::numberFormatV2($cart->tax, 2);
+            $cart->total_price += Helper::numberFormatV2($cart->tax, 2,false,true);
             $cart->save();
             DB::commit();
 
@@ -654,11 +654,11 @@ class CartService {
             'sesion_key' => $cart->session_key,
             'cart_id' => $cart->id,
             'vending_machine' => $cart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $cart->vendingMachine->operational_hour),
-            'total' => Helper::numberFormatV2($cart->total_price, 2, true),
+            'total' => Helper::numberFormatV2($cart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'subtotal' => Helper::numberFormatV2($cart->subtotal, 2, true),
-            'discount' =>  Helper::numberFormatV2($cart->discount, 2, true),
-            'tax' =>  Helper::numberFormatV2($cart->tax, 2, true),
+            'subtotal' => Helper::numberFormatV2($cart->subtotal, 2,false, true),
+            'discount' =>  Helper::numberFormatV2($cart->discount, 2,false, true),
+            'tax' =>  Helper::numberFormatV2($cart->tax, 2,false, true),
             'voucher' => $cart->voucher,
             'bundle' => $cart->productBundle,
             'user_bundle' => $cart->userBundle,
@@ -1372,7 +1372,7 @@ class CartService {
             $updateCart->total_price = Helper::numberFormatV2($orderPrice,2);
             $taxSettings = Option::getTaxesSettings();
             $updateCart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;
-            $updateCart->total_price += Helper::numberFormatV2($updateCart->tax,2);
+            $updateCart->total_price += Helper::numberFormatV2($updateCart->tax,2,false,truefalse,);
 
             $updateCart->save();
             DB::commit();
@@ -1407,11 +1407,11 @@ class CartService {
             'sesion_key' => $updateCart->session_key,
             'cart_id' => $updateCart->id,
             'vending_machine' => $updateCart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $updateCart->vendingMachine->operational_hour),
-            'total' => Helper::numberFormatV2($updateCart->total_price, 2, true),
+            'total' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2, true),
-            'discount' =>  Helper::numberFormatV2($updateCart->discount, 2, true),
-            'tax' =>  Helper::numberFormatV2($updateCart->tax, 2, true),
+            'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
+            'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
+            'tax' =>  Helper::numberFormatV2($updateCart->tax, 2,false, true),
             'voucher' => $updateCart->voucher,
             'bundle' => $updateCart->productBundle,
             'user_bundle' => $updateCart->userBundle,
