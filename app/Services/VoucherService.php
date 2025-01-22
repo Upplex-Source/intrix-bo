@@ -892,6 +892,7 @@ class VoucherService
                 ]
             ], 422 );
         }
+        $user = auth()->user();
 
         $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
 
@@ -904,8 +905,6 @@ class VoucherService
                 ]
             ], 422 );
         }
-
-        $user = auth()->user();
 
         $voucherUserClaimed = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->count();
 
