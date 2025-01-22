@@ -1039,6 +1039,7 @@ class CartService {
             }
 
             if( !$request->cart_item && $request->items ){
+                $userBundle->save();
                 $cartMetaCount = 0;
             }
 
