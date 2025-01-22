@@ -1085,9 +1085,14 @@ class OrderService
                 $cartProduct->save();
             }
 
-            if( $request->promo_code ){
-                $voucher = Voucher::where( 'id', $request->promo_code )
+            if( $request->promo_code || $userCart->voucher_id ){
+
+                if( $request->promo_code ) {
+                    $voucher = Voucher::where( 'id', $request->promo_code )
                     ->orWhere('promo_code', $request->promo_code)->first();
+                }else if( $userCart->voucher_id ) {
+                    $voucher = Voucher::where( 'id', $request->voucher_id )->first();
+                }
 
                 if ( $voucher->discount_type == 3 ) {
 
