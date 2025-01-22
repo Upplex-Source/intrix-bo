@@ -53,6 +53,7 @@ return [
 
     'total_claimable' => 'Total Claimable',
     'voucher_type' => 'Voucher Type',
+    'voucher_id' => 'Voucher ID',
     'public_voucher' => 'Promo Code',
     'user_specific_voucher' => 'Points Redeem Voucher',
     'login_reward_voucher' => 'Login Reward Voucher',

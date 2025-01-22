@@ -859,7 +859,7 @@ class VoucherService
         ] );
 
         $attributeName = [
-            'voucher_id' => __( 'voucher.promo_code' ),
+            'voucher_id' => __( 'voucher.voucher_id' ),
         ];
         
         foreach ( $attributeName as $key => $aName ) {
@@ -869,6 +869,7 @@ class VoucherService
         $validator->setAttributeNames( $attributeName )->validate();
 
         $voucher = Voucher::where( 'id', $request->voucher_id )
+        ->orWhere( 'promo_code', $request->voucher_id )
             ->where(function ( $query) {
                 $query->where(function ( $q) {
                     $q->whereNull('start_date')
