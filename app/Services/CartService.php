@@ -869,9 +869,32 @@ class CartService {
 
                 if ($cartMetaToDelete) {
                     $cart = $cartMetaToDelete->cart;
-            
-                    $remainingCartMetas = $cart->cartMetas->where('id', '!=', $cartMetaToDelete->id);
-            
+
+                    $product = Product::find($request->items[0]['product']);
+                    $froyos = $request->items[0]['froyo'] ?? [];
+                    $syrups = $request->items[0]['syrup'] ?? [];
+                    $toppings = $request->items[0]['topping'] ?? [];
+
+                    $metaPrice = 0;
+                    $metaPrice += $product->price ?? 0;
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
+                    $metaPrice += $froyoPrices;
+
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
+                    $metaPrice += $syrupPrices;
+
+                    $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
+                    $metaPrice += $toppingPrices;
+
+                    $cartMetaToDelete->product_id = $product->id;
+                    $cartMetaToDelete->froyos = json_encode($froyos);
+                    $cartMetaToDelete->syrups = json_encode($syrups);
+                    $cartMetaToDelete->toppings = json_encode($toppings);
+                    $cartMetaToDelete->total_price = $metaPrice;
+                    $cartMetaToDelete->save();
+                    
+                    $remainingCartMetas = $cart->cartMetas;
+
                     if( $request->promo_code || $cart->voucher_id ){
                         $isEligible = self::checkCartEligibility($request, $remainingCartMetas);
 
