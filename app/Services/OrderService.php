@@ -1110,9 +1110,9 @@ class OrderService
 
                         if ($getProductMeta) {
                             $orderPrice -= $getProductMeta->total_price;
+                            $order->discount = $getProductMeta->total_price;
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
-                            $order->discount = $getProductMeta->total_price;
    
                             $updateOrderMeta = OrderMeta::where('order_id', $order->id)
                             ->where('product_id', $adjustment->get_product)

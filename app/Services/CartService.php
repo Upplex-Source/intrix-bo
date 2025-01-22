@@ -558,8 +558,8 @@ class CartService {
 
                         if ($getProductMeta) {
                             $orderPrice -= $getProductMeta->total_price;
-                            $getProductMeta->total_price = 0;
                             $cart->discount = $getProductMeta->total_price;
+                            $getProductMeta->total_price = 0;
                             $getProductMeta->save();
                         }
                     }
@@ -1211,9 +1211,9 @@ class CartService {
 
                                 if ($getProductMeta) {
                                     $orderPrice -= $getProductMeta->total_price;
+                                    $updateCart->discount = $getProductMeta->total_price;
                                     $getProductMeta->total_price = 0;
                                     $getProductMeta->save();
-                                    $updateCart->discount = $getProductMeta->total_price;
                                 }
                             }
         
@@ -1307,9 +1307,9 @@ class CartService {
 
                             if ($getProductMeta) {
                                 $orderPrice -= $getProductMeta->total_price;
+                                $updateCart->discount = $getProductMeta->total_price;
                                 $getProductMeta->total_price = 0;
                                 $getProductMeta->save();
-                                $updateCart->discount = $getProductMeta->total_price;
                             }
                         }
     
@@ -1329,8 +1329,8 @@ class CartService {
             
                         $x = $updateCart->total_price;
                         if ( $x >= $adjustment->buy_quantity ) {
-                            $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100  );
                             $updateCart->discount = ( $orderPrice * $adjustment->discount_quantity / 100 );
+                            $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100  );
                         }
                     }
     
@@ -1666,10 +1666,10 @@ class CartService {
                 if ( $x < $adjustment->buy_quantity ) {
                     return response()->json( [
                         'required_amount' => $adjustment->buy_quantity,
-                        'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                        'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] . '_' .  Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ,
+                        'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
+                        'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] . '_' .  Product::find( $adjustment->buy_products[0] )->value( 'title' ) ,
                         'errors' => [
-                            'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] )
+                            'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
                         ]
                     ], 422 );
                 }
@@ -1690,7 +1690,7 @@ class CartService {
                         'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->get_product[0] )->value( 'title' ) ] ),
                         'message_key' => 'voucher.min_quantity_of_y',
                         'errors' => [
-                            'voucher' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] )
+                            'voucher' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
                         ]
                     ], 422 );
                 }
@@ -1728,10 +1728,10 @@ class CartService {
                 if ( $orderPrice < $adjustment->buy_quantity ) {
                     return response()->json( [
                         'required_amount' => $adjustment->buy_quantity,
-                        'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] ),
+                        'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
                         'message_key' => 'voucher.min_spend_of_x',
                         'errors' => [
-                            'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] )
+                            'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
                         ]
                     ], 422 );
                 }
@@ -1829,10 +1829,10 @@ class CartService {
 
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
-                    'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] . '_' .  Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ,
+                    'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
+                    'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] . '_' .  Product::find( $adjustment->buy_products[0] )->value( 'title' ) ,
                     'errors' => [
-                        'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] ),
+                        'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
                     ]
                 ], 422 );
             }
@@ -1853,7 +1853,7 @@ class CartService {
                     'message' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->get_product[0] )->value( 'title' ) ] ),
                     'message_key' => 'voucher.min_quantity_of_y',
                     'errors' => [
-                        'voucher' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        'voucher' => __( 'voucher.min_quantity_of_y', [ 'title' => $adjustment->get_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
                     ]
                 ], 422 );
             }
@@ -1891,10 +1891,10 @@ class CartService {
             if ( $orderPrice < $adjustment->buy_quantity ) {
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
-                    'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] ),
+                    'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
                     'message_key' => 'voucher.min_spend_of_x',
                     'errors' => [
-                        'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
                     ]
                 ], 422 );
             }
