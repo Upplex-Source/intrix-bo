@@ -45,6 +45,7 @@ return [
     
 
     'invalid_otp' => 'Invalid_otp',
+    'invalid_phone_number' => 'Invalid phone number',
     'repeat_password_not_match' => 'Repeat Password does not match',
     'message' => 'Message',
 

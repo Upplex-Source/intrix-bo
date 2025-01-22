@@ -816,6 +816,11 @@ class UserService
                     $fail( __( 'user.invalid_otp' ) );
                     return false;
                 }
+
+                if ( $currentTmpUser->phone_number != $request->phone_number ) {
+                    $fail( __( 'user.invalid_phone_number' ) );
+                    return false;
+                }
             } ],
             'email' => [ 'nullable', 'bail', 'unique:users,email', 'email', 'regex:/(.+)@(.+)\.(.+)/i', new CheckASCIICharacter ],
             'fullname' => [ 'nullable' ],
