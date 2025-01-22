@@ -1110,7 +1110,7 @@ class OrderService
 
                         if ($getProductMeta) {
                             $orderPrice -= $getProductMeta->total_price;
-                            $order->discount = $getProductMeta->total_price;
+                            $order->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
    
@@ -1132,7 +1132,7 @@ class OrderService
                     $x = $userCart->total_price;
                     if ( $x >= $adjustment->buy_quantity ) {
                         $orderPrice -= $adjustment->discount_quantity;
-                        $order->discount = $adjustment->discount_quantity;
+                        $order->discount = Helper::numberFormatV2($adjustment->discount_quantity,2,false,true);
                     }
         
                 } else {
@@ -1141,7 +1141,7 @@ class OrderService
         
                     $x = $userCart->total_price;
                     if ( $x >= $adjustment->buy_quantity ) {
-                        $order->discount = ( $orderPrice * $adjustment->discount_quantity / 100 );
+                        $order->discount = Helper::numberFormatV2(( $orderPrice * $adjustment->discount_quantity / 100 ),2,false,true);
                         $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
                     }
                 }
