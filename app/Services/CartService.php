@@ -654,7 +654,7 @@ class CartService {
             'vending_machine' => $cart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $cart->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($cart->total_price, 2, true),
             'cart_metas' => $cartMetas,
-            'subtotal' => $cart->subtotal,
+            'subtotal' => Helper::numberFormatV2($cart->subtotal, 2, true),
             'discount' =>  Helper::numberFormatV2($cart->discount, 2, true),
             'tax' =>  Helper::numberFormatV2($cart->tax, 2, true),
             'voucher' => $cart->voucher,
@@ -1407,7 +1407,7 @@ class CartService {
             'vending_machine' => $updateCart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $updateCart->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($updateCart->total_price, 2, true),
             'cart_metas' => $cartMetas,
-            'subtotal' => $updateCart->subtotal,
+            'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2, true),
             'tax' =>  Helper::numberFormatV2($updateCart->tax, 2, true),
             'voucher' => $updateCart->voucher,
@@ -1667,7 +1667,7 @@ class CartService {
                     return response()->json( [
                         'required_amount' => $adjustment->buy_quantity,
                         'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                        'message_key' => 'voucher.min_quantity_of_x',
+                        'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] ,
                         'errors' => [
                             'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] )
                         ]
@@ -1830,7 +1830,7 @@ class CartService {
                 return response()->json( [
                     'required_amount' => $adjustment->buy_quantity,
                     'message' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'message_key' => 'voucher.min_quantity_of_x',
+                    'message_key' => 'voucher.min_quantity_of_x_' . $adjustment->buy_products[0] ,
                     'errors' => [
                         'voucher' => __( 'voucher.min_quantity_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::find( $adjustment->buy_products[0] )->value( 'title' ) ] ),
                     ]
