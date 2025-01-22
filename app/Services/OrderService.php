@@ -1109,8 +1109,21 @@ class OrderService
                         ->first();                    
 
                         if ($getProductMeta) {
-                            $orderPrice -= Helper::numberFormatV2($getProductMeta->product->price,2,false,true);
-                            $order->discount = Helper::numberFormatV2($getProductMeta->product->price,2,false,true);
+
+                            $discount = 0;
+                            $discount += $getProductMeta->product->price;
+
+                            $froyoPrices = Froyo::whereIn('id', json_decode($getproductmeta->froyos, true))->sum('price');
+                            $discount += $froyoPrices;
+        
+                            $syrupPrices = Syrup::whereIn('id', json_decode($getproductmeta->syrups, true))->sum('price');
+                            $discount += $syrupPrices;
+        
+                            $toppingPrices = Topping::whereIn('id', json_decode($getproductmeta->toppings, true))->sum('price');
+                            $discount += $toppingPrices;
+
+                            $orderPrice -= Helper::numberFormatV2($discount,2,false,true);
+                            $order->discount = Helper::numberFormatV2($discount,2,false,true);
                             $getProductMeta->total_price = 0;
                             $getProductMeta->save();
    
