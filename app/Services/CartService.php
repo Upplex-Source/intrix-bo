@@ -614,7 +614,7 @@ class CartService {
                 $userBundle->save();
             }
 
-            $cart->total_price = $orderPrice;
+            $cart->total_price = Helper::numberFormatV2($orderPrice,2);
             $taxSettings = Option::getTaxesSettings();
             $cart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($cart->total_price,2)) : 0;
             
@@ -1368,7 +1368,7 @@ class CartService {
                 }
             }
     
-            $updateCart->total_price = $orderPrice;
+            $updateCart->total_price = Helper::numberFormatV2($orderPrice,2);
             $taxSettings = Option::getTaxesSettings();
             $updateCart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;
             $updateCart->total_price += Helper::numberFormatV2($updateCart->tax,2);
@@ -1541,7 +1541,7 @@ class CartService {
                 }
             }
 
-            $updateCart->total_price = $orderPrice;
+            $updateCart->total_price = Helper::numberFormatV2($orderPrice,2);
             $taxSettings = Option::getTaxesSettings();
 
             $updateCart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;

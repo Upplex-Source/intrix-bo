@@ -381,7 +381,7 @@ class OrderService
                 $orderMeta->save();
             }
 
-            $createOrder->total_price = $orderPrice;
+            $createOrder->total_price = Helper::numberFormatV2($orderPrice,2);
             $createOrder->save();
 
             DB::commit();
@@ -522,7 +522,7 @@ class OrderService
                 $orderMeta->save();
             }
 
-            $updateOrder->total_price = $orderPrice;
+            $updateOrder->total_price = Helper::numberFormatV2($orderPrice,2);
             $updateOrder->save();
 
             DB::commit();
@@ -1215,7 +1215,7 @@ class OrderService
                 $orderPrice = 0;
             }
 
-            $order->total_price = $orderPrice;
+            $order->total_price = Helper::numberFormatV2($orderPrice,2);
             $order->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($order->total_price,2)) : 0;
             $order->total_price += Helper::numberFormatV2($order->tax,2);
 
