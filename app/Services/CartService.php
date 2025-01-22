@@ -619,7 +619,7 @@ class CartService {
             $taxSettings = Option::getTaxesSettings();
             $cart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($cart->total_price,2)) : 0;
             
-            $cart->total_price += Helper::numberFormatV2($cart->tax, 2);
+            // $cart->total_price += Helper::numberFormatV2($cart->tax, 2);
             $cart->save();
             DB::commit();
 
