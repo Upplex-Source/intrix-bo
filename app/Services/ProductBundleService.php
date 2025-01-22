@@ -518,6 +518,7 @@ class ProductBundleService
         }else {
             $productbundles = UserBundle::with( ['productBundle'] )
             ->where( 'user_id', auth()->user()->id )
+            ->where( 'cups_left', '>', 0 )
             ->orderBy( 'cups_left', 'DESC' );
 
             if ( $request && $request->title) {

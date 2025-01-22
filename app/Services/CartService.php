@@ -665,9 +665,9 @@ class CartService {
             'subtotal' => Helper::numberFormatV2($cart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($cart->discount, 2,false, true),
             'tax' =>  Helper::numberFormatV2($cart->tax, 2,false, true),
-            'voucher' => $cart->voucher,
-            'bundle' => $cart->productBundle,
-            'user_bundle' => $cart->userBundle,
+            'voucher' => $cart->voucher ? $cart->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'bundle' => $cart->productBundle ? $cart->productBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'user_bundle' => $cart->userBundle ? $cart->userBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
     }
 
@@ -1496,9 +1496,9 @@ class CartService {
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
             'tax' =>  Helper::numberFormatV2($updateCart->tax, 2,false, true),
-            'voucher' => $updateCart->voucher,
-            'bundle' => $updateCart->productBundle,
-            'user_bundle' => $updateCart->userBundle,
+            'voucher' => $updateCart->voucher ? $updateCart->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'bundle' => $updateCart->productBundle ? $updateCart->productBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'user_bundle' => $updateCart->userBundle ? $updateCart->userBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
     }
 
