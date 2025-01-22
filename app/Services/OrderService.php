@@ -1320,6 +1320,11 @@ class OrderService
                     'order',
                     'order'
                 );
+                
+                if( $order->userBundle ){
+                    $order->status = 3;
+                }
+
             }else {
                 
                 $data = [
@@ -1400,16 +1405,16 @@ class OrderService
 
         return response()->json( [
             'message' => '',
-            'message_key' => 'create_order_success',
+            'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
             'payment_url' => $order->payment_url,
             'sesion_key' => $order->session_key,
             'order_id' => $order->id,
             'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
             'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
-            'voucher' => $order->voucher,
-            'bundle' => $order->productBundle,
-            'user_bundle' => $order->userBundle,
+            'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'bundle' => $order->productBundle ? $order->productBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'user_bundle' => $order->userBundle ? $order->userBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
     }
 
