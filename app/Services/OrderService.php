@@ -843,9 +843,9 @@ class OrderService
                     'subtotal' => $meta->total_price,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
                         ->setAttribute('image_path', $meta->product->image_path),
-                    'froyo' => $meta->froyos_metas,
-                    'syrup' => $meta->syrups_metas,
-                    'topping' => $meta->toppings_metas,
+                    'froyo' => json_decode($meta->froyos_metas, true),
+                    'syrup' => json_decode($meta->syrups_metas, true),
+                    'topping' => json_decode($meta->toppings_metas, true),
                 ];
             });
 
