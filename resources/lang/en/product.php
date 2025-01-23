@@ -28,4 +28,9 @@ return [
     'active' => 'Active',
     'pending_payment' => 'Pending Payment',
     'expired' => 'Expired',
+
+    "free_froyo_quantity" => "Free Froyo Quantity",
+    "free_syrup_quantity" => "Free Syrup Quantity",
+    "free_topping_quantity" => "Free Topping Quantity",
+    "product_type" => "Product Type",
 ];

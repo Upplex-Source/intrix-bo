@@ -43,6 +43,9 @@ class ProductService
             'default_froyo_quantity' => [ 'required' ],
             'default_syrup_quantity' => [ 'required' ],
             'default_topping_quantity' => [ 'required' ],
+            'free_froyo_quantity' => [ 'nullable' ],
+            'free_syrup_quantity' => [ 'nullable' ],
+            'free_topping_quantity' => [ 'nullable' ],
             'image' => [ 'nullable' ],
         ] );
 
@@ -56,6 +59,9 @@ class ProductService
             'default_froyo_quantity' => __( 'product.default_froyo_quantity' ),
             'default_syrup_quantity' => __( 'product.default_syrup_quantity' ),
             'default_topping_quantity' => __( 'product.default_topping_quantity' ),
+            'free_froyo_quantity' => __( 'product.free_froyo_quantity' ),
+            'free_syrup_quantity' => __( 'product.free_syrup_quantity' ),
+            'free_topping_quantity' => __( 'product.free_topping_quantity' ),
             'image' => __( 'product.image' ),
         ];
 
@@ -77,6 +83,9 @@ class ProductService
                 'default_froyo_quantity' => $request->default_froyo_quantity,
                 'default_syrup_quantity' => $request->default_syrup_quantity,
                 'default_topping_quantity' => $request->default_topping_quantity,
+                'free_froyo_quantity' => $request->free_froyo_quantity,
+                'free_syrup_quantity' => $request->free_syrup_quantity,
+                'free_topping_quantity' => $request->free_topping_quantity,
             ]);
 
             $image = explode( ',', $request->image );
@@ -132,6 +141,9 @@ class ProductService
             'default_froyo_quantity' => [ 'nullable' ],
             'default_syrup_quantity' => [ 'nullable' ],
             'default_topping_quantity' => [ 'nullable' ],
+            'free_froyo_quantity' => [ 'nullable' ],
+            'free_syrup_quantity' => [ 'nullable' ],
+            'free_topping_quantity' => [ 'nullable' ],
             'image' => [ 'nullable' ],
         ] );
 
@@ -145,6 +157,9 @@ class ProductService
             'default_froyo_quantity' => __( 'product.default_froyo_quantity' ),
             'default_syrup_quantity' => __( 'product.default_syrup_quantity' ),
             'default_topping_quantity' => __( 'product.default_topping_quantity' ),
+            'free_froyo_quantity' => __( 'product.free_froyo_quantity' ),
+            'free_syrup_quantity' => __( 'product.free_syrup_quantity' ),
+            'free_topping_quantity' => __( 'product.free_topping_quantity' ),
             'image' => __( 'product.image' ),
         ];
 
@@ -168,6 +183,9 @@ class ProductService
             $updateProduct->default_froyo_quantity = $request->default_froyo_quantity ?? $updateProduct->default_froyo_quantity;
             $updateProduct->default_syrup_quantity = $request->default_syrup_quantity ?? $updateProduct->default_syrup_quantity;
             $updateProduct->default_topping_quantity = $request->default_topping_quantity ?? $updateProduct->default_topping_quantity;
+            $updateProduct->free_froyo_quantity = $request->free_froyo_quantity ?? $updateProduct->free_froyo_quantity;
+            $updateProduct->free_syrup_quantity = $request->free_syrup_quantity ?? $updateProduct->free_syrup_quantity;
+            $updateProduct->free_topping_quantity = $request->free_topping_quantity ?? $updateProduct->free_topping_quantity;
 
             $image = explode( ',', $request->image );
 

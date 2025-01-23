@@ -553,6 +553,28 @@ class CartService {
                     $orderPrice += $toppingPrices;
                     $metaPrice += $toppingPrices;
     
+                    // calculate free item
+                    // if (($product->free_froyo_quantity != null || $product->free_froyo_quantity != 0 ) && $froyoCount > $product->free_froyo_quantity) {
+                    //     $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                    //     asort($froyoPrices);
+                    //     $mostExpensiveFroyoPrice = end($froyoPrices);
+                    //     $orderPrice += $mostExpensiveFroyoPrice;
+                    // } 
+                    
+                    // if (($product->free_syrup_quantity != null || $product->free_syrup_quantity != 0 ) && $syrupCount > $product->free_syrup_quantity) {
+                    //     $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                    //     asort($syrupPrices);
+                    //     $mostExpensiveSyrupPrice = end($syrupPrices);
+                    //     $orderPrice += $mostExpensiveSyrupPrice;
+                    // } 
+                    
+                    // if (($product->free_topping_quantity != null || $product->free_topping_quantity != 0 ) && $toppingCount > $product->free_topping_quantity) {
+                    //     $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                    //     asort($toppingPrices);
+                    //     $mostExpensiveToppingPrice = end($toppingPrices);
+                    //     $orderPrice += $mostExpensiveToppingPrice;
+                    // } 
+
                     $orderMeta->total_price = $metaPrice;
                     $orderMeta->save();
                 }
