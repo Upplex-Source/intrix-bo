@@ -805,7 +805,7 @@ class OrderService
     
         // Start by querying orders for the authenticated user
         $query = Order::where('user_id', $user->id)
-            ->with(['orderMetas', 'vendingMachine', 'voucher', 'productBundle', 'userBundle'])
+            ->with(['vendingMachine', 'voucher', 'productBundle', 'userBundle'])
             ->orderBy('created_at', 'DESC');
     
         // Apply filters
@@ -843,12 +843,14 @@ class OrderService
                     'subtotal' => $meta->total_price,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
                         ->setAttribute('image_path', $meta->product->image_path),
-                    'froyo' => json_decode($meta->froyos_metas, true),
-                    'syrup' => json_decode($meta->syrups_metas, true),
-                    'topping' => json_decode($meta->toppings_metas, true),
+                    'froyo' => $meta->froyos_metas,
+                    'syrup' => $meta->syrups_metas,
+                    'topping' => $meta->toppings_metas,
                 ];
             });
 
+            $order->orderMetas = $orderMetas;
+            
             if( $order->userBundle ) {
                 $order->userBundle->productBundle->append( ['image_path','bundle_rules'] );
             }
@@ -857,6 +859,12 @@ class OrderService
             $order->cup_used = count( $order->orderMetas );
             return $order;
         });
+
+        foreach( $userOrders as $userOrder ) {
+            $userOrder->order_metas = $userOrder->orderMetas;
+            $userOrder->orderMetas = null;
+            unset($userOrder->orderMetas);
+        }
     
         // Return the paginated response
         return response()->json([
