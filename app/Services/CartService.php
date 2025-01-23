@@ -554,31 +554,28 @@ class CartService {
                     $metaPrice += $toppingPrices;
 
                     // calculate free item
-                    if ($froyoCount >= $product->free_froyo_quantity) {
-                        $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
-                        asort($froyoPrices);
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                    asort($froyoPrices);
 
-                        $froyoCount = count($froyos);
-                        $freeCount = $product->free_froyo_quantity;
+                    $froyoCount = count($froyos);
+                    $freeCount = $product->free_froyo_quantity;
 
-                        if ($froyoCount > $freeCount) {
-                            $chargeableCount = $froyoCount - $freeCount;
-                            $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
-                            $totalDeduction = array_sum($chargeableFroyoPrices);
+                    if ($froyoCount > $freeCount) {
+                        $chargeableCount = $froyoCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
+                        $totalDeduction = array_sum($chargeableFroyoPrices);
 
 
-                            $orderPrice -= $totalDeduction;
-                            $metaPrice -= $totalDeduction;
+                        $orderPrice -= $totalDeduction;
+                        $metaPrice -= $totalDeduction;
 
-                        }else{
-                            $totalDeduction = array_sum($froyoPrices);
-                            $orderPrice -= $totalDeduction;
-                            $metaPrice -= $totalDeduction;
-                        }
-                    } 
+                    }else{
+                        $totalDeduction = array_sum($froyoPrices);
+                        $orderPrice -= $totalDeduction;
+                        $metaPrice -= $totalDeduction;
+                    }
                     
                     // free item module
-                    if ($syrupCount >= $product->free_syrup_quantity) {
                         $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
                         asort($syrupPrices);
                         
@@ -598,9 +595,7 @@ class CartService {
                             $orderPrice -= $totalDeduction;
                             $metaPrice -= $totalDeduction;
                         }
-                    } 
                     
-                    if ($toppingCount >= $product->free_topping_quantity) {
                         $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
                         asort($toppingPrices);
                         
@@ -620,7 +615,6 @@ class CartService {
                             $orderPrice -= $totalDeduction;
                             $metaPrice -= $totalDeduction;
                         }
-                    } 
 
                     $orderMeta->total_price = $metaPrice;
                     $orderMeta->save();
@@ -1347,7 +1341,6 @@ class CartService {
                     $cartMeta->total_price = $metaPrice;
 
                     // calculate free item
-                    if (count( $froyos ) >= $product->free_froyo_quantity) {
 
                         $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                         asort($froyoPrices);
@@ -1367,9 +1360,7 @@ class CartService {
                             $cartMeta->total_price -= $totalDeduction;
                             $orderPrice-= $totalDeduction;
                         }
-                    } 
                     
-                    if (count( $syrups )  >= $product->free_syrup_quantity) {
                         $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
                         asort($syrupPrices);
 
@@ -1390,9 +1381,7 @@ class CartService {
                             $orderPrice-= $totalDeduction;
                         }
 
-                    } 
                     
-                    if (count( $toppings ) >= $product->free_topping_quantity) {
                         $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
                         asort($toppingPrices);
                         
@@ -1412,7 +1401,6 @@ class CartService {
                             $cartMeta->total_price -= $totalDeduction;
                             $orderPrice-= $totalDeduction;
                         }
-                    } 
 
                     $cartMeta->save();
 
@@ -1535,7 +1523,6 @@ class CartService {
                     $discount = 0;
 
                     // calculate free item
-                    if ($froyoCount >= $product->free_froyo_quantity) {
                         $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                         asort($froyoPrices);
 
@@ -1558,10 +1545,8 @@ class CartService {
                             $cartDeduction += $totalDeduction;
                             $discount++;
                         }
-                    } 
 
                     // free item module
-                    if ($syrupCount >= $product->free_syrup_quantity) {
                         $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
                         asort($syrupPrices);
                         
@@ -1585,9 +1570,7 @@ class CartService {
                             $cartDeduction += $totalDeduction;
                             $discount++;
                         }
-                    } 
                     
-                    if ($toppingCount >= $product->free_topping_quantity) {
                         $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
                         asort($toppingPrices);
                         
@@ -1611,7 +1594,6 @@ class CartService {
                             $cartDeduction += $totalDeduction;
                             $discount++;
                         }
-                    } 
                     $orderMeta->total_price = $metaPrice;
 
                     $orderMeta->save();
@@ -1862,7 +1844,6 @@ class CartService {
 
                 $orderPrice += $product->price ?? 0;
 
-                if ($froyoCount >= $product->free_froyo_quantity) {
                     $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
                     asort($froyoPrices);
 
@@ -1881,9 +1862,7 @@ class CartService {
                             $metaPrice -= $totalDeduction;
                             $orderPrice -= $totalDeduction;
                     }
-                } 
 
-                if ($syrupCount >= $product->free_syrup_quantity) {
                     $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
                     asort($syrupPrices);
                         
@@ -1902,9 +1881,7 @@ class CartService {
                             $metaPrice -= $totalDeduction;
                             $orderPrice -= $totalDeduction;
                     }
-                } 
 
-                if ($toppingCount >= $product->free_topping_quantity) {
                     $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
                     asort($toppingPrices);
                         
@@ -1923,7 +1900,6 @@ class CartService {
                             $metaPrice -= $totalDeduction;
                             $orderPrice -= $totalDeduction;
                     }
-                }
             }
 
             $updateCart->total_price = Helper::numberFormatV2($orderPrice,2);
