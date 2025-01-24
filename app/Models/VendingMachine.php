@@ -92,7 +92,7 @@ class VendingMachine extends Model
             : "Hours not set";
     
         // Append status
-        $statusString = $isInOperation ? 'In Operation' : 'Please select another machine';
+        $statusString = $isInOperation ? 'In Operation' : 'Closed now, redeem later.';
     
         return "{$operationString}, {$statusString}";
     }
