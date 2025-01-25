@@ -291,28 +291,7 @@ $columns = [
                 toolbar: {
                     show: false
                 },
-            },
-                yaxis: {
-                    labels: {
-                        formatter: function(value) {
-                            return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
-                        }
-                    }
-                },
-                tooltip: {
-                    y: {
-                        formatter: function(value) {
-                            return value.toFixed(2); // Show exactly two decimals in the tooltip
-                        }
-                    }
-                },
-                xaxis: {
-                    labels: {
-                        formatter: function(value) {
-                            return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
-                        }
-                    }
-             }
+            }
         };
 
         // Create separate options for chart3 and chart4 with no decimals
