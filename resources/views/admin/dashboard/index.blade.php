@@ -291,25 +291,24 @@ $columns = [
                 toolbar: {
                     show: false
                 },
-            },
-            yaxis: {
+                yaxis: {
                 labels: {
                     formatter: function(value) {
-                        return value.toFixed(2); // Ensure two decimal places on the y-axis
+                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
                     }
                 }
             },
             tooltip: {
                 y: {
                     formatter: function(value) {
-                        return value.toFixed(2); // Ensure two decimal places in the tooltip
+                        return value.toFixed(2); // Show exactly two decimals in the tooltip
                     }
                 }
             },
             xaxis: {
                 labels: {
                     formatter: function(value) {
-                        return value.toFixed(2); // Ensure two decimal places on the x-axis labels
+                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
                     }
                 }
             }
