@@ -291,7 +291,45 @@ $columns = [
                 toolbar: {
                     show: false
                 },
+            },
+            yaxis: {
+                labels: {
+                    formatter: function(value) {
+                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
+                    }
+                }
+            },
+            tooltip: {
+                y: {
+                    formatter: function(value) {
+                        return value.toFixed(2); // Show exactly two decimals in the tooltip
+                    }
+                }
+            },
+            xaxis: {
+                labels: {
+                    formatter: function(value) {
+                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
+                    }
+                }
             }
+        };
+
+        // Create separate options for chart3 and chart4 with no decimals
+        let chart1Options = JSON.parse(JSON.stringify(totalOrderOption));
+        chart1Options.yaxis.labels.formatter = function(value) {
+            return Math.floor(value); // No decimal places for chart3
+        };
+        chart1Options.tooltip.y.formatter = function(value) {
+            return Math.floor(value); // No decimal places for chart3 tooltip
+        };
+
+        let chart2Options = JSON.parse(JSON.stringify(totalOrderOption));
+        chart2Options.yaxis.labels.formatter = function(value) {
+            return Math.floor(value); // No decimal places for chart4
+        };
+        chart2Options.tooltip.y.formatter = function(value) {
+            return Math.floor(value); // No decimal places for chart4 tooltip
         };
 
         // Create separate options for chart3 and chart4 with no decimals
