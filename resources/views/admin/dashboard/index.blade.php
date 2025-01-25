@@ -351,8 +351,8 @@ $columns = [
 
         // Assign options to charts
         let charts = [
-            { id: 'chart1', name: '{{ __( "template.orders" ) }}', options: JSON.parse(JSON.stringify(totalOrderOption)) }, // Two decimals
-            { id: 'chart2', name: '{{ __( "dashboard.topup" ) }}', options: JSON.parse(JSON.stringify(totalOrderOption)) }, // Two decimals
+            { id: 'chart1', name: '{{ __( "template.orders" ) }}', options: chart1Options }, // Two decimals
+            { id: 'chart2', name: '{{ __( "dashboard.topup" ) }}', options: chart2Options }, // Two decimals
             { id: 'chart3', name: '{{ __( "dashboard.cups" ) }}', options: chart3Options }, // No decimals
             { id: 'chart4', name: '{{ __( "dashboard.users" ) }}', options: chart4Options }  // No decimals
         ];
