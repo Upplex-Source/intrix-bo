@@ -76,7 +76,10 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 
                 Route::post( '/', [ DashboardController::class, 'getDashboardData' ] )->name( 'admin.dashboard.getDashboardData' );
 
-                Route::post( 'expenses-statistics', [ DashboardController::class, 'getExpensesStatistics' ] )->name( 'admin.dashboard.getExpensesStatistics' );
+                Route::post( 'total-revenue-statistics', [ DashboardController::class, 'totalRevenueStatistics' ] )->name( 'admin.dashboard.totalRevenueStatistics' );
+                Route::post( 'total-reload-statistics', [ DashboardController::class, 'totalReloadStatistics' ] )->name( 'admin.dashboard.totalReloadStatistics' );
+                Route::post( 'total-cups-statistics', [ DashboardController::class, 'totalCupsStatistics' ] )->name( 'admin.dashboard.totalCupsStatistics' );
+                Route::post( 'total-user-statistics', [ DashboardController::class, 'totalUserStatistics' ] )->name( 'admin.dashboard.totalUserStatistics' );
             } );
 
             Route::prefix( 'administrators' )->group( function() {

@@ -15,7 +15,11 @@ class DashboardController extends Controller
 
         $this->data['header']['title'] = __( 'template.dashboard' );
         $this->data['content'] = 'admin.dashboard.index';
-        $this->data['data']['upcoming_bookings'] = [];
+        
+        $this->data['data']['status'] = [
+            '10' => __( 'datatables.activated' ),
+            '20' => __( 'datatables.suspended' ),
+        ];
 
         return view( 'admin.main' )->with( $this->data );
     }
@@ -25,20 +29,19 @@ class DashboardController extends Controller
         return DashboardService::getDashboardData( $request );
     }
 
-    public function getExpensesStatistics( Request $request ) {
+    public function totalRevenueStatistics( Request $request ) {
+        return DashboardService::totalRevenueStatistics( $request );
+    }
 
-        return DashboardService::getExpensesStatistics( $request );
+    public function totalReloadStatistics( Request $request ) {
+        return DashboardService::totalReloadStatistics( $request );
+    }
 
-        return [
-            'fuelData' => [
-                1,2,3,
-            ],
-            'tollData' => [
-                1,2,3,
-            ],
-            'xAxis' => [
-                'A','B','C',
-            ],
-        ];
+    public function totalCupsStatistics( Request $request ) {
+        return DashboardService::totalCupsStatistics( $request );
+    }
+
+    public function totalUserStatistics( Request $request ) {
+        return DashboardService::totalUserStatistics( $request );
     }
 }
