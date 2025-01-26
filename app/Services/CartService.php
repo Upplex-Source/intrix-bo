@@ -680,11 +680,9 @@ class CartService {
 
                 $cartMetas = $cart->cartMetas;
 
-                foreach( $cartMetas as $cartMeta ){
-                    $cartMeta->total_price = 0;
-                    $cartMeta->save();
-                }
-                $orderPrice = $bundle->price;
+                $totalCartDeduction = self::calculateBundleCharges( $cartMetas );
+
+                $orderPrice = $bundle->price + $totalCartDeduction;
                 $cart->subtotal = $orderPrice;
 
             }
@@ -693,11 +691,10 @@ class CartService {
 
                 $cartMetas = $cart->cartMetas;
 
-                foreach( $cartMetas as $cartMeta ){
-                    $cartMeta->total_price = 0;
-                    $cartMeta->save();
-                }
+                $totalCartDeduction = self::calculateBundleCharges( $cartMetas );
+
                 $orderPrice = 0;
+                $orderPrice += $totalCartDeduction;
                 $cart->subtotal = $orderPrice;
 
                 $userBundle->cups_left -= count( $cart->cartMetas );
@@ -1660,11 +1657,9 @@ class CartService {
 
                 $cartMetas = $updateCart->cartMetas;
 
-                foreach( $cartMetas as $cartMeta ){
-                    $cartMeta->total_price = 0;
-                    $cartMeta->save();
-                }
-                $orderPrice = $bundle->price;
+                $totalCartDeduction = self::calculateBundleCharges( $cartMetas );
+
+                $orderPrice = $bundle->price + $totalCartDeduction;
                 $updateCart->subtotal = $orderPrice;
 
             }
@@ -1673,11 +1668,10 @@ class CartService {
 
                 $cartMetas = $updateCart->cartMetas;
 
-                foreach( $cartMetas as $cartMeta ){
-                    $cartMeta->total_price = 0;
-                    $cartMeta->save();
-                }
+                $totalCartDeduction = self::calculateBundleCharges( $cartMetas );
+
                 $orderPrice = 0;
+                $orderPrice += $totalCartDeduction;
                 $updateCart->subtotal = $orderPrice;
 
                 if( !$request->cart_item ){
@@ -2268,5 +2262,69 @@ class CartService {
         return response()->json( [
             'message' => 'voucher.voucher_validated',
         ] );
+    }
+
+    public static function calculateBundleCharges( $cartMetas ){
+        
+        $totalCartDeduction = 0;
+        
+        foreach( $cartMetas as $cartMeta ){
+            $cartMeta->total_price = 0;
+
+            $froyos = json_decode($cartMeta->froyos, true);
+            $syrups = json_decode($cartMeta->syrups, true);
+            $toppings = json_decode($cartMeta->toppings, true);
+
+            $product = Product::find( $cartMeta->product_id );
+
+            // calculate free item
+            $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+            rsort($froyoPrices);
+
+            $froyoCount = count($froyos);
+            $freeCount = $product->free_froyo_quantity;
+
+            if ($froyoCount > $freeCount) {
+                $chargeableCount = $froyoCount - $freeCount;
+                $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
+                $totalDeduction = array_sum($chargeableFroyoPrices);
+                $cartMeta->total_price += $totalDeduction;
+                $totalCartDeduction += $totalDeduction;
+            }
+
+            $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+            rsort($syrupPrices);
+
+            $syrupCount = count($syrups);
+            $freeCount = $product->free_syrup_quantity;
+
+            if ($syrupCount > $freeCount) {
+                $chargeableCount = $syrupCount - $freeCount;
+                $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
+
+                $totalDeduction = array_sum($chargeablesyrupPrices);
+                $cartMeta->total_price += $totalDeduction;
+                $totalCartDeduction += $totalDeduction;
+            }
+        
+            $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+            rsort($toppingPrices);
+            
+            $toppingCount = count($toppings);
+            $freeCount = $product->free_topping_quantity;
+
+            if ($toppingCount > $freeCount) {
+                $chargeableCount = $toppingCount - $freeCount;
+                $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
+                $totalDeduction = array_sum($chargeabletoppingPrices);
+
+                $cartMeta->total_price += $totalDeduction;
+                $totalCartDeduction += $totalDeduction;
+
+            }
+
+            $cartMeta->save();
+        }
+        return $totalCartDeduction;
     }
 }

@@ -1221,11 +1221,9 @@ class OrderService
 
                 $orderMetas = $order->orderMetas;
 
-                foreach( $orderMetas as $orderMeta ){
-                    $orderMeta->total_price = 0;
-                    $orderMeta->save();
-                }
-                $orderPrice = $bundle->price;
+                $totalCartDeduction = CartService::calculateBundleCharges( $cartMetas );
+
+                $orderPrice = $bundle->price + $totalCartDeduction;
                 $order->subtotal = $orderPrice;
             }
 
@@ -1233,11 +1231,10 @@ class OrderService
 
                 $orderMetas = $order->orderMetas;
 
-                foreach( $orderMetas as $orderMeta ){
-                    $orderMeta->total_price = 0;
-                    $orderMeta->save();
-                }
+                $totalCartDeduction = CartService::calculateBundleCharges( $cartMetas );
+
                 $orderPrice = 0;
+                $orderPrice += $totalCartDeduction;
                 $order->subtotal = $orderPrice;
 
             }
@@ -1384,10 +1381,10 @@ class OrderService
                 $order->payment_url = $url2;
                 $order->order_transaction_id = $orderTransaction->id;
 
-                if( $order->userBundle ){
-                    $order->status = 3;
-                    $order->payment_url = null;
-                }
+                // if( $order->userBundle ){
+                //     $order->status = 3;
+                //     $order->payment_url = null;
+                // }
             }
 
             $order->save();
