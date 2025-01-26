@@ -855,10 +855,19 @@ class OrderService
             
             if( $order->userBundle ) {
                 $order->userBundle->productBundle->append( ['image_path','bundle_rules'] );
+
+                $order->cup_used = count( $order->orderMetas );
+                $order->cup_redeemed = $order->userBundle->productBundle->productBundleMetas->first()->quantity - $order->userBundle->cups_left;
+                $order->cup_left = $order->userBundle->cups_left;
+
+            }else{
+                $order->cup_used = null;
+                $order->cup_redeemed = null;
+                $order->cup_left = null;
             }
 
             $order->qr_code = $order->status != 20 && in_array($order->status, [3, 10]) ? self::generateQrCode($order) : null;
-            $order->cup_used = count( $order->orderMetas );
+
             return $order;
         });
 
