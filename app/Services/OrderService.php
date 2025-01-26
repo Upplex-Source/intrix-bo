@@ -867,7 +867,7 @@ class OrderService
 
                 $order->cup_used = count( $order->orderMetas );
                 $order->cup_redeemed = $orderMetaCount;
-                $order->cup_left = $order->userBundle->productBundle->productBundleMetas->first()->quantity - $orderMetaCount;
+                $order->cup_left = $order->userBundle->productBundle->productBundleMetas->first()->quantity - $orderMetaCount - $order->cup_used;
 
             }else{
                 $order->cup_used = null;
