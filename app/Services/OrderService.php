@@ -1221,7 +1221,7 @@ class OrderService
 
                 $orderMetas = $order->orderMetas;
 
-                $totalCartDeduction = CartService::calculateBundleCharges( $cartMetas );
+                $totalCartDeduction = CartService::calculateBundleCharges( $orderMetas );
 
                 $orderPrice = $bundle->price + $totalCartDeduction;
                 $order->subtotal = $orderPrice;
@@ -1231,7 +1231,7 @@ class OrderService
 
                 $orderMetas = $order->orderMetas;
 
-                $totalCartDeduction = CartService::calculateBundleCharges( $cartMetas );
+                $totalCartDeduction = CartService::calculateBundleCharges( $orderMetas );
 
                 $orderPrice = 0;
                 $orderPrice += $totalCartDeduction;
