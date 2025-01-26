@@ -575,7 +575,9 @@ class ProductBundleService
                     foreach( $productbundle->activeCarts as $userCart ) {
                         $userCart->cart_metas = $userCart->cartMetas;
                         // $userCart->cartMetas = null;
-                        // unset($userCart->cartMetas);
+                        unset($userCart->cartMetas);
+                        $userCart->cartMetas = $userCart->cart_metas;
+
                     }
                 }
 
