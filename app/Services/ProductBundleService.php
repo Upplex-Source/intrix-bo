@@ -27,6 +27,7 @@ use App\Models\{
     UserBundle,
     UserBundleTransaction,
     Option,
+    Order,
 };
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -519,7 +520,8 @@ class ProductBundleService
             $productbundles = UserBundle::with( ['productBundle'] )
             ->where( 'user_id', auth()->user()->id )
             ->where( 'cups_left', '>', 0 )
-            ->orderBy( 'cups_left', 'DESC' );
+            // ->orderBy( 'cups_left', 'DESC' );
+            ->orderBy( 'created_at', 'DESC' );
 
             if ( $request && $request->title) {
                 $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
@@ -614,6 +616,20 @@ class ProductBundleService
                 'payment_url' => 'null',
             ] );
 
+            $order = Order::create( [
+                'user_id' => $user->id,
+                'product_id' => null,
+                'product_bundle_id' => $bundle->id,
+                'outlet_id' => null,
+                'vending_machine_id' => null,
+                'user_bundle_id' => $userBundle->id,
+                'total_price' => $bundle->price,
+                'discount' => 0,
+                'status' => 1,
+                'reference' => Helper::generateOrderReference(),
+                'tax' => 0,
+            ] );
+
             if( $request->payment_method == 1 ){
                 
                 WalletService::transact( $userWallet, [
@@ -653,6 +669,10 @@ class ProductBundleService
                     }
                     
                 }
+
+                $order->status = 10;
+                $order->save();
+
             }else {
                 
                 $data = [
@@ -701,7 +721,7 @@ class ProductBundleService
         
         return response()->json( [
             'message' => '',
-            'message_key' => $request->payment_method == 1  ? 'please proceed to payment' : 'purchase_bundle_success' ,
+            'message_key' => $request->payment_method == 1  ? 'purchase_bundle_success' :'please proceed to payment',
             'payment_url' => $bundleTransaction->payment_url,
             'bundle' => $userBundle,
         ] );
@@ -723,9 +743,9 @@ class ProductBundleService
         if (!$bundle) {
             return response()->json([
                 'message' => '',
-                'message_key' => 'bundle_not_available',
+                'message_key' => 'user_bundle_not_available',
                 'errors' => [
-                    'order' => 'bundle not available'
+                    'order' => 'user bundle not available'
                 ]
             ], 422);
         }

@@ -244,24 +244,28 @@ class EghlService {
     
             if($request->HashValue2 == Helper::generateResponseHash($request) && $bundle){
                 $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first(); 
+                $bundleOrder = Order::where( 'user_bundle_id', $bundle->user_bundle_id )->first();
     
                 if( $request->TxnStatus == 0 ){
                     $userBundle = $bundle->userBundle;
                     $userBundle->status = 10;
+                    $bundleOrder->status = 10;
                     $userBundle->save();
+                    $bundleOrder->save();
                     $bundleStatus = true;
 
                     UserService::createUserNotification(
-                        $order->user->id,
+                        $userBundle->user->id,
                         'notification.user_bundle_success',
                         'notification.user_bundle_success_content',
                         'user_bundle',
                         'user_bundle'
                     );
 
+
                 }else {
                     UserService::createUserNotification(
-                        $order->user->id,
+                        $userBundle->user->id,
                         'notification.user_bundle_failed',
                         'notification.user_bundle_failed_content',
                         'user_bundle',
