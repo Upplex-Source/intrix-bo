@@ -833,9 +833,11 @@ class OrderService
         $userOrders->getCollection()->transform(function ($order) {
             $order->append( ['order_status_label'] );
 
-            $order->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
+            if($order->vendingMachine){
+                $order->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
                 ->setAttribute('operational_hour', $order->vendingMachine->operational_hour)
                 ->setAttribute('image_path', $order->vendingMachine->image_path);
+            }
     
             $orderMetas = $order->orderMetas->map(function ($meta) {
                 return [
