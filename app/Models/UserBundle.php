@@ -38,7 +38,7 @@ class UserBundle extends Model
         return $this->hasMany(Order::class, 'user_bundle_id');
     }
 
-    public function unpaidCarts()
+    public function unclaimCupsInCarts()
     {
         return $this->hasMany(Cart::class, 'user_bundle_id')->where( 'status', 10 );
     }

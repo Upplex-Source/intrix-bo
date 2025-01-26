@@ -517,11 +517,14 @@ class ProductBundleService
             });
 
         }else {
-            $productbundles = UserBundle::with(['productBundle'])
+            $productbundles = UserBundle::with([
+                'productBundle',
+                'unclaimCupsInCarts.cartMetas' // Load cartMetas for unclaimCupsInCarts
+            ])
             ->where('user_id', auth()->user()->id)
             ->where(function ($query) {
                 $query->where('cups_left', '>', 0)
-                      ->orWhereHas('unpaidCarts');
+                      ->orWhereHas('unclaimCupsInCarts');
             })
             ->orderBy('created_at', 'DESC');
         
@@ -540,7 +543,9 @@ class ProductBundleService
                 $productbundle->append( ['bundle_status_label'] );
                 $productbundle->productBundle->append( ['image_path','bundle_rules'] );
                 $productbundle->bundle_rules = $productbundle->productBundle->bundle_rules;
-                $productbundle->cups_in_cart = count($productbundle->unpaidCarts);
+                $productbundle->cups_in_cart = $productbundle->unclaimCupsInCarts->sum(function ($cart) {
+                    return $cart->cartMetas->count();
+                });
                 return $productbundle;
             });
         }
