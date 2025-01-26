@@ -866,7 +866,7 @@ class OrderService
                 ->sum('order_metas_count');
 
                 $order->cup_used = count( $order->orderMetas );
-                $order->cup_redeemed = $orderMetaCount;
+                $order->cup_redeemed = $orderMetaCount + $order->cup_used;
                 $order->cup_left = $order->userBundle->productBundle->productBundleMetas->first()->quantity - $orderMetaCount - $order->cup_used;
 
             }else{
