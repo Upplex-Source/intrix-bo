@@ -826,7 +826,10 @@ class UserService
             'fullname' => [ 'nullable' ],
             'calling_code' => [ 'nullable', 'exists:countries,calling_code' ],
             'phone_number' => [ 'nullable', 'digits_between:8,15', function( $attribute, $value, $fail ) {
-                $exist = User::where( 'calling_code', request( 'calling_code' ) )->where( 'phone_number', $value )->where( 'status', 10 )->first();
+                $exist = User::where( 'calling_code', request( 'calling_code' ) )
+                ->where( 'phone_number', $value )->where( 'status', 10 )
+                ->orWhere('phone_number', ltrim($value, '0'))
+                ->first();
                 if ( $exist ) {
                     $fail( __( 'validation.exists' ) );
                     return false;
@@ -952,7 +955,9 @@ class UserService
             'password' => 'required',
             'account' => [ 'sometimes', function( $attributes, $value, $fail ) {
 
-                $user = User::where( 'phone_number', request( 'phone_number' ) )->first();
+                $user = User::where( 'phone_number', request( 'phone_number' ) )
+                ->orWhere('phone_number', ltrim(request('phone_number'), '0'))
+                ->first();
 
                 if ( !$user ) {
                     $fail( __( 'user.user_wrong_user' ) );
@@ -976,7 +981,7 @@ class UserService
         // Register OneSignal
         if ( !empty( $request->register_token ) ) {
             self::registerOneSignal( $user->id, $request->device_type, $request->register_token );
-    }
+        }
 
         return response()->json( [
             'data' => [ 
@@ -1119,6 +1124,7 @@ class UserService
                     }
 
                     $user = User::where( 'phone_number', $value )
+                        ->orWhere('phone_number', ltrim($value, '0'))
                         ->first();
 
                     if ( $user ) {
