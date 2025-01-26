@@ -519,12 +519,12 @@ class ProductBundleService
         }else {
             $productbundles = UserBundle::with([
                 'productBundle',
-                'unclaimCupsInCarts.cartMetas' // Load cartMetas for unclaimCupsInCarts
+                'activeCarts.cartMetas' // Load cartMetas for activeCarts
             ])
             ->where('user_id', auth()->user()->id)
             ->where(function ($query) {
                 $query->where('cups_left', '>', 0)
-                      ->orWhereHas('unclaimCupsInCarts');
+                      ->orWhereHas('activeCarts');
             })
             ->orderBy('created_at', 'DESC');
         
@@ -543,9 +543,29 @@ class ProductBundleService
                 $productbundle->append( ['bundle_status_label'] );
                 $productbundle->productBundle->append( ['image_path','bundle_rules'] );
                 $productbundle->bundle_rules = $productbundle->productBundle->bundle_rules;
-                $productbundle->cups_in_cart = $productbundle->unclaimCupsInCarts->sum(function ($cart) {
+                $productbundle->cups_in_cart = $productbundle->activeCarts->sum(function ($cart) {
                     return $cart->cartMetas->count();
                 });
+
+                if( $productbundle->activeCarts ){
+                    foreach( $productbundle->activeCarts as $cart ){
+                        $cartMetas = $cart->cartMetas->map(function ($meta) {
+                            return [
+                                'id' => $meta->id,
+                                'subtotal' => $meta->total_price,
+                                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                                    ->setAttribute('image_path', $meta->product->image_path),
+                                'froyo' => $meta->froyos_metas,
+                                'syrup' => $meta->syrups_metas,
+                                'topping' => $meta->toppings_metas,
+                            ];
+                        });
+                
+                        // Attach the cart metas to the cart object
+                        $cart->cartMetas = $cartMetas;
+                    }
+                }
+
                 return $productbundle;
             });
         }
