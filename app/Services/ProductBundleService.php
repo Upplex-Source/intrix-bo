@@ -520,7 +520,7 @@ class ProductBundleService
             $productbundles = UserBundle::with( ['productBundle'] )
             ->where( 'user_id', auth()->user()->id )
             ->where( 'cups_left', '>', 0 )
-            // ->orderBy( 'cups_left', 'DESC' );
+            ->orWhereHas( 'unpaidCarts' )
             ->orderBy( 'created_at', 'DESC' );
 
             if ( $request && $request->title) {
@@ -537,6 +537,7 @@ class ProductBundleService
                 $productbundle->append( ['bundle_status_label'] );
                 $productbundle->productBundle->append( ['image_path','bundle_rules'] );
                 $productbundle->bundle_rules = $productbundle->productBundle->bundle_rules;
+                $productbundle->cups_in_cart = count($productbundle->unpaidCarts);
                 return $productbundle;
             });
         }

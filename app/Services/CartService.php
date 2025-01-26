@@ -1769,7 +1769,7 @@ class CartService {
 
             if( $updateCart->userBundle ){
                 $userBundle = $updateCart->userBundle;
-                $userBundle->cups_left += count($updateCart->userBundle);
+                $userBundle->cups_left += count($updateCart->cartMetas);
                 $userBundle->save();
             }
 

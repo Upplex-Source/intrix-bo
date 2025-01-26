@@ -33,6 +33,16 @@ class UserBundle extends Model
         'secret_code'
     ];
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user_bundle_id');
+    }
+
+    public function unpaidCarts()
+    {
+        return $this->hasMany(Cart::class, 'user_bundle_id')->where( 'status', 10 );
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
