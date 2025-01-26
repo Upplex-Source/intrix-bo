@@ -856,9 +856,18 @@ class OrderService
             if( $order->userBundle ) {
                 $order->userBundle->productBundle->append( ['image_path','bundle_rules'] );
 
+                $orderMetaCount = Order::query()
+                ->where('user_bundle_id', $order->user_bundle_id)
+                ->where('id', '<>', $order->id)
+                ->where('created_at', '<', $order->created_at)
+                ->latest('created_at')
+                ->withCount('orderMetas')
+                ->get()
+                ->sum('order_metas_count');
+
                 $order->cup_used = count( $order->orderMetas );
-                $order->cup_redeemed = $order->userBundle->productBundle->productBundleMetas->first()->quantity - $order->userBundle->cups_left;
-                $order->cup_left = $order->userBundle->cups_left;
+                $order->cup_redeemed = $orderMetaCount;
+                $order->cup_left = $order->userBundle->productBundle->productBundleMetas->first()->quantity - $orderMetaCount;
 
             }else{
                 $order->cup_used = null;
