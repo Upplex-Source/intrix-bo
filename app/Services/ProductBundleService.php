@@ -517,11 +517,14 @@ class ProductBundleService
             });
 
         }else {
-            $productbundles = UserBundle::with( ['productBundle'] )
-            ->where( 'user_id', auth()->user()->id )
-            ->where( 'cups_left', '>', 0 )
-            ->orWhereHas( 'unpaidCarts' )
-            ->orderBy( 'created_at', 'DESC' );
+            $productbundles = UserBundle::with(['productBundle'])
+            ->where('user_id', auth()->user()->id)
+            ->where(function ($query) {
+                $query->where('cups_left', '>', 0)
+                      ->orWhereHas('unpaidCarts');
+            })
+            ->orderBy('created_at', 'DESC');
+        
 
             if ( $request && $request->title) {
                 $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
