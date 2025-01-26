@@ -78,9 +78,11 @@ class CartService {
                 ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
             }
 
-            $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
+            if($cart->vendingMachine){
+                $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
                 ->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)
                 ->setAttribute('image_path', $cart->vendingMachine->image_path);
+            }
     
             // Process each cart meta data
             $cartMetas = $cart->cartMetas->map(function ($meta) {
