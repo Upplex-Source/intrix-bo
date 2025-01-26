@@ -1381,10 +1381,10 @@ class OrderService
                 $order->payment_url = $url2;
                 $order->order_transaction_id = $orderTransaction->id;
 
-                // if( $order->userBundle ){
-                //     $order->status = 3;
-                //     $order->payment_url = null;
-                // }
+                if( $order->userBundle && $order->total_price == 0 ){
+                    $order->status = 3;
+                    $order->payment_url = null;
+                }
             }
 
             $order->save();
