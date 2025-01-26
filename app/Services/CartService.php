@@ -110,7 +110,7 @@ class CartService {
 
         foreach( $userCarts as $userCart ) {
             $userCart->cart_metas = $userCart->cartMetas;
-            $userCart->cartMetas = null;
+            // $userCart->cartMetas = null;
             // unset($userCart->cartMetas);
         }
     
