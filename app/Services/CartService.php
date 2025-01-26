@@ -107,6 +107,12 @@ class CartService {
     
             return $cart;
         });
+
+        foreach( $userCarts as $userCart ) {
+            $userCart->cart_metas = $userCart->cartMetas;
+            $userCart->cartMetas = null;
+            unset($userCart->cartMetas);
+        }
     
         // Return the response with the paginated carts data
         return response()->json([

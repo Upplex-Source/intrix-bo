@@ -549,6 +549,13 @@ class ProductBundleService
 
                 if( $productbundle->activeCarts ){
                     foreach( $productbundle->activeCarts as $cart ){
+
+                        if($cart->vendingMachine){
+                            $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
+                            ->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)
+                            ->setAttribute('image_path', $cart->vendingMachine->image_path);
+                        }
+
                         $cartMetas = $cart->cartMetas->map(function ($meta) {
                             return [
                                 'id' => $meta->id,
@@ -563,6 +570,12 @@ class ProductBundleService
                 
                         // Attach the cart metas to the cart object
                         $cart->cartMetas = $cartMetas;
+                    }
+
+                    foreach( $productbundle->activeCarts as $userCart ) {
+                        $userCart->cart_metas = $userOrder->cartMetas;
+                        $userCart->cartMetas = null;
+                        unset($userCart->cartMetas);
                     }
                 }
 
