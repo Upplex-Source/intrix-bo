@@ -32,6 +32,10 @@ class WalletTransaction extends Model
         return $this->belongsTo( User::class, 'user_id' );
     }
 
+    public function wallet() {
+        return $this->belongsTo( Wallet::class, 'user_wallet_id' );
+    }
+
     public function getConvertedRemarkAttribute() {
         if ( str_contains( $this->attributes['remark'], '}##' ) ) {
             $rawStatement = explode( '}##', $this->attributes['remark'] );
