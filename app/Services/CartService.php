@@ -569,22 +569,29 @@ class CartService {
 
                     $froyoCount = count($froyos);
                     $freeCount = $product->free_froyo_quantity;
+                    $chargableAmount = 0;
 
                     if ($froyoCount > $freeCount) {
                         $chargeableCount = $froyoCount - $freeCount;
                         $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
                         $totalDeduction = array_sum($chargeableFroyoPrices);
-
-
                         $orderPrice -= $totalDeduction;
                         $metaPrice -= $totalDeduction;
+
+                        $froyoPrices2 = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                        rsort($froyoPrices2);
+
+                        $chargeableCount = $froyoCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($froyoPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                        $chargableAmount += $totalDeduction2;
 
                     }else{
                         $totalDeduction = array_sum($froyoPrices);
                         $orderPrice -= $totalDeduction;
                         $metaPrice -= $totalDeduction;
                     }
-                    
+
                     // free item module
                     $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
                     asort($syrupPrices);
@@ -599,6 +606,14 @@ class CartService {
                         $totalDeduction = array_sum($chargeablesyrupPrices);
                         $orderPrice -= $totalDeduction;
                         $metaPrice -= $totalDeduction;
+
+                        $syrupPrices2 = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                        rsort($syrupPrices2);
+
+                        $chargeableCount = $syrupCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($syrupPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                        $chargableAmount += $totalDeduction2;
 
                     }else{
                         $totalDeduction = array_sum($syrupPrices);
@@ -620,6 +635,14 @@ class CartService {
                         $orderPrice -= $totalDeduction;
                         $metaPrice -= $totalDeduction;
 
+                        $toppingPrices2 = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                        rsort($toppingPrices2);
+
+                        $chargeableCount = $toppingCount - $freeCount;
+                        $chargeabletoppingPrices = array_slice($toppingPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeabletoppingPrices);
+                        $chargableAmount += $totalDeduction2;
+
                     }else{
                         $totalDeduction = array_sum($toppingPrices);
                         $orderPrice -= $totalDeduction;
@@ -627,6 +650,7 @@ class CartService {
                     }
 
                     $orderMeta->total_price = $metaPrice;
+                    $orderMeta->additional_charges = $chargableAmount;
                     $orderMeta->save();
                 }
             }
@@ -634,6 +658,7 @@ class CartService {
             // load relationship for later use
             $cart->load('cartMetas');
             $cart->subtotal = $orderPrice;
+
 
             if( $request->promo_code ){
                 $voucher = Voucher::where( 'id', $request->promo_code )
@@ -650,12 +675,13 @@ class CartService {
                         $getProductMeta = $cart->cartMetas
                         ->where('product_id', $adjustment->get_product)
                         ->sortBy('total_price')
-                        ->first();                    
+                        ->first();
 
                         if ($getProductMeta) {
                             $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
+                            $orderPrice += $getProductMeta->additional_charges;
                             $cart->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
-                            $getProductMeta->total_price = 0;
+                            $getProductMeta->total_price = 0 + $getProductMeta->additional_charges;
                             $getProductMeta->save();
                         }
                     }
@@ -1346,80 +1372,106 @@ class CartService {
                     $cartMeta->syrups = json_encode($syrups);
                     $cartMeta->toppings = json_encode($toppings);
                     $cartMeta->total_price = $metaPrice;
+                    $chargableAmount = 0;
 
                     // calculate free item
+                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                    asort($froyoPrices);
 
-                        $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
-                        asort($froyoPrices);
+                    $froyoCount = count($froyos);
+                    $freeCount = $product->free_froyo_quantity;
 
-                        $froyoCount = count($froyos);
-                        $freeCount = $product->free_froyo_quantity;
+                    if ($froyoCount > $freeCount) {
+                        $chargeableCount = $froyoCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
+                        $totalDeduction = array_sum($chargeableFroyoPrices);
+                        $cartMeta->total_price -= $totalDeduction;
+                        $orderPrice-= $totalDeduction;
 
-                        if ($froyoCount > $freeCount) {
-                            $chargeableCount = $froyoCount - $freeCount;
-                            $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
-                            $totalDeduction = array_sum($chargeableFroyoPrices);
-                            $cartMeta->total_price -= $totalDeduction;
-                            $orderPrice-= $totalDeduction;
+                        $froyoPrices2 = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                        rsort($froyoPrices2);
 
-                        }else{
-                            $totalDeduction = array_sum($froyoPrices);
-                            $cartMeta->total_price -= $totalDeduction;
-                            $orderPrice-= $totalDeduction;
-                        }
+                        $chargeableCount = $froyoCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($froyoPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                        $chargableAmount += $totalDeduction2;
+
+                    }else{
+                        $totalDeduction = array_sum($froyoPrices);
+                        $cartMeta->total_price -= $totalDeduction;
+                        $orderPrice-= $totalDeduction;
+                    }
+                
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                    asort($syrupPrices);
+
+                    $syrupCount = count($syrups);
+                    $freeCount = $product->free_syrup_quantity;
+
+                    if ($syrupCount > $freeCount) {
+                        $chargeableCount = $syrupCount - $freeCount;
+                        $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
+
+                        $totalDeduction = array_sum($chargeablesyrupPrices);
+                        $cartMeta->total_price -= $totalDeduction;
+                        $orderPrice-= $totalDeduction;
+
+                        $syrupPrices2 = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                        rsort($syrupPrices2);
+
+                        $chargeableCount = $syrupCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($syrupPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                        $chargableAmount += $totalDeduction2;
+
+                    }else{
+                        $totalDeduction = array_sum($syrupPrices);
+                        $cartMeta->total_price -= $totalDeduction;
+                        $orderPrice-= $totalDeduction;
+                    }
+                
+                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                    asort($toppingPrices);
                     
-                        $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
-                        asort($syrupPrices);
+                    $toppingCount = count($toppings);
+                    $freeCount = $product->free_topping_quantity;
 
-                        $syrupCount = count($syrups);
-                        $freeCount = $product->free_syrup_quantity;
+                    if ($toppingCount > $freeCount) {
+                        $chargeableCount = $toppingCount - $freeCount;
+                        $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
+                        $totalDeduction = array_sum($chargeabletoppingPrices);
 
-                        if ($syrupCount > $freeCount) {
-                            $chargeableCount = $syrupCount - $freeCount;
-                            $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
+                        $cartMeta->total_price -= $totalDeduction;
+                        $orderPrice-= $totalDeduction;
 
-                            $totalDeduction = array_sum($chargeablesyrupPrices);
-                            $cartMeta->total_price -= $totalDeduction;
-                            $orderPrice-= $totalDeduction;
+                        $toppingPrices2 = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                        rsort($toppingPrices2);
 
-                        }else{
-                            $totalDeduction = array_sum($syrupPrices);
-                            $cartMeta->total_price -= $totalDeduction;
-                            $orderPrice-= $totalDeduction;
-                        }
+                        $chargeableCount = $toppingCount - $freeCount;
+                        $chargeabletoppingPrices = array_slice($toppingPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeabletoppingPrices);
+                        $chargableAmount += $totalDeduction2;
 
-                    
-                        $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
-                        asort($toppingPrices);
-                        
-                        $toppingCount = count($toppings);
-                        $freeCount = $product->free_topping_quantity;
+                    }else{
+                        $totalDeduction = array_sum($toppingPrices);
+                        $cartMeta->total_price -= $totalDeduction;
+                        $orderPrice-= $totalDeduction;
+                    }
 
-                        if ($toppingCount > $freeCount) {
-                            $chargeableCount = $toppingCount - $freeCount;
-                            $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
-                            $totalDeduction = array_sum($chargeabletoppingPrices);
-
-                            $cartMeta->total_price -= $totalDeduction;
-                            $orderPrice-= $totalDeduction;
-
-                        }else{
-                            $totalDeduction = array_sum($toppingPrices);
-                            $cartMeta->total_price -= $totalDeduction;
-                            $orderPrice-= $totalDeduction;
-                        }
-
+                    $cartMeta->additional_charges = $chargableAmount;
                     $cartMeta->save();
+                    $updateCart->load( ['cartMetas'] );
 
-                    $orderPrice += $metaPrice;
-                    $updateCart->subtotal = $orderPrice;
-                    $updateCart->save();
+                    // $orderPrice += $metaPrice;
+                    // $updateCart->subtotal = $orderPrice;
+                    // $updateCart->save();
 
                     // update all other cartsMeta
                     $remainingCartMetas = $updateCart->cartMetas->where('id', '!=', $cartMeta->id);
                     foreach( $remainingCartMetas as $rcm ){
 
                         $rcm->total_price = 0;
+                        $rcm->additional_charges = 0;
                         $rcm->total_price += $rcm->product->price;
 
                         $froyoPrices = Froyo::whereIn('id', json_decode($rcm->froyos, true))->sum('price');
@@ -1430,9 +1482,97 @@ class CartService {
     
                         $toppingPrices = Topping::whereIn('id', json_decode($rcm->toppings, true))->sum('price');
                         $rcm->total_price += $toppingPrices;
+
+                        // calculate free item
+                        $froyoPrices = Froyo::whereIn('id', json_decode($rcm->froyos, true))->pluck('price', 'id')->toArray();
+                        asort($froyoPrices);
+
+                        $froyoCount = count(json_decode($rcm->froyos, true));
+                        $freeCount = $product->free_froyo_quantity;
+                        $chargableAmount = 0;
+
+                        if ($froyoCount > $freeCount) {
+                            $chargeableCount = $froyoCount - $freeCount;
+                            $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
+                            $totalDeduction = array_sum($chargeableFroyoPrices);
+                            $rcm->total_price -= $totalDeduction;
+
+                            $froyoPrices2 = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                            rsort($froyoPrices2);
+
+                            $chargeableCount = $froyoCount - $freeCount;
+                            $chargeableFroyoPrices = array_slice($froyoPrices2, 0, $chargeableCount, true);
+                            $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                            $rcm->additional_charges += $totalDeduction2;
+                            $rcm->save();
+
+                        }else{
+                            $totalDeduction = array_sum($froyoPrices);
+                            $rcm->total_price -= $totalDeduction;
+                            $rcm->save();
+                        }
+                        // free item module
+                        $syrupPrices = Syrup::whereIn('id', json_decode($rcm->syrups, true))->pluck('price', 'id')->toArray();
+                        asort($syrupPrices);
+                        
+                        $syrupCount = count(json_decode($rcm->syrups, true));
+                        $freeCount = $product->free_syrup_quantity;
+
+                        if ($syrupCount > $freeCount) {
+                            $chargeableCount = $syrupCount - $freeCount;
+                            $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
+
+                            $totalDeduction = array_sum($chargeablesyrupPrices);
+                            $rcm->total_price -= $totalDeduction;
+
+                            $syrupPrices2 = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                            rsort($syrupPrices2);
+                            
+                            $chargeableCount = $syrupCount - $freeCount;
+                            $chargeableFroyoPrices = array_slice($syrupPrices2, 0, $chargeableCount, true);
+                            $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                            $rcm->additional_charges += $totalDeduction2;
+                            $rcm->save();
+
+                        }else{
+                            $totalDeduction = array_sum($syrupPrices);
+                            $rcm->total_price -= $totalDeduction;
+                            $rcm->save();
+                        }
+
+                        $toppingPrices = Topping::whereIn('id', json_decode($rcm->toppings, true))->pluck('price', 'id')->toArray();
+                        asort($toppingPrices);
+                        
+                        $toppingCount = count(json_decode($rcm->toppings, true));
+                        $freeCount = $product->free_topping_quantity;
+
+                        if ($toppingCount > $freeCount) {
+                            $chargeableCount = $toppingCount - $freeCount;
+                            $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
+                            $totalDeduction = array_sum($chargeabletoppingPrices);
+
+                            $rcm->total_price -= $totalDeduction;
+
+                            $toppingPrices2 = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                            rsort($toppingPrices2);
+
+                            $chargeableCount = $toppingCount - $freeCount;
+                            $chargeabletoppingPrices = array_slice($toppingPrices2, 0, $chargeableCount, true);
+                            $totalDeduction2 = array_sum($chargeabletoppingPrices);
+                            $rcm->additional_charges += $totalDeduction2;
+                            $rcm->save();
+
+                        }else{
+                            $totalDeduction = array_sum($toppingPrices);
+                            $rcm->total_price -= $totalDeduction;
+                            $rcm->save();
+                        }
+
                         $rcm->save();
                     }
 
+                    $orderPrice = $updateCart->cartMetas->sum('total_price');
+                    $updateCart->save();
                     DB::commit();
                     $updateCart->load( ['cartMetas'] );
 
@@ -1457,7 +1597,8 @@ class CartService {
                                 if ($getProductMeta) {
                                     $updateCart->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                     $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
-                                    $getProductMeta->total_price = 0;
+                                    $orderPrice += $getProductMeta->additional_charges;
+                                    $getProductMeta->total_price = 0 + $getProductMeta->additional_charges;
                                     $getProductMeta->save();
                                 }
                             }
@@ -1535,6 +1676,7 @@ class CartService {
 
                     $froyoCount = count($froyos);
                     $freeCount = $product->free_froyo_quantity;
+                    $chargableAmount = 0;
 
                     if ($froyoCount > $freeCount) {
                         $chargeableCount = $froyoCount - $freeCount;
@@ -1545,6 +1687,15 @@ class CartService {
                         $metaPrice -= $totalDeduction;
                         $cartDeduction += $totalDeduction;
                         $discount++;
+
+                        $froyoPrices2 = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
+                        rsort($froyoPrices2);
+
+                        $chargeableCount = $froyoCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($froyoPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                        $chargableAmount += $totalDeduction2;
+
                     }else{
                         $totalDeduction = array_sum($froyoPrices);
                         $orderPrice -= $totalDeduction;
@@ -1568,6 +1719,14 @@ class CartService {
                         $metaPrice -= $totalDeduction;
                         $cartDeduction += $totalDeduction;
                         $discount++;
+
+                        $syrupPrices2 = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                        rsort($syrupPrices2);
+
+                        $chargeableCount = $syrupCount - $freeCount;
+                        $chargeableFroyoPrices = array_slice($syrupPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeableFroyoPrices);
+                        $chargableAmount += $totalDeduction2;
 
                     }else{
                         $totalDeduction = array_sum($syrupPrices);
@@ -1593,6 +1752,14 @@ class CartService {
                         $cartDeduction += $totalDeduction;
                         $discount++;
 
+                        $toppingPrices2 = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                        rsort($toppingPrices2);
+
+                        $chargeableCount = $toppingCount - $freeCount;
+                        $chargeabletoppingPrices = array_slice($toppingPrices2, 0, $chargeableCount, true);
+                        $totalDeduction2 = array_sum($chargeabletoppingPrices);
+                        $chargableAmount += $totalDeduction2;
+
                     }else{
                         $totalDeduction = array_sum($toppingPrices);
                         $orderPrice -= $totalDeduction;
@@ -1602,6 +1769,7 @@ class CartService {
                     }
 
                     $orderMeta->total_price = $metaPrice;
+                    $orderMeta->additional_charges = $chargableAmount;
 
                     $orderMeta->save();
                 }
@@ -1630,7 +1798,7 @@ class CartService {
                             if ($getProductMeta) {
                                 $orderPrice -= Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
                                 $updateCart->discount = Helper::numberFormatV2($getProductMeta->total_price,2,false,true);
-                                $getProductMeta->total_price = 0;
+                                $getProductMeta->total_price = 0 + $getProductMeta->additional_charges;
                                 $getProductMeta->save();
                             }
                         }
@@ -1696,6 +1864,7 @@ class CartService {
             $updateCart->total_price += Helper::numberFormatV2($updateCart->tax,2,false,true);
 
             $updateCart->save();
+
             DB::commit();
 
         } catch ( \Throwable $th ) {

@@ -32,6 +32,7 @@ class OrderMeta extends Model
         'froyos',
         'syrups',
         'toppings',
+        'additional_charges',
     ];
 
     public function order() {
@@ -146,6 +147,7 @@ class OrderMeta extends Model
         'froyos',
         'syrups',
         'toppings',
+        'additional_charges',
     ];
 
     protected static $logName = 'order_metas';

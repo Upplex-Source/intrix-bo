@@ -37,6 +37,7 @@ class Order extends Model
         'user_bundle_id',
         'tax',
         'subtotal',
+        'additional_charges',
     ];
 
     protected $hidden = [
@@ -115,6 +116,7 @@ class Order extends Model
         'user_bundle_id',
         'tax',
         'subtotal',
+        'additional_charges',
     ];
 
     protected static $logName = 'orders';

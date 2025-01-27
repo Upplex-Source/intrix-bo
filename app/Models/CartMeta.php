@@ -34,6 +34,7 @@ class CartMeta extends Model
         'toppings',
         'total_price',
         'discount',
+        'additional_charges',
     ];
 
     public function cart() {
@@ -149,6 +150,7 @@ class CartMeta extends Model
         'toppings',
         'total_price',
         'discount',
+        'additional_charges',
     ];
 
     protected static $logName = 'cart_metas';
