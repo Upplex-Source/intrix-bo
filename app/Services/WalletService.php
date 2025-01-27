@@ -313,6 +313,10 @@ class WalletService
             $walletTransactions->whereHas('wallet', function ($query) {
                 $query->where('type', 2);
             });
+        }else{
+            $walletTransactions->whereHas('wallet', function ($query) {
+                $query->where('type', 1);
+            });
         }
 
         $walletTransactions = $walletTransactions->paginate( empty( $request->per_page ) ? 10 : $request->per_page );
