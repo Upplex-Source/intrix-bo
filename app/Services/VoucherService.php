@@ -932,6 +932,16 @@ class VoucherService
                 ]
             ], 422 );
 
+        }        
+        
+        if ( $voucher->total_claimable <= 0 ) {
+            return response()->json( [
+                'message_key' => 'voucher_fully_claimed',
+                'message' => __('voucher.voucher_fully_claimed'),
+                'errors' => [
+                    'voucher' => __('voucher.voucher_fully_claimed')
+                ]
+            ], 422 );
         }
 
         WalletService::transact( $userPoints, [

@@ -586,45 +586,45 @@ class CartService {
                     }
                     
                     // free item module
-                        $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
-                        asort($syrupPrices);
-                        
-                        $syrupCount = count($syrups);
-                        $freeCount = $product->free_syrup_quantity;
-
-                        if ($syrupCount > $freeCount) {
-                            $chargeableCount = $syrupCount - $freeCount;
-                            $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
-
-                            $totalDeduction = array_sum($chargeablesyrupPrices);
-                            $orderPrice -= $totalDeduction;
-                            $metaPrice -= $totalDeduction;
-
-                        }else{
-                            $totalDeduction = array_sum($syrupPrices);
-                            $orderPrice -= $totalDeduction;
-                            $metaPrice -= $totalDeduction;
-                        }
+                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
+                    asort($syrupPrices);
                     
-                        $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
-                        asort($toppingPrices);
-                        
-                        $toppingCount = count($toppings);
-                        $freeCount = $product->free_topping_quantity;
+                    $syrupCount = count($syrups);
+                    $freeCount = $product->free_syrup_quantity;
 
-                        if ($toppingCount > $freeCount) {
-                            $chargeableCount = $toppingCount - $freeCount;
-                            $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
-                            $totalDeduction = array_sum($chargeabletoppingPrices);
+                    if ($syrupCount > $freeCount) {
+                        $chargeableCount = $syrupCount - $freeCount;
+                        $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
 
-                            $orderPrice -= $totalDeduction;
-                            $metaPrice -= $totalDeduction;
+                        $totalDeduction = array_sum($chargeablesyrupPrices);
+                        $orderPrice -= $totalDeduction;
+                        $metaPrice -= $totalDeduction;
 
-                        }else{
-                            $totalDeduction = array_sum($toppingPrices);
-                            $orderPrice -= $totalDeduction;
-                            $metaPrice -= $totalDeduction;
-                        }
+                    }else{
+                        $totalDeduction = array_sum($syrupPrices);
+                        $orderPrice -= $totalDeduction;
+                        $metaPrice -= $totalDeduction;
+                    }
+                
+                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
+                    asort($toppingPrices);
+                    
+                    $toppingCount = count($toppings);
+                    $freeCount = $product->free_topping_quantity;
+
+                    if ($toppingCount > $freeCount) {
+                        $chargeableCount = $toppingCount - $freeCount;
+                        $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
+                        $totalDeduction = array_sum($chargeabletoppingPrices);
+
+                        $orderPrice -= $totalDeduction;
+                        $metaPrice -= $totalDeduction;
+
+                    }else{
+                        $totalDeduction = array_sum($toppingPrices);
+                        $orderPrice -= $totalDeduction;
+                        $metaPrice -= $totalDeduction;
+                    }
 
                     $orderMeta->total_price = $metaPrice;
                     $orderMeta->save();
