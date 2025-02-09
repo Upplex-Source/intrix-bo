@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddUserBundleIdToOrdersTable extends Migration
+class AddProductVariantIdToOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class AddUserBundleIdToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             //
-            $table->foreignId('user_bundle_id')->nullable()->constrained('user_bundles')->onUpdate( 'restrict')->onDelete('cascade');
+            $table->foreignId('product_variant_id')->nullable()->constrained('product_variants')->onUpdate( 'restrict')->onDelete('cascade');
         });
     }
 
@@ -27,9 +27,8 @@ class AddUserBundleIdToOrdersTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            //
-            $table->dropForeign(['user_bundle_id']);
-            $table->dropColumn('user_bundle_id');
+            $table->dropForeign(['product_variant_id']);
+            $table->dropColumn('product_variant_id');
         });
     }
 }

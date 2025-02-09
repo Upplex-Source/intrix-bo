@@ -9,7 +9,7 @@
         display: none
     }
     .page-title{
-        color: #aad418;
+        color: #F79932;
         margin-bottom: -10px;
     }
 </style>

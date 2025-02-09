@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->string('postcode')->nullable();
             $table->tinyInteger('account_type')->nullable();
             $table->string('status')->default(10);
+            $table->date('date_of_birth')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

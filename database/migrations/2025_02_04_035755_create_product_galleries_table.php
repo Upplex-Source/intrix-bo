@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class createProductBundleMetasTable extends Migration
+class CreateProductGalleriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class createProductBundleMetasTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_bundle_metas', function (Blueprint $table) {
+        Schema::create('product_galleries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->nullable()->constrained('products')->onUpdate( 'restrict')->onDelete('cascade');
-            $table->integer('quantity')->nullable()->default(0);
+            $table->foreignId( 'product_variant_id' )->constrained( 'product_variants' )->onUpdate( 'restrict' )->onDelete( 'cascade' );
+            $table->string('image')->nullable();
+            $table->tinyInteger('status')->default(10);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class createProductBundleMetasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_bundle_metas');
+        Schema::dropIfExists('product_galleries');
     }
 }

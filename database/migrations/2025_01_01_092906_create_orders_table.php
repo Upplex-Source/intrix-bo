@@ -16,10 +16,7 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->nullable()->constrained('products')->onUpdate( 'restrict')->onDelete('cascade');
-            $table->foreignId('product_bundle_id')->nullable()->constrained('product_bundles')->onUpdate( 'restrict')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onUpdate( 'restrict')->onDelete('cascade');
-            $table->foreignId('vending_machine_id')->nullable()->constrained('vending_machines')->onUpdate( 'restrict')->onDelete('cascade');
-            $table->foreignId('outlet_id')->nullable()->constrained('outlets')->onUpdate( 'restrict')->onDelete('cascade');
             $table->decimal('total_price', 12, 2)->nullable()->default(0);
             $table->decimal('discount', 12, 2)->nullable()->default(0);
             $table->string('reference', 100)->nullable();

@@ -21,17 +21,11 @@ class CartMeta extends Model
     protected $fillable = [
         'cart_id',
         'product_id',
-        'product_bundle_id',
+        'product_variant_id',
         'froyo_id',
         'syrup_id',
         'topping_id',
-        'froyo_quantity',
-        'syrup_quantity',
-        'topping_quantity',
         'status',
-        'froyos',
-        'syrups',
-        'toppings',
         'total_price',
         'discount',
         'additional_charges',
@@ -45,8 +39,8 @@ class CartMeta extends Model
         return $this->belongsTo( Product::class, 'product_id' );
     }
 
-    public function productBundle() {
-        return $this->belongsTo( ProductBundle::class, 'product_bundle_id' );
+    public function productVariant() {
+        return $this->belongsTo( ProductVariant::class, 'product_variant_id' );
     }
 
     public function froyo()
@@ -137,17 +131,11 @@ class CartMeta extends Model
     protected static $logAttributes = [
         'cart_id',
         'product_id',
-        'product_bundle_id',
+        'product_variant_id',
         'froyo_id',
         'syrup_id',
         'topping_id',
-        'froyo_quantity',
-        'syrup_quantity',
-        'topping_quantity',
         'status',
-        'froyos',
-        'syrups',
-        'toppings',
         'total_price',
         'discount',
         'additional_charges',

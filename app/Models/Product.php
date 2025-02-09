@@ -25,15 +25,19 @@ class Product extends Model
         'price',
         'image',
         'discount_price',
-        'default_froyo_quantity',
-        'default_syrup_quantity',
-        'default_topping_quantity',
         'status',
-        'free_froyo_quantity',
-        'free_syrup_quantity',
-        'free_topping_quantity',
         'product_type',
     ];
+    
+    public function productVariants()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id');
+    }
+    
+    public function productGalleries()
+    {
+        return $this->hasMany(ProductGallery::class, 'product_id');
+    }
 
     public function getImagePathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
@@ -56,13 +60,7 @@ class Product extends Model
         'price',
         'image',
         'discount_price',
-        'default_froyo_quantity',
-        'default_syrup_quantity',
-        'default_topping_quantity',
         'status',
-        'free_froyo_quantity',
-        'free_syrup_quantity',
-        'free_topping_quantity',
         'product_type',
     ];
 

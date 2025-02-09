@@ -20,24 +20,27 @@ class ProductVariant extends Model
 
     protected $fillable = [
         'product_id',
-        'image',
         'title',
         'description',
+        'color',
+        'image',
         'price',
-        'sku',
-        'quantity',
+        'discount_price',
+        'installment_price',
+        'installment_rate',
         'status',
+        'brochure',
+        'sku',
+        'specification',
+        'features',
+        'whats_included',
+        'upfront',
+        'monthly',
+        'outright',
     ];
 
     public function product() {
         return $this->belongsTo( Product::class, 'product_id' );
-    }
-
-    public function warehouses()
-    {
-        return $this->belongsToMany(Warehouse::class, 'warehouses_variants', 'variant_id', 'warehouse_id')
-                    ->withPivot('quantity', 'price', 'status')
-                    ->withTimestamps();
     }
 
     public function getPathAttribute() {
@@ -54,13 +57,23 @@ class ProductVariant extends Model
 
     protected static $logAttributes = [
         'product_id',
-        'image',
         'title',
         'description',
+        'color',
+        'image',
         'price',
-        'sku',
-        'quantity',
+        'discount_price',
+        'installment_price',
+        'installment_rate',
         'status',
+        'brochure',
+        'sku',
+        'specification',
+        'features',
+        'whats_included',
+        'upfront',
+        'monthly',
+        'outright',
     ];
 
     protected static $logName = 'product_variants';

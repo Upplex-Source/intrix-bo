@@ -21,9 +21,8 @@ class Order extends Model
     protected $fillable = [
         'product_id',
         'order_transaction_id',
-        'product_bundle_id',
+        'product_variant_id',
         'user_id',
-        'vending_machine_id',
         'outlet_id',
         'total_price',
         'discount',
@@ -38,6 +37,9 @@ class Order extends Model
         'tax',
         'subtotal',
         'additional_charges',
+        'guest_id',
+        'payment_plan',
+        'remarks',
     ];
 
     protected $hidden = [
@@ -55,6 +57,14 @@ class Order extends Model
         ];
 
         return $discountTypes[$this->attributes['status']] ?? null;
+    }
+
+    public function guest() {
+        return $this->belongsTo( Guest::class, 'guest_id' );
+    }
+
+    public function productVariant() {
+        return $this->belongsTo( ProductVariant::class, 'product_variant_id' );
     }
 
     public function voucher() {
@@ -100,9 +110,8 @@ class Order extends Model
     protected static $logAttributes = [
         'product_id',
         'order_transaction_id',
-        'product_bundle_id',
+        'product_variant_id',
         'user_id',
-        'vending_machine_id',
         'outlet_id',
         'total_price',
         'discount',
@@ -117,6 +126,9 @@ class Order extends Model
         'tax',
         'subtotal',
         'additional_charges',
+        'guest_id',
+        'payment_plan',
+        'remarks',
     ];
 
     protected static $logName = 'orders';

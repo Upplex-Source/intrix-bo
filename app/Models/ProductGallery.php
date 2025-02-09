@@ -19,13 +19,13 @@ class ProductGallery extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'product_id',
+        'product_variant_id',
         'image',
         'status',
     ];
 
-    public function product() {
-        return $this->belongsTo( Product::class, 'product_id' );
+    public function productVariant() {
+        return $this->belongsTo( ProductVariant::class, 'product_variant_id' );
     }
 
     public function getImagePathAttribute() {
@@ -41,7 +41,7 @@ class ProductGallery extends Model
     }
 
     protected static $logAttributes = [
-        'product_id',
+        'product_variant_id',
         'image',
         'status',
     ];

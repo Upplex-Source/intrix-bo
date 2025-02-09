@@ -55,55 +55,6 @@ $product_create = 'product_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-
-                <div class="mb-3 row">
-                    <label for="{{ $product_create }}_default_froyo_quantity" class="col-sm-5 form-label">{{ __( 'product.default_froyo_quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_create }}_default_froyo_quantity">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="{{ $product_create }}_default_syrup_quantity" class="col-sm-5 form-label">{{ __( 'product.default_syrup_quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_create }}_default_syrup_quantity">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="{{ $product_create }}_default_topping_quantity" class="col-sm-5 form-label">{{ __( 'product.default_topping_quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_create }}_default_topping_quantity">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="{{ $product_create }}_free_froyo_quantity" class="col-sm-5 form-label">{{ __( 'product.free_froyo_quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_create }}_free_froyo_quantity">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="{{ $product_create }}_free_syrup_quantity" class="col-sm-5 form-label">{{ __( 'product.free_syrup_quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_create }}_free_syrup_quantity">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="{{ $product_create }}_free_topping_quantity" class="col-sm-5 form-label">{{ __( 'product.free_topping_quantity' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_create }}_free_topping_quantity">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-            
             
                 <div class="mb-3">
                     <label>{{ __( 'product.image' ) }}</label>

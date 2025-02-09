@@ -83,10 +83,10 @@ class SettingService {
         DB::beginTransaction();
 
         $validator = Validator::make( $request->all(), [
-            'convertion_rate' => [ 'required', 'numeric', 'gte:0' ],
-            'referral_register_bonus_points' => [ 'required', 'numeric', 'gte:0' ],
-            'referral_spending_bonus_points' => [ 'required', 'numeric', 'gte:0' ],
-            'register_bonus' => [ 'required', 'numeric', 'gte:0' ],
+            'convertion_rate' => [ 'nullable', 'numeric', 'gte:0' ],
+            'referral_register_bonus_points' => [ 'nullable', 'numeric', 'gte:0' ],
+            'referral_spending_bonus_points' => [ 'nullable', 'numeric', 'gte:0' ],
+            'register_bonus' => [ 'nullable', 'numeric', 'gte:0' ],
             'taxes' => [ 'required', 'numeric', 'gte:0' ],
         ] );
 
@@ -103,10 +103,10 @@ class SettingService {
         try {
 
             $options = [
-                'CONVERTION_RATE' => $request->convertion_rate,
-                'REFERRAL_REGISTER' => $request->referral_register_bonus_points,
-                'REFERRAL_SPENDING' => $request->referral_spending_bonus_points,
-                'REGISTER_BONUS' => $request->register_bonus,
+                // 'CONVERTION_RATE' => $request->convertion_rate,
+                // 'REFERRAL_REGISTER' => $request->referral_register_bonus_points,
+                // 'REFERRAL_SPENDING' => $request->referral_spending_bonus_points,
+                // 'REGISTER_BONUS' => $request->register_bonus,
                 'TAXES' => $request->taxes,
             ];
             

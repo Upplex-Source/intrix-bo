@@ -20,10 +20,8 @@ class Cart extends Model
 
     protected $fillable = [
         'product_id',
-        'product_bundle_id',
+        'product_variant_id',
         'user_id',
-        'vending_machine_id',
-        'outlet_id',
         'total_price',
         'discount',
         'reference',
@@ -36,6 +34,9 @@ class Cart extends Model
         'tax',
         'subtotal',
         'additional_charges',
+        'guest_id',
+        'payment_plan',
+        'remarks',
     ];
 
     protected $hidden = [
@@ -45,6 +46,10 @@ class Cart extends Model
         'product_bundle_id',
         'outlet_id',
     ];
+
+    public function guest() {
+        return $this->belongsTo( Guest::class, 'guest_id' );
+    }
 
     public function voucher() {
         return $this->belongsTo( Voucher::class, 'voucher_id' );
@@ -58,8 +63,8 @@ class Cart extends Model
         return $this->belongsTo( UserBundle::class, 'user_bundle_id' );
     }
 
-    public function productBundle() {
-        return $this->belongsTo( ProductBundle::class, 'product_bundle_id' );
+    public function productVariant() {
+        return $this->belongsTo( ProductVariant::class, 'product_variant_id' );
     }
 
     public function user() {
@@ -92,10 +97,8 @@ class Cart extends Model
 
     protected static $logAttributes = [
         'product_id',
-        'product_bundle_id',
+        'product_variant_id',
         'user_id',
-        'vending_machine_id',
-        'outlet_id',
         'total_price',
         'discount',
         'reference',
@@ -108,6 +111,9 @@ class Cart extends Model
         'tax',
         'subtotal',
         'additional_charges',
+        'guest_id',
+        'payment_plan',
+        'remarks',
     ];
 
     protected static $logName = 'carts';

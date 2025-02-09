@@ -17,6 +17,7 @@ $setting = 'setting';
                         <hr>
                         <div class="row">
                             <div class="col-6">
+                                @if ( 1 == 2 )
                                 <div class="mb-3 row">
                                     <label for="{{ $setting }}_convertion_rate" class="col-sm-5 col-form-label">{{ __( 'setting.points_convertion' ) }} (RM 1 SPEND = <span id="convertion_rate_preview"></span> Points)</label>
                                     <div class="col-sm-7">
@@ -45,6 +46,7 @@ $setting = 'setting';
                                         <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
+                                @endif
                                 <div class="mb-3 row">
                                     <label for="{{ $setting }}_taxes" class="col-sm-5 col-form-label">{{ __( 'setting.taxes' ) }}</label>
                                     <div class="col-sm-7">
