@@ -1105,7 +1105,7 @@ class OrderService
 
             $merchantKey = config('services.ipay88.merchant_key');
             $merchantCode = config('services.ipay88.merchant_code');
-
+            dd($order);
             // $payment = new Payment();
             // return redirect($payment->createPayment($order));
 
@@ -1125,46 +1125,46 @@ class OrderService
                 'lang' => $request->setLang( 'UTF-8' ),
                 // 'signature' => $request->getSignature(),
     			'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
-                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callabck_url')),
-                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callabck_url')),
+                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
+                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
             );
 
             $url2= "";
             $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
-            // try{ 
-            //     $ch = curl_init();
-            //     curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
-            //     curl_setopt($ch, CURLOPT_POST, true);
-            //     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-            //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            try{ 
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
-            //     // Execute cURL request
-            //     $response = curl_exec($ch);
-            //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            //     curl_close($ch);
+                // Execute cURL request
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
         
-            //     if ($httpCode == 200) {
+                if ($httpCode == 200) {
 
-            //         echo $response;
+                    echo $response;
 
-            //         // return response()->json([
-            //         //     'success' => true,
-            //         //     'message' => 'Payment submitted successfully.',
-            //         //     'ipay88_response' => $response
-            //         // ]);
-            //     } else {
-            //         return response()->json([
-            //             'success' => false,
-            //             'message' => 'Failed to submit payment.',
-            //             'ipay88_response' => $response
-            //         ], 500);
-            //     }
-            // } catch (\Exception $e) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Error: ' . $e->getMessage(),
-            //     ], 500);
-            // }
+                    // return response()->json([
+                    //     'success' => true,
+                    //     'message' => 'Payment submitted successfully.',
+                    //     'ipay88_response' => $response
+                    // ]);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Failed to submit payment.',
+                        'ipay88_response' => $response
+                    ], 500);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error: ' . $e->getMessage(),
+                ], 500);
+            }
 
             $orderTransaction = OrderTransaction::create( [
                 'order_id' => $order->id,

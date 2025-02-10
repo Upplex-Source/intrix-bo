@@ -60,6 +60,7 @@
                                     </li>
                                 @endcan
 
+                                @if( 1 == 2 )
                                 @can( 'view Wallets' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WalletController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.wallet.index' ) }}" class="nk-menu-link">
@@ -77,6 +78,7 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @endif
 
                                 @can( 'view Products' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' ? 'active current-page' : '' }}">

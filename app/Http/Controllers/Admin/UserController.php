@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Services\{
     UserService,
+    GuestService,
 };
 
 class UserController extends Controller
@@ -85,28 +86,28 @@ class UserController extends Controller
         return view( 'admin.main' )->with( $this->data );
     }
 
-    public function allUsers( Request $request ) {
+    public function allGuests( Request $request ) {
 
-        return UserService::allUsers( $request );
+        return GuestService::allGuests( $request );
     }
 
-    public function oneUser( Request $request ) {
+    public function oneGuest( Request $request ) {
 
-        return UserService::oneUser( $request );
+        return GuestService::oneGuest( $request );
     }
 
-    public function createUser( Request $request ) {
+    public function createGuest( Request $request ) {
 
-        return UserService::createUser( $request );
+        return GuestService::createGuest( $request );
     }
 
-    public function updateUser( Request $request ) {
+    public function updateGuest( Request $request ) {
 
-        return UserService::updateUser( $request );
+        return GuestService::updateGuest( $request );
     }
 
-    public function updateUserStatus( Request $request ) {
+    public function updateGuestStatus( Request $request ) {
 
-        return UserService::updateUserStatus( $request );
+        return GuestService::updateGuestStatus( $request );
     }
 }

@@ -167,7 +167,7 @@ $user_create = 'user_create';
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
-                url: '{{ route( 'admin.user.createUser' ) }}',
+                url: '{{ route( 'admin.guest.createGuest' ) }}',
                 type: 'POST',
                 data: formData,
                 processData: false,

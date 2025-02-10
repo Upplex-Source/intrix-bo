@@ -3,6 +3,7 @@
         <div class="nk-block-head-content">
             <h3 class="nk-block-title page-title">{{ __( 'template.users' ) }}</h3>
         </div><!-- .nk-block-head-content -->
+        @if( 1 == 2 )
         @can( 'add users' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
@@ -17,6 +18,7 @@
             </div>
         </div><!-- .nk-block-head-content -->
         @endcan
+        @endif
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
@@ -98,11 +100,11 @@ var statusMapper = @json( $data['status'] ),
             }
         },
         ajax: {
-            url: '{{ route( 'admin.user.allUsers' ) }}',
+            url: '{{ route( 'admin.guest.allGuests' ) }}',
             data: {
                 '_token': '{{ csrf_token() }}',
             },
-            dataSrc: 'users',
+            dataSrc: 'guests',
         },
         lengthMenu: [[10, 25],[10, 25]],
         order: [[ 2, 'desc' ]],
@@ -110,7 +112,7 @@ var statusMapper = @json( $data['status'] ),
             { data: null },
             { data: null },
             { data: 'created_at' },
-            { data: 'username' },
+            { data: 'fullname' },
             { data: 'email' },
             { data: 'phone_number' },
             { data: 'status' },
