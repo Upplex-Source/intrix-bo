@@ -16,6 +16,8 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "hashids/hashids": "^4.1",
+        "karyamedia/ipay88": "dev-master",
+        "kyrax324/laravel-ipay88": "^1.0",
         "laravel/fortify": "^1.16",
         "laravel/framework": "^8.0",
         "laravel/sanctum": "^2.15",

@@ -49,15 +49,18 @@ return [
         'receiver' => env( 'MAIL_RECEIVER' )
     ],
 
-    'eghl' => [
-        'test_url' => env( 'EGHL_TEST_URL' ),
-        'merchant_id' => env( 'EGHL_MERCHANT_ID' ),
-        'merchant_password' => env( 'EGHL_MERCHANT_PASSWORD' ),
-        'staging_callabck_url' => env( 'EGHL_STAGING_CALLBACK' ),
-        'live_callabck_url' => env( 'EGHL_STAGING_LIVE' ),
-        'staging_success_url' => env( 'EGHL_STAGING_SUCCESS_URL' ),
-        'live_success_url' => env( 'EGHL_LIVE_SUCCESS_URL' ),
-        'staging_failed_url' => env( 'EGHL_STAGING_FAILED_URL' ),
-        'live_failed_url' => env( 'EGHL_LIVE_FAILED_URL' ),
+    'ipay88' => [
+        'env' => env( 'IPAY88_ENV' ),
+        'test_url' => env( 'IPAY88_TEST_URL' ),
+        'merchant_code' => env( 'IPAY88_MERCHANT_CODE' ),
+        'merchant_key' => env( 'IPAY88_MERCHANT_KEY' ),
+        'staging_payment_url' => env( 'IPAY88_STAGING_PAYMENT_URL' ),
+        'live_payment_url' => env( 'IPAY88_LIVE_PAYMENT_URL' ),
+        'staging_callabck_url' => env( 'IPAY88_STAGING_CALLBACK' ),
+        'live_callabck_url' => env( 'IPAY88_LIVE_CALLBACK' ),
+        'staging_success_url' => env( 'IPAY88_STAGING_SUCCESS_URL' ),
+        'live_success_url' => env( 'IPAY88_LIVE_SUCCESS_URL' ),
+        'staging_failed_url' => env( 'IPAY88_STAGING_FAILED_URL' ),
+        'live_failed_url' => env( 'IPAY88_LIVE_FAILED_URL' ),
     ]
 ];

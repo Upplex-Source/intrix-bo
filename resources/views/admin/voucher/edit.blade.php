@@ -53,7 +53,6 @@ $voucherTypes = $data['voucher_type'];
                     <label for="{{ $voucher_edit }}_voucher_type" class="col-sm-5 col-form-label">{{ __( 'voucher.voucher_type' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $voucher_edit }}_voucher_type">
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'voucher.voucher_type' ) ] ) }}</option>
                             @forEach( $voucherTypes as $key => $voucherType )
                                 <option value="{{ $key }}">{{ $voucherType }}</option>
                             @endforeach
@@ -192,16 +191,6 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                
-                <div class="mb-3 row">
-                    <label for="{{ $voucher_edit}}_points_required" class="col-sm-5 col-form-label">{{ __( 'voucher.points_required' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $voucher_edit}}_points_required">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
-
-                
                 
                 <div class="mb-3 row">
                     <label for="{{ $voucher_edit}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>

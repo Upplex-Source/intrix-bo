@@ -115,7 +115,7 @@ class VoucherService
                 'description' => $request->description,
                 'promo_code' => $request->promo_code,
                 'total_claimable' => $request->total_claimable,
-                'points_required' => $request->points_required,
+                'points_required' => 0,
                 'start_date' => $request->start_date,
                 'expired_date' => $request->expired_date,
                 'buy_x_get_y_adjustment' => $request->adjustment_data,
@@ -253,7 +253,7 @@ class VoucherService
             $updateVoucher->description = $request->description;
             $updateVoucher->promo_code = $request->promo_code;
             $updateVoucher->total_claimable = $request->total_claimable;
-            $updateVoucher->points_required = $request->points_required;
+            $updateVoucher->points_required = 0;
             $updateVoucher->start_date = $request->start_date;
             $updateVoucher->expired_date = $request->expired_date;
             $updateVoucher->usable_amount = $request->usable_amount;

@@ -26,14 +26,16 @@ use App\Models\{
     Voucher,
     VoucherUsage,
     UserVoucher,
-    ProductBundle,
+    ProductVariant,
     UserBundle,
     UserBundleHistory,
     UserBundleHistoryMeta,
     UserBundleTransaction,
+    Guest,
 };
 
 use Helper;
+use IPay88\Request\RequestBuilder as IPay88RequestBuilder;
 
 use Carbon\Carbon;
 
@@ -898,7 +900,8 @@ class OrderService
     public static function checkout( $request ) {
 
         $validator = Validator::make($request->all(), [
-            'cart' => ['required', 'exists:carts,id'],
+            'session_key' => ['required', 'exists:carts,session_key'],
+            'cart_item' => ['required', 'exists:cart_metas,id'],
             'promo_code' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
@@ -910,25 +913,34 @@ class OrderService
                     }
                 },
             ],
-            'payment_method' => ['nullable', 'in:1,2'],
+            'fullname' => ['required'],
+            'company_name' => ['nullable'],
+            'email' => ['required'],
+            'phone_number' => ['required'],
+            'address_1' => ['required'],
+            'address_2' => ['nullable'],
+            'city' => ['required'],
+            'state' => ['required'],
+            'postcode' => ['required'],
+            'country' => ['required'],
+            'remarks' => ['nullable'],
+            'payment_plan' => ['nullable'],
         ]);
 
         $user = auth()->user();
 
-        $query = Cart::where('user_id', $user->id)
-        ->where('id', $request->cart)
-        ->where('status',10);
+        $query = Cart::where('status',10);
+
+        if ($request->has('id')) {
+            $query->where('id', $request->id);
+        }
+    
+        if ($request->has('session_key')) {
+            $query->where('session_key', $request->session_key);
+        }
     
         $userCart = $query->first();
-        
-        if (!$userCart) {
-            return response()->json([
-                'message' => '',
-                'message_key' => 'cart_is_empty',
-                'carts' => []
-            ], 422);
-        }
-        
+
         $validator->validate();
 
         if( $request->promo_code ){
@@ -938,244 +950,82 @@ class OrderService
                 return $test;
             }
         }
-        
-        // check wallet balance 
-        $userWallet = $user->wallets->where('type',1)->first();
-
-        if( $request->payment_method == 1 ){
-
-            if (!$userWallet) {
-                return response()->json([
-                    'message' => 'Wallet Not Found',
-                    'message_key' => 'wallet_not_found',
-                ]);
-            }else{
-                if( $request->promo_code ){
-                    $voucher = Voucher::where( 'id', $request->promo_code )
-                    ->orWhere('promo_code', $request->promo_code)->first();
-                    $orderPrice = $userCart->total_price;
-    
-                    if ( $voucher->discount_type == 3 ) {
-    
-                        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-            
-                        $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
-            
-                        if ( $x >= $adjustment->buy_quantity ) {
-                            $getProductMeta = $userCart->cartMetas
-                            ->where('product_id', $adjustment->get_product)
-                            ->sortBy('total_price')
-                            ->first();                    
-    
-                            if ($getProductMeta) {
-                                $getProduct = Product::find($adjustment->get_product);
-                                if ($getProduct && $getProduct->price) {
-                                    $orderPrice -= $getProduct->price;
-                                }
-                            }
-                        }
-            
-                    } else if ( $voucher->discount_type == 2 ) {
-    
-                        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-    
-                        $x = $userCart->total_price;
-    
-                        if ( $x >= $adjustment->buy_quantity ) {
-                            $orderPrice -= floatVal($adjustment->discount_quantity);
-                        }
-            
-                    } else {
-    
-                        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-            
-                        $x = $userCart->total_price;
-            
-                        if ( $x >= $adjustment->buy_quantity ) {
-                            $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
-                        }
-                    }
-    
-                    if( $userWallet->balance < $orderPrice ){
-                        return response()->json([
-                            'message' => 'Balance is not enough, please top up to continue',
-                            'message_key' => 'insufficient_balance',
-                            'errors' => [
-                                'wallet' => 'Balance is not enough, please top up to continue',
-                            ]
-                        ], 422);
-                    }
-    
-                }else{
-                    if( $userWallet->balance < $userCart->total_price ){
-                        return response()->json([
-                            'message' => 'Balance is not enough, please top up to continue',
-                            'message_key' => 'insufficient_balance',
-                            'errors' => [
-                                'wallet' => 'Balance is not enough, please top up to continue',
-                            ]
-                        ], 422);
-                    }
-                }
-            }
-        }
 
         DB::beginTransaction();
         try {
         
+            $subtotal = 0;
             $orderPrice = 0;
-            $user = auth()->user();
-            $userWallet = $user->wallets->where( 'type', 1 )->first();
-            $bundle = ProductBundle::where( 'id', $userCart->product_bundle_id )->where( 'status', 10 )->first();
-            $userBundle = UserBundle::where( 'id', $userCart->user_bundle_id )->where( 'status', 10 )->first();
+
+            $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
+
             $taxSettings = Option::getTaxesSettings();
 
+            $guest = Guest::where('email', $request->email)->first() 
+                ?? $userCart->guest 
+                ?? Guest::create([
+                'fullname' => $request->fullname,
+                'email' => $request->email,
+                'session_key' => $userCart->session_key,
+                'address_1' => $request->address_1,
+                'address_2' => $request->address_2,
+                'city' => $request->city,
+                'state' => $request->state,
+                'postcode' => $request->postcode,
+                'calling_code' => '+60',
+                'status' => 10,
+                'phone_number' => $request->phone_number,  
+                'ip_address' => $request->ip(), // Get client's IP address
+                'user_agent' => $request->header('User-Agent'), // Get client's user agent
+                'last_visit' => now(), // Store current timestamp
+                'country' => $request->country,
+                'company_name' => $request->company_name,
+            ] );
+
             $order = Order::create( [
-                'user_id' => $user->id,
+                'user_id' => null,
                 'product_id' => null,
-                'product_bundle_id' => $userCart->product_bundle_id,
-                'outlet_id' => null,
-                'vending_machine_id' => $userCart->vending_machine_id,
-                'user_bundle_id' => $userCart->user_bundle_id,
                 'total_price' => $orderPrice,
                 'discount' => 0,
                 'status' => 1,
                 'reference' => Helper::generateOrderReference(),
                 'tax' => 0,
+                'remarks' => $request->remarks,
+                'payment_plan' => $request->payment_plan,
+
+                'guest_id' => $guest->id,
+                'fullname' => $request->fullname,
+                'email' => $request->email,
+                'session_key' => $userCart->session_key,
+                'address_1' => $request->address_1,
+                'address_2' => $request->address_2,
+                'city' => $request->city,
+                'state' => $request->state,
+                'postcode' => $request->postcode,
+                'calling_code' => '+60',
+                'status' => 10,
+                'phone_number' => $request->phone_number,  
+                'ip_address' => $request->ip(), // Get client's IP address
+                'user_agent' => $request->header('User-Agent'), // Get client's user agent
+                'last_visit' => now(), // Store current timestamp
+                'country' => $request->country,
+                'company_name' => $request->company_name,
             ] );
 
-            foreach ( $userCart->cartMetas as $cartProduct ) {
+            $checkoutCart = CartMeta::find( $request->cart_item );
 
-                $froyos = json_decode($cartProduct->froyos,true);
-                $froyoCount = count($froyos);
-                $syrups = json_decode($cartProduct->syrups,true);
-                $syrupCount = count($syrups);
-                $toppings = json_decode($cartProduct->toppings,true);
-                $toppingCount = count($toppings);
-                $product = Product::find($cartProduct->product_id);
-                $metaPrice = 0;
+            $orderMeta = OrderMeta::create( [
+                'order_id' => $order->id,
+                'product_id' => $checkoutCart->product->id,
+                'product_variant_id' => $checkoutCart->productVariant->id,
+                'total_price' =>  $checkoutCart->quantity * $checkoutCart->product->price,
+                'quantity' => $checkoutCart->quantity,
+            ] );
 
-                $orderMeta = OrderMeta::create( [
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'product_bundle_id' => null,
-                    'froyos' =>  $cartProduct->froyos,
-                    'syrups' =>  $cartProduct->syrups,
-                    'toppings' =>  $cartProduct->toppings,
-                    'total_price' =>  $metaPrice,
-                ] );
+            $orderPrice += $orderMeta->total_price;
 
-                $orderPrice += $product->price ?? 0;
-                $metaPrice += $product->price ?? 0;
-    
-                // new calculation 
-                $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
-                $orderPrice += $froyoPrices;
-                $metaPrice += $froyoPrices;
-
-                $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
-                $orderPrice += $syrupPrices;
-                $metaPrice += $syrupPrices;
-
-                $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
-                $orderPrice += $toppingPrices;
-                $metaPrice += $toppingPrices;
-
-                // calculate free item
-                $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
-                asort($froyoPrices);
-
-                $froyoCount = count($froyos);
-                $freeCount = $product->free_froyo_quantity;
-                $chargableAmount = 0;
-
-                if ($froyoCount > $freeCount) {
-                    $chargeableCount = $froyoCount - $freeCount;
-                    $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
-                    $totalDeduction = array_sum($chargeableFroyoPrices);
-
-
-                    $orderPrice -= $totalDeduction;
-                    $metaPrice -= $totalDeduction;
-
-                    $froyoPrices2 = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
-                    rsort($froyoPrices2);
-
-                    $chargeableCount = $froyoCount - $freeCount;
-                    $chargeableFroyoPrices = array_slice($froyoPrices2, 0, $chargeableCount, true);
-                    $totalDeduction2 = array_sum($chargeableFroyoPrices);
-                    $chargableAmount += $totalDeduction2;
-
-                }else{
-                    $totalDeduction = array_sum($froyoPrices);
-                    $orderPrice -= $totalDeduction;
-                    $metaPrice -= $totalDeduction;
-                }
-                
-                // free item module
-                $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
-                asort($syrupPrices);
-                
-                $syrupCount = count($syrups);
-                $freeCount = $product->free_syrup_quantity;
-
-                if ($syrupCount > $freeCount) {
-                    $chargeableCount = $syrupCount - $freeCount;
-                    $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
-
-                    $totalDeduction = array_sum($chargeablesyrupPrices);
-                    $orderPrice -= $totalDeduction;
-                    $metaPrice -= $totalDeduction;
-
-                    $syrupPrices2 = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
-                    rsort($syrupPrices2);
-
-                    $chargeableCount = $syrupCount - $freeCount;
-                    $chargeableFroyoPrices = array_slice($syrupPrices2, 0, $chargeableCount, true);
-                    $totalDeduction2 = array_sum($chargeableFroyoPrices);
-                    $chargableAmount += $totalDeduction2;
-
-                }else{
-                    $totalDeduction = array_sum($syrupPrices);
-                    $orderPrice -= $totalDeduction;
-                    $metaPrice -= $totalDeduction;
-                }
-            
-                $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
-                asort($toppingPrices);
-                
-                $toppingCount = count($toppings);
-                $freeCount = $product->free_topping_quantity;
-
-                if ($toppingCount > $freeCount) {
-                    $chargeableCount = $toppingCount - $freeCount;
-                    $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
-                    $totalDeduction = array_sum($chargeabletoppingPrices);
-
-                    $orderPrice -= $totalDeduction;
-                    $metaPrice -= $totalDeduction;
-
-                    $toppingPrices2 = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
-                    rsort($toppingPrices2);
-
-                    $chargeableCount = $toppingCount - $freeCount;
-                    $chargeabletoppingPrices = array_slice($toppingPrices2, 0, $chargeableCount, true);
-                    $totalDeduction2 = array_sum($chargeabletoppingPrices);
-                    $chargableAmount += $totalDeduction2;
-
-                }else{
-                    $totalDeduction = array_sum($toppingPrices);
-                    $orderPrice -= $totalDeduction;
-                    $metaPrice -= $totalDeduction;
-                }
-                
-                $orderMeta->total_price = $metaPrice;
-                $orderMeta->additional_charges = $chargableAmount;
-                $orderMeta->save();
-
-                $cartProduct->status = 20;
-                $cartProduct->save();
-            }
+            // $checkoutCart->status = 20;
+            $checkoutCart->save();
 
             $order->subtotal = $orderPrice;
 
@@ -1205,15 +1055,6 @@ class OrderService
                             $discount = 0;
                             $discount += $getProductMeta->product->price;
 
-                            // $froyoPrices = Froyo::whereIn('id', json_decode($getProductMeta->froyos, true))->sum('price');
-                            // $discount += $froyoPrices;
-        
-                            // $syrupPrices = Syrup::whereIn('id', json_decode($getProductMeta->syrups, true))->sum('price');
-                            // $discount += $syrupPrices;
-        
-                            // $toppingPrices = Topping::whereIn('id', json_decode($getProductMeta->toppings, true))->sum('price');
-                            // $discount += $toppingPrices;
-
                             $orderPrice -= Helper::numberFormatV2($discount,2,false,true);
                             $order->discount = Helper::numberFormatV2($discount,2,false,true);
                             $getProductMeta->total_price = 0 + $getProductMeta->additional_charges;
@@ -1225,7 +1066,7 @@ class OrderService
 
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
         
-                    $x = $userCart->total_price;
+                    $x = $orderMeta->total_price;
                     if ( $x >= $adjustment->buy_quantity ) {
                         $orderPrice -= $adjustment->discount_quantity;
                         $order->discount = Helper::numberFormatV2($adjustment->discount_quantity,2,false,true);
@@ -1235,7 +1076,7 @@ class OrderService
 
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
         
-                    $x = $userCart->total_price;
+                    $x = $orderMeta->total_price;
                     if ( $x >= $adjustment->buy_quantity ) {
                         $order->discount = Helper::numberFormatV2(( $orderPrice * $adjustment->discount_quantity / 100 ),2,false,true);
                         $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
@@ -1245,218 +1086,110 @@ class OrderService
                 $order->voucher_id = $voucher->id;
                 
                 VoucherUsage::create( [
-                    'user_id' => auth()->user()->id,
+                    'user_id' => null,
                     'order_id' => $order->id,
                     'voucher_id' => $voucher->id,
                     'status' => 10
                 ] );
 
-                // if user have voucher, else
-                $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->where( 'status', 10 )->first();
-
-                if($userVoucher){
-                    $userVoucher->used_at = Carbon::now();
-                    $userVoucher->status = 20;
-                    $userVoucher->total_used += 1;
-                    $userVoucher->total_left -= 1;
-                    $userVoucher->save();
-                }else{
-                    if( $voucher->points_required > 0 ){
-                        WalletService::transact( $userWallet, [
-                            'amount' => -$voucher->points_required,
-                            'remark' => 'Claim Voucher',
-                            'type' => 2,
-                            'transaction_type' => 11,
-                        ] );
-                    }
-
-                    UserVoucher::create([
-                        'user_id' => $user->id,
-                        'voucher_id' => $voucher->id,
-                        'expired_date' => Carbon::now()->addDays($voucher->validity_days),
-                        'status' => 20,
-                        'redeem_from' => 1,
-                        'total_left' => 0,
-                        'used_at' => Carbon::now(),
-                        'secret_code' => strtoupper( \Str::random( 8 ) ),
-                    ]);
-
-                    $voucher->total_claimable -= 1;
-                    $voucher->save();
-                }
-
             }
 
             $order->load( ['orderMetas'] );
-
-            if( $bundle ){
-
-                $orderMetas = $order->orderMetas;
-
-                $totalCartDeduction = CartService::calculateBundleCharges( $orderMetas );
-
-                $orderPrice = $bundle->price + $totalCartDeduction;
-                $order->subtotal = $orderPrice;
-            }
-
-            if( $userBundle ){
-
-                $orderMetas = $order->orderMetas;
-
-                $totalCartDeduction = CartService::calculateBundleCharges( $orderMetas );
-
-                $orderPrice = 0;
-                $orderPrice += $totalCartDeduction;
-                $order->subtotal = $orderPrice;
-
-            }
 
             $order->total_price = Helper::numberFormatV2($orderPrice,2,false,true);
             $order->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($order->total_price,2)) : 0;
             $order->total_price += Helper::numberFormatV2($order->tax,2,false,true);
 
-            $userCart->status = 20;
+            // $userCart->status = 20;
             $userCart->save();
 
-            if( $request->payment_method == 1 ){
-                WalletService::transact( $userWallet, [
-                    'amount' => -$order->total_price,
-                    'remark' => 'Order Placed: ' . $order->reference,
-                    'type' => $userWallet->type,
-                    'transaction_type' => 10,
-                ] );
+            $merchantKey = config('services.ipay88.merchant_key');
+            $merchantCode = config('services.ipay88.merchant_code');
+
+            // $payment = new Payment();
+            // return redirect($payment->createPayment($order));
+
+            $request = new \IPay88\Payment\Request( $merchantKey );
+            $order_amount = number_format($order->total_price, 2, '.', '');
+            $data = array(
+                'merchantCode' => $request->setMerchantCode( $merchantCode ),
+                'paymentId' =>  '',
+                'refNo' => $request->setRefNo( $order->reference ),
+                'amount' => $request->setAmount( $order_amount ),
+                'currency' => $request->setCurrency( 'MYR' ),
+                'prodDesc' => $request->setProdDesc( 'Testing' ),
+                'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
+                'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
+                'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
+                'remark' => $request->setRemark( 'test' ),
+                'lang' => $request->setLang( 'UTF-8' ),
+                // 'signature' => $request->getSignature(),
+    			'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
+                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callabck_url')),
+                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callabck_url')),
+            );
+
+            $url2= "";
+            $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
+            // try{ 
+            //     $ch = curl_init();
+            //     curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
+            //     curl_setopt($ch, CURLOPT_POST, true);
+            //     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+            //     // Execute cURL request
+            //     $response = curl_exec($ch);
+            //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            //     curl_close($ch);
+        
+            //     if ($httpCode == 200) {
+
+            //         echo $response;
+
+            //         // return response()->json([
+            //         //     'success' => true,
+            //         //     'message' => 'Payment submitted successfully.',
+            //         //     'ipay88_response' => $response
+            //         // ]);
+            //     } else {
+            //         return response()->json([
+            //             'success' => false,
+            //             'message' => 'Failed to submit payment.',
+            //             'ipay88_response' => $response
+            //         ], 500);
+            //     }
+            // } catch (\Exception $e) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Error: ' . $e->getMessage(),
+            //     ], 500);
+            // }
+
+            $orderTransaction = OrderTransaction::create( [
+                'order_id' => $order->id,
+                'checkout_id' => null,
+                'checkout_url' => null,
+                'payment_url' => $url2,
+                'transaction_id' => null,
+                'layout_version' => 'v1',
+                'redirect_url' => null,
+                'notify_url' => null,
+                'order_no' => $order->reference . '-' . $order->payment_attempt,
+                'order_title' => $order->reference,
+                'order_detail' => $order->reference,
+                'amount' => $order->total_price,
+                'currency' => 'MYR',
+                'transaction_type' => 1,
+                'status' => 10,
+            ] );
+
+            $order->payment_url = $url2;
+            $order->order_transaction_id = $orderTransaction->id;
+
+            if( $order->userBundle && $order->total_price == 0 ){
                 $order->status = 3;
-
-                // assign purchasing bonus
-                $spendingBonus = Option::getSpendingSettings();
-                if( $spendingBonus ){
-
-                    $userBonusWallet = $user->wallets->where( 'type', 2 )->first();
-
-                    WalletService::transact( $userBonusWallet, [
-                        'amount' => $order->total_price * $spendingBonus->option_value,
-                        'remark' => 'Purchasing Bonus',
-                        'type' => 2,
-                        'transaction_type' => 24,
-                    ] );
-                }
-
-                // assign referral's purchasing bonus
-                $referralSpendingBonus = Option::getReferralSpendingSettings();
-                if( $user->referral && $referralSpendingBonus){
-
-                    $referralWallet = $user->referral->wallets->where('type',2)->first();
-
-                    if($referralWallet){
-                        WalletService::transact( $referralWallet, [
-                            'amount' => $order->total_price * $referralSpendingBonus->option_value,
-                            'remark' => 'Referral Purchasing Bonus',
-                            'type' => $referralWallet->type,
-                            'transaction_type' => 22,
-                        ] );
-                    }
-                    
-                }
-
-                // create bundle
-                if( $order->product_bundle_id ){
-                            
-                    $userBundle = UserBundle::create([
-                        'user_id' => $user->id,
-                        'product_bundle_id' => $bundle->id,
-                        'status' => $request->payment_method == 1 ? 10 : 20,
-                        'total_cups' => $bundle->productBundleMetas->first()->quantity,
-                        'cups_left' => $bundle->productBundleMetas->first()->quantity - count( $order->orderMetas ),
-                        'last_used' => Carbon::now(),
-                        'payment_attempt' => 1,
-                        'payment_url' => 'null',
-                    ]);
-
-                    $bundleTransaction = UserBundleTransaction::create( [
-                        'user_id' => $user->id,
-                        'product_bundle_id' => $bundle->id,
-                        'user_bundle_id' => $userBundle->id,
-                        'reference' => Helper::generateBundleReference(),
-                        'price' => $bundle->price,
-                        'status' => 10,
-                        'payment_attempt' => 1,
-                        'payment_url' => 'null',
-                    ] );
-
-                    $order->user_bundle_id = $userBundle->id;
-                    $order->save();
-
-                }
-
-                // update stock
-                VendingMachineStockService::updateVendingMachineStock( $order->vending_machine_id, $order->orderMetas );
-
-                // notification
-                UserService::createUserNotification(
-                    $order->user->id,
-                    'notification.user_order_success',
-                    'notification.user_order_success_content',
-                    'order',
-                    'order'
-                );
-                
-                if( $order->userBundle ){
-                    $order->status = 3;
-                }
-
-            }else {
-                
-                $data = [
-                    'TransactionType' => 'SALE',
-                    'PymtMethod' => 'ANY',
-                    'ServiceID' => config('services.eghl.merchant_id'),
-                    'PaymentID' => $order->reference . '-' . $order->payment_attempt,
-                    'OrderNumber' => $order->reference,
-                    'PaymentDesc' => $order->reference,
-                    'MerchantName' => 'Yobe Froyo',
-                    'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
-                    'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
-                    'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
-                    'Amount' => Helper::numberFormatV2($order->total_price, 2),
-                    'CurrencyCode' => 'MYR',
-                    'CustIP' => request()->ip(),
-                    'CustName' => $order->user->username ?? 'Yobe Guest',
-                    'HashValue' => '',
-                    'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
-                    'CustPhone' => $order->user->phone_number,
-                    'MerchantTermsURL' => null,
-                    'LanguageCode' => 'en',
-                    'PageTimeout' => '780',
-                ];
-
-                $data['HashValue'] = Helper::generatePaymentHash($data);
-                $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
-                
-                $orderTransaction = OrderTransaction::create( [
-                    'order_id' => $order->id,
-                    'checkout_id' => null,
-                    'checkout_url' => null,
-                    'payment_url' => $url2,
-                    'transaction_id' => null,
-                    'layout_version' => 'v1',
-                    'redirect_url' => null,
-                    'notify_url' => null,
-                    'order_no' => $order->reference . '-' . $order->payment_attempt,
-                    'order_title' => $order->reference,
-                    'order_detail' => $order->reference,
-                    'amount' => $order->total_price,
-                    'currency' => 'MYR',
-                    'transaction_type' => 1,
-                    'status' => 10,
-                ] );
-
-                $order->payment_url = $url2;
-                $order->order_transaction_id = $orderTransaction->id;
-
-                if( $order->userBundle && $order->total_price == 0 ){
-                    $order->status = 3;
-                    $order->payment_url = null;
-                }
+                $order->payment_url = null;
             }
 
             $order->save();
@@ -1477,25 +1210,20 @@ class OrderService
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'froyo' => $meta->froyos_metas,
-                'syrup' => $meta->syrups_metas,
-                'topping' => $meta->toppings_metas,
+
             ];
         });
 
-        return response()->json( [
-            'message' => '',
-            'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
-            'payment_url' => $order->payment_url,
-            'sesion_key' => $order->session_key,
-            'order_id' => $order->id,
-            'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
-            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
-            'order_metas' => $orderMetas,
-            'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
-            'bundle' => $order->productBundle ? $order->productBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
-            'user_bundle' => $order->userBundle ? $order->userBundle->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
-        ] );
+        // return response()->json( [
+        //     'message' => '',
+        //     'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
+        //     'payment_url' => $order->payment_url,
+        //     'sesion_key' => $order->session_key,
+        //     'order_id' => $order->id,
+        //     'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
+        //     'order_metas' => $orderMetas,
+        //     'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+        // ] );
     }
 
     public static function scannedOrder( $request ) {
@@ -1603,19 +1331,6 @@ class OrderService
             ], 422 );
         }
 
-        $user = auth()->user();
-        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
-
-        if ( $voucherUsages->count() >= $voucher->usable_amount ) {
-            return response()->json( [
-                'message_key' => 'voucher_you_have_maximum_used',
-                'message' => __('voucher.voucher_you_have_maximum_used'),
-                'errors' => [
-                    'voucher' => __('voucher.voucher_you_have_maximum_used')
-                ]
-            ], 422 );
-        }
-
         // total claimable
         if ( $voucher->total_claimable <= 0 ) {
             return response()->json( [
@@ -1667,7 +1382,17 @@ class OrderService
         //     }
         // }
 
-        $cart = Cart::find( $request->cart );
+        $query = Cart::where('status',10);
+
+        if ($request->has('id')) {
+            $query->where('id', $request->id);
+        }
+    
+        if ($request->has('session_key')) {
+            $query->where('session_key', $request->session_key);
+        }
+    
+        $cart = $query->first();
 
         if ( $voucher->discount_type == 3 ) {
 

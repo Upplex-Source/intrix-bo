@@ -45,7 +45,8 @@ Route::prefix( 'carts' )->group( function() {
 
 Route::prefix( 'orders' )->group( function() {
     Route::get( '/', [ OrderController::class, 'getOrder' ] );
-    Route::post( 'checkout', [ OrderController::class, 'checkout' ] );
+    Route::post( 'cart-checkout', [ OrderController::class, 'cartCheckout' ] );
+    Route::post( 'direct-checkout', [ OrderController::class, 'directCheckout' ] );
     Route::post( 'retry-payment', [ OrderController::class, 'retryPayment' ] );
 } );
 

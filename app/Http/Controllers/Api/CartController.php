@@ -15,14 +15,13 @@ class CartController extends Controller
     /**
      * 1. Add to cart
      * 
-     * @authenticated
-     * 
      * @group Cart API
      * 
      * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
      * @bodyParam color required strong The color of the product. Example: CHROME
      * @bodyParam quantity required integer The quantity of the product. Example: 1
      * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
+     * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
      * 
      */
     public function addToCart( Request $request ) {
@@ -34,8 +33,6 @@ class CartController extends Controller
      * 2. Retrieve cart 
      * 
      * <aside class="notice">id and session_key can be used to filter out the cart</aside>
-     * 
-     * @authenticated
      * 
      * 
      * 
@@ -56,27 +53,17 @@ class CartController extends Controller
      * 
      * <aside class="notice">session_key or cart id can be used to update the cart</aside>
      * 
-     * @authenticated
      * 
      * 
      * @group Cart API
      * 
-     * @bodyParam vending_machine integer required The ID of the vending_machine. Example: 2
-     * @bodyParam items array required The list of products with their ingredients. Example: [{"productId": 1, "froyo": [1, 2], "syrup": [3], "topping": [4, 5]}]
-     * @bodyParam items.*.product integer The ID of the product. Pass `null` if no product is selected. Example: 1
-     * @bodyParam items.*.froyo array An array of froyo IDs. Pass an empty array if no froyo is selected. Example: [1, 2]
-     * @bodyParam items.*.froyo.* integer A froyo ID. Example: 1
-     * @bodyParam items.*.syrup array An array of syrup IDs. Pass an empty array if no syrup is selected. Example: [3]
-     * @bodyParam items.*.syrup.* integer A syrup ID. Example: 3
-     * @bodyParam items.*.topping array An array of topping IDs. Pass an empty array if no topping is selected. Example: [4, 5]
-     * @bodyParam items.*.topping.* integer A topping ID. Example: 4
-     * @bodyParam session_key string The unique identifier for the cart. Example: abcd-1234
+     * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
+     * @bodyParam color required strong The color of the product. Example: CHROME
+     * @bodyParam quantity required integer The quantity of the product. Example: 1
+     * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
      * @bodyParam id integer The ID of the cart. Example: 1
      * @bodyParam cart_item integer The ID of the cart item. Example: 1
      * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
-     * @bodyParam cart integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
-     * @bodyParam bundle integer The ID of the bundle to apply ( not usable together with voucher ). Example: 1
-     * @bodyParam user_bundle integer The ID of the user's bundle to apply ( not usable together with bundle/voucher ). Example: 2
      * 
      */
     public function updateCart( Request $request ) {
@@ -90,10 +77,10 @@ class CartController extends Controller
      * 
      * <aside class="notice">session_key or cart id can be used to delete the cart</aside>
      * 
-     * @authenticated
      * 
      * @group Cart API
      * 
+     * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
      * @bodyParam id integer The ID of the cart. Example: 1
      * @bodyParam session_key string The unique identifier for the cart. Example: abcd-1234
      * 
@@ -108,11 +95,11 @@ class CartController extends Controller
      * 
      * <aside class="notice">session_key or cart id can be used to delete the cart</aside>
      * 
-     * @authenticated
      * 
      * 
      * @group Cart API
      * 
+     * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
      * @bodyParam id integer The ID of the cart. Example: 1
      * @bodyParam cart_item integer The ID of the cart item. Example: 1
      * 

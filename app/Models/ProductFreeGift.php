@@ -6,7 +6,6 @@ use DateTimeInterface;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Sanctum\HasApiTokens;
 
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -15,31 +14,31 @@ use Helper;
 
 use Carbon\Carbon;
 
-class Guest extends Model
+class ProductFreeGift extends Model
 {
-    use HasFactory, LogsActivity, HasApiTokens;
-
-    protected $hidden = ['password'];
+    use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'fullname',
-        'email',
-        'session_key',
-        'password',
-        'address_1',
-        'address_2',
-        'city',
-        'state',
-        'postcode',
-        'calling_code',
+        'product_id',
+        'title',
+        'description',
+        'color',
+        'image',
         'status',
-        'phone_number',  
-        'ip_address',
-        'user_agent',
-        'last_visit',
-        'country',
-        'company_name',
+        'brochure',
+        'sku',
+        'specification',
+        'features',
+        'whats_included',
     ];
+
+    public function product() {
+        return $this->belongsTo( Product::class, 'product_id' );
+    }
+
+    public function getPathAttribute() {
+        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : null;
+    }
 
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );
@@ -50,26 +49,20 @@ class Guest extends Model
     }
 
     protected static $logAttributes = [
-        'fullname',
-        'email',
-        'session_key',
-        'password',
-        'address_1',
-        'address_2',
-        'city',
-        'state',
-        'postcode',
-        'calling_code',
+        'product_id',
+        'title',
+        'description',
+        'color',
+        'image',
         'status',
-        'phone_number',  
-        'ip_address',
-        'user_agent',
-        'last_visit',
-        'country',
-        'company_name',
+        'brochure',
+        'sku',
+        'specification',
+        'features',
+        'whats_included',
     ];
 
-    protected static $logName = 'guests';
+    protected static $logName = 'product_free_gifts';
 
     protected static $logOnlyDirty = true;
 
@@ -78,6 +71,6 @@ class Guest extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} guest";
+        return "{$eventName} product free gift";
     }
 }

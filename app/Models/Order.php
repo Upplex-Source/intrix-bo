@@ -40,6 +40,17 @@ class Order extends Model
         'guest_id',
         'payment_plan',
         'remarks',
+        'country',
+        'company_name',
+        'fullname',
+        'email',
+        'address_1',
+        'address_2',
+        'city',
+        'state',
+        'postcode',
+        'calling_code',
+        'phone_number',  
     ];
 
     protected $hidden = [
@@ -129,6 +140,17 @@ class Order extends Model
         'guest_id',
         'payment_plan',
         'remarks',
+        'country',
+        'company_name',
+        'fullname',
+        'email',
+        'address_1',
+        'address_2',
+        'city',
+        'state',
+        'postcode',
+        'calling_code',
+        'phone_number',  
     ];
 
     protected static $logName = 'orders';

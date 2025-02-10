@@ -43,6 +43,7 @@ class Cart extends Model
         'created_at',
         'updated_at',
         'product_id',
+        'product_variant_id',
         'product_bundle_id',
         'outlet_id',
     ];

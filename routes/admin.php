@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\{
     ModuleController,
     SettingController,
     UserController,
+    GuestController,
     WalletController,
     WalletTransactionController,
     OutletController,
@@ -164,6 +165,24 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'create-user', [ UserController::class, 'createUser' ] )->name( 'admin.user.createUser' );
                 Route::post( 'update-user', [ UserController::class, 'updateUser' ] )->name( 'admin.user.updateUser' );
                 Route::post( 'update-user-status', [ UserController::class, 'updateUserStatus' ] )->name( 'admin.user.updateUserStatus' );
+            } );
+
+            Route::prefix( 'guests' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view guests' ] ], function() {
+                    Route::get( '/', [ GuestController::class, 'index' ] )->name( 'admin.module_parent.guest.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guests' ] ], function() {
+                    Route::get( 'add', [ GuestController::class, 'add' ] )->name( 'admin.guest.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit guests' ] ], function() {
+                    Route::get( 'edit', [ GuestController::class, 'edit' ] )->name( 'admin.guest.edit' );
+                } );
+
+                Route::post( 'all-guests', [ GuestController::class, 'allGuests' ] )->name( 'admin.guest.allGuests' );
+                Route::post( 'one-guest', [ GuestController::class, 'oneGuest' ] )->name( 'admin.guest.oneGuest' );
+                Route::post( 'create-guest', [ GuestController::class, 'createGuest' ] )->name( 'admin.guest.createGuest' );
+                Route::post( 'update-guest', [ GuestController::class, 'updateGuest' ] )->name( 'admin.guest.updateGuest' );
+                Route::post( 'update-guest-status', [ GuestController::class, 'updateGuestStatus' ] )->name( 'admin.guest.updateGuestStatus' );
             } );
 
             Route::prefix( 'wallets' )->group( function() {
@@ -549,11 +568,11 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
     Route::post( 'logout', [ AuthenticatedSessionController::class, 'destroy' ] )->middleware( 'auth:admin' )->name( 'admin.logout' );
 } );
 
-Route::prefix( 'eghl' )->group( function() {
+Route::prefix( 'ipay88' )->group( function() {
     Route::get( 'initiate', [ PaymentController::class, 'initEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::any( 'notify', [ PaymentController::class, 'notifyEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::any( 'query', [ PaymentController::class, 'queryEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
-    Route::any( 'callback', [PaymentController::class, 'callbackEghl'] )->name( 'payment.callbackEghl' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'callback', [PaymentController::class, 'callback'] )->name( 'payment.callback' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
 } );
 
 

@@ -21,18 +21,11 @@ class OrderMeta extends Model
     protected $fillable = [
         'order_id',
         'product_id',
-        'product_bundle_id',
-        'froyo_id',
-        'syrup_id',
-        'topping_id',
-        'froyo_quantity',
-        'syrup_quantity',
-        'topping_quantity',
-        'status',
-        'froyos',
-        'syrups',
-        'toppings',
+        'product_variant_id',
         'additional_charges',
+        'total_price',
+        'discount',
+        'quantity',
     ];
 
     public function order() {
@@ -43,8 +36,8 @@ class OrderMeta extends Model
         return $this->belongsTo( Product::class, 'product_id' );
     }
 
-    public function productBundle() {
-        return $this->belongsTo( ProductBundle::class, 'product_bundle_id' );
+    public function productVariant() {
+        return $this->belongsTo( ProductVariant::class, 'product_variant_id' );
     }
 
     public function froyo()
@@ -136,18 +129,11 @@ class OrderMeta extends Model
     protected static $logAttributes = [
         'order_id',
         'product_id',
-        'product_bundle_id',
-        'froyo_id',
-        'syrup_id',
-        'topping_id',
-        'froyo_quantity',
-        'syrup_quantity',
-        'topping_quantity',
-        'status',
-        'froyos',
-        'syrups',
-        'toppings',
+        'product_variant_id',
         'additional_charges',
+        'total_price',
+        'discount',
+        'quantity',
     ];
 
     protected static $logName = 'order_metas';

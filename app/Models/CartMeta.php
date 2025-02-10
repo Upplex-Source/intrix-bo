@@ -22,13 +22,13 @@ class CartMeta extends Model
         'cart_id',
         'product_id',
         'product_variant_id',
-        'froyo_id',
-        'syrup_id',
-        'topping_id',
-        'status',
+        'user_id',
         'total_price',
         'discount',
+        'status',
+        'products',
         'additional_charges',
+        'quantity',
     ];
 
     public function cart() {
@@ -132,13 +132,13 @@ class CartMeta extends Model
         'cart_id',
         'product_id',
         'product_variant_id',
-        'froyo_id',
-        'syrup_id',
-        'topping_id',
-        'status',
+        'user_id',
         'total_price',
         'discount',
+        'status',
+        'products',
         'additional_charges',
+        'quantity',
     ];
 
     protected static $logName = 'cart_metas';

@@ -34,8 +34,6 @@ class VoucherController extends Controller
 
         $this->data['data']['voucher_type'] = [
             '1' => __( 'voucher.public_voucher' ),
-            '2' => __( 'voucher.user_specific_voucher' ),
-            '3' => __( 'voucher.login_reward_voucher' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -71,8 +69,6 @@ class VoucherController extends Controller
 
         $this->data['data']['voucher_type'] = [
             '1' => __( 'voucher.public_voucher' ),
-            '2' => __( 'voucher.user_specific_voucher' ),
-            '3' => __( 'voucher.login_reward_voucher' ),
         ];
 
         return view( 'admin.main' )->with( $this->data );
@@ -108,8 +104,6 @@ class VoucherController extends Controller
 
         $this->data['data']['voucher_type'] = [
             '1' => __( 'voucher.public_voucher' ),
-            '2' => __( 'voucher.user_specific_voucher' ),
-            '3' => __( 'voucher.login_reward_voucher' ),
         ];
 
 
