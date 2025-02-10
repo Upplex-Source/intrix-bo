@@ -190,7 +190,7 @@ class Ipay88Service {
             'raw_response' => json_encode( $request->all() ),
         ] );
 
-        $response = (new IPay88\Payment\Response)->init($this->_merchantCode);
+        $response = (new IPay88\Payment\Response)->init(config('services.ipay88.merchant_code'));
 		echo "<pre>";
 		print_r($response);
 
