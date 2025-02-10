@@ -15,8 +15,10 @@ class OrderController extends Controller
     /**
      * 1. checkout
      * 
-     * <strong>payment_method</strong><br>
-     * 
+     * <strong>payment_plan</strong></br>
+     * 1: upfront<br>
+     * 2: monthly<br>
+     * 3: outright<br>
      * 
      * @group Order API
      * 
@@ -34,6 +36,7 @@ class OrderController extends Controller
      * @bodyParam postcode string required The postcode of the guest. Example: 43000
      * @bodyParam country string required The country of the guest. Example: Malaysia
      * @bodyParam remarks string nullable The remarks for the order. Example: Be careful
+     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
      * 
      */
     public function cartCheckout( Request $request ) {
@@ -42,9 +45,12 @@ class OrderController extends Controller
     }
 
     /**
-     * 2. checkout
+     * 2. direct checkout
      * 
-     * <strong>payment_method</strong><br>
+     * <strong>payment_plan</strong></br>
+     * 1: upfront<br>
+     * 2: monthly<br>
+     * 3: outright<br>
      * 
      * 
      * @group Order API
@@ -64,6 +70,7 @@ class OrderController extends Controller
      * @bodyParam postcode string nullable The postcode of the guest. Example: 43000
      * @bodyParam country string nullable The country of the guest. Example: Malaysia
      * @bodyParam remarks string nullable The remarks for the order. Example: Be careful
+     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
      * 
      */
     public function directCheckout( Request $request ) {

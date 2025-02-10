@@ -29,6 +29,7 @@ class CartMeta extends Model
         'products',
         'additional_charges',
         'quantity',
+        'payment_plan',
     ];
 
     public function cart() {
@@ -139,6 +140,7 @@ class CartMeta extends Model
         'products',
         'additional_charges',
         'quantity',
+        'payment_plan',
     ];
 
     protected static $logName = 'cart_metas';

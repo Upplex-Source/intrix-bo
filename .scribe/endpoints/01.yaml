@@ -1,293 +1,47 @@
-name: 'Cart API'
+name: 'Order API'
 description: ''
 endpoints:
   -
     httpMethods:
-      - POST
-    uri: api/v1/carts/add
-    metadata:
-      title: '1. Add to cart'
-      description: ''
-      authenticated: true
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      vending_machine:
-        name: vending_machine
-        description: 'The ID of the vending_machine.'
-        required: true
-        example: 2
-        type: integer
-        custom: []
-      items:
-        name: items
-        description: 'The list of products with their ingredients.'
-        required: true
-        example:
-          -
-            productId: 1
-            froyo:
-              - 1
-              - 2
-            syrup:
-              - 3
-            topping:
-              - 4
-              - 5
-        type: 'string[]'
-        custom: []
-      'items.*.product':
-        name: 'items.*.product'
-        description: 'The ID of the product. Pass `null` if no product is selected.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      'items.*.froyo':
-        name: 'items.*.froyo'
-        description: 'An array of froyo IDs. Pass an empty array if no froyo is selected.'
-        required: false
-        example:
-          - 1
-          - 2
-        type: 'string[]'
-        custom: []
-      'items.*.froyo.*':
-        name: 'items.*.froyo.*'
-        description: 'A froyo ID.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      'items.*.syrup':
-        name: 'items.*.syrup'
-        description: 'An array of syrup IDs. Pass an empty array if no syrup is selected.'
-        required: false
-        example:
-          - 3
-        type: 'string[]'
-        custom: []
-      'items.*.syrup.*':
-        name: 'items.*.syrup.*'
-        description: 'A syrup ID.'
-        required: false
-        example: 3
-        type: integer
-        custom: []
-      'items.*.topping':
-        name: 'items.*.topping'
-        description: 'An array of topping IDs. Pass an empty array if no topping is selected.'
-        required: false
-        example:
-          - 4
-          - 5
-        type: 'string[]'
-        custom: []
-      'items.*.topping.*':
-        name: 'items.*.topping.*'
-        description: 'A topping ID.'
-        required: false
-        example: 4
-        type: integer
-        custom: []
-      promo_code:
-        name: promo_code
-        description: 'The ID of the promotion/voucher to apply.'
-        required: false
-        example: BUY1FREE1
-        type: string
-        custom: []
-      bundle:
-        name: bundle
-        description: 'The ID of the bundle to apply ( not usable together with voucher ).'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      user_bundle:
-        name: user_bundle
-        description: 'The ID of the user''s bundle to apply ( not usable together with bundle/voucher ).'
-        required: false
-        example: 2
-        type: integer
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/carts/update
-    metadata:
-      title: '3. Update cart'
-      description: '<aside class="notice">session_key or cart id can be used to update the cart</aside>'
-      authenticated: true
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      vending_machine:
-        name: vending_machine
-        description: 'The ID of the vending_machine.'
-        required: true
-        example: 2
-        type: integer
-        custom: []
-      items:
-        name: items
-        description: 'The list of products with their ingredients.'
-        required: true
-        example:
-          -
-            productId: 1
-            froyo:
-              - 1
-              - 2
-            syrup:
-              - 3
-            topping:
-              - 4
-              - 5
-        type: 'string[]'
-        custom: []
-      'items.*.product':
-        name: 'items.*.product'
-        description: 'The ID of the product. Pass `null` if no product is selected.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      'items.*.froyo':
-        name: 'items.*.froyo'
-        description: 'An array of froyo IDs. Pass an empty array if no froyo is selected.'
-        required: false
-        example:
-          - 1
-          - 2
-        type: 'string[]'
-        custom: []
-      'items.*.froyo.*':
-        name: 'items.*.froyo.*'
-        description: 'A froyo ID.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      'items.*.syrup':
-        name: 'items.*.syrup'
-        description: 'An array of syrup IDs. Pass an empty array if no syrup is selected.'
-        required: false
-        example:
-          - 3
-        type: 'string[]'
-        custom: []
-      'items.*.syrup.*':
-        name: 'items.*.syrup.*'
-        description: 'A syrup ID.'
-        required: false
-        example: 3
-        type: integer
-        custom: []
-      'items.*.topping':
-        name: 'items.*.topping'
-        description: 'An array of topping IDs. Pass an empty array if no topping is selected.'
-        required: false
-        example:
-          - 4
-          - 5
-        type: 'string[]'
-        custom: []
-      'items.*.topping.*':
-        name: 'items.*.topping.*'
-        description: 'A topping ID.'
-        required: false
-        example: 4
-        type: integer
-        custom: []
-      session_key:
-        name: session_key
-        description: 'The unique identifier for the cart.'
-        required: false
-        example: abcd-1234
-        type: string
-        custom: []
-      id:
-        name: id
-        description: 'The ID of the cart.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      cart_item:
-        name: cart_item
-        description: 'The ID of the cart item.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      promo_code:
-        name: promo_code
-        description: 'The ID of the promotion/voucher to apply.'
-        required: false
-        example: 0
-        type: integer
-        custom: []
-      cart:
-        name: cart
-        description: 'The ID of the promotion/voucher to apply.'
-        required: false
-        example: 0
-        type: integer
-        custom: []
-      bundle:
-        name: bundle
-        description: 'The ID of the bundle to apply ( not usable together with voucher ).'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      user_bundle:
-        name: user_bundle
-        description: 'The ID of the user''s bundle to apply ( not usable together with bundle/voucher ).'
-        required: false
-        example: 2
-        type: integer
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
       - GET
-    uri: api/v1/carts
+    uri: api/v1/orders
     metadata:
-      title: '2. Retrieve cart'
-      description: '<aside class="notice">id and session_key can be used to filter out the cart</aside>'
-      authenticated: true
+      title: '3. Retrieve user order'
+      description: |-
+        <aside class="notice">id and reference can be used to filter out the order</aside>
+
+        <strong>status</strong><br>
+        1: placed order / pending payment<br>
+        3: paid / unclaimed<br>
+        10: completed / claimed<br>
+        20: canceled<br>
+      authenticated: false
       custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
     queryParameters:
-      session_key:
-        name: session_key
-        description: 'The unique identifier for the cart.'
+      reference:
+        name: reference
+        description: 'The unique reference for the order.'
         required: false
         example: abcd-1234
         type: string
         custom: []
       id:
         name: id
-        description: 'The ID of the cart. .'
+        description: 'The ID of the order. .'
         required: false
-        example: abcd-1234
-        type: string
+        example: 1
+        type: integer
+        custom: []
+      status:
+        name: status
+        description: 'The Status of the order. .'
+        required: false
+        example: 1
+        type: integer
         custom: []
       per_page:
         name: per_page
@@ -299,386 +53,48 @@ endpoints:
     bodyParameters: []
     responses:
       -
-        status: 404
-        content: |-
-          {
-              "message": "",
-              "exception": "Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException",
-              "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\AbstractRouteCollection.php",
-              "line": 43,
-              "trace": [
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\CompiledRouteCollection.php",
-                      "line": 144,
-                      "function": "handleMatchedRoute",
-                      "class": "Illuminate\\Routing\\AbstractRouteCollection",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
-                      "line": 673,
-                      "function": "match",
-                      "class": "Illuminate\\Routing\\CompiledRouteCollection",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
-                      "line": 662,
-                      "function": "findRoute",
-                      "class": "Illuminate\\Routing\\Router",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
-                      "line": 651,
-                      "function": "dispatchToRoute",
-                      "class": "Illuminate\\Routing\\Router",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
-                      "line": 167,
-                      "function": "dispatch",
-                      "class": "Illuminate\\Routing\\Router",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 128,
-                      "function": "Illuminate\\Foundation\\Http\\{closure}",
-                      "class": "Illuminate\\Foundation\\Http\\Kernel",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php",
-                      "line": 59,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 167,
-                      "function": "handle",
-                      "class": "Barryvdh\\Debugbar\\Middleware\\InjectDebugbar",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
-                      "line": 21,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php",
-                      "line": 31,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 167,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
-                      "line": 21,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php",
-                      "line": 40,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 167,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php",
-                      "line": 27,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 167,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php",
-                      "line": 86,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 167,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php",
-                      "line": 38,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 167,
-                      "function": "handle",
-                      "class": "Fruitcake\\Cors\\HandleCors",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\fideloper\\proxy\\src\\TrustProxies.php",
-                      "line": 57,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 167,
-                      "function": "handle",
-                      "class": "Fideloper\\Proxy\\TrustProxies",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
-                      "line": 103,
-                      "function": "Illuminate\\Pipeline\\{closure}",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
-                      "line": 142,
-                      "function": "then",
-                      "class": "Illuminate\\Pipeline\\Pipeline",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
-                      "line": 111,
-                      "function": "sendRequestThroughRouter",
-                      "class": "Illuminate\\Foundation\\Http\\Kernel",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
-                      "line": 299,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Http\\Kernel",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
-                      "line": 287,
-                      "function": "callLaravelOrLumenRoute",
-                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
-                      "line": 89,
-                      "function": "makeApiCall",
-                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
-                      "line": 45,
-                      "function": "makeResponseCall",
-                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
-                      "line": 35,
-                      "function": "makeResponseCallIfConditionsPass",
-                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php",
-                      "line": 222,
-                      "function": "__invoke",
-                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php",
-                      "line": 179,
-                      "function": "iterateThroughStrategies",
-                      "class": "Knuckles\\Scribe\\Extracting\\Extractor",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php",
-                      "line": 116,
-                      "function": "fetchResponses",
-                      "class": "Knuckles\\Scribe\\Extracting\\Extractor",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php",
-                      "line": 123,
-                      "function": "processRoute",
-                      "class": "Knuckles\\Scribe\\Extracting\\Extractor",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php",
-                      "line": 80,
-                      "function": "extractEndpointsInfoFromLaravelApp",
-                      "class": "Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php",
-                      "line": 56,
-                      "function": "extractEndpointsInfoAndWriteToDisk",
-                      "class": "Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Commands\\GenerateDocumentation.php",
-                      "line": 55,
-                      "function": "get",
-                      "class": "Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php",
-                      "line": 36,
-                      "function": "handle",
-                      "class": "Knuckles\\Scribe\\Commands\\GenerateDocumentation",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php",
-                      "line": 40,
-                      "function": "Illuminate\\Container\\{closure}",
-                      "class": "Illuminate\\Container\\BoundMethod",
-                      "type": "::"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php",
-                      "line": 93,
-                      "function": "unwrapIfClosure",
-                      "class": "Illuminate\\Container\\Util",
-                      "type": "::"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php",
-                      "line": 37,
-                      "function": "callBoundMethod",
-                      "class": "Illuminate\\Container\\BoundMethod",
-                      "type": "::"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php",
-                      "line": 653,
-                      "function": "call",
-                      "class": "Illuminate\\Container\\BoundMethod",
-                      "type": "::"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php",
-                      "line": 136,
-                      "function": "call",
-                      "class": "Illuminate\\Container\\Container",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Command\\Command.php",
-                      "line": 298,
-                      "function": "execute",
-                      "class": "Illuminate\\Console\\Command",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php",
-                      "line": 121,
-                      "function": "run",
-                      "class": "Symfony\\Component\\Console\\Command\\Command",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Application.php",
-                      "line": 1040,
-                      "function": "run",
-                      "class": "Illuminate\\Console\\Command",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Application.php",
-                      "line": 301,
-                      "function": "doRunCommand",
-                      "class": "Symfony\\Component\\Console\\Application",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\symfony\\console\\Application.php",
-                      "line": 171,
-                      "function": "doRun",
-                      "class": "Symfony\\Component\\Console\\Application",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php",
-                      "line": 94,
-                      "function": "run",
-                      "class": "Symfony\\Component\\Console\\Application",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php",
-                      "line": 129,
-                      "function": "run",
-                      "class": "Illuminate\\Console\\Application",
-                      "type": "->"
-                  },
-                  {
-                      "file": "C:\\xampp\\htdocs\\yobe-backoffice\\artisan",
-                      "line": 37,
-                      "function": "handle",
-                      "class": "Illuminate\\Foundation\\Console\\Kernel",
-                      "type": "->"
-                  }
-              ]
-          }
+        status: 422
+        content: '{"message":"The given data was invalid.","errors":{"id":["The selected id is invalid."],"reference":["The selected reference is invalid."]}}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
+          x-ratelimit-limit: '100'
+          x-ratelimit-remaining: '98'
+          access-control-allow-origin: '*'
         description: null
     responseFields: []
   -
     httpMethods:
       - POST
-    uri: api/v1/carts/delete
+    uri: api/v1/orders/retry-payment
     metadata:
-      title: '4. Delete Cart'
-      description: '<aside class="notice">session_key or cart id can be used to delete the cart</aside>'
-      authenticated: true
+      title: '4. Retry Payment'
+      description: '<aside class="notice">retry payment for online payment</aside>'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      order_id:
+        name: order_id
+        description: 'The ID of the order.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+    bodyParameters: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/orders/cart-checkout
+    metadata:
+      title: '1. checkout'
+      description: '<strong>payment_method</strong><br>'
+      authenticated: false
       custom: []
     headers:
       Content-Type: application/json
@@ -686,18 +102,102 @@ endpoints:
     urlParameters: []
     queryParameters: []
     bodyParameters:
-      id:
-        name: id
-        description: 'The ID of the cart.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
       session_key:
         name: session_key
-        description: 'The unique identifier for the cart.'
+        description: 'The session_key of the cart.'
         required: false
-        example: abcd-1234
+        example: kn1i23onlas1
+        type: string
+        custom: []
+      cart_item:
+        name: cart_item
+        description: 'The ID of the cart item.'
+        required: true
+        example: 12
+        type: integer
+        custom: []
+      promo_code:
+        name: promo_code
+        description: 'The ID of the promotion/voucher to apply.'
+        required: false
+        example: 0
+        type: integer
+        custom: []
+      fullname:
+        name: fullname
+        description: 'The fullname of the guest.'
+        required: true
+        example: Johnny
+        type: string
+        custom: []
+      company_name:
+        name: company_name
+        description: 'nullable The company_name of the guest.'
+        required: false
+        example: 'Johnny holdings'
+        type: string
+        custom: []
+      email:
+        name: email
+        description: 'The email of the guest.'
+        required: true
+        example: johnny@gmail.com
+        type: string
+        custom: []
+      phone_number:
+        name: phone_number
+        description: 'nullable The phone_number of the guest.'
+        required: false
+        example: '1231231223'
+        type: string
+        custom: []
+      address_1:
+        name: address_1
+        description: 'The address_1 of the guest.'
+        required: true
+        example: 'Lot 4, 1'
+        type: string
+        custom: []
+      address_2:
+        name: address_2
+        description: 'nullable The address_2 of the guest.'
+        required: false
+        example: 'Bandar Baru Bangi'
+        type: string
+        custom: []
+      city:
+        name: city
+        description: 'The city of the guest.'
+        required: true
+        example: Kajang
+        type: string
+        custom: []
+      state:
+        name: state
+        description: 'The state of the guest.'
+        required: true
+        example: Selangor
+        type: string
+        custom: []
+      postcode:
+        name: postcode
+        description: 'The postcode of the guest.'
+        required: true
+        example: '43000'
+        type: string
+        custom: []
+      country:
+        name: country
+        description: 'The country of the guest.'
+        required: true
+        example: Malaysia
+        type: string
+        custom: []
+      remarks:
+        name: remarks
+        description: 'nullable The remarks for the order.'
+        required: false
+        example: 'Be careful'
         type: string
         custom: []
     responses: []
@@ -705,11 +205,11 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: api/v1/carts/delete-cart-item
+    uri: api/v1/orders/direct-checkout
     metadata:
-      title: '4. Delete Cart Item'
-      description: '<aside class="notice">session_key or cart id can be used to delete the cart</aside>'
-      authenticated: true
+      title: '2. checkout'
+      description: '<strong>payment_method</strong><br>'
+      authenticated: false
       custom: []
     headers:
       Content-Type: application/json
@@ -717,19 +217,110 @@ endpoints:
     urlParameters: []
     queryParameters: []
     bodyParameters:
-      id:
-        name: id
-        description: 'The ID of the cart.'
+      product_code:
+        name: product_code
+        description: 'The product_code of the prodcut.'
+        required: true
+        example: 5-IN-1
+        type: string
+        custom: []
+      color:
+        name: color
+        description: 'strong The color of the product.'
         required: false
-        example: 1
+        example: CHROME
+        type: required
+        custom: []
+      quantity:
+        name: quantity
+        description: 'integer The quantity of the product.'
+        required: false
+        example: '1'
+        type: required
+        custom: []
+      promo_code:
+        name: promo_code
+        description: 'The ID of the promotion/voucher to apply.'
+        required: false
+        example: 0
         type: integer
         custom: []
-      cart_item:
-        name: cart_item
-        description: 'The ID of the cart item.'
+      fullname:
+        name: fullname
+        description: 'nullable The fullname of the guest.'
         required: false
-        example: 1
-        type: integer
+        example: Johnny
+        type: string
+        custom: []
+      company_name:
+        name: company_name
+        description: 'nullable The company_name of the guest.'
+        required: false
+        example: 'Johnny holdings'
+        type: string
+        custom: []
+      email:
+        name: email
+        description: 'nullable The email of the guest.'
+        required: false
+        example: johnny@gmail.com
+        type: string
+        custom: []
+      phone_number:
+        name: phone_number
+        description: 'nullable The phone_number of the guest.'
+        required: false
+        example: '1231231223'
+        type: string
+        custom: []
+      address_1:
+        name: address_1
+        description: 'nullable The address_1 of the guest.'
+        required: false
+        example: 'Lot 4, 1'
+        type: string
+        custom: []
+      address_2:
+        name: address_2
+        description: 'nullable The address_2 of the guest.'
+        required: false
+        example: 'Bandar Baru Bangi'
+        type: string
+        custom: []
+      city:
+        name: city
+        description: 'nullable The city of the guest.'
+        required: false
+        example: Kajang
+        type: string
+        custom: []
+      state:
+        name: state
+        description: 'nullable The state of the guest.'
+        required: false
+        example: Selangor
+        type: string
+        custom: []
+      postcode:
+        name: postcode
+        description: 'nullable The postcode of the guest.'
+        required: false
+        example: '43000'
+        type: string
+        custom: []
+      country:
+        name: country
+        description: 'nullable The country of the guest.'
+        required: false
+        example: Malaysia
+        type: string
+        custom: []
+      remarks:
+        name: remarks
+        description: 'nullable The remarks for the order.'
+        required: false
+        example: 'Be careful'
+        type: string
         custom: []
     responses: []
     responseFields: []

@@ -53,7 +53,9 @@ class CartService {
         $user = auth()->user();
     
         // Start by querying carts for the authenticated user
-        $query = Cart::with(['cartMetas', 'voucher'])
+        $query = Cart::with(['cartMetas' => function ($query) {
+        $query->orderBy('created_at', 'DESC');
+    }, 'voucher'])
             ->where('status', 10)
             ->orderBy('created_at', 'DESC');
     
@@ -91,6 +93,7 @@ class CartService {
                     'subtotal' => $meta->total_price,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
                         ->setAttribute('image_path', $meta->product->image_path),
+                    'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
                 ];
             });
     
@@ -131,6 +134,7 @@ class CartService {
             'product_code' => [ 'required', 'exists:products,code'  ],
             'color' => [ 'required', 'exists:product_variants,title'  ],
             'quantity' => [ 'integer', 'min:1'  ],
+            'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'session_key' => ['nullable', 'exists:carts,session_key'],
             'promo_code' => [
                 'nullable',
@@ -146,6 +150,14 @@ class CartService {
         ]);
 
         $validator->validate();
+
+        if( $request->promo_code ){
+            $test = self::validateCartVoucher($request);
+
+            if ($test->getStatusCode() === 422) {
+                return $test;
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -176,15 +188,30 @@ class CartService {
                 ]
             );
 
+            $productPrice = $product->price;
+
+            switch ( $request->payment_plan ) {
+                case 1:
+                    $productPrice = $productVariant->upfront;
+                    break;
+                case 2:
+                    $productPrice = $productVariant->monthly;
+                    break;
+                case 3:
+                    $productPrice = $productVariant->outright;
+                    break;
+            }
+
             $cartMeta = CartMeta::create( [
                 'cart_id' => $cart->id ,
                 'product_id' => $product->id ,
                 'product_variant_id' => $productVariant->id ,
                 'user_id' => NULL ,
-                'total_price' => $product->price * $request->quantity,
+                'total_price' => $productPrice * $request->quantity,
                 'discount' => NULL ,
                 'status' => 10 ,
                 'products' => NULL ,
+                'payment_plan' => $request->payment_plan ,
                 'additional_charges' => NULL ,
                 'quantity' => $request->quantity,
             ] );
@@ -271,6 +298,7 @@ class CartService {
                 'subtotal' => $meta->total_price,
                 'quantity' => $meta->quantity,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
             ];
         });
 
@@ -302,6 +330,7 @@ class CartService {
         $validator = Validator::make( $request->all(), [
             'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
+            'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'product_code' => [ 'nullable', 'exists:products,code'  ],
             'color' => [ 'nullable', 'exists:product_variants,title'  ],
             'quantity' => [ 'integer', 'min:1'  ],
@@ -320,6 +349,14 @@ class CartService {
         ] );
 
         $validator->validate();
+
+        if( $request->promo_code ){
+            $test = self::validateCartVoucher($request);
+
+            if ($test->getStatusCode() === 422) {
+                return $test;
+            }
+        }
 
         $user = auth()->user();
         $query = Cart::with(['cartMetas'])
@@ -367,26 +404,61 @@ class CartService {
             $updateCart->voucher_id = optional($voucher)->id;
         
             if ($request->has('cart_item')) {
+                
                 $cartMeta = CartMeta::find($request->cart_item);
+
+                $paymentPlan = $request->payment_plan ? $request->payment_plan : $cartMeta->payment_plan;
+
+                $productPrice = $product->price;
+
+                switch ( $request->payment_plan ) {
+                    case 1:
+                        $productPrice = $productVariant->upfront;
+                        break;
+                    case 2:
+                        $productPrice = $productVariant->monthly;
+                        break;
+                    case 3:
+                        $productPrice = $productVariant->outright;
+                        break;
+                }
 
                 if ($cartMeta) {
                     $cartMeta->update([
                         'product_id'        => $product->id,
                         'product_variant_id'=> $productVariant->id,
                         'quantity'          => $request->quantity,
-                        'total_price'       => $product->price * $request->quantity,
+                        'total_price'       => $productPrice * $request->quantity,
+                        'payment_plan'      => $paymentPlan,
                     ]);
                 }
             } else {
                 CartMeta::where('cart_id', $updateCart->id)->delete();
         
+                $paymentPlan = $request->payment_plan;
+
+                $productPrice = $product->price;
+
+                switch ( $request->payment_plan ) {
+                    case 1:
+                        $productPrice = $productVariant->upfront;
+                        break;
+                    case 2:
+                        $productPrice = $productVariant->monthly;
+                        break;
+                    case 3:
+                        $productPrice = $productVariant->outright;
+                        break;
+                }
+
                 $cartMeta = CartMeta::create([
                     'cart_id'           => $updateCart->id,
                     'product_id'        => $product->id,
                     'product_variant_id'=> $productVariant->id,
                     'quantity'          => $request->quantity,
-                    'total_price'       => $product->price * $request->quantity,
+                    'total_price'       => $productPrice * $request->quantity,
                     'status'            => 10,
+                    'payment_plan'      => $request->payment_plan ,
                 ]);
             }
 
@@ -429,6 +501,7 @@ class CartService {
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
                 'quantity' => $meta->quantity,
             ];
         });
@@ -681,9 +754,7 @@ class CartService {
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'froyo' => $meta->froyos_metas,
-                'syrup' => $meta->syrups_metas,
-                'topping' => $meta->toppings_metas,
+                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
             ];
         });
 
@@ -720,19 +791,6 @@ class CartService {
                 'message' => __('voucher.voucher_not_available'),
                 'errors' => [
                     'voucher' => __('voucher.voucher_not_available')
-                ]
-            ], 422 );
-        }
-
-        $user = auth()->user();
-        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
-
-        if ( $voucherUsages->count() >= $voucher->usable_amount ) {
-            return response()->json( [
-                'message_key' => 'voucher_you_have_maximum_used',
-                'message' => __('voucher.voucher_you_have_maximum_used'),
-                'errors' => [
-                    'voucher' => __('voucher.voucher_you_have_maximum_used')
                 ]
             ], 422 );
         }
@@ -814,35 +872,28 @@ class CartService {
                 }
     
             } else {
+
+                $product = Product::where( 'code', $request->product_code )->first();
+                $productVariant = ProductVariant::where( 'color', $request->color )->where( 'product_id', $product->id )->first();
     
                 $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-                $orderPrice = 0;
-                if(isset($request->items)){
-                    foreach ( $request->items as $product ) {
-    
-                        $froyos = $product['froyo'];
-                        $froyoCount = count($froyos);
-                        $syrups = $product['syrup'];
-                        $syrupCount = count($syrups);
-                        $toppings = $product['topping'];
-                        $toppingCount = count($toppings);
-                        $product = Product::find($product['product']);
-                        $metaPrice = 0;
-        
-                        $orderPrice += $product->price ?? 0;
-        
-                        // new calculation 
-                        $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
-                        $orderPrice += $froyoPrices;
-    
-                        $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
-                        $orderPrice += $syrupPrices;
-    
-                        $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
-                        $orderPrice += $toppingPrices;
-                    }
+
+                $productPrice = $product->price;
+
+                switch ( $request->payment_plan ) {
+                    case 1:
+                        $productPrice = $productVariant->upfront;
+                        break;
+                    case 2:
+                        $productPrice = $productVariant->monthly;
+                        break;
+                    case 3:
+                        $productPrice = $productVariant->outright;
+                        break;
                 }
-    
+
+                $orderPrice = $productPrice * $request->quantity;
+
                 if ( $orderPrice < $adjustment->buy_quantity ) {
                     return response()->json( [
                         'required_amount' => $adjustment->buy_quantity,
@@ -855,6 +906,42 @@ class CartService {
                 }
     
             }
+        } else {
+
+            $cartItem = CartMeta::find( $request->cart_item );
+
+            $product = Product::where( 'code', $cartItem->product->code )->first();
+            $productVariant = ProductVariant::where( 'color', $cartItem->productVariant->color )->where( 'product_id', $cartItem->product->id )->first();
+
+            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+
+            $productPrice = $product->price;
+
+            switch ( $cartItem->payment_plan ) {
+                case 1:
+                    $productPrice = $productVariant->upfront;
+                    break;
+                case 2:
+                    $productPrice = $productVariant->monthly;
+                    break;
+                case 3:
+                    $productPrice = $productVariant->outright;
+                    break;
+            }
+
+            $orderPrice = $productPrice * $request->quantity;
+
+            if ( $orderPrice < $adjustment->buy_quantity ) {
+                return response()->json( [
+                    'required_amount' => $adjustment->buy_quantity,
+                    'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity ] ),
+                    'message_key' => 'voucher.min_spend_of_x',
+                    'errors' => [
+                        'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity ] )
+                    ]
+                ], 422 );
+            }
+
         }
     
         return response()->json( [

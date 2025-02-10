@@ -17,11 +17,17 @@ class CartController extends Controller
      * 
      * @group Cart API
      * 
+     * <strong>payment_plan</strong></br>
+     * 1: upfront<br>
+     * 2: monthly<br>
+     * 3: outright<br>
+     * 
      * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
      * @bodyParam color required strong The color of the product. Example: CHROME
      * @bodyParam quantity required integer The quantity of the product. Example: 1
      * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
      * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
+     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
      * 
      */
     public function addToCart( Request $request ) {
@@ -53,7 +59,10 @@ class CartController extends Controller
      * 
      * <aside class="notice">session_key or cart id can be used to update the cart</aside>
      * 
-     * 
+     * <strong>payment_plan</strong></br>
+     * 1: upfront<br>
+     * 2: monthly<br>
+     * 3: outright<br>
      * 
      * @group Cart API
      * 
@@ -64,6 +73,7 @@ class CartController extends Controller
      * @bodyParam id integer The ID of the cart. Example: 1
      * @bodyParam cart_item integer The ID of the cart item. Example: 1
      * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
+     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
      * 
      */
     public function updateCart( Request $request ) {

@@ -64,7 +64,6 @@ class VoucherController extends Controller
         $this->data['data']['discount_types'] = [
             '1' => __( 'voucher.percentage' ),
             '2' => __( 'voucher.fixed_amount' ),
-            '3' => __( 'voucher.free_cup' ),
         ];
 
         $this->data['data']['voucher_type'] = [
@@ -99,7 +98,6 @@ class VoucherController extends Controller
         $this->data['data']['discount_types'] = [
             '1' => __( 'voucher.percentage' ),
             '2' => __( 'voucher.fixed_amount' ),
-            '3' => __( 'voucher.free_cup' ),
         ];
 
         $this->data['data']['voucher_type'] = [

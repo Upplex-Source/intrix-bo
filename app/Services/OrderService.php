@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\{
     Validator,
     File,
 };
-
+use Illuminate\Validation\Rule;
 use App\Models\{
     FileManager,
     Option,
@@ -72,7 +72,6 @@ class OrderService
     public static function allOrders( $request, $export = false ) {
 
         $order = Order::with( [
-            'vendingMachine',
             'user',
             'orderMetas',
         ] )->select( 'orders.*' )
@@ -224,19 +223,16 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'orderMetas','vendingMachine','user', 'productBundle', 'userBundle'
+            'orderMetas','user'
         ] )->find( $request->id );
-
-        $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour)->setAttribute('image_path', $order->vendingMachine->image_path);
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
                 'product' => $meta->product->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
-                'froyo' => $meta->froyos_metas,
-                'syrup' => $meta->syrups_metas,
-                'topping' => $meta->toppings_metas,
+                'product_variant' => $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
             ];
         });
     
@@ -806,8 +802,7 @@ class OrderService
         $user = auth()->user();
     
         // Start by querying orders for the authenticated user
-        $query = Order::where('user_id', $user->id)
-            ->with(['vendingMachine', 'voucher', 'productBundle', 'userBundle'])
+        $query = Order::with(['voucher'])
             ->orderBy('created_at', 'DESC');
     
         // Apply filters
@@ -834,12 +829,6 @@ class OrderService
         // Modify each order and its related data
         $userOrders->getCollection()->transform(function ($order) {
             $order->append( ['order_status_label'] );
-
-            if($order->vendingMachine){
-                $order->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
-                ->setAttribute('operational_hour', $order->vendingMachine->operational_hour)
-                ->setAttribute('image_path', $order->vendingMachine->image_path);
-            }
     
             $orderMetas = $order->orderMetas->map(function ($meta) {
                 return [
@@ -847,37 +836,11 @@ class OrderService
                     'subtotal' => $meta->total_price,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
                         ->setAttribute('image_path', $meta->product->image_path),
-                    'froyo' => $meta->froyos_metas,
-                    'syrup' => $meta->syrups_metas,
-                    'topping' => $meta->toppings_metas,
+                    'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
                 ];
             });
 
             $order->orderMetas = $orderMetas;
-            
-            if( $order->userBundle ) {
-                $order->userBundle->productBundle->append( ['image_path','bundle_rules'] );
-
-                $orderMetaCount = Order::query()
-                ->where('user_bundle_id', $order->user_bundle_id)
-                ->where('id', '<>', $order->id)
-                ->where('created_at', '<', $order->created_at)
-                ->latest('created_at')
-                ->withCount('orderMetas')
-                ->get()
-                ->sum('order_metas_count');
-
-                $order->cup_used = count( $order->orderMetas );
-                $order->cup_redeemed = $orderMetaCount + $order->cup_used;
-                $order->cup_left = $order->userBundle->productBundle->productBundleMetas->first()->quantity - $orderMetaCount - $order->cup_used;
-
-            }else{
-                $order->cup_used = null;
-                $order->cup_redeemed = null;
-                $order->cup_left = null;
-            }
-
-            $order->qr_code = $order->status != 20 && in_array($order->status, [3, 10]) ? self::generateQrCode($order) : null;
 
             return $order;
         });
@@ -900,8 +863,14 @@ class OrderService
     public static function checkout( $request ) {
 
         $validator = Validator::make($request->all(), [
-            'session_key' => ['required', 'exists:carts,session_key'],
-            'cart_item' => ['required', 'exists:cart_metas,id'],
+            'session_key' => [
+                'required',
+                Rule::exists('carts', 'session_key')->where('status', 10),
+            ],
+            'cart_item' => [
+                'required',
+                Rule::exists('cart_metas', 'id')->where('status', 10),
+            ],
             'promo_code' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
@@ -982,6 +951,8 @@ class OrderService
                 'company_name' => $request->company_name,
             ] );
 
+            $checkoutCart = CartMeta::find( $request->cart_item );
+
             $order = Order::create( [
                 'user_id' => null,
                 'product_id' => null,
@@ -991,8 +962,7 @@ class OrderService
                 'reference' => Helper::generateOrderReference(),
                 'tax' => 0,
                 'remarks' => $request->remarks,
-                'payment_plan' => $request->payment_plan,
-
+                'payment_plan' => $checkoutCart->payment_plan ? $checkoutCart->payment_plan : $request->payment_plan,
                 'guest_id' => $guest->id,
                 'fullname' => $request->fullname,
                 'email' => $request->email,
@@ -1012,19 +982,32 @@ class OrderService
                 'company_name' => $request->company_name,
             ] );
 
-            $checkoutCart = CartMeta::find( $request->cart_item );
+
+            $productPrice = $checkoutCart->product->price;
+
+            switch ( $checkoutCart->payment_plan ) {
+                case 1:
+                    $productPrice = $checkoutCart->productVariant->upfront;
+                    break;
+                case 2:
+                    $productPrice = $checkoutCart->productVariant->monthly;
+                    break;
+                case 3:
+                    $productPrice = $checkoutCart->productVariant->outright;
+                    break;
+            }
 
             $orderMeta = OrderMeta::create( [
                 'order_id' => $order->id,
                 'product_id' => $checkoutCart->product->id,
                 'product_variant_id' => $checkoutCart->productVariant->id,
-                'total_price' =>  $checkoutCart->quantity * $checkoutCart->product->price,
+                'total_price' =>  $checkoutCart->quantity * $productPrice,
                 'quantity' => $checkoutCart->quantity,
             ] );
 
             $orderPrice += $orderMeta->total_price;
 
-            // $checkoutCart->status = 20;
+            $checkoutCart->status = 20;
             $checkoutCart->save();
 
             $order->subtotal = $orderPrice;
@@ -1100,12 +1083,16 @@ class OrderService
             $order->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($order->total_price,2)) : 0;
             $order->total_price += Helper::numberFormatV2($order->tax,2,false,true);
 
-            // $userCart->status = 20;
+            if (!$userCart->cartMetas->contains('status', 10)) {
+                $userCart->status = 20;
+                $userCart->save();
+            }
+            
             $userCart->save();
 
             $merchantKey = config('services.ipay88.merchant_key');
             $merchantCode = config('services.ipay88.merchant_code');
-            dd($order);
+            // dd($order);
             // $payment = new Payment();
             // return redirect($payment->createPayment($order));
 
@@ -1129,68 +1116,440 @@ class OrderService
                 'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
             );
 
-            $url2= "";
-            $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
-            try{ 
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            // $url2= "";
+            // $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
+            // try{ 
+            //     $ch = curl_init();
+            //     curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
+            //     curl_setopt($ch, CURLOPT_POST, true);
+            //     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         
-                // Execute cURL request
-                $response = curl_exec($ch);
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                curl_close($ch);
+            //     // Execute cURL request
+            //     $response = curl_exec($ch);
+            //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            //     curl_close($ch);
         
-                if ($httpCode == 200) {
+            //     if ($httpCode == 200) {
 
-                    echo $response;
+            //         echo $response;
 
-                    // return response()->json([
-                    //     'success' => true,
-                    //     'message' => 'Payment submitted successfully.',
-                    //     'ipay88_response' => $response
-                    // ]);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Failed to submit payment.',
-                        'ipay88_response' => $response
-                    ], 500);
-                }
-            } catch (\Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Error: ' . $e->getMessage(),
-                ], 500);
-            }
+            //         // return response()->json([
+            //         //     'success' => true,
+            //         //     'message' => 'Payment submitted successfully.',
+            //         //     'ipay88_response' => $response
+            //         // ]);
+            //     } else {
+            //         return response()->json([
+            //             'success' => false,
+            //             'message' => 'Failed to submit payment.',
+            //             'ipay88_response' => $response
+            //         ], 500);
+            //     }
+            // } catch (\Exception $e) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Error: ' . $e->getMessage(),
+            //     ], 500);
+            // }
 
-            $orderTransaction = OrderTransaction::create( [
-                'order_id' => $order->id,
-                'checkout_id' => null,
-                'checkout_url' => null,
-                'payment_url' => $url2,
-                'transaction_id' => null,
-                'layout_version' => 'v1',
-                'redirect_url' => null,
-                'notify_url' => null,
-                'order_no' => $order->reference . '-' . $order->payment_attempt,
-                'order_title' => $order->reference,
-                'order_detail' => $order->reference,
-                'amount' => $order->total_price,
-                'currency' => 'MYR',
-                'transaction_type' => 1,
+            // $orderTransaction = OrderTransaction::create( [
+            //     'order_id' => $order->id,
+            //     'checkout_id' => null,
+            //     'checkout_url' => null,
+            //     'payment_url' => $url2,
+            //     'transaction_id' => null,
+            //     'layout_version' => 'v1',
+            //     'redirect_url' => null,
+            //     'notify_url' => null,
+            //     'order_no' => $order->reference . '-' . $order->payment_attempt,
+            //     'order_title' => $order->reference,
+            //     'order_detail' => $order->reference,
+            //     'amount' => $order->total_price,
+            //     'currency' => 'MYR',
+            //     'transaction_type' => 1,
+            //     'status' => 10,
+            // ] );
+
+            // $order->payment_url = $url2;
+            // $order->order_transaction_id = $orderTransaction->id;
+
+            // if( $order->userBundle && $order->total_price == 0 ){
+            //     $order->status = 3;
+            //     $order->payment_url = null;
+            // }
+
+            $order->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
+            ];
+        });
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'create_order_success',
+            'payment_url' => $order->payment_url,
+            'reference' => $order->reference,
+            'order_id' => $order->id,
+            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
+            'order_metas' => $orderMetas,
+            'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+        ] );
+    }
+
+    public static function directCheckout( $request ) {
+
+        $validator = Validator::make($request->all(), [
+            'promo_code' => [
+                'nullable',
+                function ($attribute, $value, $fail) {
+                    $existsInPromoCode = \DB::table('vouchers')->where('promo_code', $value)->exists();
+                    $existsInId = \DB::table('vouchers')->where('id', $value)->exists();
+
+                    if (!$existsInPromoCode && !$existsInId) {
+                        $fail(__('The :attribute must exist in either the promo_code or id column.'));
+                    }
+                },
+            ],
+            'fullname' => ['required'],
+            'company_name' => ['nullable'],
+            'email' => ['required'],
+            'phone_number' => ['required'],
+            'address_1' => ['required'],
+            'address_2' => ['nullable'],
+            'city' => ['required'],
+            'state' => ['required'],
+            'postcode' => ['required'],
+            'country' => ['required'],
+            'remarks' => ['nullable'],
+            'payment_plan' => ['nullable'],
+        ]);
+
+        $validator->validate();
+
+        // create a tmp cart
+        $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
+        $product = Product::where( 'code', $request->product_code )->first();
+        $productVariant = ProductVariant::where( 'color', $request->color )->where( 'product_id', $product->id )->first();
+
+        $userCart = Cart::updateOrCreate(
+            ['session_key' => $request->session_key], // Find cart by session_key
+            [
+                'product_id' => NULL,
+                'product_variant_id' => NULL,
+                'user_id' => NULL,
+                'total_price' => 0,
+                'discount' => 0,
                 'status' => 10,
+                'voucher_id' => NULL,
+                'session_key' => $request->session_key ?? Helper::generateCartSessionKey(), // Keep existing or generate new
+                'tax' => 0,
+                'subtotal' => 0,
+                'additional_charges' => 0,
+                'payment_plan' => NULL,
+                'remarks' => NULL,
+            ]
+        );
+
+        $productPrice = $product->price;
+
+        switch ( $request->payment_plan ) {
+            case 1:
+                $productPrice = $productVariant->upfront;
+                break;
+            case 2:
+                $productPrice = $productVariant->monthly;
+                break;
+            case 3:
+                $productPrice = $productVariant->outright;
+                break;
+        }
+
+        $cartMeta = CartMeta::create( [
+            'cart_id' => $userCart->id ,
+            'product_id' => $product->id ,
+            'product_variant_id' => $productVariant->id ,
+            'user_id' => NULL ,
+            'total_price' => $productPrice * $request->quantity,
+            'discount' => NULL ,
+            'status' => 10 ,
+            'products' => NULL ,
+            'additional_charges' => NULL ,
+            'quantity' => $request->quantity,
+        ] );
+    
+        $request->merge([
+            'cart_item' => $cartMeta->id,
+            'session_key' => $userCart->session_key,
+        ]);
+
+        if( $request->promo_code ){
+            $test = self::validateVoucher($request);
+
+            if ($test->getStatusCode() === 422) {
+                return $test;
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+        
+            $subtotal = 0;
+            $orderPrice = 0;
+
+            $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
+
+            $taxSettings = Option::getTaxesSettings();
+
+            $guest = Guest::where('email', $request->email)->first() 
+                ?? $userCart->guest 
+                ?? Guest::create([
+                'fullname' => $request->fullname,
+                'email' => $request->email,
+                'session_key' => $userCart->session_key,
+                'address_1' => $request->address_1,
+                'address_2' => $request->address_2,
+                'city' => $request->city,
+                'state' => $request->state,
+                'postcode' => $request->postcode,
+                'calling_code' => '+60',
+                'status' => 10,
+                'phone_number' => $request->phone_number,  
+                'ip_address' => $request->ip(), // Get client's IP address
+                'user_agent' => $request->header('User-Agent'), // Get client's user agent
+                'last_visit' => now(), // Store current timestamp
+                'country' => $request->country,
+                'company_name' => $request->company_name,
             ] );
 
-            $order->payment_url = $url2;
-            $order->order_transaction_id = $orderTransaction->id;
+            $order = Order::create( [
+                'user_id' => null,
+                'product_id' => null,
+                'total_price' => $orderPrice,
+                'discount' => 0,
+                'status' => 1,
+                'reference' => Helper::generateOrderReference(),
+                'tax' => 0,
+                'remarks' => $request->remarks,
+                'payment_plan' => $request->payment_plan,
+                'guest_id' => $guest->id,
+                'fullname' => $request->fullname,
+                'email' => $request->email,
+                'session_key' => $userCart->session_key,
+                'address_1' => $request->address_1,
+                'address_2' => $request->address_2,
+                'city' => $request->city,
+                'state' => $request->state,
+                'postcode' => $request->postcode,
+                'calling_code' => '+60',
+                'status' => 10,
+                'phone_number' => $request->phone_number,  
+                'ip_address' => $request->ip(), // Get client's IP address
+                'user_agent' => $request->header('User-Agent'), // Get client's user agent
+                'last_visit' => now(), // Store current timestamp
+                'country' => $request->country,
+                'company_name' => $request->company_name,
+            ] );
 
-            if( $order->userBundle && $order->total_price == 0 ){
-                $order->status = 3;
-                $order->payment_url = null;
+            $checkoutCart = CartMeta::find( $request->cart_item );
+
+            $orderMeta = OrderMeta::create( [
+                'order_id' => $order->id,
+                'product_id' => $checkoutCart->product->id,
+                'product_variant_id' => $checkoutCart->productVariant->id,
+                'total_price' =>  $checkoutCart->quantity * $checkoutCart->product->price,
+                'quantity' => $checkoutCart->quantity,
+            ] );
+
+            $orderPrice += $orderMeta->total_price;
+
+            $checkoutCart->status = 20;
+            $checkoutCart->save();
+
+            $order->subtotal = $orderPrice;
+
+            if( $request->promo_code || $userCart->voucher_id ){
+
+                if( $request->promo_code ) {
+                    $voucher = Voucher::where( 'id', $request->promo_code )
+                    ->orWhere('promo_code', $request->promo_code)->first();
+                }else if( $userCart->voucher_id ) {
+                    $voucher = Voucher::where( 'id', $userCart->voucher_id )->first();
+                }
+
+                if ( $voucher->discount_type == 3 ) {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
+
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $getProductMeta = $userCart->cartMetas
+                        ->where('product_id', $adjustment->get_product)
+                        ->sortBy('total_price')
+                        ->first();                    
+
+                        if ($getProductMeta) {
+
+                            $discount = 0;
+                            $discount += $getProductMeta->product->price;
+
+                            $orderPrice -= Helper::numberFormatV2($discount,2,false,true);
+                            $order->discount = Helper::numberFormatV2($discount,2,false,true);
+                            $getProductMeta->total_price = 0 + $getProductMeta->additional_charges;
+                            $getProductMeta->save();
+                        }
+                    }
+
+                } else if ( $voucher->discount_type == 2 ) {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $orderMeta->total_price;
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $orderPrice -= $adjustment->discount_quantity;
+                        $order->discount = Helper::numberFormatV2($adjustment->discount_quantity,2,false,true);
+                    }
+        
+                } else {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $orderMeta->total_price;
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $order->discount = Helper::numberFormatV2(( $orderPrice * $adjustment->discount_quantity / 100 ),2,false,true);
+                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
+                    }
+                }
+
+                $order->voucher_id = $voucher->id;
+                
+                VoucherUsage::create( [
+                    'user_id' => null,
+                    'order_id' => $order->id,
+                    'voucher_id' => $voucher->id,
+                    'status' => 10
+                ] );
+
             }
+
+            $order->load( ['orderMetas'] );
+
+            $order->total_price = Helper::numberFormatV2($orderPrice,2,false,true);
+            $order->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($order->total_price,2)) : 0;
+            $order->total_price += Helper::numberFormatV2($order->tax,2,false,true);
+
+            if (!$userCart->cartMetas->contains('status', 10)) {
+                $userCart->status = 20;
+                $userCart->save();
+            }
+            
+            $userCart->save();
+
+            $merchantKey = config('services.ipay88.merchant_key');
+            $merchantCode = config('services.ipay88.merchant_code');
+            // dd($order);
+            // $payment = new Payment();
+            // return redirect($payment->createPayment($order));
+
+            $request = new \IPay88\Payment\Request( $merchantKey );
+            $order_amount = number_format($order->total_price, 2, '.', '');
+            $data = array(
+                'merchantCode' => $request->setMerchantCode( $merchantCode ),
+                'paymentId' =>  '',
+                'refNo' => $request->setRefNo( $order->reference ),
+                'amount' => $request->setAmount( $order_amount ),
+                'currency' => $request->setCurrency( 'MYR' ),
+                'prodDesc' => $request->setProdDesc( 'Testing' ),
+                'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
+                'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
+                'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
+                'remark' => $request->setRemark( 'test' ),
+                'lang' => $request->setLang( 'UTF-8' ),
+                // 'signature' => $request->getSignature(),
+    			'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
+                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
+                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
+            );
+
+            // $url2= "";
+            // $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
+            // try{ 
+            //     $ch = curl_init();
+            //     curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
+            //     curl_setopt($ch, CURLOPT_POST, true);
+            //     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        
+            //     // Execute cURL request
+            //     $response = curl_exec($ch);
+            //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            //     curl_close($ch);
+        
+            //     if ($httpCode == 200) {
+
+            //         echo $response;
+
+            //         // return response()->json([
+            //         //     'success' => true,
+            //         //     'message' => 'Payment submitted successfully.',
+            //         //     'ipay88_response' => $response
+            //         // ]);
+            //     } else {
+            //         return response()->json([
+            //             'success' => false,
+            //             'message' => 'Failed to submit payment.',
+            //             'ipay88_response' => $response
+            //         ], 500);
+            //     }
+            // } catch (\Exception $e) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Error: ' . $e->getMessage(),
+            //     ], 500);
+            // }
+
+            // $orderTransaction = OrderTransaction::create( [
+            //     'order_id' => $order->id,
+            //     'checkout_id' => null,
+            //     'checkout_url' => null,
+            //     'payment_url' => $url2,
+            //     'transaction_id' => null,
+            //     'layout_version' => 'v1',
+            //     'redirect_url' => null,
+            //     'notify_url' => null,
+            //     'order_no' => $order->reference . '-' . $order->payment_attempt,
+            //     'order_title' => $order->reference,
+            //     'order_detail' => $order->reference,
+            //     'amount' => $order->total_price,
+            //     'currency' => 'MYR',
+            //     'transaction_type' => 1,
+            //     'status' => 10,
+            // ] );
+
+            // $order->payment_url = $url2;
+            // $order->order_transaction_id = $orderTransaction->id;
+
+            // if( $order->userBundle && $order->total_price == 0 ){
+            //     $order->status = 3;
+            //     $order->payment_url = null;
+            // }
 
             $order->save();
 
@@ -1214,16 +1573,16 @@ class OrderService
             ];
         });
 
-        // return response()->json( [
-        //     'message' => '',
-        //     'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
-        //     'payment_url' => $order->payment_url,
-        //     'sesion_key' => $order->session_key,
-        //     'order_id' => $order->id,
-        //     'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
-        //     'order_metas' => $orderMetas,
-        //     'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
-        // ] );
+        return response()->json( [
+            'message' => '',
+            'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
+            'payment_url' => $order->payment_url,
+            'sesion_key' => $order->session_key,
+            'order_id' => $order->id,
+            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
+            'order_metas' => $orderMetas,
+            'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+        ] );
     }
 
     public static function scannedOrder( $request ) {
@@ -1382,14 +1741,10 @@ class OrderService
         //     }
         // }
 
-        $query = Cart::where('status',10);
+        $query = CartMeta::where('status',10);
 
-        if ($request->has('id')) {
-            $query->where('id', $request->id);
-        }
-    
-        if ($request->has('session_key')) {
-            $query->where('session_key', $request->session_key);
+        if ($request->has('cart_item')) {
+            $query->where('id', $request->cart_item);
         }
     
         $cart = $query->first();

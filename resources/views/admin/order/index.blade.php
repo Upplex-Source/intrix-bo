@@ -3,6 +3,7 @@
         <div class="nk-block-head-content">
             <h3 class="nk-block-title page-title">{{ __( 'template.orders' ) }}</h3>
         </div><!-- .nk-block-head-content -->
+        @if( 1 == 2 )
         @can( 'add orders' )
         <div class="nk-block-head-content">
             <div class="toggle-wrap nk-block-tools-toggle">
@@ -17,6 +18,7 @@
             </div>
         </div><!-- .nk-block-head-content -->
         @endcan
+        @endif
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 
@@ -82,7 +84,7 @@ $columns = [
         </div>
         <div class="modal-body">
             <div class="mb-3 row d-flex justify-content-between">
-                <label class="col-sm-5 col-form-label">Vending Machine</label>
+                <label class="col-sm-5 col-form-label">User</label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control-plaintext" id="{{ $order_view }}_fullname" readonly>
                 </div>
@@ -91,20 +93,6 @@ $columns = [
                 <label class="col-sm-5 col-form-label">Reference</label>
                 <div class="col-sm-7">
                     <input type="text" class="form-control-plaintext" id="{{ $order_view }}_email" readonly>
-                </div>
-            </div>
-            
-            <div class="mb-3 row d-flex justify-content-between bundle">
-                <label class="col-sm-5 col-form-label"> {{ __( 'order.bundle' ) }}</label>
-                <div class="col-sm-7">
-                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}_bundle" readonly>
-                </div>
-            </div>
-            
-            <div class="mb-3 row d-flex justify-content-between bundle">
-                <label class="col-sm-5 col-form-label"> {{ __( 'order.cups_left' ) }}</label>
-                <div class="col-sm-7">
-                    <input type="text" class="form-control-plaintext" id="{{ $order_view }}cups_left" readonly>
                 </div>
             </div>
 
@@ -127,9 +115,21 @@ $columns = [
                 </div>
             </div>
             <div class="mb-3 row d-flex justify-content-between">
+                <label class="col-sm-5 col-form-label">Subtotal</label>
+                <div class="col-sm-7">
+                    <input type="number" class="form-control-plaintext" id="{{ $order_view }}_subtotal" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row d-flex justify-content-between">
+                <label class="col-sm-5 col-form-label">Discount</label>
+                <div class="col-sm-7">
+                    <input type="number" class="form-control-plaintext" id="{{ $order_view }}_discount" readonly>
+                </div>
+            </div>
+            <div class="mb-3 row d-flex justify-content-between">
                 <label class="col-sm-5 col-form-label">Total Price</label>
                 <div class="col-sm-7">
-                    <input type="number" class="form-control-plaintext" id="{{ $order_view }}_leverage" readonly>
+                    <input type="number" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
                 </div>
             </div>
             <input type="hidden" id="{{ $order_view }}_id">
@@ -187,7 +187,7 @@ var statusMapper = @json( $data['status'] ),
             { data: null },
             { data: 'created_at' },
             { data: 'reference' },
-            { data: 'user' },
+            { data: 'fullname' },
             { data: 'total_price' },
             { data: 'status' },
             { data: 'encrypted_id' },
@@ -217,7 +217,7 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "user" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data.username ?? '-' + '<br>' + '+60' + data.phone_number;
+                    return data ? data : row.company_name;
                 },
             },
             {
@@ -339,57 +339,29 @@ var statusMapper = @json( $data['status'] ),
                 },
                 success: function( response ) {
                     $('#{{ $order_view }}_id').val(response.id);
-                    $('#{{ $order_view }}_fullname').val(response.vending_machine.title || '-');
+                    $('#{{ $order_view }}_fullname').val(response.fullname ? response.fullname : response.company_name || '-');
                     $('#{{ $order_view }}_status').val(response.status || '-');
                     $('#{{ $order_view }}_email').val(response.reference || '-');
-                    $('#{{ $order_view }}_type').val(response.payment_method === 1 ? 'Yobe Wallet' : 'Online Payment');
-                    $('#{{ $order_view }}_account_type').val(response.status === 1 ? 'Order Placed' : 'Collected');
-                    $('#{{ $order_view }}_leverage').val(response.total_price || '0.00');
+                    $('#{{ $order_view }}_type').val('Online Payment');
+                    $('#{{ $order_view }}_subtotal').val(response.subtotal || '0.00');
+                    $('#{{ $order_view }}_discount').val(response.discount || '0.00');
+                    $('#{{ $order_view }}_total').val(response.total_price || '0.00');
                     $('#modal_order_view .selections').empty();
 
                     const orderMetas = response.orderMetas || [];
                     orderMetas.forEach((meta) => {
-                        const froyoHtml = meta.froyo
-                            ? meta.froyo
-                                .map(
-                                    (froyo) =>
-                                        `<div><strong>Froyo:</strong> ${froyo.title}</div>`
-                                )
-                                .join('')
-                            : '<div><strong>Froyo:</strong> None selected</div>';
 
-                        const syrupHtml = meta.syrup
-                            ? meta.syrup
-                                .map(
-                                    (syrup) =>
-                                        `<div><strong>Syrup:</strong> ${syrup.title}</div>`
-                                )
-                                .join('')
-                            : '<div><strong>Syrup:</strong> None selected</div>';
-
-                        const toppingHtml = meta.topping
-                            ? meta.topping
-                                .map(
-                                    (topping) =>
-                                        `<div><strong>Topping:</strong> ${topping.title}</div>`
-                                )
-                                .join('')
-                            : '<div><strong>Topping:</strong> None selected</div>';
-
-                        // Append to the modal
                         $('#modal_order_view .selections').append(
                             `<div>
                                 <h6>Product: ${meta.product.title} (${meta.product.code})</h6>
-                                <h6>Price: ${meta.product.title} (${meta.product.code})</h6>
-                                ${froyoHtml}
-                                ${syrupHtml}
-                                ${toppingHtml}
+                                <h6>Variant: ${meta.product_variant.color}</h6>
+                                <h6>Price: ${meta.product.price} ( x ${meta.quantity} unit)</h6>
                             </div><hr>`
                         );
                     });
 
-
                     modalmt5Detail.show();
+                    
                 },
                 error: function( error ) {
                     modalmt5Detail.hide();

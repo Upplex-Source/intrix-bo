@@ -50,9 +50,13 @@ Route::prefix( 'orders' )->group( function() {
     Route::post( 'retry-payment', [ OrderController::class, 'retryPayment' ] );
 } );
 
-Route::prefix( 'vouchers' )->group( function() {
-    Route::get( '/', [ VoucherController::class, 'getVouchers' ] );
-    Route::post( '/validate', [ VoucherController::class, 'validateVoucher' ] );
+// Route::prefix( 'vouchers' )->group( function() {
+//     Route::get( '/', [ VoucherController::class, 'getVouchers' ] );
+//     Route::post( '/validate', [ VoucherController::class, 'validateVoucher' ] );
+// } );
+
+Route::prefix( 'promo-codes' )->group( function() {
+    Route::get( '/', [ VoucherController::class, 'getPromoCode' ] );
 } );
 
 if( 1 == 2 ){

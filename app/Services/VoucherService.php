@@ -657,12 +657,8 @@ class VoucherService
             }
 
             $vouchers = $vouchers->get();
-            $claimedVoucherIds = UserVoucher::where('user_id', auth()->user()->id)
-            ->pluck('voucher_id')
-            ->toArray();
 
-            $vouchers = $vouchers->map(function ($voucher) use ($claimedVoucherIds) {
-                $voucher->claimed = in_array($voucher->id, $claimedVoucherIds) ? 'claimed' : 'unclaim';
+            $vouchers = $vouchers->map(function ($voucher) {
                 $voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] );
                 $voucher->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
                 return $voucher;
