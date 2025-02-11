@@ -1,0 +1,32 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Blog Module Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used during Blog Module for various
+    | messages that we need to display to the user. You are free to modify
+    | these language lines according to your application's requirements.
+    |
+    */
+
+    'title' => 'Title',
+    'subtitle' => 'Subtitle',
+    'content' => 'Content',
+    'thumbnail' => 'Thumbnail',
+    'meta_title' => 'Meta Title',
+    'meta_desc' => 'Meta Description',
+    'publish_date' => 'Publish Date',
+    'tags' => 'Tags',
+    'gallery' => 'Gallery (can upload multiple)',
+    'type' => 'Type',
+
+    'articles' => 'Articles',
+    'insights' => 'Insights',
+    'stories' => 'Stories',
+    'blogs' => 'Blogs',
+
+];

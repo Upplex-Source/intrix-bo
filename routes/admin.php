@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\{
     CheckinRewardController,
     ProductBundleController,
     UserBundleController,
+    BlogController,
 };
 
 use App\Models\{
@@ -544,6 +545,25 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-user-bundle-status', [ UserBundleController::class, 'updateUserBundleStatus' ] )->name( 'admin.user_bundle.updateUserBundleStatus' );
                 Route::post( 'remove-user-bundle-gallery-image', [ UserBundleController::class, 'removeUserBundleGalleryImage' ] )->name( 'admin.user_bundle.removeUserBundleGalleryImage' );
                 Route::post( 'ckeUpload', [ UserBundleController::class, 'ckeUpload' ] )->name( 'admin.user_bundle.ckeUpload' );
+            } );
+
+            Route::prefix( 'blogs' )->group( function() {
+
+                Route::group( [ 'middleware' => [ 'permission:view blogs' ] ], function() {
+                    Route::get( '/', [ BlogController::class, 'index' ] )->name( 'admin.module_parent.blog.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add blogs' ] ], function() {
+                    Route::get( 'add', [ BlogController::class, 'add' ] )->name( 'admin.blog.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit blogs' ] ], function() {
+                    Route::get( 'edit', [ BlogController::class, 'edit' ] )->name( 'admin.blog.edit' );
+                } );
+
+                Route::post( 'allBlogs', [ BlogController::class, 'allBlogs' ] )->name( 'admin.blog.allBlogs' );
+                Route::post( 'one-blog', [ BlogController::class, 'oneBlog' ] )->name( 'admin.blog.oneBlog' );
+                Route::post( 'create-blog', [ BlogController::class, 'createBlog' ] )->name( 'admin.blog.createBlog' );
+                Route::post( 'update-blog', [ BlogController::class, 'updateBlog' ] )->name( 'admin.blog.updateBlog' );
+                Route::post( 'update-blog-status', [ BlogController::class, 'updateBlogStatus' ] )->name( 'admin.blog.updateBlogStatus' );
             } );
 
         } );

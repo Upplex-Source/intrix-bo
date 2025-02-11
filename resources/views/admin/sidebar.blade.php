@@ -60,6 +60,15 @@
                                     </li>
                                 @endcan
 
+                                @can( 'view Blogs' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\BlogController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.blog.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-money"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.blogs' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+
                                 @if( 1 == 2 )
                                 @can( 'view Wallets' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WalletController' ? 'active current-page' : '' }}">

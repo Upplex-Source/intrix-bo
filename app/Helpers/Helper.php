@@ -38,6 +38,15 @@ class Helper {
             '2' => __( 'wallet.wallet_2' ),
         ];
     }
+
+    public static function types() {
+        return [
+            '1' => __( 'blog.articles' ),
+            '2' => __( 'blog.insights' ),
+            '3' => __( 'blog.stories' ),
+            // '4' => __( 'blog.blogs' ),
+        ];
+    }
     
     public static function maxStocks() {
         return [

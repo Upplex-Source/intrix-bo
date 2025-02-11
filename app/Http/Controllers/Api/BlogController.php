@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\{
+    Crypt,
+    Hash,
+    Http,
+    Storage
+};
+
+use App\Services\{
+    BlogService,
+    UserService,
+};
+
+use App\Models\{
+    User,
+};
+
+use Helper;
+
+class BlogController extends Controller {
+
+    /**
+     * 1. Get all blogs
+     * 
+     * @group Blog API
+     * 
+     * @bodyParam length string required The length of the table. Example: 10
+     * @bodyParam start string required The start of the record of the table. Example: 0
+     * @bodyParam type string The type of the filter. Example: 1
+     * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
+     * 
+     */ 
+    public function allBlogs( Request $request ) {
+        
+        return BlogService::_allBlogs( $request );
+    }
+
+    /**
+     * 2. Get one blog detail
+     * 
+     * @group Blog API
+     * @bodyParam id string required The encrypted id the blog. Example: 1
+     * 
+     */ 
+    public function oneBlog( Request $request ) {
+        
+        return BlogService::_oneBlog( $request );
+    }
+}

@@ -59,6 +59,11 @@ Route::prefix( 'promo-codes' )->group( function() {
     Route::get( '/', [ VoucherController::class, 'getPromoCode' ] );
 } );
 
+Route::prefix( 'blogs' )->group( function() {
+    Route::any( '/', [ BlogController::class, 'allBlogs' ] );
+    Route::any( '/details', [ BlogController::class, 'oneBlog' ] );
+} );
+
 if( 1 == 2 ){
 Route::prefix( 'products' )->group( function() {
     Route::get( '/', [ ProductController::class, 'getProducts' ] );

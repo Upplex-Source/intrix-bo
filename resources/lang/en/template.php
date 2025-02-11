@@ -85,6 +85,7 @@ return [
     'add_transaction' => 'Add Transaction',
     'preview' => 'Preview',
     'generate_and_save' => 'Generate & Save',
+    'blogs' => 'Blogs',
 
     'new_x_created' => 'New :title Created.',
     'x_updated' => ':title Updated.',
