@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\{
     VoucherController,
     CheckinController,
     ProductBundleController,
+    BlogController,
 };
 
 use Illuminate\Support\Facades\Route;
