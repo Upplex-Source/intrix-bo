@@ -43,23 +43,23 @@ return [
     'Nov' => 'Nov',
     'Dec' => 'Dec',
     
-    'today_revenue' => "Today's Revenue", //Cup sales, topup
-    'total_revenue' => 'Total Revenue', //Cup sales, topup
+    'today_revenue' => "Today's Revenue", //Order sales, topup
+    'total_revenue' => 'Total Revenue', //Order sales, topup
     'new_users' => 'New Users',
     'total_users' => 'Total Users',
 
     'busineess_insights' => 'Business Insights',
     'total_revenue_chart' => 'Total Revenue Chart (RM)',
     'total_reload' => 'Total Reload (RM)',
-    'total_cups_chart' => 'Total Cups Chart',
+    'total_orders_chart' => 'Total Orders Chart',
     'total_users_chart' => 'Total Users Chart',
     'vending_machine_sales' => 'Vending Machine Sales',
 
     // Extras
-    'cup_sales' => 'Cup Sales',
+    'order_sales' => 'Order Sales',
     'vending_machine_sales' => 'Vending Machine Sales',
     'top_selling_items' => 'Top Selling Items',
     'users' => 'Users',
     'topup' => 'Topup',
-    'cups' => 'Cups',
+    'orders' => 'Orders',
 ];

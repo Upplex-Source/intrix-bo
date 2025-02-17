@@ -593,6 +593,7 @@ Route::prefix( 'ipay88' )->group( function() {
     Route::any( 'notify', [ PaymentController::class, 'notifyEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::any( 'query', [ PaymentController::class, 'queryEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::any( 'callback', [PaymentController::class, 'callback'] )->name( 'payment.callback' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::get( 'start-payment', [PaymentController::class, 'startPayment'] )->name( 'payment.startPayment' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
 } );
 
 
