@@ -24,7 +24,7 @@ class OrderController extends Controller
      * 1: CHROME<br>
      * 2: MATTE BLACK<br>
      * 3: SATIN GOLD<br>
-     * 3: GUNMETAL GREY<br>
+     * 4: GUNMETAL GREY<br>
      * 
      * @group Order API
      * 
@@ -62,7 +62,7 @@ class OrderController extends Controller
      * 1: CHROME<br>
      * 2: MATTE BLACK<br>
      * 3: SATIN GOLD<br>
-     * 3: GUNMETAL GREY<br>
+     * 4: GUNMETAL GREY<br>
      * 
      * @group Order API
      * 
