@@ -1240,7 +1240,7 @@ class OrderService
             'remarks' => ['nullable'],
             'payment_plan' => ['nullable'],
             'product_code' => [ 'required', 'exists:products,code'  ],
-            'color' => [ 'required', 'exists:product_variants,title'  ],
+            'color' => [ 'required', 'exists:product_variants,color'  ],
             'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'quantity' => [ 'numeric', 'min:1'  ],
         ]);
@@ -1608,7 +1608,7 @@ class OrderService
             ],
             'quantity' => ['numeric', 'min:1'],
             'product_code' => ['required', 'exists:products,code'],
-            'color' => ['required', 'exists:product_variants,title'],
+            'color' => ['required', 'exists:product_variants,color'],
             'payment_plan' => ['nullable', 'in:1,2,3'],
         ]);
     
