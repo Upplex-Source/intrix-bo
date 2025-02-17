@@ -51,6 +51,7 @@
                                     <h6 class="overline-title text-primary-alt">{{ __( 'template.operations' ) }}</h6>
                                 </li>
                                 {{-- New module starts here --}}
+                                @if( 1 == 2 )
                                 @can( 'view Users' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\UserController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.user.index' ) }}" class="nk-menu-link">
@@ -59,6 +60,7 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @endif
 
                                 @can( 'view Blogs' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\BlogController' ? 'active current-page' : '' }}">
@@ -98,6 +100,7 @@
                                     </li>
                                 @endcan
 
+                                @if( 1 == 2 )
                                 @can( 'view Orders' )
                                 <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\OrderController') ? 'active current-page' : '' }}">
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
@@ -115,6 +118,16 @@
                                         @endif
                                     </ul>
                                 </li>
+                                @endcan
+                                @endif
+
+                                @can( 'view Orders' )
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-ticket-alt"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.orders' ) }}</span>
+                                        </a>
+                                    </li>
                                 @endcan
 
                                 @can( 'view Vouchers' )

@@ -20,6 +20,12 @@ class OrderController extends Controller
      * 2: monthly<br>
      * 3: outright<br>
      * 
+     * <strong>payment_plan</strong></br>
+     * 1: CHROME<br>
+     * 2: MATTE BLACK<br>
+     * 3: SATIN GOLD<br>
+     * 3: GUNMETAL GREY<br>
+     * 
      * @group Order API
      * 
      * @bodyParam session_key string The session_key of the cart. Example: kn1i23onlas1
@@ -52,6 +58,11 @@ class OrderController extends Controller
      * 2: monthly<br>
      * 3: outright<br>
      * 
+     * <strong>payment_plan</strong></br>
+     * 1: CHROME<br>
+     * 2: MATTE BLACK<br>
+     * 3: SATIN GOLD<br>
+     * 3: GUNMETAL GREY<br>
      * 
      * @group Order API
      * 
