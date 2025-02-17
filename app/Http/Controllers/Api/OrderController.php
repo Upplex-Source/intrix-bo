@@ -20,7 +20,7 @@ class OrderController extends Controller
      * 2: monthly<br>
      * 3: outright<br>
      * 
-     * <strong>payment_plan</strong></br>
+     * <strong>color</strong></br>
      * 1: CHROME<br>
      * 2: MATTE BLACK<br>
      * 3: SATIN GOLD<br>
@@ -58,7 +58,7 @@ class OrderController extends Controller
      * 2: monthly<br>
      * 3: outright<br>
      * 
-     * <strong>payment_plan</strong></br>
+     * <strong>color</strong></br>
      * 1: CHROME<br>
      * 2: MATTE BLACK<br>
      * 3: SATIN GOLD<br>
