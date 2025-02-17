@@ -30,4 +30,31 @@ class FileService
             'data' => $createFile,
         ] );
     }
+
+    public static function ckeUpload( $request ) {
+     
+        $createFile = FileManager::create( [
+            'file' => $request->file( 'file' )->store( 'ckeditor', [ 'disk' => 'public' ] ),
+        ] );
+
+        return response()->json( [
+            'url' => asset( 'storage/' . $createFile->file ),
+        ] );
+    }
+
+    public static function blogUpload( $request ) {
+     
+        $file = $request->file('file');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('blogImage', $filename, ['disk' => 'public']);
+
+        $createFile = FileManager::create( [
+            'file' => $path,
+        ] );
+
+        return response()->json( [
+            'status' => 200,
+            'url' => asset( 'storage/' . $createFile->file ),
+        ] );
+    }
 }

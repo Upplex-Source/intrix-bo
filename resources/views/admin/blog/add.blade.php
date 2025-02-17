@@ -58,6 +58,13 @@ $blog_create = 'blog_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $blog_create }}_slug" class="col-sm-5 col-form-label">{{ __( 'blog.slug' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" id="{{ $blog_create }}_slug" class="form-control form-control-sm" placeholder="blog-title-1">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3 row">
@@ -70,7 +77,7 @@ $blog_create = 'blog_create';
                 <div class="mb-3 row">
                     <label for="{{ $blog_create }}_meta_desc" class="col-sm-5 col-form-label">{{ __( 'blog.meta_desc' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control form-control-sm" id="{{ $blog_create }}_meta_desc">
+                        <textarea type="text" class="form-control form-control-sm" id="{{ $blog_create }}_meta_desc" rows="4"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -110,16 +117,16 @@ $blog_create = 'blog_create';
     <button id="{{ $blog_create }}_submit" type="button" class="btn btn-sm btn-primary">{{ __( 'template.save_changes' ) }}</button>
 </div>
 {{-- content --}}
-<link rel="stylesheet" href="{{ asset( 'admin/css/ckeditor/styles.css' ) }}">
-<script src="{{ asset( 'admin/js/ckeditor/ckeditor.js' ) }}"></script>
-<script src="{{ asset( 'admin/js/ckeditor/upload-adapter.js' ) }}"></script>
+<link rel="stylesheet" href="{{ asset( 'admin/css/ckeditor/styles.css' ) . Helper::assetVersion() }}">
+<script src="{{ asset( 'admin/js/ckeditor/ckeditor.js' ) . Helper::assetVersion() }}"></script>
+<script src="{{ asset( 'admin/js/ckeditor/upload-adapter.js' ) . Helper::assetVersion() }}"></script>
 <script>
 window.ckeupload_path = '{{ route( 'admin.file.blogUpload' ) }}';
 window.csrf_token = '{{ csrf_token() }}';
 window.cke_element = 'blog_create_text';
 </script>
 
-<script src="{{ asset( 'admin/js/ckeditor/ckeditor-init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/ckeditor/ckeditor-init.js' ). Helper::assetVersion() }}"></script>
 
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
@@ -147,6 +154,7 @@ window.cke_element = 'blog_create_text';
             formData.append( 'publish_date', $( be + '_publish_date' ).val() );
             formData.append( 'meta_title', $( be + '_meta_title' ).val() );
             formData.append( 'meta_desc', $( be + '_meta_desc' ).val() );
+            formData.append( 'slug', $( be + '_slug' ).val() );
             formData.append( 'tag', $( be + '_tags' ).val() );
             formData.append( 'text', editor.getData() );
             formData.append( 'image', fileID );
@@ -192,12 +200,21 @@ window.cke_element = 'blog_create_text';
             maxFiles: 1,
             acceptedFiles: 'image/jpg,image/jpeg,image/png',
             addRemoveLinks: true,
-            removedfile: function( file ) {
-                fileID = null;
-                file.previewElement.remove();
+            init: function () {
+                this.on("addedfile", function (file) {
+                    if (this.files.length > 1) {
+                        this.removeFile(this.files[0]);
+                    }
+                });
             },
-            success: function( file, response ) {
-                if ( response.status == 200 )  {
+            removedfile: function(file) {
+                fileID = null;
+                if (file.previewElement) {
+                    file.previewElement.remove();
+                }
+            },
+            success: function(file, response) {
+                if (response.status == 200) {
                     fileID = response.url;
                 }
             }
@@ -205,7 +222,7 @@ window.cke_element = 'blog_create_text';
 
         const dropzone2 = new Dropzone(be + '_gallery', {
             url: '{{ route("admin.file.blogUpload") }}',
-            acceptedFiles: 'image/jpg,image/jpeg,image/png,video/mp4,video/webm,video/ogg',
+            acceptedFiles: 'image/jpg,image/jpeg,image/png,video/mp4,video/webm,video/ogg,video/avi,video/mov,video/quicktime',
             addRemoveLinks: true,
             previewTemplate: `
                 <div class="dz-preview dz-file-preview">

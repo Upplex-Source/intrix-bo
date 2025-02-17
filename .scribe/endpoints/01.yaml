@@ -1,214 +1,23 @@
-name: 'Order API'
-description: ''
+name: 'Cart API'
+description: |-
+  <strong>payment_plan</strong></br>
+  1: upfront<br>
+  2: monthly<br>
+  3: outright<br>
+
+  <strong>color</strong></br>
+  1: CHROME<br>
+  2: MATTE BLACK<br>
+  3: SATIN GOLD<br>
+  4: GUNMETAL GREY<br>
 endpoints:
   -
     httpMethods:
-      - GET
-    uri: api/v1/orders
-    metadata:
-      title: '3. Retrieve user order'
-      description: |-
-        <aside class="notice">id and reference can be used to filter out the order</aside>
-
-        <strong>status</strong><br>
-        1: placed order / pending payment<br>
-        3: paid / unclaimed<br>
-        10: completed / claimed<br>
-        20: canceled<br>
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters:
-      reference:
-        name: reference
-        description: 'The unique reference for the order.'
-        required: false
-        example: abcd-1234
-        type: string
-        custom: []
-      id:
-        name: id
-        description: 'The ID of the order. .'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      status:
-        name: status
-        description: 'The Status of the order. .'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-      per_page:
-        name: per_page
-        description: 'Retrieve how many insurance quote in a page, default is 10.'
-        required: false
-        example: 10
-        type: integer
-        custom: []
-    bodyParameters: []
-    responses:
-      -
-        status: 422
-        content: '{"message":"The given data was invalid.","errors":{"id":["The selected id is invalid."],"reference":["The selected reference is invalid."]}}'
-        headers:
-          cache-control: 'no-cache, private'
-          content-type: application/json
-          x-ratelimit-limit: '100'
-          x-ratelimit-remaining: '98'
-          access-control-allow-origin: '*'
-        description: null
-    responseFields: []
-  -
-    httpMethods:
       - POST
-    uri: api/v1/orders/retry-payment
+    uri: api/v1/carts/add
     metadata:
-      title: '4. Retry Payment'
-      description: '<aside class="notice">retry payment for online payment</aside>'
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters:
-      order_id:
-        name: order_id
-        description: 'The ID of the order.'
-        required: false
-        example: 1
-        type: integer
-        custom: []
-    bodyParameters: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/orders/cart-checkout
-    metadata:
-      title: '1. checkout'
-      description: '<strong>payment_method</strong><br>'
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    queryParameters: []
-    bodyParameters:
-      session_key:
-        name: session_key
-        description: 'The session_key of the cart.'
-        required: false
-        example: kn1i23onlas1
-        type: string
-        custom: []
-      cart_item:
-        name: cart_item
-        description: 'The ID of the cart item.'
-        required: true
-        example: 12
-        type: integer
-        custom: []
-      promo_code:
-        name: promo_code
-        description: 'The ID of the promotion/voucher to apply.'
-        required: false
-        example: 0
-        type: integer
-        custom: []
-      fullname:
-        name: fullname
-        description: 'The fullname of the guest.'
-        required: true
-        example: Johnny
-        type: string
-        custom: []
-      company_name:
-        name: company_name
-        description: 'nullable The company_name of the guest.'
-        required: false
-        example: 'Johnny holdings'
-        type: string
-        custom: []
-      email:
-        name: email
-        description: 'The email of the guest.'
-        required: true
-        example: johnny@gmail.com
-        type: string
-        custom: []
-      phone_number:
-        name: phone_number
-        description: 'nullable The phone_number of the guest.'
-        required: false
-        example: '1231231223'
-        type: string
-        custom: []
-      address_1:
-        name: address_1
-        description: 'The address_1 of the guest.'
-        required: true
-        example: 'Lot 4, 1'
-        type: string
-        custom: []
-      address_2:
-        name: address_2
-        description: 'nullable The address_2 of the guest.'
-        required: false
-        example: 'Bandar Baru Bangi'
-        type: string
-        custom: []
-      city:
-        name: city
-        description: 'The city of the guest.'
-        required: true
-        example: Kajang
-        type: string
-        custom: []
-      state:
-        name: state
-        description: 'The state of the guest.'
-        required: true
-        example: Selangor
-        type: string
-        custom: []
-      postcode:
-        name: postcode
-        description: 'The postcode of the guest.'
-        required: true
-        example: '43000'
-        type: string
-        custom: []
-      country:
-        name: country
-        description: 'The country of the guest.'
-        required: true
-        example: Malaysia
-        type: string
-        custom: []
-      remarks:
-        name: remarks
-        description: 'nullable The remarks for the order.'
-        required: false
-        example: 'Be careful'
-        type: string
-        custom: []
-    responses: []
-    responseFields: []
-  -
-    httpMethods:
-      - POST
-    uri: api/v1/orders/direct-checkout
-    metadata:
-      title: '2. checkout'
-      description: '<strong>payment_method</strong><br>'
+      title: '1. Add to cart'
+      description: ''
       authenticated: false
       custom: []
     headers:
@@ -238,6 +47,13 @@ endpoints:
         example: '1'
         type: required
         custom: []
+      session_key:
+        name: session_key
+        description: 'The session_key of the cart. Required only on second time'
+        required: false
+        example: kn1i23onlas1
+        type: string
+        custom: []
       promo_code:
         name: promo_code
         description: 'The ID of the promotion/voucher to apply.'
@@ -245,82 +61,214 @@ endpoints:
         example: 0
         type: integer
         custom: []
-      fullname:
-        name: fullname
-        description: 'nullable The fullname of the guest.'
+      payment_plan:
+        name: payment_plan
+        description: 'nullable The payment_plan integer for the order.'
         required: false
-        example: Johnny
+        example: 1
+        type: integer
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/carts/update
+    metadata:
+      title: '3. Update cart'
+      description: |-
+        <aside class="notice">session_key or cart id can be used to update the cart</aside>
+
+        <strong>payment_plan</strong></br>
+        1: upfront<br>
+        2: monthly<br>
+        3: outright<br>
+
+        <strong>color</strong></br>
+        1: CHROME<br>
+        2: MATTE BLACK<br>
+        3: SATIN GOLD<br>
+        4: GUNMETAL GREY<br>
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      product_code:
+        name: product_code
+        description: 'The product_code of the prodcut.'
+        required: true
+        example: 5-IN-1
         type: string
         custom: []
-      company_name:
-        name: company_name
-        description: 'nullable The company_name of the guest.'
+      color:
+        name: color
+        description: 'strong The color of the product.'
         required: false
-        example: 'Johnny holdings'
+        example: CHROME
+        type: required
+        custom: []
+      quantity:
+        name: quantity
+        description: 'integer The quantity of the product.'
+        required: false
+        example: '1'
+        type: required
+        custom: []
+      session_key:
+        name: session_key
+        description: 'The session_key of the cart. Required only on second time'
+        required: false
+        example: kn1i23onlas1
         type: string
         custom: []
-      email:
-        name: email
-        description: 'nullable The email of the guest.'
+      id:
+        name: id
+        description: 'The ID of the cart.'
         required: false
-        example: johnny@gmail.com
+        example: 1
+        type: integer
+        custom: []
+      cart_item:
+        name: cart_item
+        description: 'The ID of the cart item.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+      promo_code:
+        name: promo_code
+        description: 'The ID of the promotion/voucher to apply.'
+        required: false
+        example: 0
+        type: integer
+        custom: []
+      payment_plan:
+        name: payment_plan
+        description: 'nullable The payment_plan integer for the order.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/carts
+    metadata:
+      title: '2. Retrieve cart'
+      description: '<aside class="notice">id and session_key can be used to filter out the cart</aside>'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      session_key:
+        name: session_key
+        description: 'The unique identifier for the cart.'
+        required: false
+        example: abcd-1234
         type: string
         custom: []
-      phone_number:
-        name: phone_number
-        description: 'nullable The phone_number of the guest.'
+      id:
+        name: id
+        description: 'The ID of the cart. .'
         required: false
-        example: '1231231223'
+        example: abcd-1234
         type: string
         custom: []
-      address_1:
-        name: address_1
-        description: 'nullable The address_1 of the guest.'
+      per_page:
+        name: per_page
+        description: 'Retrieve how many insurance quote in a page, default is 10.'
         required: false
-        example: 'Lot 4, 1'
+        example: 10
+        type: integer
+        custom: []
+    bodyParameters: []
+    responses:
+      -
+        status: 422
+        content: '{"message":"The given data was invalid.","errors":{"id":["The selected id is invalid."],"session_key":["The selected session key is invalid."]}}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          x-ratelimit-limit: '100'
+          x-ratelimit-remaining: '96'
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/carts/delete
+    metadata:
+      title: '4. Delete Cart'
+      description: '<aside class="notice">session_key or cart id can be used to delete the cart</aside>'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      session_key:
+        name: session_key
+        description: 'The unique identifier for the cart.'
+        required: false
+        example: abcd-1234
         type: string
         custom: []
-      address_2:
-        name: address_2
-        description: 'nullable The address_2 of the guest.'
+      id:
+        name: id
+        description: 'The ID of the cart.'
         required: false
-        example: 'Bandar Baru Bangi'
+        example: 1
+        type: integer
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/carts/delete-cart-item
+    metadata:
+      title: '4. Delete Cart Item'
+      description: '<aside class="notice">session_key or cart id can be used to delete the cart</aside>'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      session_key:
+        name: session_key
+        description: 'The session_key of the cart. Required only on second time'
+        required: false
+        example: kn1i23onlas1
         type: string
         custom: []
-      city:
-        name: city
-        description: 'nullable The city of the guest.'
+      id:
+        name: id
+        description: 'The ID of the cart.'
         required: false
-        example: Kajang
-        type: string
+        example: 1
+        type: integer
         custom: []
-      state:
-        name: state
-        description: 'nullable The state of the guest.'
+      cart_item:
+        name: cart_item
+        description: 'The ID of the cart item.'
         required: false
-        example: Selangor
-        type: string
-        custom: []
-      postcode:
-        name: postcode
-        description: 'nullable The postcode of the guest.'
-        required: false
-        example: '43000'
-        type: string
-        custom: []
-      country:
-        name: country
-        description: 'nullable The country of the guest.'
-        required: false
-        example: Malaysia
-        type: string
-        custom: []
-      remarks:
-        name: remarks
-        description: 'nullable The remarks for the order.'
-        required: false
-        example: 'Be careful'
-        type: string
+        example: 1
+        type: integer
         custom: []
     responses: []
     responseFields: []

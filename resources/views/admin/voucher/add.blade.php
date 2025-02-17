@@ -191,6 +191,7 @@ $voucherTypes = $data['voucher_type'];
                     </div>
                 </div>
                 
+                @if( 1 == 2 )
                 <div class="mb-3 row">
                     <label for="{{ $voucher_create}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
                     <div class="col-sm-7">
@@ -206,6 +207,7 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                @endif
 
                 <div class="mb-3 row">
                     <label for="{{ $voucher_create }}_promo_code" class="col-sm-5 col-form-label">{{ __( 'voucher.promo_code' ) }}</label>
@@ -310,8 +312,8 @@ window.cke_element1 = 'voucher_create_description';
             formData.append( 'start_date', $( fc + '_start_date' ).val() );
             formData.append( 'expired_date', $( fc + '_expired_date' ).val() );
             formData.append( 'usable_amount', $( fc + '_usable_amount' ).val() );
-            formData.append( 'validity_days', $( fc + '_validity_days' ).val() );
-            formData.append( 'claim_per_user', $( fc + '_claim_per_user' ).val() );
+            // formData.append( 'validity_days', $( fc + '_validity_days' ).val() );
+            // formData.append( 'claim_per_user', $( fc + '_claim_per_user' ).val() );
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'adjustment_data', JSON.stringify(data) );

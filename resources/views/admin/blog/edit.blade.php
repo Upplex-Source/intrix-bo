@@ -62,6 +62,13 @@ $blog_edit = 'blog_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $blog_edit }}_slug" class="col-sm-5 col-form-label">{{ __( 'blog.slug' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" id="{{ $blog_edit }}_slug" class="form-control form-control-sm">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3 row">
@@ -74,7 +81,7 @@ $blog_edit = 'blog_edit';
                 <div class="mb-3 row">
                     <label for="{{ $blog_edit }}_meta_desc" class="col-sm-5 col-form-label">{{ __( 'blog.meta_desc' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control form-control-sm" id="{{ $blog_edit }}_meta_desc">
+                        <textarea type="text" class="form-control form-control-sm" id="{{ $blog_edit }}_meta_desc" rows="4"></textarea>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -114,16 +121,17 @@ $blog_edit = 'blog_edit';
     <button id="{{ $blog_edit }}_submit" type="button" class="btn btn-sm btn-primary">{{ __( 'template.save_changes' ) }}</button>
 </div>
 {{-- content --}}
-<link rel="stylesheet" href="{{ asset( 'admin/css/ckeditor/styles.css' ) }}">
-<script src="{{ asset( 'admin/js/ckeditor/ckeditor.js' ) }}"></script>
-<script src="{{ asset( 'admin/js/ckeditor/upload-adapter.js' ) }}"></script>
+<link rel="stylesheet" href="{{ asset( 'admin/css/ckeditor/styles.css' ) . Helper::assetVersion() }}">
+<script src="{{ asset( 'admin/js/ckeditor/ckeditor.js' ) . Helper::assetVersion() }}"></script>
+<script src="{{ asset( 'admin/js/ckeditor/upload-adapter.js' ) . Helper::assetVersion() }}"></script>
 <script>
 window.ckeupload_path = '{{ route( 'admin.file.blogUpload' ) }}';
 window.csrf_token = '{{ csrf_token() }}';
 window.cke_element = 'blog_edit_text';
 </script>
 
-<script src="{{ asset( 'admin/js/ckeditor/ckeditor-init.js' ) }}"></script>
+<script src="{{ asset( 'admin/js/ckeditor/ckeditor-init.js' ). Helper::assetVersion() }}"></script>
+
 
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
@@ -155,6 +163,7 @@ window.cke_element = 'blog_edit_text';
             formData.append( 'meta_title', $( be + '_meta_title' ).val() );
             formData.append( 'meta_desc', $( be + '_meta_desc' ).val() );
             formData.append( 'tag', $( be + '_tags' ).val() );
+            formData.append( 'slug', $( be + '_slug' ).val() );
             formData.append( 'text', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'gallery', JSON.stringify(file2ID) );
@@ -221,6 +230,7 @@ window.cke_element = 'blog_edit_text';
                     $( be + '_main_title' ).val( response.main_title );
                     $( be + '_subtitle' ).val( response.subtitle );
                     $( be + '_type' ).val( response.type );
+                    $( be + '_slug' ).val( response.slug );
                     $( be + '_publish_date' ).val( response.display_publish_date );
                     $( be + '_meta_title' ).val( response.meta_title );
                     $( be + '_meta_desc' ).val( response.meta_desc );
@@ -240,6 +250,11 @@ window.cke_element = 'blog_edit_text';
                         acceptedFiles: 'image/jpg,image/jpeg,image/png',
                         addRemoveLinks: true,
                         init: function() {
+                            this.on("addedfile", function (file) {
+                                if (this.files.length > 1) {
+                                    this.removeFile(this.files[0]);
+                                }
+                            });
                             if ( imagePath ) {
                                 let myDropzone = this,
                                     mockFile = { name: 'Default', size: 1024, accepted: true };
@@ -249,7 +264,7 @@ window.cke_element = 'blog_edit_text';
                             }
                         },
                         removedfile: function( file ) {
-                            fileID = '';
+                            fileID = null;
                             file.previewElement.remove();
                         },
                         success: function( file, response ) {
@@ -261,7 +276,7 @@ window.cke_element = 'blog_edit_text';
 
                     const dropzone2 = new Dropzone(be + '_gallery', {
                         url: '{{ route("admin.file.blogUpload") }}',
-                        acceptedFiles: 'image/jpg,image/jpeg,image/png,video/mp4,video/webm,video/ogg',
+                        acceptedFiles: 'image/jpg,image/jpeg,image/png,video/mp4,video/webm,video/ogg,video/avi,video/mov,video/quicktime',
                         addRemoveLinks: true,
                         previewTemplate: `
                             <div class="dz-preview dz-file-preview">

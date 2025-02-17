@@ -52,4 +52,17 @@ class BlogController extends Controller {
         
         return BlogService::_oneBlog( $request );
     }
+
+    /**
+     * 2. Get one blog detail By slug
+     * 
+     * @group Blog API
+     * 
+     * @bodyParam slug string required The slug the blog. Example: 1
+     * 
+     */ 
+    public function oneBlogBySlug( Request $request ) {
+        
+        return BlogService::oneBlogBySlug( $request );
+    }
 }

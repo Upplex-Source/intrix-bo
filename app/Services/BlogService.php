@@ -13,6 +13,7 @@ use App\Models\{
     Blog,
     BlogImage,
     BlogTag,
+    BlogTransaction,
 };
 
 use Helper;
@@ -121,6 +122,7 @@ class BlogService
             'subtitle' => [ 'nullable' ],
             'type' => [ 'required' ],
             'text' => [ 'required' ],
+            'slug' => [ 'required', 'unique:blogs,slug', 'regex:/^[a-zA-Z0-9_-]+$/' ],
             'image' => [ 'required' ],
             'meta_title' => [ 'required' ],
             'meta_desc' => [ 'required' ],
@@ -133,6 +135,7 @@ class BlogService
             'main_title' => __( 'blog.main_title' ),
             'subtitle' => __( 'blog.subtitle' ),
             'type' => __( 'blog.type' ),
+            'slug' => __( 'blog.slug' ),
             'text' => __( 'blog.content' ),
             'image' => __( 'blog.thumbnail' ),
             'meta_title' => __( 'blog.meta_title' ),
@@ -156,6 +159,7 @@ class BlogService
                 'main_title' => $request->main_title,
                 'subtitle' => $request->subtitle,
                 'type' => $request->type,
+                'slug' => $request->slug,
                 'text' => $request->text,
                 'image' => $request->image,
                 'meta_title' => $request->meta_title,
@@ -209,11 +213,16 @@ class BlogService
 
     public static function updateBlog( $request ) {
 
+        $request->merge( [
+            'id' => \Helper::decode( $request->id )
+        ] );
+
         $validator = Validator::make( $request->all(), [
             'main_title' => [ 'required' ],
             'subtitle' => [ 'nullable' ],
             'type' => [ 'required' ],
             'text' => [ 'required' ],
+            'slug' => [ 'required', 'unique:blogs,slug,' . $request->id , 'regex:/^[a-zA-Z0-9_-]+$/' ],
             'image' => [ 'required' ],
             'meta_title' => [ 'required' ],
             'meta_desc' => [ 'required' ],
@@ -227,6 +236,7 @@ class BlogService
             'subtitle' => __( 'blog.subtitle' ),
             'type' => __( 'blog.type' ),
             'text' => __( 'blog.content' ),
+            'slug' => __( 'blog.slug' ),
             'image' => __( 'blog.thumbnail' ),
             'meta_title' => __( 'blog.meta_title' ),
             'meta_desc' => __( 'blog.meta_desc' ),
@@ -245,9 +255,10 @@ class BlogService
 
         try {
 
-            $updateBlog = Blog::find( \Helper::decode( $request->id ) );
+            $updateBlog = Blog::find( $request->id );
             $updateBlog->main_title = $request->main_title;
             $updateBlog->subtitle = $request->subtitle;
+            $updateBlog->slug = $request->slug;
             $updateBlog->type = $request->type;
             $updateBlog->text = $request->text;
             $updateBlog->image = $request->image;
@@ -357,7 +368,8 @@ class BlogService
             'images',
             'tag',
         ] )->select( 'blogs.*' )
-        ->whereDate( 'publish_date', '<=', $now );
+        ->whereDate( 'publish_date', '<=', $now )
+        ->where( 'status', 10 );
 
         $filterObject = self::filterBlog( $request, $blog );
         $blog = $filterObject['model'];
@@ -367,14 +379,15 @@ class BlogService
 
         $blogCount = $blog->count();
 
-        $limit = $request->length;
-        $offset = $request->start;
+        $limit = $request->length ? $request->length : 10;
+        $offset = $request->start ? $request->start : 0;
 
         $blogs = $blog->skip( $offset )->take( $limit )->get();
 
         $blog = Blog::select(
             DB::raw( 'COUNT(blogs.id) as total'
-        ) )->whereDate( 'publish_date', '<=', $now );
+        ) )->whereDate( 'publish_date', '<=', $now )
+        ->where( 'status', 10 );
 
         $filterObject = self::filterBlog( $request, $blog );
         $blog = $filterObject['model'];
@@ -402,6 +415,16 @@ class BlogService
             'images',
             'tag',
         ] )->find( $request->id );
+
+        return response()->json( $blog );
+    }
+
+    public static function oneBlogBySlug( $request ) {
+
+        $blog = Blog::with( [
+            'images',
+            'tag',
+        ] )->where( 'slug', $request->slug )->first();
 
         return response()->json( $blog );
     }

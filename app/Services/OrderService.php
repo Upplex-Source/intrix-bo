@@ -1239,6 +1239,10 @@ class OrderService
             'country' => ['required'],
             'remarks' => ['nullable'],
             'payment_plan' => ['nullable'],
+            'product_code' => [ 'required', 'exists:products,code'  ],
+            'color' => [ 'required', 'exists:product_variants,title'  ],
+            'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
+            'quantity' => [ 'numeric', 'min:1'  ],
         ]);
 
         $validator->validate();
@@ -1583,6 +1587,152 @@ class OrderService
             'order_metas' => $orderMetas,
             'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
+    }
+
+    public static function validatePromoCode($request)
+    {
+        // Validate request input
+        $validator = Validator::make($request->all(), [
+            'promo_code' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $exists = \DB::table('vouchers')
+                        ->where('promo_code', $value)
+                        ->orWhere('id', $value)
+                        ->exists();
+    
+                    if (!$exists) {
+                        $fail(__('The :attribute must exist in either the promo_code or id column.'));
+                    }
+                },
+            ],
+            'quantity' => ['numeric', 'min:1'],
+            'product_code' => ['required', 'exists:products,code'],
+            'color' => ['required', 'exists:product_variants,title'],
+            'payment_plan' => ['nullable', 'in:1,2,3'],
+        ]);
+    
+        $validator->validate();
+    
+        // Fetch product and variant details
+        $product = Product::where('code', $request->product_code)->first();
+        $productVariant = ProductVariant::where('color', $request->color)
+            ->where('product_id', $product->id)
+            ->first();
+    
+        // Determine product price based on payment plan
+        $productPrice = $product->price;
+        switch ($request->payment_plan) {
+            case 1:
+                $productPrice = $productVariant->upfront;
+                break;
+            case 2:
+                $productPrice = $productVariant->monthly;
+                break;
+            case 3:
+                $productPrice = $productVariant->outright;
+                break;
+        }
+    
+        // Calculate subtotal before discount
+        $subtotal = $productPrice * $request->quantity;
+        $discountAmount = 0;
+    
+        if ($request->promo_code) {
+            // Validate voucher
+            $voucher = Voucher::where('status', 10)
+                ->where(function ($query) use ($request) {
+                    $query->where('id', $request->promo_code)
+                        ->orWhere('promo_code', $request->promo_code);
+                })
+                ->where(function ($query) {
+                    $query->whereNull('start_date')
+                        ->orWhere('start_date', '<=', Carbon::now());
+                })
+                ->where(function ($query) {
+                    $query->whereNull('expired_date')
+                        ->orWhere('expired_date', '>=', Carbon::now());
+                })
+                ->first();
+    
+            if (!$voucher || $voucher->total_claimable <= 0) {
+                return response()->json([
+                    'message_key' => 'voucher_not_available',
+                    'message' => __('voucher.voucher_not_available'),
+                    'errors' => [
+                        'voucher' => [
+                            __('voucher.voucher_not_available')
+                        ]
+                    ]
+                ], 422);
+            }
+    
+            // Apply discount logic
+            $adjustment = json_decode($voucher->buy_x_get_y_adjustment, true);
+            if ($voucher->discount_type == 3) {
+                // Buy X Get Y logic
+                $buyQuantity = $adjustment['buy_quantity'] ?? 0;
+                $getProductId = $adjustment['get_product'] ?? null;
+    
+                if ($request->quantity >= $buyQuantity) {
+                    $getProduct = Product::find($getProductId);
+                    if ($getProduct) {
+                        $discountAmount = $getProduct->price;
+                    }
+                }else {
+                    return response()->json([
+                        'message_key' => 'voucher_not_available',
+                        'message' => __('voucher.voucher_not_available'),
+                        'errors' => [
+                            'voucher' => [
+                               'Minimum amount not reach'
+                            ]
+                        ]
+                    ], 422);
+                }
+            } elseif ($voucher->discount_type == 2) {
+                // Fixed discount
+                if ($subtotal >= ($adjustment['buy_quantity'] ?? 0)) {
+                    $discountAmount = $adjustment['discount_quantity'] ?? 0;
+                }else {
+                    return response()->json([
+                        'message_key' => 'voucher_not_available',
+                        'message' => __('voucher.voucher_not_available'),
+                        'errors' => [
+                            'voucher' => [
+                               'Minimum amount not reach'
+                            ]
+                        ]
+                    ], 422);
+                }
+            } else {
+                // Percentage discount
+                $percentage = $adjustment['discount_quantity'] ?? 0;
+                if ($subtotal >= ($adjustment['buy_quantity'] ?? 0)) {
+                    $discountAmount = ($subtotal * $percentage) / 100;
+                }else {
+                    return response()->json([
+                        'message_key' => 'voucher_not_available',
+                        'message' => __('voucher.voucher_not_available'),
+                        'errors' => [
+                            'voucher' => [
+                               'Minimum amount not reach'
+                            ]
+                        ]
+                    ], 422);
+                }
+            }
+        }
+    
+        // Final price after discount
+        $finalPrice = max(0, $subtotal - $discountAmount);
+    
+        return response()->json([
+            'message' => 'Price calculated successfully',
+            'subtotal' => number_format($subtotal, 2),
+            'discount' => number_format($discountAmount, 2),
+            'final_price' => number_format($finalPrice, 2),
+        ]);
     }
 
     public static function scannedOrder( $request ) {

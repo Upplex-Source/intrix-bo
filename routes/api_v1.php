@@ -58,11 +58,13 @@ Route::prefix( 'orders' )->group( function() {
 
 Route::prefix( 'promo-codes' )->group( function() {
     Route::get( '/', [ VoucherController::class, 'getPromoCode' ] );
+    Route::post( 'validate', [ VoucherController::class, 'validatePromoCode' ] );
 } );
 
 Route::prefix( 'blogs' )->group( function() {
     Route::any( '/', [ BlogController::class, 'allBlogs' ] );
     Route::any( '/details', [ BlogController::class, 'oneBlog' ] );
+    Route::any( '/one-blog-by-slug', [ BlogController::class, 'oneBlogBySlug' ] );
 } );
 
 if( 1 == 2 ){

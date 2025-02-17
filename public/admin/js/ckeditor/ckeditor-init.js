@@ -5,7 +5,7 @@ function UploadAdapterPlugin( editor ) {
 }
 
 ClassicEditor
-.create( document.getElementById( window.cke_element1 ), {
+.create( document.getElementById( window.cke_element ), {
     licenseKey: '',
     extraPlugins: [ UploadAdapterPlugin ],
 } )

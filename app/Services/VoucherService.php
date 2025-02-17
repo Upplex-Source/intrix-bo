@@ -119,8 +119,8 @@ class VoucherService
                 'start_date' => $request->start_date,
                 'expired_date' => $request->expired_date,
                 'buy_x_get_y_adjustment' => $request->adjustment_data,
-                'usable_amount' => $request->usable_amount,
-                'validity_days' => $request->validity_days,
+                // 'usable_amount' => $request->usable_amount,
+                // 'validity_days' => $request->validity_days,
                 'claim_per_user' => $request->claim_per_user,
             ]);
 
@@ -182,7 +182,7 @@ class VoucherService
             'usable_amount' => [ 'nullable' ],
             'validity_days' => [ 'nullable' ],
             'adjustment_data' => ['required'],
-            'claim_per_user' => ['required'],
+            'claim_per_user' => ['nullable'],
             
         ] );
 
@@ -256,8 +256,8 @@ class VoucherService
             $updateVoucher->points_required = 0;
             $updateVoucher->start_date = $request->start_date;
             $updateVoucher->expired_date = $request->expired_date;
-            $updateVoucher->usable_amount = $request->usable_amount;
-            $updateVoucher->validity_days = $request->validity_days;
+            // $updateVoucher->usable_amount = $request->usable_amount;
+            // $updateVoucher->validity_days = $request->validity_days;
             $updateVoucher->claim_per_user = $request->claim_per_user;
             $updateVoucher->buy_x_get_y_adjustment = $request->adjustment_data;
             

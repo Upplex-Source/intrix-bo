@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\{
-    VoucherService
+    VoucherService,
+    OrderService
 };
 
 class VoucherController extends Controller
@@ -37,7 +38,7 @@ class VoucherController extends Controller
     }
 
     /**
-     * 3. Validate vouchers
+     * 2. Validate vouchers
      * 
      * @authenticated
      * 
@@ -50,5 +51,33 @@ class VoucherController extends Controller
     public function validateVoucher( Request $request ) {
 
         return VoucherService::validateVoucher( $request );
+    }
+
+    /**
+     * 3. validate voucher ( Apply Voucher )
+     * 
+     * <strong>payment_plan</strong></br>
+     * 1: upfront<br>
+     * 2: monthly<br>
+     * 3: outright<br>
+     * 
+     * <strong>color</strong></br>
+     * 1: CHROME<br>
+     * 2: MATTE BLACK<br>
+     * 3: SATIN GOLD<br>
+     * 4: GUNMETAL GREY<br>
+     * 
+     * @group Order API
+     * 
+     * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
+     * @bodyParam color required strong The color of the product. Example: CHROME
+     * @bodyParam quantity required integer The quantity of the product. Example: 1
+     * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
+     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
+     * 
+     */
+    public function validatePromoCode( Request $request ) {
+
+        return OrderService::validatePromoCode( $request );
     }
 }

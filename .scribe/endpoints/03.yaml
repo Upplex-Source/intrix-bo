@@ -1,0 +1,57 @@
+name: 'Promo Code API'
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/v1/promo-codes
+    metadata:
+      title: '1. Get promo code'
+      description: |-
+        <aside class="notice">Get all voucher that is claimable</aside>
+
+        <strong>voucher discount type</strong></br>
+        1: percentage<br>
+        2: fixed amount<br>
+        3: buy x free y<br>
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      per_page:
+        name: per_page
+        description: 'Retrieve how many product in a page, default is 10.'
+        required: false
+        example: 10
+        type: integer
+        custom: []
+      promo_code:
+        name: promo_code
+        description: 'The promo code to be filter.'
+        required: false
+        example: XBMSD22
+        type: string
+        custom: []
+      discount_type:
+        name: discount_type
+        description: 'The promo discount type to be filter'
+        required: false
+        example: 2
+        type: integer
+        custom: []
+    bodyParameters: []
+    responses:
+      -
+        status: 200
+        content: '{"message":"","message_key":"get_voucher_success","data":[]}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          x-ratelimit-limit: '100'
+          x-ratelimit-remaining: '94'
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []

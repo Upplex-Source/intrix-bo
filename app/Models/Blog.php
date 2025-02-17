@@ -28,6 +28,7 @@ class Blog extends Model
         'meta_desc',
         'publish_date',
         'status',
+        'slug',
     ];
 
     protected $appends = [
@@ -71,6 +72,7 @@ class Blog extends Model
         'meta_desc',
         'publish_date',
         'status',
+        'slug',
     ];
 
     protected static $logName = 'blogs';

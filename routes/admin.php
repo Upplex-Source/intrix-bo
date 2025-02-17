@@ -72,6 +72,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
             } )->name( 'admin.home' );
 
             Route::post( 'file/upload', [ FileController::class, 'upload' ] )->withoutMiddleware( [\App\Http\Middleware\VerifyCsrfToken::class] )->name( 'admin.file.upload' );
+            Route::post( 'file/blog-image-upload', [ FileController::class, 'blogUpload' ] )->withoutMiddleware( [\App\Http\Middleware\VerifyCsrfToken::class] )->name( 'admin.file.blogUpload' );
+            Route::post( 'file/cke-upload', [ FileController::class, 'ckeUpload' ] )->withoutMiddleware( [\App\Http\Middleware\VerifyCsrfToken::class] )->name( 'admin.file.ckeUpload' );
 
             Route::prefix( 'dashboard' )->group( function() {
                 Route::get( '/', [ DashboardController::class, 'index' ] )->name( 'admin.dashboard' );

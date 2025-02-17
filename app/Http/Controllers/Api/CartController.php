@@ -22,6 +22,12 @@ class CartController extends Controller
      * 2: monthly<br>
      * 3: outright<br>
      * 
+     * <strong>color</strong></br>
+     * 1: CHROME<br>
+     * 2: MATTE BLACK<br>
+     * 3: SATIN GOLD<br>
+     * 4: GUNMETAL GREY<br>
+     * 
      * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
      * @bodyParam color required strong The color of the product. Example: CHROME
      * @bodyParam quantity required integer The quantity of the product. Example: 1
@@ -63,6 +69,12 @@ class CartController extends Controller
      * 1: upfront<br>
      * 2: monthly<br>
      * 3: outright<br>
+     * 
+     * <strong>color</strong></br>
+     * 1: CHROME<br>
+     * 2: MATTE BLACK<br>
+     * 3: SATIN GOLD<br>
+     * 4: GUNMETAL GREY<br>
      * 
      * @group Cart API
      * 

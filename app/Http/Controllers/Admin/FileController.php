@@ -15,4 +15,14 @@ class FileController extends Controller
 
         return FileService::upload( $request );
     }
+
+    public function ckeUpload( Request $request ) {
+
+        return FileManagerService::ckeUpload( $request );
+    }
+
+    public function blogUpload( Request $request ) {
+        return FileManagerService::blogUpload( $request );
+    }
+
 }

@@ -111,7 +111,7 @@ var statusMapper = @json( $data['status'] ),
             { data: null },
             { data: 'created_at' },
             { data: 'order' },
-            { data: 'user' },
+            { data: 'order' },
             { data: 'voucher' },
             { data: 'voucher' },
             { data: 'voucher' },
@@ -158,7 +158,8 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "user" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data.username ?? '-' + '<br>' + '+60' + data.phone_number;
+                    console.log(data)
+                    return data.email ?? '-' + '<br>' + '+60' + data.phone_number;
                 },
             },
             {
@@ -216,8 +217,8 @@ var statusMapper = @json( $data['status'] ),
 
                     @can( 'delete voucher_usages' )
                     status = row['status'] == 10 ? 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.claim_failed' ) }}</span></a></li>' : 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.claim_success' ) }}</span></a></li>';
                     @endcan
                     
                     let html = 

@@ -192,6 +192,7 @@ $voucherTypes = $data['voucher_type'];
                     </div>
                 </div>
                 
+                @if( 1 == 2 )
                 <div class="mb-3 row">
                     <label for="{{ $voucher_edit}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
                     <div class="col-sm-7">
@@ -207,6 +208,7 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                @endif
 
                 <div class="mb-3 row">
                     <label for="{{ $voucher_edit }}_promo_code" class="col-sm-5 col-form-label">{{ __( 'voucher.promo_code' ) }}</label>
@@ -313,8 +315,8 @@ window.cke_element1 = 'voucher_edit_description';
             formData.append( 'start_date', $( fe + '_start_date' ).val() );
             formData.append( 'expired_date', $( fe + '_expired_date' ).val() );
             formData.append( 'usable_amount', $( fe + '_usable_amount' ).val() );
-            formData.append( 'validity_days', $( fe + '_validity_days' ).val() );
-            formData.append( 'claim_per_user', $( fe + '_claim_per_user' ).val() );
+            // formData.append( 'validity_days', $( fe + '_validity_days' ).val() );
+            // formData.append( 'claim_per_user', $( fe + '_claim_per_user' ).val() );
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'adjustment_data', JSON.stringify(data) );
@@ -377,8 +379,8 @@ window.cke_element1 = 'voucher_edit_description';
                     $( fe + '_points_required' ).val( response.points_required );
                     $( fe + '_voucher_type' ).val( response.type );
                     $( fe + '_usable_amount' ).val( response.usable_amount );
-                    $( fe + '_validity_days' ).val( response.validity_days );
-                    $( fe + '_claim_per_user' ).val( response.claim_per_user );
+                    // $( fe + '_validity_days' ).val( response.validity_days );
+                    // $( fe + '_claim_per_user' ).val( response.claim_per_user );
                     endDate.setDate( response.expired_date );
                     startDate.setDate( response.start_date );
                     editor.setData( response.description );

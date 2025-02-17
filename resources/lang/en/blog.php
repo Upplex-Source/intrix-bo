@@ -23,6 +23,7 @@ return [
     'tags' => 'Tags',
     'gallery' => 'Gallery (can upload multiple)',
     'type' => 'Type',
+    'slug' => 'Slug',
 
     'articles' => 'Articles',
     'insights' => 'Insights',
