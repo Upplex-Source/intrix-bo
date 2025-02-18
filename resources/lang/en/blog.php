@@ -31,5 +31,6 @@ return [
     'blogs' => 'Blogs',
     'one_min_read' => 'One Minute Read',
     'author' => 'Author',
+    'category' => 'Category',
 
 ];

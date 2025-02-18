@@ -54,7 +54,7 @@ class BlogController extends Controller {
     }
 
     /**
-     * 2. Get one blog detail By slug
+     * 3. Get one blog detail By slug
      * 
      * @group Blog API
      * 

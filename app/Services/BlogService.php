@@ -14,6 +14,7 @@ use App\Models\{
     BlogImage,
     BlogTag,
     BlogTransaction,
+    BlogCategory,
 };
 
 use Helper;
@@ -101,6 +102,45 @@ class BlogService
         ];
     }
 
+    private static function filterBlogCategory( $request, $model ) {
+
+        $filter = false;
+
+        if (  !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'blog_categories.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );                
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+    
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'blog_categories.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+
+            $filter = true;
+        }
+
+        if( !empty( $request->title ) ){
+            $model->where( 'blog_categories.title', 'LIKE', '%' . $request->title . '%' );
+            $filter = true;
+        }
+
+        return [
+            'filter' => $filter,
+            'model' => $model,
+        ];
+    }
+
     public static function oneBlog( $request ) {
 
         $request->merge( [
@@ -112,6 +152,10 @@ class BlogService
             'tag',
             'author',
         ] )->find( $request->id );
+
+        if( $blog ) {
+            $blog->append( ['categories_metas'] );
+        }
 
         return response()->json( $blog );
     }
@@ -167,6 +211,7 @@ class BlogService
                 'meta_title' => $request->meta_title,
                 'meta_desc' => $request->meta_desc,
                 'publish_date' => $request->publish_date,
+                'categories' => json_encode($request->category),
                 'status' => 10,
             ] );
 
@@ -268,6 +313,7 @@ class BlogService
             $updateBlog->meta_title = $request->meta_title;
             $updateBlog->meta_desc = $request->meta_desc;
             $updateBlog->publish_date = $request->publish_date;
+            $updateBlog->categories = json_encode($request->category);
             $updateBlog->save();
 
             $deleteTag = BlogTag::where( 'blog_id', $updateBlog->id )
@@ -392,6 +438,9 @@ class BlogService
                 ? asset('storage/' . $blog->profile_pic)
                 : asset('admin/images/placeholder.png') . Helper::assetVersion();
             }
+
+            $blog->append( ['categories_metas'] );
+
             return $blog;
         });
 
@@ -428,6 +477,10 @@ class BlogService
             'author',
         ] )->find( $request->id );
 
+        if( $blog ) {
+            $blog->append( ['categories_metas'] );
+        }
+
         if( $blog->author ) {
             $blog->author->append( ['profile_pic_path'] );
         }
@@ -440,8 +493,101 @@ class BlogService
         $blog = Blog::with( [
             'images',
             'tag',
+            'author'
         ] )->where( 'slug', $request->slug )->first();
 
+        if( $blog ) {
+            $blog->append( ['categories_metas'] );
+        }
+        
+        if( $blog->author ) {
+            $blog->author->append( ['profile_pic_path'] );
+        }
+
         return response()->json( $blog );
+    }
+
+    public static function createBlogCategoryQuick( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'categoryTitle' => [ 'required' ],
+        ] );
+
+        $attributeName = [
+            'categoryTitle' => __( 'blog.category' ),
+        ];
+
+        foreach ( $attributeName as $key => $aName ) {
+            $attributeName[$key] = strtolower( $aName );
+        }
+        
+        $validator->setAttributeNames( $attributeName )->validate();
+
+        DB::beginTransaction();
+
+        try {
+
+            $createBlogCategoryObject = [
+                'title' => $request->categoryTitle,
+                'status' => 10,
+            ];
+
+            $createBlogCategory = BlogCategory::create( $createBlogCategoryObject );
+
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'category' => [
+                'id' => $createBlogCategory->id,
+                'title' => $createBlogCategory->title
+            ]
+        ]);
+    }
+
+    public static function allBlogCategories( $request ) {
+
+        $blog = BlogCategory::select( 'blog_categories.*' );
+
+        $filterObject = self::filterBlogCategory( $request, $blog );
+        $blog = $filterObject['model'];
+        $filter = $filterObject['filter'];
+
+        $blog->orderBy( 'blog_categories.created_at', 'DESC' );
+
+        $blogCount = $blog->count();
+
+        $limit = $request->length;
+        $offset = $request->start;
+
+        $blogs = $blog->skip( $offset )->take( $limit )->get();
+
+        $blog = BlogCategory::select(
+            DB::raw( 'COUNT(blog_categories.id) as total'
+        ) );
+
+        $filterObject = self::filterBlogCategory( $request, $blog );
+        $blog = $filterObject['model'];
+        $filter = $filterObject['filter'];
+
+        $blog = $blog->first();
+
+        $data = [
+            'blog_categories' => $blogs,
+            'draw' => $request->draw,
+            'recordsFiltered' => $filter ? $blogCount : $blog->total,
+            'recordsTotal' => $filter ? BlogCategory::count() : $blogCount,
+        ];
+
+        return $data;
     }
 }

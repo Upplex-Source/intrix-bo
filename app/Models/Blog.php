@@ -30,6 +30,8 @@ class Blog extends Model
         'publish_date',
         'status',
         'slug',
+        'category_id',
+        'categories',
     ];
 
     protected $appends = [
@@ -37,6 +39,23 @@ class Blog extends Model
         'display_type',
         'display_publish_date',
     ];
+
+    public function getCategoriesIdsAttribute()
+    {
+        return $this->attributes['categories'] ? explode(',', json_decode($this->attributes['categories'], true)) :null;
+    }
+
+    public function getCategoriesMetasAttribute()
+    {
+        $categories = explode(',', json_decode($this->attributes['categories'], true));
+
+        return $categories ? BlogCategory::whereIn('id', $categories)->get() : null;
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(BlogCategory::class, 'category_id');
+    }
 
     public function author()
     {
@@ -80,6 +99,8 @@ class Blog extends Model
         'publish_date',
         'status',
         'slug',
+        'category_id',
+        'categories',
     ];
 
     protected static $logName = 'blogs';

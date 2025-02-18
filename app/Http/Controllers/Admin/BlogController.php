@@ -89,4 +89,14 @@ class BlogController extends Controller
         
         return BlogService::updateBlogStatus( $request );
     }
+
+    public function createBlogCategoryQuick( Request $request ) {
+
+        return BlogService::createBlogCategoryQuick( $request );
+    }
+
+    public function allBlogCategories( Request $request ) {
+
+        return BlogService::allBlogCategories( $request );
+    }
 }

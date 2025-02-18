@@ -3,6 +3,21 @@ $blog_create = 'blog_create';
 ?>
 
 <style>
+    .modal {
+        z-index: 1057 !important; /* Ensure modal is above Select2 */
+    }
+
+    .modal-backdrop {
+        z-index: 1050 !important; /* Make sure the backdrop covers the page */
+    }
+
+    .dz-thumbnail {
+        text-align: center;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
     .bootstrap-tagsinput .tag {
         border: 1px solid black;
         background-color: #5d5d5d;
@@ -12,10 +27,39 @@ $blog_create = 'blog_create';
     .bootstrap-tagsinput {
         width: 100% !important;
     }
+    .dz-video {
+        width: 120px;
+        height: 120px;
+    }
     .ck-editor__editable_inline {
         min-height: 400px;
     }
 </style>
+
+<!-- Create New Category Modal -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createCategoryForm">
+                    <div class="mb-3">
+                        <label for="categoryTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="categoryTitle" required>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Category</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="card">
     <div class="card-body">
@@ -44,18 +88,31 @@ $blog_create = 'blog_create';
                     <div class="invalid-feedback"></div>
                 </div>
             </div>
+            <div class="col-md-6">
             
-            <div class="mb-3 row">
-                <label for="{{ $blog_create }}_type" class="col-sm-5 col-form-label">{{ __( 'blog.type' ) }}</label>
-                <div class="col-sm-7">
-                    <select class="form-select form-select-sm" id="{{ $blog_create }}_type">
-                        @foreach( $data['types'] as $key => $value )
-                            <option value="{{ $key }}">{{ $value }}</option>
-                        @endforeach
-                    </select>
-                    <div class="invalid-feedback"></div>
+                <div class="mb-3 row">
+                    <label for="{{ $blog_create }}_type" class="col-sm-5 col-form-label">{{ __( 'blog.type' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select form-select-sm" id="{{ $blog_create }}_type">
+                            @foreach( $data['types'] as $key => $value )
+                                <option value="{{ $key }}">{{ $value }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="mb-3 row">
+                    <label for="{{ $blog_create }}_category" class="col-sm-5 col-form-label">{{ __( 'blog.category' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select form-select-sm" id="{{ $blog_create }}_category" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'blog.category' ) ] ) }}" multiple="multiple">
+                        </select>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-6">
                 <div class="mb-3 row">
                     <label for="{{ $blog_create }}_publish_date" class="col-sm-5 col-form-label">{{ __( 'blog.publish_date' ) }}</label>
@@ -172,6 +229,7 @@ window.cke_element = 'blog_create_text';
             formData.append( 'meta_desc', $( be + '_meta_desc' ).val() );
             formData.append( 'slug', $( be + '_slug' ).val() );
             formData.append( 'tag', $( be + '_tags' ).val() );
+            formData.append( 'category', $( be + '_category' ).val() );
             formData.append( 'text', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'gallery', JSON.stringify(file2ID) );
@@ -345,6 +403,116 @@ window.cke_element = 'blog_create_text';
             }
         } );
         @endcan
+
+        $(be + '_category').select2({
+            language: '{{ App::getLocale() }}',
+            theme: 'bootstrap-5',
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+            closeOnSelect: false, // Keeps the dropdown open after a selection
+            multiple: true, // Enable multiple selections
+            ajax: {
+                method: 'POST',
+                url: '{{ route('admin.blog.allBlogCategories') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        title: params.term,
+                        status: 10,
+                        start: ((params.page ? params.page : 1) - 1) * 10,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function(data, params) {
+                    params.page = params.page || 1;
+
+                    // Always add the "Create New Category" option
+                    let processedResult = [{
+                        id: 'new_category',
+                        text: '➕ Create New Category',
+                        newOption: true
+                    }];
+
+                    // Add categories if they exist
+                    if (data.blog_categories.length > 0) {
+                        processedResult = processedResult.concat(data.blog_categories.map(category => ({
+                            id: category.id,
+                            text: category.title,
+                        })));
+                    }
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: (params.page * 10) < data.recordsFiltered
+                        }
+                    };
+                }
+            }
+        }).on('select2:select', function(e) {
+            var selectedData = e.params.data;
+
+            if (selectedData.id === 'new_category') {
+                // Deselect "Create New Category" after it's selected
+                var select = $(be + '_category');
+                select.val(select.val().filter(function(val) {
+                    return val !== 'new_category'; // Remove "new_category" from the selection
+                })).trigger('change');
+                
+                // Show the modal for category creation
+                $('#createCategoryModal').modal('show');
+            }
+        });
+
+        $('#createCategoryForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let categoryTitle = $('#categoryTitle').val();
+
+            if (categoryTitle) {
+                $.ajax({
+                    method: 'POST',
+                    url: '{{ route('admin.blog.createBlogCategoryQuick') }}', // Update with your actual API route
+                    data: {
+                        categoryTitle: categoryTitle,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            var newUser = {
+                                id: response.category.id,
+                                text: response.category.title
+                            };
+
+                            // Add the new category to the Select2 options and select it
+                            var select = $(be + '_category');
+                            var newOption = new Option(newUser.text, newUser.id, true, true);
+                            select.append(newOption).trigger('change');
+
+                            // Close the modal
+                            $('#createCategoryModal').modal('hide');
+
+                            // Reset the form
+                            $('#createCategoryForm')[0].reset();
+                        }
+                    },
+                    error: function(error) {
+                        if (error.status === 422) {
+                            let errors = error.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                $('#' + key).addClass('is-invalid').nextAll('div.invalid-feedback').text(value);
+                            });
+                        } else {
+                            $('#modal_danger .caption-text').html(error.responseJSON.message);
+                            modalDanger.toggle();
+                        }
+                    }
+                });
+            }
+        });
+
 
     } );
 </script>
