@@ -26,4 +26,8 @@ return [
     'vouchers' => 'Vouchers',
     'orders' => 'Orders',
     'products' => 'Products',
+    'guests' => 'Guests',
+    'user_vouchers' => 'User Vouchers',
+    'voucher_usages' => 'Voucher Usages',
+    'settings' => 'Settings',
 ];

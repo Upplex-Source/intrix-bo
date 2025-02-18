@@ -91,7 +91,7 @@
                                 @endcan
                                 @endif
 
-                                @can( 'view Products' )
+                                @can( 'view products' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-money"></em></span>
@@ -101,7 +101,7 @@
                                 @endcan
 
                                 @if( 1 == 2 )
-                                @can( 'view Orders' )
+                                @can( 'view orders' )
                                 <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\OrderController') ? 'active current-page' : '' }}">
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
                                         <span class="nk-menu-icon"><em class="icon ni ni-list-index-fill"></em></span>
@@ -121,7 +121,7 @@
                                 @endcan
                                 @endif
 
-                                @can( 'view Orders' )
+                                @can( 'view orders' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\OrderController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.order.index' ) }}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-ticket-alt"></em></span>
@@ -130,7 +130,7 @@
                                     </li>
                                 @endcan
 
-                                @can( 'view Vouchers' )
+                                @can( 'view vouchers' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VoucherController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.voucher.index' ) }}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-ticket-alt"></em></span>
@@ -139,7 +139,7 @@
                                     </li>
                                 @endcan
 
-                                @can( 'view User Vouchers' )
+                                @can( 'view voucher_usages' )
                                 <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\UserVoucherController' || $controller == 'App\Http\Controllers\Admin\VoucherUsageController') ? 'active current-page' : '' }}">
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
                                         <span class="nk-menu-icon"><em class="icon ni ni-ticket-plus"></em></span>
@@ -156,7 +156,7 @@
                                 </li>
                                 @endcan
 
-                                @can( 'view Settings' )
+                                @can( 'view settings' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\SettingController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.setting.index' ) }}" class="nk-menu-link">
                                             <span class="nk-menu-icon"><em class="icon ni ni-setting-alt"></em></span>
