@@ -305,7 +305,7 @@ class BlogService
         try {
 
             $updateBlog = Blog::find( $request->id );
-            $updateBlog->author_id = ($request->author && $request->author != 'null') ? $request->author : auth()->user()->id;
+            $updateBlog->author_id = ($request->author && $request->author != 'null') ? $request->author : null;
             $updateBlog->main_title = $request->main_title;
             $updateBlog->subtitle = $request->subtitle;
             $updateBlog->slug = $request->slug;
