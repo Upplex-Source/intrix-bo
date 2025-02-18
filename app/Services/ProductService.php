@@ -228,7 +228,7 @@ class ProductService
 
     public static function allProducts( $request ) {
 
-        $products = Product::select( 'products.*' );
+        $products = Product::with( 'productVariants' )->select( 'products.*' );
 
         $filterObject = self::filter( $request, $products );
         $product = $filterObject['model'];
@@ -373,6 +373,11 @@ class ProductService
         
         if ( !empty( $request->id ) ) {
             $model->where( 'products.id', '!=', Helper::decode($request->id) );
+            $filter = true;
+        }
+        
+        if ( !empty( $request->product ) ) {
+            $model->where( 'products.id', $request->product);
             $filter = true;
         }
 

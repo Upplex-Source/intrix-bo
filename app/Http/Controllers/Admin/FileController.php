@@ -18,11 +18,11 @@ class FileController extends Controller
 
     public function ckeUpload( Request $request ) {
 
-        return FileManagerService::ckeUpload( $request );
+        return FileService::ckeUpload( $request );
     }
 
     public function blogUpload( Request $request ) {
-        return FileManagerService::blogUpload( $request );
+        return FileService::blogUpload( $request );
     }
 
 }

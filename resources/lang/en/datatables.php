@@ -60,7 +60,7 @@ return [
 
     // orders status
     'order_placed' => 'Order Placed',
-    'order_pending_payment' => 'Order Pending Payement',
+    'order_pending_payment' => 'Order Pending Payment',
     'order_paid' => 'Order Paid',
     'order_completed' => 'Order Completed',
     'order_canceled' => 'Order Canceled',

@@ -404,28 +404,18 @@ class OrderService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        if ($request->has('products')) {
-            $decodedProducts = [];
-            foreach ($request->products as $product) {
-                $productArray = json_decode($product, true);
-        
-                $productArray['productId'] = explode('-', $productArray['productId'])[0];
-        
-                $decodedProducts[] = $productArray;
-            }
-        
-            $request->merge(['products' => $decodedProducts]);
-        }
-
         $validator = Validator::make( $request->all(), [
             'id' => [ 'required', 'exists:orders,id'  ],
-            'user' => [ 'required', 'exists:users,id'  ],
-            'vending_machine' => [ 'nullable', 'exists:vending_machines,id'  ],
-            'products' => [ 'nullable' ],
-            'products.*.productId' => [ 'nullable', 'exists:products,id' ],
-            'products.*.froyo' => [ 'nullable', 'exists:froyos,id' ],
-            'products.*.syrup' => [ 'nullable', 'exists:syrups,id' ],
-            'products.*.topping' => [ 'nullable', 'exists:toppings,id' ],
+            'products' => [ 'required' ],
+            'address_1' => [ 'nullable' ],
+            'address_2' => [ 'nullable' ],
+            'state' => [ 'nullable' ],
+            'city' => [ 'nullable' ],
+            'postcode' => [ 'nullable' ],
+            'remarks' => [ 'nullable' ],
+            'payment_plan' => [ 'nullable' ],
+            'color' => [ 'nullable' ],
+            'quantity' => [ 'numeric', 'min:1' ],
         ] );
 
         $attributeName = [
@@ -436,7 +426,6 @@ class OrderService
             'weight' => __( 'order.weight' ),
             'rate' => __( 'order.rate' ),
             'total' => __( 'order.total' ),
-            // 'subtotal' => __( 'order.subtotal' ),
         ];
 
         foreach( $attributeName as $key => $aName ) {
@@ -451,76 +440,106 @@ class OrderService
             $orderPrice = 0;
 
             $updateOrder = Order::find( $request->id );
-            $updateOrder->user_id = $request->user;
-            $updateOrder->vending_machine_id = $request->vending_machine;
+            $updateOrder->address_1 = $request->address_1;
+            $updateOrder->address_2 = $request->address_2;
+            $updateOrder->city = $request->city;
+            $updateOrder->state = $request->state;
+            $updateOrder->postcode = $request->postcode;
+            $updateOrder->remarks = $request->remarks;
+            $updateOrder->payment_plan = $request->payment_plan;
+            $updateOrder->email = $request->email;
+            $updateOrder->phone_number = $request->phone_number;
+            $updateOrder->fullname = $request->fullname;
+            $updateOrder->company_name = $request->company_name;
             $updateOrder->save();
 
+            $color = $request->color ? $request->color : $updateOrder->orderMetas->first()->productVariant->color;
             OrderMeta::where( 'order_id', $updateOrder->id )->delete();
 
-            foreach ( $request->products as $product ) {
-                $metaPrice = 0;
+            $voucher = $updateOrder->voucher;
+            $product = Product::find( $request->products );
+            $productVariant = ProductVariant::where( 'color', $color )->where( 'product_id', $product->id )->first();
 
-                $froyos = $product['froyo'];
-                $froyoCount = count($froyos);
-                $syrups = $product['syrup'];
-                $syrupCount = count($syrups);
-                $toppings = $product['topping'];
-                $toppingCount = count($toppings);
-                $product = Product::find($product['productId']);
+            $subtotal = 0;
+            $orderPrice = 0;
 
-                $orderMeta = OrderMeta::create( [
-                    'order_id' => $updateOrder->id,
-                    'product_id' => $product->id,
-                    'product_bundle_id' => null,
-                    'froyos' =>  json_encode($froyos),
-                    'syrups' =>  json_encode($syrups),
-                    'toppings' =>  json_encode($toppings),
-                ] );
+            $taxSettings = Option::getTaxesSettings();
 
-                $orderPrice += $product->price ?? 0;
-                $metaPrice += $product->price ?? 0;
+            $productPrice = $product->price;
 
-                // new calculation 
-                $froyoPrices = Froyo::whereIn('id', $froyos)->sum('price');
-                $orderPrice += $froyoPrices;
-                $metaPrice += $froyoPrices;
-
-                $syrupPrices = Syrup::whereIn('id', $syrups)->sum('price');
-                $orderPrice += $syrupPrices;
-                $metaPrice += $syrupPrices;
-
-                $toppingPrices = Topping::whereIn('id', $toppings)->sum('price');
-                $orderPrice += $toppingPrices;
-                $metaPrice += $toppingPrices;
-
-                /*
-                if (($product->default_froyo_quantity != null || $product->default_froyo_quantity != 0 ) && $froyoCount > $product->default_froyo_quantity) {
-                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
-                    asort($froyoPrices);
-                    $mostExpensiveFroyoPrice = end($froyoPrices);
-                    $orderPrice += $mostExpensiveFroyoPrice;
-                } 
-                
-                if (($product->default_syrup_quantity != null || $product->default_syrup_quantity != 0 ) && $syrupCount > $product->default_syrup_quantity) {
-                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
-                    asort($syrupPrices);
-                    $mostExpensiveSyrupPrice = end($syrupPrices);
-                    $orderPrice += $mostExpensiveSyrupPrice;
-                } 
-
-                if (($product->default_topping_quantity != null || $product->default_topping_quantity != 0 ) && $toppingCount > $product->default_topping_quantity) {
-                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
-                    asort($toppingPrices);
-                    $mostExpensiveToppingPrice = end($toppingPrices);
-                    $orderPrice += $mostExpensiveToppingPrice;
-                } 
-                */
-
-                $orderMeta->total_price = $metaPrice;
-                $orderMeta->save();
+            switch ( $request->payment_plan ) {
+                case 1:
+                    $productPrice = $productVariant->upfront;
+                    break;
+                case 2:
+                    $productPrice = $productVariant->monthly;
+                    break;
+                case 3:
+                    $productPrice = $productVariant->outright;
+                    break;
             }
+            
+            $orderMeta = OrderMeta::create( [
+                'order_id' => $updateOrder->id,
+                'product_id' => $product->id,
+                'product_variant_id' => $productVariant->id,
+                'total_price' =>  $request->quantity * $productPrice,
+                'quantity' => $request->quantity,
+            ] );
+            
+            $orderPrice += $orderMeta->total_price;
+            $subtotal += $orderMeta->total_price;
 
-            $updateOrder->total_price = Helper::numberFormatV2($orderPrice,2);
+            if( $voucher ){
+                if ( $voucher->discount_type == 3 ) {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
+
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $getProductMeta = $userCart->cartMetas
+                        ->where('product_id', $adjustment->get_product)
+                        ->sortBy('total_price')
+                        ->first();                    
+
+                        if ($getProductMeta) {
+
+                            $discount = 0;
+                            $discount += $getProductMeta->product->price;
+
+                            $orderPrice -= Helper::numberFormatV2($discount,2,false,true);
+                            $order->discount = Helper::numberFormatV2($discount,2,false,true);
+                            $getProductMeta->total_price = 0 + $getProductMeta->additional_charges;
+                            $getProductMeta->save();
+                        }
+                    }
+
+                } else if ( $voucher->discount_type == 2 ) {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $orderMeta->total_price;
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $orderPrice -= $adjustment->discount_quantity;
+                        $order->discount = Helper::numberFormatV2($adjustment->discount_quantity,2,false,true);
+                    }
+        
+                } else {
+
+                    $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        
+                    $x = $orderMeta->total_price;
+                    if ( $x >= $adjustment->buy_quantity ) {
+                        $order->discount = Helper::numberFormatV2(( $orderPrice * $adjustment->discount_quantity / 100 ),2,false,true);
+                        $orderPrice = $orderPrice - ( $orderPrice * $adjustment->discount_quantity / 100 );
+                    }
+                }
+            }
+            $updateOrder->total_price = Helper::numberFormatV2($orderPrice,2,false,true);
+            $updateOrder->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($order->total_price,2)) : 0;
+            $updateOrder->total_price += Helper::numberFormatV2($updateOrder->tax,2,false,true);
+            $updateOrder->subtotal = Helper::numberFormatV2($subtotal,2,false,true);
             $updateOrder->save();
 
             DB::commit();

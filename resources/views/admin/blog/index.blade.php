@@ -1,5 +1,4 @@
 <?php
-array_unshift( $data['types'], [ 'title' => __( 'datatables.all_x', [ 'title' => __( 'blog.type' ) ] ), 'value' => '' ] );
 $columns = [
     [
         'type' => 'default',
@@ -31,11 +30,7 @@ $columns = [
     ],
     [
         'type' => 'select',
-        'options' => [
-            [ 'value' => '', 'title' => __( 'datatables.all_x', [ 'title' => __( 'datatables.status' ) ] ) ],
-            [ 'value' => 10, 'title' => __( 'datatables.activated' ) ],
-            [ 'value' => 20, 'title' => __( 'datatables.suspended' ) ],
-        ],
+        'options' => $data['status'],
         'id' => 'status',
         'title' => __( 'datatables.status' ),
     ],
@@ -151,41 +146,45 @@ $columns = [
                     },
                 },
                 {
-                    targets: parseInt( '{{ count( $columns ) - 1 }}' ),
-                    orderable: false,
-                    width: '10%',
-                    className: 'text-center',
-                    render: function( data, type, row, meta ) {
+                targets: parseInt( '{{ count( $columns ) - 1 }}' ),
+                orderable: false,
+                width: '1%',
+                className: 'text-center',
+                render: function( data, type, row, meta ) {
 
-                        @canany( [ 'edit blogs', 'view blogs' ] )
+                    @canany( [ 'edit blogs', 'delete blogs' ] )
+                    let edit = '', 
+                    status = '';
+ 
+                    @can( 'edit blogs' )
+                    edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
+                    edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    @endcan
 
-                        let view = '',
-                            edit = '',
-                            status = '';
-
-                        @can( 'edit blogs' )
-                        view += '<li class="dropdown-item click-action dt-edit" data-id="' + data + '">{{ __( 'datatables.edit' ) }}</li>';
-                        status = row.status == 10 ? 
-                        '<li class="dropdown-item click-action dt-suspend" data-id="' + data + '">{{ __( 'datatables.suspend' ) }}</li>':
-                        '<li class="dropdown-item click-action dt-activate" data-id="' + data + '">{{ __( 'datatables.activate' ) }}</li>' ;
-                        @endcan
-
-                        let html = 
+                    @can( 'delete blogs' )
+                    status = row['status'] == 10 ? 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.blog_canceled' ) }}</span></a></li>' : 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.blog_placed' ) }}</span></a></li>';
+                    @endcan
+                    
+                    let html = 
                         `
                         <div class="dropdown">
-                            <i class="text-primary click-action" data-lucide="more-horizontal" data-bs-toggle="dropdown"></i>
-                            <ul class="dropdown-menu">
-                            ` + view + `
-                            ` + status + `
-                            </ul>
+                            <a class="dropdown-toggle btn btn-icon btn-trigger" href="#" type="button" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                            <div class="dropdown-menu">
+                                <ul class="link-list-opt">
+                                    `+edit+`
+                                </ul>
+                            </div>
                         </div>
                         `;
+                        console.log(html)
                         return html;
-                        @else
-                        return '<i class="text-secondary" data-lucide="more-horizontal" data-bs-toggle="dropdown"></i>';
-                        @endcanany
-                    },
+                    @else
+                    return '-';
+                    @endcanany
                 },
+            },
             ],
         },
         table_no = 0,

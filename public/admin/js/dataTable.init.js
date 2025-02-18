@@ -178,13 +178,12 @@ document.addEventListener( 'DOMContentLoaded', function() {
     });
 
     function positionDropdown(event) {
-        console.log(event)
         var dropdown = document.querySelector('.dropdown-menu');
         var trigger = event.target; // The element that triggered the dropdown
         var rect = trigger.getBoundingClientRect();
         var dropdownWidth = dropdown.offsetWidth;
         var dropdownHeight = dropdown.offsetHeight;
-        
+        console.log(event)
         // Calculate positions
         var top = rect.top + window.pageYOffset + rect.height;
         var left = rect.left + window.pageXOffset;
@@ -203,17 +202,26 @@ document.addEventListener( 'DOMContentLoaded', function() {
       
         dropdown.style.top = top + 'px';
         dropdown.style.left = left + 'px';
+        dropdown.style.position = "absolute";
+        dropdown.style.zIndex = "9999"; 
     }
 
     document.querySelector('.dropdown-toggle').addEventListener('click', positionDropdown);
   
     $(dt_table_name).on('shown.bs.dropdown', function (event) {
+
+        let rowCount = document.querySelectorAll(dt_table_name +" tbody tr").length;
+        
         setTimeout(() => {
             const scrollBody = $('.dt-scroll-body');
             const dropdown = $(event.target).closest('.dropdown').find('.dropdown-menu');
             const dropdownOffset = dropdown.offset();
             const scrollBodyOffset = scrollBody.offset();
     
+            if (rowCount === 1) {
+                scrollBody.css("height", "125px");
+            }
+
             if (dropdownOffset && scrollBodyOffset) {
                 const dropdownPosition = dropdownOffset.top - scrollBodyOffset.top + scrollBody.scrollTop();
     

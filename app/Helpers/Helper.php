@@ -29,7 +29,7 @@ class Helper {
     }
 
     public static function assetVersion() {
-        return '?v=1.13';
+        return '?v=1.06';
     }
 
     public static function wallets() {
