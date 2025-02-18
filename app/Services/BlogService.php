@@ -421,7 +421,7 @@ class BlogService
     // client
     public static function _allBlogs( $request ) {
 
-        $now = Carbon::now();
+        $now = Carbon::now('Asia/Kuala_Lumpur');
 
         $blog = Blog::with( [
             'images',
