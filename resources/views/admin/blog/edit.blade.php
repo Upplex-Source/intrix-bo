@@ -91,19 +91,19 @@ $blog_edit = 'blog_edit';
                     <div class="invalid-feedback"></div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3 ">
             
                 <div class="mb-3 row">
                     <label for="{{ $blog_edit }}_category" class="col-sm-5 col-form-label">{{ __( 'blog.category' ) }}</label>
                     <div class="col-sm-7">
-                        <select class="form-select form-select-sm" id="{{ $blog_edit }}_category" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'blog.category' ) ] ) }}" multiple="multiple">
+                        <select class="form-select form-select-sm" id="{{ $blog_edit }}_category" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'blog.category' ) ] ) }}">
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
             </div>
             
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3 ">
 
                 <div class="mb-3 row">
                     <label for="{{ $blog_edit }}_type" class="col-sm-5 col-form-label">{{ __( 'blog.type' ) }}</label>
@@ -118,7 +118,7 @@ $blog_edit = 'blog_edit';
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3 ">
                 <div class="mb-3 row">
                     <label for="{{ $blog_edit }}_publish_date" class="col-sm-5 col-form-label">{{ __( 'blog.publish_date' ) }}</label>
                     <div class="col-sm-7">
@@ -511,7 +511,7 @@ window.cke_element = 'blog_edit_text';
             width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
             placeholder: $(this).data('placeholder'),
             closeOnSelect: false, // Keeps the dropdown open after a selection
-            multiple: true, // Enable multiple selections
+
             ajax: {
                 method: 'POST',
                 url: '{{ route('admin.blog.allBlogCategories') }}',
@@ -558,9 +558,6 @@ window.cke_element = 'blog_edit_text';
             if (selectedData.id === 'new_category') {
                 // Deselect "Create New Category" after it's selected
                 var select = $(be + '_category');
-                select.val(select.val().filter(function(val) {
-                    return val !== 'new_category'; // Remove "new_category" from the selection
-                })).trigger('change');
                 
                 // Show the modal for category creation
                 $('#createCategoryModal').modal('show');

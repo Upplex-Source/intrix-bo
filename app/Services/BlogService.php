@@ -443,7 +443,7 @@ class BlogService
                 : asset('admin/images/placeholder.png') . Helper::assetVersion();
             }
 
-            $blog->append( ['categories_metas'] );
+            $blog->append( ['category'] );
 
             return $blog;
         });

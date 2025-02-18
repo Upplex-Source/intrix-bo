@@ -41,6 +41,14 @@ class Blog extends Model
         'display_publish_date',
     ];
 
+    public function getCategoryAttribute()
+    {
+        $categories = $this->attributes['categories'] ? explode(',', json_decode($this->attributes['categories'], true)) :null;
+
+        return $categories ? BlogCategory::whereIn('id', $categories)->first()->title : null;
+
+    }
+
     public function getCategoriesIdsAttribute()
     {
         return $this->attributes['categories'] ? explode(',', json_decode($this->attributes['categories'], true)) :null;
