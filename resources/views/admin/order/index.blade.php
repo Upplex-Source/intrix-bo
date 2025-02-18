@@ -1,3 +1,12 @@
+
+<style>
+    @media (max-width: 768px) { /* Target mobile screens */
+        .modal-body {
+            max-height: 50vh; /* Adjust height as needed */
+            overflow-y: auto;
+        }
+    }
+</style>
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
@@ -77,162 +86,170 @@ $columns = [
 <x-data-tables id="order_table" enableFilter="true" enableFooter="false" columns="{{ json_encode( $columns ) }}" />
 
 <div class="modal fade" id="modal_order_view" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg"> <!-- Increased size for better layout -->
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{ __( 'order.order_details' ) }}</h5>
             </div>
             <div class="modal-body">
-                
-                <!-- User Information -->
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <strong>User Information</strong>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">User</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_fullname" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Email</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_email" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Phone Number</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_phone_number" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Reference</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_reference" readonly>
-                        </div>
-                    </div>
-                </div>
+                <div class="row">
+                    <!-- Left Side: User & Address Details -->
+                    <div class="col-md-6">
+                        <!-- User Information -->
+                        <div class="mb-3">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#userInformation" aria-expanded="false" aria-controls="userInformation" style="cursor: pointer;">
+                                <strong>User Information</strong>
+                                <em class="icon ni ni-chevron-down"></em>
+                            </div>
+                            <div class="mt-2" id="userInformation">
 
-                <!-- Payment Details -->
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <strong>Payment Details</strong>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Payment Method</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_type" readonly>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">User</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_fullname" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">Email</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_email" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">Phone Number</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_phone_number" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-5 col-form-label">Reference</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_reference" readonly>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="{{ $order_view }}_status" class="col-sm-5 col-form-label">{{ __( 'order.status' ) }}</label>
-                        <div class="col-sm-7">
-                            <select class="form-select form-select-sm" id="{{ $order_view }}_status">
-                                @foreach ( $data[ 'status' ] as $key => $status)
-                                    <option value="{{ $key }}">{{ $status }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Remarks</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_remarks" readonly>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Pricing Details -->
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <strong>Pricing Details</strong>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Subtotal</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_subtotal" readonly>
+                        <!-- Address Details -->
+                        <div class="mb-3">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderAddress" aria-expanded="false" aria-controls="orderAddress" style="cursor: pointer;">
+                                <strong>Address Details</strong>
+                                <em class="icon ni ni-chevron-down"></em>
+                            </div>
+                            <div class="collapse mt-2" id="orderAddress">
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">Address 1</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_1" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">Address 2</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_2" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">City</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_city" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">State</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_state" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">Post Code</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_postcode" readonly>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Tax</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_tax" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Discount</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_discount" readonly>
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label class="col-sm-5 col-form-label">Total Price</label>
-                        <div class="col-sm-7">
-                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Collapsible Address Details -->
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderAddress" aria-expanded="false" aria-controls="orderAddress" style="cursor: pointer;">
-                        <strong>Address Details</strong>
-                        <em class="icon ni ni-chevron-down"></em>
-                    </div>
-                    <div class="collapse mt-2" id="orderAddress">
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">Address 1</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_1" readonly>
+                    <!-- Right Side: Payment & Order Details -->
+                    <div class="col-md-6">
+                        <!-- Payment Details -->
+                        <div class="mb-3">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#paymentDetails" aria-expanded="false" aria-controls="paymentDetails" style="cursor: pointer;">
+                                <strong>Payment Details</strong>
+                                <em class="icon ni ni-chevron-down"></em>
                             </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">Address 2</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_2" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">City</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control-plaintext" id="{{ $order_view }}_city" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">State</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control-plaintext" id="{{ $order_view }}_state" readonly>
-                            </div>
-                        </div>
-                        <div class="mb-3 row">
-                            <label class="col-sm-5 col-form-label">Post Code</label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control-plaintext" id="{{ $order_view }}_postcode" readonly>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            <div class="collapse mt-2" id="paymentDetails">
 
-                <!-- Order Details -->
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
-                        <strong>Order Details</strong>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-5 col-form-label">Payment Method</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_type" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-5 col-form-label">Subtotal</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_subtotal" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-5 col-form-label">Tax</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_tax" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-5 col-form-label">Discount</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_discount" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-5 col-form-label">Total Price</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="{{ $order_view }}_status" class="col-sm-5 col-form-label">{{ __( 'order.status' ) }}</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-select form-select-sm" id="{{ $order_view }}_status">
+                                            @foreach ( $data[ 'status' ] as $key => $status)
+                                                <option value="{{ $key }}">{{ $status }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-5 col-form-label">Remarks</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_remarks" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Details -->
+                        <div class="mb-3">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderDetails" aria-expanded="false" aria-controls="orderDetails" style="cursor: pointer;">
+                                <strong>Order Details</strong>
+                                <em class="icon ni ni-chevron-down"></em>
+                            </div>
+                            <div class="mt-2" id="orderDetails">
+                                <div class="selections mt-3"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="selections mt-3"></div>
                 </div>
 
                 <input type="hidden" id="{{ $order_view }}_id">
-
             </div>
 
-            <!-- Modal Footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">{{ __( 'template.cancel' ) }}</button>
                 <button type="button" class="btn btn-sm btn-primary">{{ __( 'template.save_changes' ) }}</button>
             </div>
-
         </div>
     </div>
 </div>

@@ -46,6 +46,7 @@ return [
     'today_revenue' => "Today's Revenue", //Order sales, topup
     'total_revenue' => 'Total Revenue', //Order sales, topup
     'new_users' => 'New Users',
+    'new_orders' => 'New Orders',
     'total_users' => 'Total Users',
 
     'busineess_insights' => 'Business Insights',

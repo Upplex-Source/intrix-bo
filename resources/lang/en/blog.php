@@ -27,7 +27,7 @@ return [
 
     'articles' => 'Articles',
     'insights' => 'Insights',
-    'stories' => 'Stories',
+    'partners' => 'Partners',
     'blogs' => 'Blogs',
 
 ];

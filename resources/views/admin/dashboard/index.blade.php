@@ -100,12 +100,12 @@ $columns = [
                     <div class="card-inner">
                         <div class="card-title-group">
                             <div class="card-title">
-                                <h6 class="title">{{ __( 'dashboard.new_users' ) }}</h6>
+                                <h6 class="title">{{ __( 'dashboard.new_orders' ) }}</h6>
                             </div>
                         </div>
                         <div class="data">
                             <div class="data-group">
-                                <div class="amount" id="new_users" style="white-space: normal; word-wrap: break-word; font-size:1.5rem">
+                                <div class="amount" id="new_orders" style="white-space: normal; word-wrap: break-word; font-size:1.5rem">
                                     <div class="spinner-grow text-secondary" role="status">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
@@ -122,12 +122,12 @@ $columns = [
                     <div class="card-inner">
                         <div class="card-title-group">
                             <div class="card-title">
-                                <h6 class="title">{{ __( 'dashboard.total_users' ) }}</h6>
+                                <h6 class="title">{{ __( 'dashboard.total_orders' ) }}</h6>
                             </div>
                         </div>
                         <div class="data">
                             <div class="data-group">
-                                <div class="amount" id="total_users" style="white-space: normal; word-wrap: break-word; font-size:1.5rem">
+                                <div class="amount" id="total_orders" style="white-space: normal; word-wrap: break-word; font-size:1.5rem">
                                     <div class="spinner-grow text-secondary" role="status">
                                         <span class="visually-hidden">Loading...</span>
                                     </div>
@@ -178,65 +178,7 @@ $columns = [
                     <div class="card-inner">
                         <div class="card-title-group mb-3">
                             <div class="card-title">
-                                <h6 class="title">{{ __( 'dashboard.total_reload' ) }}</h6>
-                            </div>
-                            <div class="card-tools">
-                                <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle link link-light link-sm dropdown-indicator chart-type-selector" data-bs-toggle="dropdown" data-chart-id="chart2">Daily</a>
-                                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
-                                        <ul class="link-list-opt">
-                                            <li><a href="#" data-type="day" class=" chart-type-option active" data-chart-id="chart2" ><span>Daily</span></a></li>
-                                            <li><a href="#" data-type="week"  class=" chart-type-option" data-chart-id="chart2"><span>Weekly</span></a></li>
-                                            <li><a href="#" data-type="month" class=" chart-type-option" data-chart-id="chart2" ><span>Monthly</span></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="nk-ecwg8-ck">
-                            <div id="chart2"></div>
-                        </div>
-                    </div><!-- .card-inner -->
-                </div>
-            </div><!-- .card -->
-        </div><!-- .col -->
-        
-        <div class="col-xxl-6 col-sm-6 col-xs-6">
-            <div class="card card-full card-chart">
-                <div class="nk-ecwg nk-ecwg8 h-100">
-                    <div class="card-inner">
-                        <div class="card-title-group mb-3">
-                            <div class="card-title">
-                                <h6 class="title">{{ __( 'dashboard.total_cups_chart' ) }}</h6>
-                            </div>
-                            <div class="card-tools">
-                                <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle link link-light link-sm dropdown-indicator chart-type-selector" data-bs-toggle="dropdown" data-chart-id="chart3">Daily</a>
-                                    <div class="dropdown-menu dropdown-menu-sm dropdown-menu-end">
-                                        <ul class="link-list-opt">
-                                            <li><a href="#" data-type="day" class=" chart-type-option active"  data-chart-id="chart3" ><span>Daily</span></a></li>
-                                            <li><a href="#" data-type="week"  class=" chart-type-option"  data-chart-id="chart3"><span>Weekly</span></a></li>
-                                            <li><a href="#" data-type="month" class=" chart-type-option"  data-chart-id="chart3" ><span>Monthly</span></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="nk-ecwg8-ck">
-                            <div id="chart3"></div>
-                        </div>
-                    </div><!-- .card-inner -->
-                </div>
-            </div><!-- .card -->
-        </div><!-- .col -->
-        
-        <div class="col-xxl-6 col-sm-6 col-xs-6">
-            <div class="card card-full card-chart">
-                <div class="nk-ecwg nk-ecwg8 h-100">
-                    <div class="card-inner">
-                        <div class="card-title-group mb-3">
-                            <div class="card-title">
-                                <h6 class="title">{{ __( 'dashboard.total_users_chart' ) }}</h6>
+                                <h6 class="title">{{ __( 'dashboard.total_orders_chart' ) }}</h6>
                             </div>
                             <div class="card-tools">
                                 <div class="dropdown">
@@ -317,44 +259,25 @@ $columns = [
 
         // Create separate options for chart3 and chart4 with no decimals
         let chart1Options = JSON.parse(JSON.stringify(totalOrderOption));
-        chart1Options.yaxis.labels.formatter = function(value) {
-            return Math.floor(2); // No decimal places for chart3
-        };
-        chart1Options.tooltip.y.formatter = function(value) {
-            return Math.floor(2); // No decimal places for chart3 tooltip
-        };
-
-        let chart2Options = JSON.parse(JSON.stringify(totalOrderOption));
-        chart2Options.yaxis.labels.formatter = function(value) {
-            return Math.floor(2); // No decimal places for chart4
-        };
-        chart2Options.tooltip.y.formatter = function(value) {
-            return Math.floor(2); // No decimal places for chart4 tooltip
-        };
-
-        // Create separate options for chart3 and chart4 with no decimals
-        let chart3Options = JSON.parse(JSON.stringify(totalOrderOption));
-        chart3Options.yaxis.labels.formatter = function(value) {
-            return Math.floor(value); // No decimal places for chart3
-        };
-        chart3Options.tooltip.y.formatter = function(value) {
-            return Math.floor(value); // No decimal places for chart3 tooltip
-        };
+        // chart1Options.yaxis.labels.formatter = function(value) {
+        //     return Math.floor(2); // No decimal places for chart3
+        // };
+        // chart1Options.tooltip.y.formatter = function(value) {
+        //     return Math.floor(2); // No decimal places for chart3 tooltip
+        // };
 
         let chart4Options = JSON.parse(JSON.stringify(totalOrderOption));
-        chart4Options.yaxis.labels.formatter = function(value) {
-            return Math.floor(value); // No decimal places for chart4
-        };
-        chart4Options.tooltip.y.formatter = function(value) {
-            return Math.floor(value); // No decimal places for chart4 tooltip
-        };
+        // chart4Options.yaxis.labels.formatter = function(value) {
+        //     return Math.floor(value); // No decimal places for chart4
+        // };
+        // chart4Options.tooltip.y.formatter = function(value) {
+        //     return Math.floor(value); // No decimal places for chart4 tooltip
+        // };
 
         // Assign options to charts
         let charts = [
-            { id: 'chart1', name: '{{ __( "template.orders" ) }}', options: chart1Options }, // Two decimals
-            { id: 'chart2', name: '{{ __( "dashboard.topup" ) }}', options: chart2Options }, // Two decimals
-            { id: 'chart3', name: '{{ __( "dashboard.cups" ) }}', options: chart3Options }, // No decimals
-            { id: 'chart4', name: '{{ __( "dashboard.users" ) }}', options: chart4Options }  // No decimals
+            { id: 'chart1', name: '{{ __( "dashboard.today_revenue" ) }}', options: chart1Options }, // Two decimals
+            { id: 'chart4', name: '{{ __( "dashboard.orders" ) }}', options: chart4Options }  // No decimals
         ];
 
         // Render all charts
@@ -369,6 +292,7 @@ $columns = [
             let chart = new ApexCharts(document.querySelector(`#${chartConfig.id}`), chartConfig.options);
             chart.render();
             chartConfig.instance = chart; // Store chart instance for later updates
+
             loadChartData(chartConfig.id, 'day'); // Load initial data
         });
 
@@ -379,6 +303,7 @@ $columns = [
                 data: { type, chartId, _token: '{{ csrf_token() }}' },
                 success: function(response) {
                     const chartConfig = charts.find(chart => chart.id === chartId);
+                    console.log(response)
                     if (chartConfig) {
                         chartConfig.instance.updateOptions({
                             xaxis: {
@@ -426,8 +351,8 @@ $columns = [
                 success: function( response ) {
                     $( '#today_revenue' ).html( response.today_revenue );
                     $( '#total_revenue' ).html( response.total_revenue );
-                    $( '#new_users' ).html( response.new_users );
-                    $( '#total_users' ).html( response.total_users );
+                    $( '#new_orders' ).html( response.new_orders );
+                    $( '#total_orders' ).html( response.total_orders );
                 },
             } );
         }

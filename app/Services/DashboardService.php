@@ -36,17 +36,25 @@ class DashboardService
             Order::whereIn( 'status', [1,3] )->sum('total_price') + 
             WalletTransaction::where( 'type',1 )->where('transaction_type', 1 )->where( 'status', 10 )->sum( 'amount' ), 
             2, true );
-        $new_users = $new_users = Helper::numberFormat(
+        $new_users = Helper::numberFormat(
             User::whereDate('created_at', Carbon::today())->count(),
             0
         );
         $total_users = Helper::numberFormat( User::where( 'status', 10 )->count(), 0 );
+
+        $new_orders = Helper::numberFormat(
+            Order::whereDate('created_at', Carbon::today())->count(),
+            0
+        );
+        $total_orders = Helper::numberFormat( Order::where( 'status', 10 )->count(), 0 );
 
         return response()->json( [
             'today_revenue' => 'RM ' . $today_revenue,
             'total_revenue'  => 'RM ' . $total_revenue,
             'new_users' => $new_users,
             'total_users' => $total_users,
+            'new_orders' => $new_orders,
+            'total_orders' => $total_orders,
         ] );
     }
 
@@ -65,7 +73,7 @@ class DashboardService
                         $day = strtotime(date('Y-m-d') . ' -' . $x . ' day');
                         $thisDay = date('Y-m-d', $day);
 
-                        $thisDayOrder = Order::whereIn('status', [1,3])
+                        $thisDayOrder = Order::where('status', 10)
                             ->whereBetween('created_at', [$thisDay . ' 00:00:00', $thisDay . ' 23:59:59'])
                             ->sum( 'total_price' );
 
@@ -83,7 +91,7 @@ class DashboardService
                         $startOfWeek = date('Y-m-d', strtotime("last sunday -{$x} week"));
                         $endOfWeek = date('Y-m-d', strtotime("next saturday -{$x} week"));
             
-                        $weekOrder = Order::whereIn('status', [1,3])
+                        $weekOrder = Order::where('status', 10)
                             ->whereBetween('created_at', [$startOfWeek . ' 00:00:00', $endOfWeek . ' 23:59:59'])
                             ->sum( 'total_price' );
 
@@ -102,7 +110,7 @@ class DashboardService
                         $startOfMonth = date('Y-m-01', strtotime("-{$x} month"));
                         $endOfMonth = date('Y-m-t', strtotime("-{$x} month"));
             
-                        $monthOrder = Order::whereIn('status', [1,3])
+                        $monthOrder = Order::where('status', 10)
                             ->whereBetween('created_at', [$startOfMonth . ' 00:00:00', $endOfMonth . ' 23:59:59'])
                             ->sum( 'total_price' );
 
@@ -223,7 +231,7 @@ class DashboardService
                         $day = strtotime(date('Y-m-d') . ' -' . $x . ' day');
                         $thisDay = date('Y-m-d', $day);
 
-                        $thisDayOrder = User::where('status', 10)
+                        $thisDayOrder = Order::where('status', 10)
                             ->whereBetween('created_at', [$thisDay . ' 00:00:00', $thisDay . ' 23:59:59'])
                             ->count();
 
@@ -235,7 +243,7 @@ class DashboardService
                         $startOfWeek = date('Y-m-d', strtotime("last sunday -{$x} week"));
                         $endOfWeek = date('Y-m-d', strtotime("next saturday -{$x} week"));
             
-                        $weekOrder = User::where('status', 10)
+                        $weekOrder = Order::where('status', 10)
                             ->whereBetween('created_at', [$startOfWeek . ' 00:00:00', $endOfWeek . ' 23:59:59'])
                             ->count();
             
@@ -248,7 +256,7 @@ class DashboardService
                         $startOfMonth = date('Y-m-01', strtotime("-{$x} month"));
                         $endOfMonth = date('Y-m-t', strtotime("-{$x} month"));
             
-                        $monthOrder = User::where('status', 10)
+                        $monthOrder = Order::where('status', 10)
                             ->whereBetween('created_at', [$startOfMonth . ' 00:00:00', $endOfMonth . ' 23:59:59'])
                             ->count();
             
