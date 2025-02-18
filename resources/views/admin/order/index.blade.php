@@ -114,6 +114,7 @@ $columns = [
                     <div class="invalid-feedback"></div>
                 </div>
             </div>
+
             <div class="mb-3 row d-flex justify-content-between">
                 <label class="col-sm-5 col-form-label">Subtotal</label>
                 <div class="col-sm-7">
@@ -132,10 +133,56 @@ $columns = [
                     <input type="number" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
                 </div>
             </div>
+
             <input type="hidden" id="{{ $order_view }}_id">
 
             <div class="mb-3">
-                <strong>Order Details</strong>
+                <div class="d-flex justify-content-between align-items-center border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderAddress" aria-expanded="false" aria-controls="orderAddress" style="cursor: pointer;">
+                    <strong>Address Details</strong>
+                    <em class="icon ni ni-chevron-down"></em>
+                </div>
+                <div class="collapse mt-2" id="orderAddress">
+                    <div class="mb-3 row d-flex justify-content-between">
+                        <label class="col-sm-5 col-form-label">Address 1</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_1" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row d-flex justify-content-between">
+                        <label class="col-sm-5 col-form-label">Address 2</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_2" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row d-flex justify-content-between">
+                        <label class="col-sm-5 col-form-label">City</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_city" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row d-flex justify-content-between">
+                        <label class="col-sm-5 col-form-label">State</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_state" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row d-flex justify-content-between">
+                        <label class="col-sm-5 col-form-label">Post Code</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_postcode" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center py-2">
+                    <strong>Order Details</strong>
+                </div>
                 <div class="selections"></div>
             </div>
 
@@ -253,7 +300,7 @@ var statusMapper = @json( $data['status'] ),
  
                     @can( 'edit orders' )
                     edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
-                    edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    // edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete orders' )
@@ -338,6 +385,7 @@ var statusMapper = @json( $data['status'] ),
                     _token: '{{ csrf_token() }}',
                 },
                 success: function( response ) {
+                    console.log(response)
                     $('#{{ $order_view }}_id').val(response.id);
                     $('#{{ $order_view }}_fullname').val(response.fullname ? response.fullname : response.company_name || '-');
                     $('#{{ $order_view }}_status').val(response.status || '-');
@@ -346,6 +394,12 @@ var statusMapper = @json( $data['status'] ),
                     $('#{{ $order_view }}_subtotal').val(response.subtotal || '0.00');
                     $('#{{ $order_view }}_discount').val(response.discount || '0.00');
                     $('#{{ $order_view }}_total').val(response.total_price || '0.00');
+                    $('#{{ $order_view }}_address_1').val(response.address_1 || '-');
+                    $('#{{ $order_view }}_address_2').val(response.address_2 || '-');
+                    $('#{{ $order_view }}_city').val(response.city || '-');
+                    $('#{{ $order_view }}_state').val(response.state || '-');
+                    $('#{{ $order_view }}_postcode').val(response.postcode || '-');
+
                     $('#modal_order_view .selections').empty();
 
                     const orderMetas = response.orderMetas || [];
