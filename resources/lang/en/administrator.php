@@ -19,4 +19,5 @@ return [
     'phone_number' => 'Phone Number',
     'role' => 'Role',
     'password' => 'Password',
+    'profile_pic' => 'Profile Picture',
 ];

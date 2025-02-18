@@ -24,6 +24,17 @@ $blog_edit = 'blog_edit';
 <div class="card">
     <div class="card-body">
         <div class="row">
+            
+            @can ( 'edit administrators' )
+            <div class="mb-3 row">
+                <label for="{{ $blog_edit }}_author" class="col-sm-5 col-form-label">{{ __( 'blog.author' ) }}</label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" id="{{ $blog_edit }}_author" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'user_checkin.user' ) ] ) }}">
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            @endcan
             <div class="mb-3 row">
                 <label for="{{ $blog_edit }}_main_title" class="col-sm-5 col-form-label">{{ __( 'blog.title' ) }}</label>
                 <div class="col-sm-7">
@@ -159,6 +170,9 @@ window.cke_element = 'blog_edit_text';
 
             let formData = new FormData();
             formData.append( 'id', '{{ Request( 'id' ) }}' );
+            if ($(be + '_author').length && $(be + '_author').val().trim() !== '') {
+                formData.append('author', $(be + '_author').val());
+            }
             formData.append( 'main_title', $( be + '_main_title' ).val() );
             formData.append( 'subtitle', $( be + '_subtitle' ).val() );
             formData.append( 'type', $( be + '_type' ).val() );
@@ -241,6 +255,13 @@ window.cke_element = 'blog_edit_text';
                     $.each( response.tag, function( i, v ) {
                         $( be + '_tags').tagsinput( 'add', v.tag );
                     } );
+
+                    @can ( 'edit administrators' )
+                    if( response.author ){
+                        let option = new Option( response.author.email, response.author.id, true, true );
+                        authorSelect2.append( option )
+                    }
+                    @endcan
 
                     editor.setData( response.text );
 
@@ -366,5 +387,48 @@ window.cke_element = 'blog_edit_text';
                 },
             } );
         }
+
+        @can ( 'edit administrators' )
+        let authorSelect2 = $( be + '_author' ).select2( {
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: true,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.administrator.allAdministrators' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        title: params.term, // search term
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.administrators.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.email,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            }
+        } );
+        @endcan
+
     } );
 </script>

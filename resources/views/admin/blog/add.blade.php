@@ -20,6 +20,16 @@ $blog_create = 'blog_create';
 <div class="card">
     <div class="card-body">
         <div class="row">
+            @can ( 'edit administrators' )
+            <div class="mb-3 row">
+                <label for="{{ $blog_create }}_author" class="col-sm-5 col-form-label">{{ __( 'blog.author' ) }}</label>
+                <div class="col-sm-7">
+                    <select class="form-select form-select-sm" id="{{ $blog_create }}_author" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'user_checkin.user' ) ] ) }}">
+                    </select>
+                    <div class="invalid-feedback"></div>
+                </div>
+            </div>
+            @endcan
             <div class="mb-3 row">
                 <label for="{{ $blog_create }}_main_title" class="col-sm-5 col-form-label">{{ __( 'blog.title' ) }}</label>
                 <div class="col-sm-7">
@@ -152,6 +162,9 @@ window.cke_element = 'blog_create_text';
 
             let formData = new FormData();
             formData.append( 'main_title', $( be + '_main_title' ).val() );
+            if ($(be + '_author').length && $(be + '_author').val().trim() !== '') {
+                formData.append('author', $(be + '_author').val());
+            }
             formData.append( 'subtitle', $( be + '_subtitle' ).val() );
             formData.append( 'type', $( be + '_type' ).val() );
             formData.append( 'publish_date', $( be + '_publish_date' ).val() );
@@ -290,6 +303,48 @@ window.cke_element = 'blog_create_text';
                 dt_table.draw();
             }
         } );
+
+        @can( 'edit administrators' )
+        let authorSelect2 = $( be + '_author' ).select2( {
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: true,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.administrator.allAdministrators' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        title: params.term, // search term
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.administrators.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.email,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            }
+        } );
+        @endcan
 
     } );
 </script>

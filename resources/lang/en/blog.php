@@ -29,5 +29,7 @@ return [
     'insights' => 'Insights',
     'partners' => 'Partners',
     'blogs' => 'Blogs',
+    'one_min_read' => 'One Minute Read',
+    'author' => 'Author',
 
 ];

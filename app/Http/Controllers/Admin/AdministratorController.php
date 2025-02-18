@@ -12,6 +12,7 @@ use App\Services\{
 use Illuminate\Support\Facades\{
     DB,
 };
+use Illuminate\Support\Facades\Lang;
 
 class AdministratorController extends Controller
 {
@@ -67,7 +68,12 @@ class AdministratorController extends Controller
 
         $roles = [];
         foreach( DB::table( 'roles' )->select( 'id', 'name' )->orderBy( 'id', 'ASC' )->get() as $role ) {
-            $roles[] = [ 'key' => $role->name, 'value' => $role->id, 'title' => __( 'role.' . $role->name ) ];
+
+            $titleKey = 'role.' . $role->name;
+
+            $title = Lang::has($titleKey) ? __('role.' . $role->name) : str_replace('_', ' ', $role->name);;
+
+            $roles[] = [ 'key' => $role->name, 'value' => $role->id, 'title' => strtoupper($title) ];
         }
         $this->data['data']['roles'] = $roles;
 
@@ -95,6 +101,17 @@ class AdministratorController extends Controller
                 'class' => 'active',
             ],
         ];
+
+        $roles = [];
+        foreach( DB::table( 'roles' )->select( 'id', 'name' )->orderBy( 'id', 'ASC' )->get() as $role ) {
+
+            $titleKey = 'role.' . $role->name;
+
+            $title = Lang::has($titleKey) ? __('role.' . $role->name) : str_replace('_', ' ', $role->name);;
+
+            $roles[] = [ 'key' => $role->name, 'value' => $role->id, 'title' => strtoupper($title) ];
+        }
+        $this->data['data']['roles'] = $roles;
 
         return view( 'admin.main' )->with( $this->data );
     }
@@ -127,6 +144,10 @@ class AdministratorController extends Controller
 
     public function updateAdministrator( Request $request ) {
         return AdministratorService::updateAdministrator( $request );
+    }
+
+    public function removeProfilePic( Request $request ) {
+        return AdministratorService::removeProfilePic( $request );
     }
 
     public function oneSalesman( Request $request ) {

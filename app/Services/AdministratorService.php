@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\{
     DB,
     Hash,
     Validator,
+    Storage,
 };
 
 use Illuminate\Validation\Rules\Password;
@@ -14,6 +15,7 @@ use Illuminate\Validation\Rules\Password;
 use App\Models\{
     Administrator,
     User,
+    FileManager,
     Role as RoleModel
 };
 
@@ -145,6 +147,8 @@ class AdministratorService
 
         $administrator = Administrator::find( Helper::decode( $request->id ) );
 
+        $administrator->append( ['profile_pic_path'] );
+
         return response()->json( $administrator );
     }
 
@@ -190,6 +194,27 @@ class AdministratorService
 
             $createAdmin = Administrator::create( $basicAttribute );
     
+            $image = explode( ',', $request->profile_pic );
+            $imageFiles = FileManager::whereIn( 'id', $image )->get();
+
+            if ( $imageFiles ) {
+                foreach ( $imageFiles as $imageFile ) {
+
+                    $fileName = explode( '/', $imageFile->file );
+                    $fileExtention = pathinfo($fileName[1])['extension'];
+
+                    $target = 'administrator/' . $createAdmin->id . '/' . $fileName[1];
+                    Storage::disk( 'public' )->move( $imageFile->file, $target );
+
+                   $createAdmin->profile_pic = $target;
+                   $createAdmin->save();
+
+                    $imageFile->status = 10;
+                    $imageFile->save();
+
+                }
+            }
+
             $roleModel = RoleModel::find( $request->role ?? 3 );
     
             $createAdmin->syncRoles( [ $roleModel->name ] );
@@ -271,6 +296,29 @@ class AdministratorService
 
             $roleModel = RoleModel::find( $request->role ?? $updateAdministrator->role  );
             $updateAdministrator->syncRoles( [ $roleModel->name ] );
+
+
+            $image = explode( ',', $request->profile_pic );
+
+            $imageFiles = FileManager::whereIn( 'id', $image )->get();
+
+            if ( $imageFiles ) {
+                foreach ( $imageFiles as $imageFile ) {
+
+                    $fileName = explode( '/', $imageFile->file );
+                    $fileExtention = pathinfo($fileName[1])['extension'];
+
+                    $target = 'administrator/' . $updateAdministrator->id . '/' . $fileName[1];
+                    Storage::disk( 'public' )->move( $imageFile->file, $target );
+
+                   $updateAdministrator->profile_pic = $target;
+                   $updateAdministrator->save();
+
+                    $imageFile->status = 10;
+                    $imageFile->save();
+
+                }
+            }
 
             $updateAdministrator->save();
 
@@ -522,6 +570,24 @@ class AdministratorService
 
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.owners' ) ) ] ),
+        ] );
+    }
+
+    public static function removeProfilePic( $request ) {
+
+        $updateAdmin = Administrator::find( Helper::decode($request->id) );
+
+        $filePath = public_path($updateAdmin->profile_pic);
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $updateAdmin->profile_pic = null;
+        $updateAdmin->save();
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'farm.galleries' ) ) ] ),
         ] );
     }
 

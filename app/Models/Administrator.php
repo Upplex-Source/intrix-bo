@@ -29,10 +29,15 @@ class Administrator extends Authenticatable
         'calling_code',
         'role',
         'status',
+        'profile_pic',
     ];
 
     public function owner() {
         return $this->hasOne( User::class, 'id', 'user_id' );
+    }
+
+    public function getProfilePicPathAttribute() {
+        return $this->attributes['profile_pic'] ? asset( 'storage/' . $this->attributes['profile_pic'] ) : asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
     }
 
     public function getEncryptedIdAttribute() {
@@ -53,6 +58,7 @@ class Administrator extends Authenticatable
         'calling_code',
         'role',
         'status',
+        'profile_pic',
     ];
 
     protected static $logName = 'administrators';

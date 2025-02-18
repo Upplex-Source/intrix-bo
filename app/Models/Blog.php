@@ -20,6 +20,7 @@ class Blog extends Model
 
     protected $fillable = [
         'main_title',
+        'author_id',
         'subtitle',
         'text',
         'image',
@@ -36,6 +37,11 @@ class Blog extends Model
         'display_type',
         'display_publish_date',
     ];
+
+    public function author()
+    {
+        return $this->belongsTo(Administrator::class, 'author_id');
+    }
 
     public function images() {
         return $this->hasMany( BlogImage::class, 'blog_id' );
@@ -64,6 +70,7 @@ class Blog extends Model
 
     protected static $logAttributes = [
         'main_title',
+        'author_id',
         'subtitle',
         'text',
         'type',

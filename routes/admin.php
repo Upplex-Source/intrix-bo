@@ -101,6 +101,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'one-administrator', [ AdministratorController::class, 'oneAdministrator' ] )->name( 'admin.administrator.oneAdministrator' );
                 Route::post( 'create-administrator', [ AdministratorController::class, 'createAdministrator' ] )->name( 'admin.administrator.createAdministrator' );
                 Route::post( 'update-administrator', [ AdministratorController::class, 'updateAdministrator' ] )->name( 'admin.administrator.updateAdministrator' );
+                Route::post( 'remove-profile-pic', [ AdministratorController::class, 'removeProfilePic' ] )->name( 'admin.administrator.removeProfilePic' );
                 
                 Route::group( [ 'middleware' => [ 'permission:view administrators' ] ], function() {
                     Route::get( 'salesmen', [ AdministratorController::class, 'indexSalesman' ] )->name( 'admin.module_parent.administrator.indexSalesman' );
@@ -187,167 +188,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-guest', [ GuestController::class, 'updateGuest' ] )->name( 'admin.guest.updateGuest' );
                 Route::post( 'update-guest-status', [ GuestController::class, 'updateGuestStatus' ] )->name( 'admin.guest.updateGuestStatus' );
             } );
-
-            Route::prefix( 'wallets' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view wallets' ] ], function() {
-                    Route::get( '/', [ WalletController::class, 'index' ] )->name( 'admin.module_parent.wallet.index' );
-                } );
-
-                Route::post( 'all-wallets', [ WalletController::class, 'allWallets' ] )->name( 'admin.wallet.allWallets' );
-                Route::post( 'one-wallet', [ WalletController::class, 'oneWallet' ] )->name( 'admin.wallet.oneWallet' );
-                Route::post( 'update-wallet', [ WalletController::class, 'updateWallet' ] )->name( 'admin.wallet.updateWallet' );
-                Route::post( 'update-wallet-multiple', [ WalletController::class, 'updateWalletMultiple' ] )->name( 'admin.wallet.updateWalletMultiple' );
-            } );
-            
-            Route::prefix( 'wallet-transactions' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view wallet_transactions' ] ], function() {
-                    Route::get( '/', [ WalletTransactionController::class, 'index' ] )->name( 'admin.module_parent.wallet_transaction.index' );
-                } );
-
-                Route::post( 'all-wallet-transactions', [ WalletTransactionController::class, 'allWalletTransactions' ] )->name( 'admin.wallet_transaction.allWalletTransactions' );
-            } );
             
             // new routes ( 23/12 ) 
-            Route::prefix( 'outlets' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view outlets' ] ], function() {
-                    Route::get( '/', [ OutletController::class, 'index' ] )->name( 'admin.module_parent.outlet.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add outlets' ] ], function() {
-                    Route::get( 'add', [ OutletController::class, 'add' ] )->name( 'admin.outlet.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit outlets' ] ], function() {
-                    Route::get( 'edit', [ OutletController::class, 'edit' ] )->name( 'admin.outlet.edit' );
-                } );
-
-                Route::post( 'all-outlets', [ OutletController::class, 'allOutlets' ] )->name( 'admin.outlet.allOutlets' );
-                Route::post( 'one-outlet', [ OutletController::class, 'oneOutlet' ] )->name( 'admin.outlet.oneOutlet' );
-                Route::post( 'create-outlet', [ OutletController::class, 'createOutlet' ] )->name( 'admin.outlet.createOutlet' );
-                Route::post( 'update-outlet', [ OutletController::class, 'updateOutlet' ] )->name( 'admin.outlet.updateOutlet' );
-                Route::post( 'update-outlet-status', [ OutletController::class, 'updateOutletStatus' ] )->name( 'admin.outlet.updateOutletStatus' );
-                Route::post( 'remove-outlet-gallery-image', [ OutletController::class, 'removeOutletGalleryImage' ] )->name( 'admin.outlet.removeOutletGalleryImage' );
-            } );
-
-            Route::prefix( 'vending-machines' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view vendingmachines' ] ], function() {
-                    Route::get( '/', [ VendingMachineController::class, 'index' ] )->name( 'admin.module_parent.vending_machine.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add vendingmachines' ] ], function() {
-                    Route::get( 'add', [ VendingMachineController::class, 'add' ] )->name( 'admin.vending_machine.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit vendingmachines' ] ], function() {
-                    Route::get( 'edit', [ VendingMachineController::class, 'edit' ] )->name( 'admin.vending_machine.edit' );
-                } );
-
-                Route::post( 'all-vending-machines', [ VendingMachineController::class, 'allVendingMachines' ] )->name( 'admin.vending_machine.allVendingMachines' );
-                Route::post( 'one-vending-machine', [ VendingMachineController::class, 'oneVendingMachine' ] )->name( 'admin.vending_machine.oneVendingMachine' );
-                Route::post( 'create-vending-machine', [ VendingMachineController::class, 'createVendingMachine' ] )->name( 'admin.vending_machine.createVendingMachine' );
-                Route::post( 'update-vending-machine', [ VendingMachineController::class, 'updateVendingMachine' ] )->name( 'admin.vending_machine.updateVendingMachine' );
-                Route::post( 'update-vending-machine-status', [ VendingMachineController::class, 'updateVendingMachineStatus' ] )->name( 'admin.vending_machine.updateVendingMachineStatus' );
-                Route::post( 'remove-vending-machine-gallery-image', [ VendingMachineController::class, 'removeVendingMachineGalleryImage' ] )->name( 'admin.vending_machine.removeVendingMachineGalleryImage' );
-            } );
-
-            Route::prefix( 'vending-machine-stocks' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view vendingmachinestocks' ] ], function() {
-                    Route::get( '/', [ VendingMachineStockController::class, 'index' ] )->name( 'admin.module_parent.vending_machine_stock.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add vendingmachinestocks' ] ], function() {
-                    Route::get( 'add', [ VendingMachineStockController::class, 'add' ] )->name( 'admin.vending_machine_stock.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit vendingmachinestocks' ] ], function() {
-                    Route::get( 'edit', [ VendingMachineStockController::class, 'edit' ] )->name( 'admin.vending_machine_stock.edit' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add vendingmachinestocks' ] ], function() {
-                    Route::get( 'history', [ VendingMachineStockController::class, 'history' ] )->name( 'admin.vending_machine_stock.history' );
-                } );
-
-                Route::post( 'all-vending-machine-stocks', [ VendingMachineStockController::class, 'allVendingMachineStocks' ] )->name( 'admin.vending_machine_stock.allVendingMachineStocks' );
-                Route::post( 'one-vending-machine-stock', [ VendingMachineStockController::class, 'oneVendingMachineStock' ] )->name( 'admin.vending_machine_stock.oneVendingMachineStock' );
-                Route::post( 'create-vending-machine-stock', [ VendingMachineStockController::class, 'createVendingMachineStock' ] )->name( 'admin.vending_machine_stock.createVendingMachineStock' );
-                Route::post( 'update-vending-machine-stock', [ VendingMachineStockController::class, 'updateVendingMachineStock' ] )->name( 'admin.vending_machine_stock.updateVendingMachineStock' );
-                Route::post( 'update-vending-machine-stock-status', [ VendingMachineStockController::class, 'updateVendingMachineStockStatus' ] )->name( 'admin.vending_machine_stock.updateVendingMachineStockStatus' );
-                Route::post( 'remove-vending-machine-stock-gallery-image', [ VendingMachineStockController::class, 'removeVendingMachineStockGalleryImage' ] )->name( 'admin.vending_machine_stock.removeVendingMachineStockGalleryImage' );
-            } );
-
-            Route::prefix( 'vending-machine-products' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view vendingmachineproducts' ] ], function() {
-                    Route::get( '/', [ VendingMachineProductController::class, 'index' ] )->name( 'admin.module_parent.vending_machine_product.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add vendingmachineproducts' ] ], function() {
-                    Route::get( 'add', [ VendingMachineProductController::class, 'add' ] )->name( 'admin.vending_machine_product.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit vendingmachineproducts' ] ], function() {
-                    Route::get( 'edit', [ VendingMachineProductController::class, 'edit' ] )->name( 'admin.vending_machine_product.edit' );
-                } );
-
-                Route::post( 'all-vending-machine-products', [ VendingMachineProductController::class, 'allVendingMachineProducts' ] )->name( 'admin.vending_machine_product.allVendingMachineProducts' );
-                Route::post( 'one-vending-machine-product', [ VendingMachineProductController::class, 'oneVendingMachineProduct' ] )->name( 'admin.vending_machine_product.oneVendingMachineProduct' );
-                Route::post( 'create-vending-machine-product', [ VendingMachineProductController::class, 'createVendingMachineProduct' ] )->name( 'admin.vending_machine_product.createVendingMachineProduct' );
-                Route::post( 'update-vending-machine-product', [ VendingMachineProductController::class, 'updateVendingMachineProduct' ] )->name( 'admin.vending_machine_product.updateVendingMachineProduct' );
-                Route::post( 'update-vending-machine-product-status', [ VendingMachineProductController::class, 'updateVendingMachineProductStatus' ] )->name( 'admin.vending_machine_product.updateVendingMachineProductStatus' );
-                Route::post( 'remove-vending-machine-product-gallery-image', [ VendingMachineProductController::class, 'removeVendingMachineProductGalleryImage' ] )->name( 'admin.vending_machine_product.removeVendingMachineProductGalleryImage' );
-            } );
-
-            Route::prefix( 'froyos' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view froyos' ] ], function() {
-                    Route::get( '/', [ FroyoController::class, 'index' ] )->name( 'admin.module_parent.froyo.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add froyos' ] ], function() {
-                    Route::get( 'add', [ FroyoController::class, 'add' ] )->name( 'admin.froyo.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit froyos' ] ], function() {
-                    Route::get( 'edit', [ FroyoController::class, 'edit' ] )->name( 'admin.froyo.edit' );
-                } );
-
-                Route::post( 'all-froyos', [ FroyoController::class, 'allFroyos' ] )->name( 'admin.froyo.allFroyos' );
-                Route::post( 'all-stock-froyos', [ FroyoController::class, 'allStocksFroyos' ] )->name( 'admin.froyo.allStocksFroyos' );
-                Route::post( 'all-stock-froyos-for-vending-machine', [ FroyoController::class, 'allFroyosForVendingMachine' ] )->name( 'admin.froyo.allFroyosForVendingMachine' );
-                Route::post( 'get-froyo-stock', [ FroyoController::class, 'getFroyoStock' ] )->name( 'admin.froyo.getFroyoStock' );
-                Route::post( 'one-froyo', [ FroyoController::class, 'oneFroyo' ] )->name( 'admin.froyo.oneFroyo' );
-                Route::post( 'create-froyo', [ FroyoController::class, 'createFroyo' ] )->name( 'admin.froyo.createFroyo' );
-                Route::post( 'update-froyo', [ FroyoController::class, 'updateFroyo' ] )->name( 'admin.froyo.updateFroyo' );
-                Route::post( 'update-froyo-status', [ FroyoController::class, 'updateFroyoStatus' ] )->name( 'admin.froyo.updateFroyoStatus' );
-                Route::post( 'remove-froyo-gallery-image', [ FroyoController::class, 'removeFroyoGalleryImage' ] )->name( 'admin.froyo.removeFroyoGalleryImage' );
-            } );
-
-            Route::prefix( 'syrups' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view syrups' ] ], function() {
-                    Route::get( '/', [ SyrupController::class, 'index' ] )->name( 'admin.module_parent.syrup.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add syrups' ] ], function() {
-                    Route::get( 'add', [ SyrupController::class, 'add' ] )->name( 'admin.syrup.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit syrups' ] ], function() {
-                    Route::get( 'edit', [ SyrupController::class, 'edit' ] )->name( 'admin.syrup.edit' );
-                } );
-
-                Route::post( 'all-syrups', [ SyrupController::class, 'allSyrups' ] )->name( 'admin.syrup.allSyrups' );
-                Route::post( 'all-stock-syrups', [ SyrupController::class, 'allStocksSyrups' ] )->name( 'admin.froyo.allStocksSyrups' );
-                Route::post( 'one-syrup', [ SyrupController::class, 'oneSyrup' ] )->name( 'admin.syrup.oneSyrup' );
-                Route::post( 'create-syrup', [ SyrupController::class, 'createSyrup' ] )->name( 'admin.syrup.createSyrup' );
-                Route::post( 'update-syrup', [ SyrupController::class, 'updateSyrup' ] )->name( 'admin.syrup.updateSyrup' );
-                Route::post( 'update-syrup-status', [ SyrupController::class, 'updateSyrupStatus' ] )->name( 'admin.syrup.updateSyrupStatus' );
-                Route::post( 'remove-syrup-gallery-image', [ SyrupController::class, 'removeSyrupGalleryImage' ] )->name( 'admin.syrup.removeSyrupGalleryImage' );
-            } );
-
-            Route::prefix( 'toppings' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view toppings' ] ], function() {
-                    Route::get( '/', [ ToppingController::class, 'index' ] )->name( 'admin.module_parent.topping.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add toppings' ] ], function() {
-                    Route::get( 'add', [ ToppingController::class, 'add' ] )->name( 'admin.topping.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit toppings' ] ], function() {
-                    Route::get( 'edit', [ ToppingController::class, 'edit' ] )->name( 'admin.topping.edit' );
-                } );
-
-                Route::post( 'all-toppings', [ ToppingController::class, 'allToppings' ] )->name( 'admin.topping.allToppings' );
-                Route::post( 'all-stock-toppings', [ ToppingController::class, 'allStocksToppings' ] )->name( 'admin.froyo.allStocksToppings' );
-                Route::post( 'one-topping', [ ToppingController::class, 'oneTopping' ] )->name( 'admin.topping.oneTopping' );
-                Route::post( 'create-topping', [ ToppingController::class, 'createTopping' ] )->name( 'admin.topping.createTopping' );
-                Route::post( 'update-topping', [ ToppingController::class, 'updateTopping' ] )->name( 'admin.topping.updateTopping' );
-                Route::post( 'update-topping-status', [ ToppingController::class, 'updateToppingStatus' ] )->name( 'admin.topping.updateToppingStatus' );
-                Route::post( 'remove-topping-gallery-image', [ ToppingController::class, 'removeToppingGalleryImage' ] )->name( 'admin.topping.removeToppingGalleryImage' );
-            } );
 
             Route::prefix( 'products' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view products' ] ], function() {
@@ -412,50 +254,6 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'ckeUpload', [ VoucherController::class, 'ckeUpload' ] )->name( 'admin.voucher.ckeUpload' );
             } );
 
-            Route::prefix( 'user-checkins' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view user_checkins' ] ], function() {
-                    Route::get( '/', [ UserCheckinController::class, 'index' ] )->name( 'admin.module_parent.user_checkin.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add user_checkins' ] ], function() {
-                    Route::get( 'add', [ UserCheckinController::class, 'add' ] )->name( 'admin.user_checkin.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit user_checkins' ] ], function() {
-                    Route::get( 'edit', [ UserCheckinController::class, 'edit' ] )->name( 'admin.user_checkin.edit' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:view checkin_rewards' ] ], function() {
-                    Route::get( 'calendar', [ UserCheckinController::class, 'calendar' ] )->name( 'admin.user_checkin.calendar' );
-                } );
-    
-                Route::post( 'all-user-checkins', [ UserCheckinController::class, 'allUserCheckins' ] )->name( 'admin.user_checkin.allUserCheckins' );
-                Route::post( 'all-user-checkin-calendars', [ UserCheckinController::class, 'allUserCheckinCalendars' ] )->name( 'admin.user_checkin.allUserCheckinCalendars' );
-                Route::post( 'one-user-checkin', [ UserCheckinController::class, 'oneUserCheckin' ] )->name( 'admin.user_checkin.oneUserCheckin' );
-                Route::post( 'create-user-checkin', [ UserCheckinController::class, 'createUserCheckin' ] )->name( 'admin.user_checkin.createUserCheckin' );
-                Route::post( 'update-user-checkin', [ UserCheckinController::class, 'updateUserCheckin' ] )->name( 'admin.user_checkin.updateUserCheckin' );
-                Route::post( 'update-user-checkin-status', [ UserCheckinController::class, 'updateUserCheckinStatus' ] )->name( 'admin.user_checkin.updateUserCheckinStatus' );
-                Route::post( 'remove-user-checkin-gallery-image', [ UserCheckinController::class, 'removeUserCheckinGalleryImage' ] )->name( 'admin.user_checkin.removeUserCheckinGalleryImage' );
-                Route::post( 'ckeUpload', [ UserCheckinController::class, 'ckeUpload' ] )->name( 'admin.user_checkin.ckeUpload' );
-            } );
-
-            Route::prefix( 'checkin-rewards' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view checkin_rewards' ] ], function() {
-                    Route::get( '/', [ CheckinRewardController::class, 'index' ] )->name( 'admin.module_parent.checkin_reward.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add checkin_rewards' ] ], function() {
-                    Route::get( 'add', [ CheckinRewardController::class, 'add' ] )->name( 'admin.checkin_reward.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit checkin_rewards' ] ], function() {
-                    Route::get( 'edit', [ CheckinRewardController::class, 'edit' ] )->name( 'admin.checkin_reward.edit' );
-                } );
-    
-                Route::post( 'all-checkin-rewards', [ CheckinRewardController::class, 'allCheckinRewards' ] )->name( 'admin.checkin_reward.allCheckinRewards' );
-                Route::post( 'one-checkin-reward', [ CheckinRewardController::class, 'oneCheckinReward' ] )->name( 'admin.checkin_reward.oneCheckinReward' );
-                Route::post( 'create-checkin-reward', [ CheckinRewardController::class, 'createCheckinReward' ] )->name( 'admin.checkin_reward.createCheckinReward' );
-                Route::post( 'update-checkin-reward', [ CheckinRewardController::class, 'updateCheckinReward' ] )->name( 'admin.checkin_reward.updateCheckinReward' );
-                Route::post( 'update-checkin-reward-status', [ CheckinRewardController::class, 'updateCheckinRewardStatus' ] )->name( 'admin.checkin_reward.updateCheckinRewardStatus' );
-                Route::post( 'remove-checkin-reward-gallery-image', [ CheckinRewardController::class, 'removeCheckinRewardGalleryImage' ] )->name( 'admin.checkin_reward.removeCheckinRewardGalleryImage' );
-                Route::post( 'ckeUpload', [ CheckinRewardController::class, 'ckeUpload' ] )->name( 'admin.checkin_reward.ckeUpload' );
-            } );
-
             Route::prefix( 'settings' )->group( function() {
 
                 Route::group( [ 'middleware' => [ 'permission:add settings|view settings|edit settings|delete settings' ] ], function() {
@@ -507,46 +305,6 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-voucher-usage-status', [ VoucherUsageController::class, 'updateVoucherUsageStatus' ] )->name( 'admin.voucher_usage.updateVoucherUsageStatus' );
                 Route::post( 'remove-voucher-usage-gallery-image', [ VoucherUsageController::class, 'removeVoucherUsageGalleryImage' ] )->name( 'admin.voucher_usage.removeVoucherUsageGalleryImage' );
                 Route::post( 'ckeUpload', [ VoucherUsageController::class, 'ckeUpload' ] )->name( 'admin.voucher_usage.ckeUpload' );
-            } );
-
-            Route::prefix( 'product-bundles' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view vouchers' ] ], function() {
-                    Route::get( '/', [ ProductBundleController::class, 'index' ] )->name( 'admin.module_parent.product_bundle.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add vouchers' ] ], function() {
-                    Route::get( 'add', [ ProductBundleController::class, 'add' ] )->name( 'admin.product_bundle.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit vouchers' ] ], function() {
-                    Route::get( 'edit', [ ProductBundleController::class, 'edit' ] )->name( 'admin.product_bundle.edit' );
-                } );
-    
-                Route::post( 'all-product-bundles', [ ProductBundleController::class, 'allProductBundles' ] )->name( 'admin.product_bundle.allProductBundles' );
-                Route::post( 'one-product-bundle', [ ProductBundleController::class, 'oneProductBundle' ] )->name( 'admin.product_bundle.oneProductBundle' );
-                Route::post( 'create-product-bundle', [ ProductBundleController::class, 'createProductBundle' ] )->name( 'admin.product_bundle.createProductBundle' );
-                Route::post( 'update-product-bundle', [ ProductBundleController::class, 'updateProductBundle' ] )->name( 'admin.product_bundle.updateProductBundle' );
-                Route::post( 'update-product-bundle-status', [ ProductBundleController::class, 'updateProductBundleStatus' ] )->name( 'admin.product_bundle.updateProductBundleStatus' );
-                Route::post( 'remove-product-bundle-gallery-image', [ ProductBundleController::class, 'removeProductBundleGalleryImage' ] )->name( 'admin.product_bundle.removeProductBundleGalleryImage' );
-                Route::post( 'ckeUpload', [ ProductBundleController::class, 'ckeUpload' ] )->name( 'admin.product_bundle.ckeUpload' );
-            } );
-
-            Route::prefix( 'user-bundles' )->group( function() {
-                Route::group( [ 'middleware' => [ 'permission:view vouchers' ] ], function() {
-                    Route::get( '/', [ UserBundleController::class, 'index' ] )->name( 'admin.module_parent.user_bundle.index' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:add vouchers' ] ], function() {
-                    Route::get( 'add', [ UserBundleController::class, 'add' ] )->name( 'admin.user_bundle.add' );
-                } );
-                Route::group( [ 'middleware' => [ 'permission:edit vouchers' ] ], function() {
-                    Route::get( 'edit', [ UserBundleController::class, 'edit' ] )->name( 'admin.user_bundle.edit' );
-                } );
-    
-                Route::post( 'all-user-bundles', [ UserBundleController::class, 'allUserBundles' ] )->name( 'admin.user_bundle.allUserBundles' );
-                Route::post( 'one-user-bundle', [ UserBundleController::class, 'oneuUserBundle' ] )->name( 'admin.user_bundle.oneuUserBundle' );
-                Route::post( 'create-user-bundle', [ UserBundleController::class, 'createUserBundle' ] )->name( 'admin.user_bundle.createUserBundle' );
-                Route::post( 'update-user-bundle', [ UserBundleController::class, 'updateUserBundle' ] )->name( 'admin.user_bundle.updateUserBundle' );
-                Route::post( 'update-user-bundle-status', [ UserBundleController::class, 'updateUserBundleStatus' ] )->name( 'admin.user_bundle.updateUserBundleStatus' );
-                Route::post( 'remove-user-bundle-gallery-image', [ UserBundleController::class, 'removeUserBundleGalleryImage' ] )->name( 'admin.user_bundle.removeUserBundleGalleryImage' );
-                Route::post( 'ckeUpload', [ UserBundleController::class, 'ckeUpload' ] )->name( 'admin.user_bundle.ckeUpload' );
             } );
 
             Route::prefix( 'blogs' )->group( function() {

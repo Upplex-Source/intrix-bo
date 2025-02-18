@@ -66,6 +66,15 @@ $administrator_create = 'administrator_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label>{{ __( 'administrator.profile_pic' ) }}</label>
+                    <div class="dropzone mb-3" id="{{ $administrator_create }}_profile_pic" style="min-height: 0px;">
+                        <div class="dz-message needsclick">
+                            <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                        </div>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
                 <div class="text-end">
                     <button id="{{ $administrator_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -79,7 +88,44 @@ $administrator_create = 'administrator_create';
 <script>
     document.addEventListener( 'DOMContentLoaded', function() {
 
-        let ac = '#{{ $administrator_create }}';
+        let ac = '#{{ $administrator_create }}'
+            fileID = '';
+
+        Dropzone.autoDiscover = false;
+        const dropzone = new Dropzone( ac + '_profile_pic', { 
+            url: '{{ route( 'admin.file.upload' ) }}',
+            maxFiles: 1,
+            maxFilesize: 50,
+            acceptedFiles: 'image/jpg,image/jpeg,image/png',
+            addRemoveLinks: true,
+            removedfile: function( file ) {
+
+                var idToRemove = file.previewElement.id;
+
+                var idArrays = fileID.split(/\s*,\s*/);
+
+                var indexToRemove = idArrays.indexOf( idToRemove.toString() );
+                if (indexToRemove !== -1) {
+                    idArrays.splice( indexToRemove, 1 );
+                }
+
+                fileID = idArrays.join( ', ' );
+
+                file.previewElement.remove();
+            },
+            success: function( file, response ) {
+
+                if ( response.status == 200 )  {
+                    if ( fileID !== '' ) {
+                        fileID += ','; // Add a comma if fileID is not empty
+                    }
+                    fileID += response.data.id;
+
+                    file.previewElement.id = response.data.id;
+                }
+            }
+        } );
+
 
         $( ac + '_cancel' ).click( function() {
             window.location.href = '{{ route( 'admin.module_parent.administrator.index' ) }}';
@@ -100,6 +146,7 @@ $administrator_create = 'administrator_create';
             formData.append( 'phone_number', $( ac + '_phone_number' ).val() );
             formData.append( 'password', $( ac + '_password' ).val() );
             formData.append( 'role', $( ac + '_role' ).val() );
+            formData.append( 'profile_pic', fileID );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {

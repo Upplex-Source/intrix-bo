@@ -24,7 +24,7 @@ $role_edit = 'role_edit';
                 <div class="mb-3 row">
                     <label for="{{ $role_edit }}_guard_name" class="col-sm-5 col-form-label">{{ __( 'role.guard_name' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="text" class="form-control-plaintext" id="{{ $role_edit }}_guard_name" readonly >
+                        <input type="text" class="form-control" id="{{ $role_create }}_guard_name" value="admin" readonly>
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>

@@ -45,7 +45,7 @@ $columns = [
 <div class="card">
     <div class="card-body">
         <div class="mb-3 text-end">
-            @can( 'add users' )
+            @can( 'add blogs' )
             <a class="btn btn-sm btn-primary" href="{{ route( 'admin.blog.add' ) }}">{{ __( 'template.create' ) }}</a>
             @endcan
         </div>

@@ -110,6 +110,7 @@ class BlogService
         $blog = Blog::with( [
             'images',
             'tag',
+            'author',
         ] )->find( $request->id );
 
         return response()->json( $blog );
@@ -156,6 +157,7 @@ class BlogService
         try {
 
             $createBlog = Blog::create( [
+                'author_id' => $request->author ?? auth()->user()->id,
                 'main_title' => $request->main_title,
                 'subtitle' => $request->subtitle,
                 'type' => $request->type,
@@ -256,6 +258,7 @@ class BlogService
         try {
 
             $updateBlog = Blog::find( $request->id );
+            $updateBlog->author_id = $request->author ?? auth()->user()->id;
             $updateBlog->main_title = $request->main_title;
             $updateBlog->subtitle = $request->subtitle;
             $updateBlog->slug = $request->slug;
@@ -367,6 +370,7 @@ class BlogService
         $blog = Blog::with( [
             'images',
             'tag',
+            'author',
         ] )->select( 'blogs.*' )
         ->whereDate( 'publish_date', '<=', $now )
         ->where( 'status', 10 );
@@ -382,7 +386,12 @@ class BlogService
         $limit = $request->length ? $request->length : 10;
         $offset = $request->start ? $request->start : 0;
 
-        $blogs = $blog->skip( $offset )->take( $limit )->get();
+        $blogs = $blog->skip($offset)->take($limit)->get()->map(function ($blog) {
+            $blog->author->profile_pic_path = $blog->profile_pic
+                ? asset('storage/' . $blog->profile_pic)
+                : asset('admin/images/placeholder.png') . Helper::assetVersion();
+            return $blog;
+        });
 
         $blog = Blog::select(
             DB::raw( 'COUNT(blogs.id) as total'
@@ -414,7 +423,12 @@ class BlogService
         $blog = Blog::with( [
             'images',
             'tag',
+            'author',
         ] )->find( $request->id );
+
+        if( $blog->author ) {
+            $blog->author->append( ['profile_pic_path'] );
+        }
 
         return response()->json( $blog );
     }

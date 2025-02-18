@@ -22,4 +22,8 @@ return [
     'audits' => 'Audits',
     'users' => 'Users',
     'orders' => 'Orders',
+    'blogs' => 'Blogs',
+    'vouchers' => 'Vouchers',
+    'orders' => 'Orders',
+    'products' => 'Products',
 ];
