@@ -454,7 +454,7 @@ var statusMapper = @json( $data['status'] ),
                         $('#modal_order_view .selections').append(
                             `<div>
                                 <h6>Product: ${meta.product.title} (${meta.product.code})</h6>
-                                <h6>Variant: ${meta.product_variant.color}</h6>
+                                <h6>Variant: ${meta.product_variant.title}</h6>
                                 <h6>Price: ${meta.product.price} ( x ${meta.quantity} unit)</h6>
                             </div><hr>`
                         );
