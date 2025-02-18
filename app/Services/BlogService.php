@@ -504,7 +504,7 @@ class BlogService
         ] )->find( $request->id );
 
         if( $blog ) {
-            $blog->append( ['categories_metas'] );
+            $blog->append( ['category'] );
         }
 
         if( $blog->author ) {
@@ -529,7 +529,7 @@ class BlogService
         ] )->where( 'slug', $request->slug )->first();
 
         if( $blog ) {
-            $blog->append( ['categories_metas'] );
+            $blog->append( ['category'] );
         }
         
         if( $blog->author ) {
