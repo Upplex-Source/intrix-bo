@@ -202,7 +202,7 @@ class BlogService
         try {
 
             $createBlog = Blog::create( [
-                'author_id' => $request->author ?? auth()->user()->id,
+                'author_id' => ($request->author && $request->author != 'null') ? $request->author : auth()->user()->id,
                 'main_title' => $request->main_title,
                 'subtitle' => $request->subtitle,
                 'type' => $request->type,
@@ -305,7 +305,7 @@ class BlogService
         try {
 
             $updateBlog = Blog::find( $request->id );
-            $updateBlog->author_id = $request->author ?? auth()->user()->id;
+            $updateBlog->author_id = ($request->author && $request->author != 'null') ? $request->author : auth()->user()->id;
             $updateBlog->main_title = $request->main_title;
             $updateBlog->subtitle = $request->subtitle;
             $updateBlog->slug = $request->slug;
