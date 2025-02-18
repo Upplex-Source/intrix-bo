@@ -387,9 +387,11 @@ class BlogService
         $offset = $request->start ? $request->start : 0;
 
         $blogs = $blog->skip($offset)->take($limit)->get()->map(function ($blog) {
-            $blog->author->profile_pic_path = $blog->profile_pic
+            if($blog->author){
+                $blog->author->profile_pic_path = $blog->profile_pic
                 ? asset('storage/' . $blog->profile_pic)
                 : asset('admin/images/placeholder.png') . Helper::assetVersion();
+            }
             return $blog;
         });
 
