@@ -16,6 +16,9 @@ $blog_edit = 'blog_edit';
         width: 120px;
         height: 120px;
     }
+    .ck-editor__editable_inline {
+        min-height: 400px;
+    }
 </style>
 
 <div class="card">

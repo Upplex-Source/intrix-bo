@@ -12,6 +12,9 @@ $blog_create = 'blog_create';
     .bootstrap-tagsinput {
         width: 100% !important;
     }
+    .ck-editor__editable_inline {
+        min-height: 400px;
+    }
 </style>
 
 <div class="card">

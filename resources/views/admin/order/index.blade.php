@@ -152,25 +152,25 @@ $columns = [
                     <div class="mb-3 row">
                         <label class="col-sm-5 col-form-label">Subtotal</label>
                         <div class="col-sm-7">
-                            <input type="number" class="form-control-plaintext" id="{{ $order_view }}_subtotal" readonly>
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_subtotal" readonly>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-5 col-form-label">Tax</label>
                         <div class="col-sm-7">
-                            <input type="number" class="form-control-plaintext" id="{{ $order_view }}_tax" readonly>
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_tax" readonly>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-5 col-form-label">Discount</label>
                         <div class="col-sm-7">
-                            <input type="number" class="form-control-plaintext" id="{{ $order_view }}_discount" readonly>
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_discount" readonly>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-sm-5 col-form-label">Total Price</label>
                         <div class="col-sm-7">
-                            <input type="number" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
+                            <input type="text" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
                         </div>
                     </div>
                 </div>
@@ -435,10 +435,10 @@ var statusMapper = @json( $data['status'] ),
                     $('#{{ $order_view }}_status').val(response.status || '-');
                     $('#{{ $order_view }}_reference').val(response.reference || '-');
                     $('#{{ $order_view }}_type').val('Online Payment');
-                    $('#{{ $order_view }}_subtotal').val(response.subtotal || '0.00');
-                    $('#{{ $order_view }}_tax').val(response.tax || '0.00');
-                    $('#{{ $order_view }}_discount').val(response.discount || '0.00');
-                    $('#{{ $order_view }}_total').val(response.total_price || '0.00');
+                    $('#{{ $order_view }}_subtotal').val( 'RM ' + ( response.subtotal || '0.00' ) );
+                    $('#{{ $order_view }}_tax').val( 'RM ' + ( response.tax || '0.00' ) );
+                    $('#{{ $order_view }}_discount').val( 'RM ' + ( response.discount || '0.00' ) );
+                    $('#{{ $order_view }}_total').val( 'RM ' + ( response.total_price || '0.00' ) );
                     $('#{{ $order_view }}_address_1').val(response.address_1 || '-');
                     $('#{{ $order_view }}_address_2').val(response.address_2 || '-');
                     $('#{{ $order_view }}_city').val(response.city || '-');
