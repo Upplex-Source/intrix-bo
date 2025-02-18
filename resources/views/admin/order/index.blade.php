@@ -220,7 +220,7 @@ $columns = [
                     <div class="d-flex justify-content-between align-items-center border-bottom py-2">
                         <strong>Order Details</strong>
                     </div>
-                    <div class="selections"></div>
+                    <div class="selections mt-3"></div>
                 </div>
 
                 <input type="hidden" id="{{ $order_view }}_id">
