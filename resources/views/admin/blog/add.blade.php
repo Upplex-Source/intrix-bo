@@ -377,6 +377,7 @@ window.cke_element = 'blog_create_text';
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             closeOnSelect: true,
+            allowClear: true,
             ajax: {
                 method: 'POST',
                 url: '{{ route( 'admin.administrator.allAdministrators' ) }}',
