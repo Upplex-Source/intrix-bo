@@ -212,6 +212,7 @@ class BlogService
                 'meta_title' => $request->meta_title,
                 'meta_desc' => $request->meta_desc,
                 'publish_date' => Carbon::parse($request->publish_date)
+                ->subHours(8)
                 ->timezone('Asia/Kuala_Lumpur')
                 ->format('Y-m-d H:i:s'),
                 'min_of_read' => $request->min_of_read,
@@ -317,6 +318,7 @@ class BlogService
             $updateBlog->meta_title = $request->meta_title;
             $updateBlog->meta_desc = $request->meta_desc;
             $updateBlog->publish_date = Carbon::parse($request->publish_date)
+            ->subHours(8)
             ->timezone('Asia/Kuala_Lumpur')
             ->format('Y-m-d H:i:s');
             $updateBlog->min_of_read = $request->min_of_read;
