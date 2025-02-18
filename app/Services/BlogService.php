@@ -211,7 +211,9 @@ class BlogService
                 'image' => $request->image,
                 'meta_title' => $request->meta_title,
                 'meta_desc' => $request->meta_desc,
-                'publish_date' => $request->publish_date,
+                'publish_date' => Carbon::parse($request->publish_date)
+                ->timezone('Asia/Kuala_Lumpur')
+                ->format('Y-m-d H:i:s'),
                 'min_of_read' => $request->min_of_read,
                 'categories' => json_encode($request->category),
                 'status' => 10,
@@ -314,7 +316,9 @@ class BlogService
             $updateBlog->image = $request->image;
             $updateBlog->meta_title = $request->meta_title;
             $updateBlog->meta_desc = $request->meta_desc;
-            $updateBlog->publish_date = $request->publish_date;
+            $updateBlog->publish_date = Carbon::parse($request->publish_date)
+            ->timezone('Asia/Kuala_Lumpur')
+            ->format('Y-m-d H:i:s');
             $updateBlog->min_of_read = $request->min_of_read;
             
             $updateBlog->categories = json_encode($request->category);
