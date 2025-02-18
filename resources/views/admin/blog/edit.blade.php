@@ -236,7 +236,7 @@ window.cke_element = 'blog_edit_text';
 
             let formData = new FormData();
             formData.append( 'id', '{{ Request( 'id' ) }}' );
-            if ($(be + '_author').length && $(be + '_author').val().trim() !== '') {
+            if ($(be + '_author').length && $(be + '_author').val() !== '') {
                 formData.append('author', $(be + '_author').val());
             }
             formData.append( 'main_title', $( be + '_main_title' ).val() );
