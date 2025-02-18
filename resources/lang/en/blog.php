@@ -32,5 +32,6 @@ return [
     'one_min_read' => 'One Minute Read',
     'author' => 'Author',
     'category' => 'Category',
+    'min_of_read' => 'Minute(s) of Reading',
 
 ];

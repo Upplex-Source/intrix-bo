@@ -140,6 +140,15 @@ $blog_edit = 'blog_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                
+                <div class="mb-3 row">
+                    <label for="{{ $blog_edit }}_min_of_read" class="col-sm-5 col-form-label">{{ __( 'blog.min_of_read' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" id="{{ $blog_edit }}_min_of_read" class="form-control form-control-sm">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+                
             </div>
             <div class="col-md-6">
                 <div class="mb-3 row">
@@ -239,6 +248,7 @@ window.cke_element = 'blog_edit_text';
             formData.append( 'meta_desc', $( be + '_meta_desc' ).val() );
             formData.append( 'tag', $( be + '_tags' ).val() );
             formData.append( 'slug', $( be + '_slug' ).val() );
+            formData.append( 'min_of_read', $( be + '_min_of_read' ).val() );
             formData.append( 'text', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'gallery', JSON.stringify(file2ID) );
@@ -306,6 +316,7 @@ window.cke_element = 'blog_edit_text';
                     $( be + '_subtitle' ).val( response.subtitle );
                     $( be + '_type' ).val( response.type );
                     $( be + '_slug' ).val( response.slug );
+                    $( be + '_min_of_read' ).val( response.min_of_read );
                     $( be + '_publish_date' ).val( response.display_publish_date );
                     $( be + '_meta_title' ).val( response.meta_title );
                     $( be + '_meta_desc' ).val( response.meta_desc );

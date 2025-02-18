@@ -33,6 +33,7 @@ class BlogController extends Controller {
      * @bodyParam length string required The length of the table. Example: 10
      * @bodyParam start string required The start of the record of the table. Example: 0
      * @bodyParam type string The type of the filter. Example: 1
+     * @bodyParam category string The category of the blog ( id, title ) . Example: test
      * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
      * 
      */ 
@@ -64,5 +65,17 @@ class BlogController extends Controller {
     public function oneBlogBySlug( Request $request ) {
         
         return BlogService::oneBlogBySlug( $request );
+    }
+
+    /**
+     * 4. Get Blog Categories
+     * 
+     * @group Blog API
+     * 
+     * 
+     */ 
+    public function getBlogCategories( Request $request ) {
+        
+        return BlogService::getBlogCategories( $request );
     }
 }

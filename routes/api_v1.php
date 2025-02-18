@@ -63,6 +63,7 @@ Route::prefix( 'promo-codes' )->group( function() {
 
 Route::prefix( 'blogs' )->group( function() {
     Route::any( '/', [ BlogController::class, 'allBlogs' ] );
+    Route::any( 'categories', [ BlogController::class, 'getBlogCategories' ] );
     Route::any( '/details', [ BlogController::class, 'oneBlog' ] );
     Route::any( '/one-blog-by-slug', [ BlogController::class, 'oneBlogBySlug' ] );
 } );

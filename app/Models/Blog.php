@@ -32,6 +32,7 @@ class Blog extends Model
         'slug',
         'category_id',
         'categories',
+        'min_of_read',
     ];
 
     protected $appends = [
@@ -101,6 +102,7 @@ class Blog extends Model
         'slug',
         'category_id',
         'categories',
+        'min_of_read',
     ];
 
     protected static $logName = 'blogs';

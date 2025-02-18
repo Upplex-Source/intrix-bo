@@ -135,6 +135,13 @@ $blog_create = 'blog_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                <div class="mb-3 row">
+                    <label for="{{ $blog_create }}_min_of_read" class="col-sm-5 col-form-label">{{ __( 'blog.min_of_read' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="text" id="{{ $blog_create }}_min_of_read" class="form-control form-control-sm">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3 row">
