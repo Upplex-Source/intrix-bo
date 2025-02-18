@@ -340,7 +340,7 @@ class BlogService
         try {
 
             $updateBlog = Blog::lockForUpdate()->find( $request->id );
-            $updateBlog->status = $request->status;
+            $updateBlog->status = $updateBlog->status == 10 ? 20 : 10;
             $updateBlog->save();
 
             DB::commit();

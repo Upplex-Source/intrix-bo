@@ -157,14 +157,14 @@ $columns = [
                     status = '';
  
                     @can( 'edit blogs' )
-                    edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
+                    // edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
                     edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete blogs' )
                     status = row['status'] == 10 ? 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.blog_canceled' ) }}</span></a></li>' : 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.blog_placed' ) }}</span></a></li>';
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.suspend' ) }}</span></a></li>' : 
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.activate' ) }}</span></a></li>';
                     @endcan
                     
                     let html = 
@@ -174,6 +174,7 @@ $columns = [
                             <div class="dropdown-menu">
                                 <ul class="link-list-opt">
                                     `+edit+`
+                                    `+status+`
                                 </ul>
                             </div>
                         </div>
@@ -259,6 +260,25 @@ $columns = [
                 dt_table.draw();
             }
         } );
+
+        $( document ).on( 'click', '.dt-status', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.blog.updateBlogStatus' ) }}',
+                type: 'POST',
+                data: {
+                    'id': $( this ).data( 'id' ),
+                    'status': $( this ).data( 'status' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function( response ) {
+                    dt_table.draw( false );
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.toggle();
+                },
+            } );
+        } );
+
    } );
 
 </script>
