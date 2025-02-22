@@ -99,4 +99,9 @@ class BlogController extends Controller
 
         return BlogService::allBlogCategories( $request );
     }
+
+    public function copyBlog( Request $request ) {
+        
+        return BlogService::copyBlog( $request );
+    }
 }

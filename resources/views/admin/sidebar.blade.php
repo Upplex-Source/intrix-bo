@@ -65,7 +65,7 @@
                                 @can( 'view blogs' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\BlogController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.blog.index' ) }}" class="nk-menu-link">
-                                            <span class="nk-menu-icon"><em class="icon ni ni-money"></em></span>
+                                            <span class="nk-menu-icon"><em class="icon ni ni-book-fill"></em></span>
                                             <span class="nk-menu-text">{{ __( 'template.blogs' ) }}</span>
                                         </a>
                                     </li>

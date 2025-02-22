@@ -61,6 +61,7 @@ return [
     'order_item_list' => 'Order Item List',
     'orders' => 'Orders',
     'create' => 'Create',
+    'duplicate' => 'Duplicate',
 
     'loading' => 'Loading...',
     'add' => 'Add',
@@ -90,6 +91,7 @@ return [
 
     'new_x_created' => 'New :title Created.',
     'x_updated' => ':title Updated.',
+    'x_duplicated' => ':title Copied.',
     'x_deleted' => ':title Deleted.',
 
     'leave_blank' => 'Leave blank to leave unchanged',

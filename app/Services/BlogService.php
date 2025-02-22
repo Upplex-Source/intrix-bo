@@ -628,4 +628,59 @@ class BlogService
 
         return $data;
     }
+
+    public static function copyBlog( $request )
+    {
+        $request->merge( [
+            'id' => \Helper::decode( $request->id ),
+        ] );
+    
+        DB::beginTransaction();
+    
+        try {
+
+            $originalBlog = Blog::findOrFail( $request->id );
+    
+            $newSlug = $originalBlog->slug . '-copy';
+            while ( Blog::where( 'slug', $newSlug )->exists() ) {
+                $newSlug .= rand( 100, 999 );
+            }
+    
+            $newBlog = $originalBlog->replicate();
+            $newBlog->slug = $newSlug;
+            $newBlog->publish_date = now()->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
+            $newBlog->save();
+    
+            // Duplicate tags
+            $originalTags = BlogTag::where( 'blog_id', $originalBlog->id )->get();
+            foreach ( $originalTags as $tag ) {
+                BlogTag::create( [
+                    'blog_id' => $newBlog->id,
+                    'tag' => $tag->tag,
+                ] );
+            }
+    
+            // Duplicate images
+            $originalImages = BlogImage::where( 'blog_id', $originalBlog->id )->get();
+            foreach ( $originalImages as $image ) {
+                BlogImage::create( [
+                    'blog_id' => $newBlog->id,
+                    'path' => $image->path,
+                ] );
+            }
+    
+            DB::commit();
+    
+        } catch ( \Throwable $th ) {
+            DB::rollback();
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+    
+        return response()->json( [
+            'message' => __( 'template.x_duplicated', [ 'title' => Str::singular( __( 'template.blogs' ) ) ] ),
+        ] );
+    }
+    
 }

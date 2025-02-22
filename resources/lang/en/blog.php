@@ -34,4 +34,6 @@ return [
     'category' => 'Category',
     'min_of_read' => 'Minute(s) of Reading',
 
+    'duplicate' => 'Duplicate',
+
 ];

@@ -159,6 +159,7 @@ $columns = [
                     @can( 'edit blogs' )
                     // edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
                     edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    edit += '<li class="dt-duplicate" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-block-over"></em><span>{{ __( 'template.duplicate' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete blogs' )
@@ -269,6 +270,23 @@ $columns = [
                 data: {
                     'id': $( this ).data( 'id' ),
                     'status': $( this ).data( 'status' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function( response ) {
+                    dt_table.draw( false );
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.toggle();
+                },
+            } );
+        } );
+
+        $( document ).on( 'click', '.dt-duplicate', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.blog.copyBlog' ) }}',
+                type: 'POST',
+                data: {
+                    'id': $( this ).data( 'id' ),
                     '_token': '{{ csrf_token() }}'
                 },
                 success: function( response ) {

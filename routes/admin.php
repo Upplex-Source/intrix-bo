@@ -323,6 +323,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'one-blog', [ BlogController::class, 'oneBlog' ] )->name( 'admin.blog.oneBlog' );
                 Route::post( 'create-blog', [ BlogController::class, 'createBlog' ] )->name( 'admin.blog.createBlog' );
                 Route::post( 'update-blog', [ BlogController::class, 'updateBlog' ] )->name( 'admin.blog.updateBlog' );
+                Route::post( 'copy-blog', [ BlogController::class, 'copyBlog' ] )->name( 'admin.blog.copyBlog' );
                 Route::post( 'update-blog-status', [ BlogController::class, 'updateBlogStatus' ] )->name( 'admin.blog.updateBlogStatus' );
                 
                 Route::post( 'create-blog-category-quick', [ BlogController::class, 'createBlogCategoryQuick' ] )->name( 'admin.blog.createBlogCategoryQuick' );
