@@ -642,11 +642,13 @@ class BlogService
             $originalBlog = Blog::findOrFail( $request->id );
     
             $newSlug = $originalBlog->slug . '-copy';
+            $newTitle = 'Copy of ' . $originalBlog->main_title;
             while ( Blog::where( 'slug', $newSlug )->exists() ) {
                 $newSlug .= rand( 100, 999 );
             }
     
             $newBlog = $originalBlog->replicate();
+            $newBlog->main_title = $newTitle;
             $newBlog->slug = $newSlug;
             $newBlog->publish_date = now()->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
             $newBlog->save();
