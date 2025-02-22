@@ -58,8 +58,35 @@ class Blog extends Model
     {
         $categories = explode(',', json_decode($this->attributes['categories'], true));
 
-        return $categories ? BlogCategory::whereIn('id', $categories)->get() : null;
+        return $categories ? BlogCategory::whereIn('id', $categories)->get() : [];
     }
+
+    public function getUrlAttribute()
+    {
+        $typeLabel = '';
+
+        switch ($this->attributes['type']) {
+            case '1':
+                $typeLabel = 'one-minute-read';
+                break;
+
+            case '2':
+                $typeLabel = 'insights';
+                break;
+
+            case '3':
+                $typeLabel = 'partners';
+                break;
+            
+            default:
+                $typeLabel = 'insights';
+                break;
+        }
+
+        return config( 'services.frontend.url' ) . $typeLabel . '/' . $this->attributes['slug'];
+
+    }
+    
 
     public function category()
     {

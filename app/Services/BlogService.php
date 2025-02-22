@@ -43,6 +43,10 @@ class BlogService
 
         $blogs = $blog->skip( $offset )->take( $limit )->get();
 
+        foreach( $blogs as $blog ) {
+            $blog->append([ 'url', 'categories_metas' ]);
+        }
+
         $blog = Blog::select(
             DB::raw( 'COUNT(blogs.id) as total'
         ) );

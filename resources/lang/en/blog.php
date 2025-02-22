@@ -35,5 +35,6 @@ return [
     'min_of_read' => 'Minute(s) of Reading',
 
     'duplicate' => 'Duplicate',
+    'url' => 'URL'
 
 ];

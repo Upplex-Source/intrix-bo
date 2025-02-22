@@ -62,5 +62,9 @@ return [
         'live_success_url' => env( 'IPAY88_LIVE_SUCCESS_URL' ),
         'staging_failed_url' => env( 'IPAY88_STAGING_FAILED_URL' ),
         'live_failed_url' => env( 'IPAY88_LIVE_FAILED_URL' ),
-    ]
+    ],
+
+    'frontend' => [
+        'url' => env('FRONTEND_URL')
+    ],
 ];

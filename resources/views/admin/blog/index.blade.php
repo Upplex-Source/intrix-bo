@@ -18,6 +18,17 @@ $columns = [
         'title' => __( 'blog.title' ),
     ],
     [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'blog.category' ) ] ),
+        'id' => 'category',
+        'title' => __( 'blog.category' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'url',
+        'title' => __( 'blog.url' ),
+    ],
+    [
         'type' => 'default',
         'id' => 'publish_date',
         'title' => __( 'blog.publish_date' ),
@@ -104,6 +115,8 @@ $columns = [
                 { data: null },
                 { data: 'created_at' },
                 { data: 'main_title' },
+                { data: 'categories_metas' },
+                { data: 'url' },
                 { data: 'display_publish_date' },
                 { data: 'display_type' },
                 { data: 'status' },
@@ -130,6 +143,22 @@ $columns = [
                     render: function( data, type, row, meta ) {
                         return data ?? '-';
                     },
+                },
+                {
+                    targets: parseInt( '{{ Helper::columnIndex( $columns, "category" ) }}' ),
+                    orderable: false,
+                    render: function( data, type, row, meta ) {
+                        return data && data.length > 0 ? data[0].title : '-';
+                    },
+                },
+                {
+                    targets: parseInt( '{{ Helper::columnIndex( $columns, "url" ) }}' ),
+                    orderable: false,
+                    render: function( data, type, row, meta ) {
+                        return data 
+                            ? `<a href="${data}" target="_blank" rel="noopener noreferrer">${data}</a>` 
+                            : '-';
+                    }
                 },
                 {
                     targets: parseInt( '{{ Helper::columnIndex( $columns, "display_type" ) }}' ),
