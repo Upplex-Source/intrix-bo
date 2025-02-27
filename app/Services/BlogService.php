@@ -479,23 +479,12 @@ class BlogService
                 return false;  // Exclude this blog
             });
         }
-        
-        $blog = Blog::select(
-            DB::raw( 'COUNT(blogs.id) as total'
-        ) )->whereDate( 'publish_date', '<=', $now )
-        ->where( 'status', 10 );
-
-        $filterObject = self::filterBlog( $request, $blog );
-        $blog = $filterObject['model'];
-        $filter = $filterObject['filter'];
-
-        $blog = $blog->first();
 
         $data = [
             'blogs' => $request->category ? $filteredBlogs : $blogs,
             'draw' => $request->draw,
-            'recordsFiltered' => $filter ? $blogCount : $blog->total,
-            'recordsTotal' => $filter ? Blog::count() : $blogCount,
+            'recordsFiltered' => $filter ? $blogCount : $blogs->count(),
+            'recordsTotal' => $blogCount,
         ];
 
         return $data;
