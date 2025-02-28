@@ -41,7 +41,7 @@ class Helper {
 
     public static function types() {
         return [
-            '1' => __( 'blog.one_min_read' ),
+            // '1' => __( 'blog.one_min_read' ),
             '2' => __( 'blog.insights' ),
             '3' => __( 'blog.partners' ),
             // '4' => __( 'blog.blogs' ),
