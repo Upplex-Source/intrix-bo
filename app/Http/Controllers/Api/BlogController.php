@@ -28,7 +28,7 @@ class BlogController extends Controller {
     /**
      * 1. Get all blogs
      * 
-     * <strong>color</strong></br>
+     * <strong>type</strong></br>
      * 2: insights<br>
      * 3: partners<br>
      * 

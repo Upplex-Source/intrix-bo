@@ -100,6 +100,13 @@ class BlogService
             $filter = true;
         }
         
+        if (!empty($request->category)) {
+            $model->whereHas('category', function ($query) use ($request) {
+                $query->where('title', 'LIKE', '%' . $request->category . '%');
+            });
+            $filter = true;
+        }        
+
         return [
             'filter' => $filter,
             'model' => $model,
@@ -221,6 +228,7 @@ class BlogService
                 ->format('Y-m-d H:i:s'),
                 'min_of_read' => $request->min_of_read,
                 'categories' => json_encode($request->category),
+                'category_id' => $request->category,
                 'status' => 10,
             ] );
 
@@ -326,6 +334,7 @@ class BlogService
             ->timezone('Asia/Kuala_Lumpur')
             ->format('Y-m-d H:i:s');
             $updateBlog->min_of_read = $request->min_of_read;
+            $updateBlog->category_id = $request->category;
             
             $updateBlog->categories = json_encode($request->category);
             $updateBlog->save();
@@ -458,33 +467,13 @@ class BlogService
             return $blog;
         });
 
-        if ($request->category) {
-            $filteredBlogs = $blogs->filter(function ($blog) use ($request) {
-                // Check if categories_metas exists and is not empty
-                $categoriesMetas = $blog->categories_metas;
-        
-                if ($categoriesMetas && $categoriesMetas->isNotEmpty()) {
-                    // Check if any category title matches the request category
-                    $filteredCategories = $categoriesMetas->filter(function ($category) use ($request) {
-                        return stripos($category->title, $request->category) !== false;
-                    });
-        
-                    // If matching categories are found, return true to include this blog
-                    if ($filteredCategories->isNotEmpty()) {
-                        return true;  // Include this blog
-                    }
-                }
-        
-                // Exclude the blog if no matching category is found
-                return false;  // Exclude this blog
-            });
-        }
-
         $data = [
-            'blogs' => $request->category ? $filteredBlogs : $blogs,
+            'blogs' => $blogs,
             'draw' => $request->draw,
-            'recordsFiltered' => $filter ? $blogCount : $blogs->count(),
-            'recordsTotal' => $blogCount,
+            'start' => $offset,
+            'length' => $limit,
+            'recordsFiltered' => ( $filter || ( $request->length || $request->start ) ) ? $blogs->count() : $blogCount,
+            'recordsTotal' => $filter ? $blogCount : Blog::where( 'status', 10 )->count(),
         ];
 
         return $data;
