@@ -455,7 +455,7 @@ class BlogService
         $limit = $request->length ? $request->length : 10;
         $offset = $request->start ? $request->start : 0;
 
-        $blogs = $blog->skip($offset)->take($limit)->get()->map(function ($blog) {
+        $blogs = $blog->skip($offset)->take($limit + 1)->get()->map(function ($blog) {
             if($blog->author){
                 $blog->author->profile_pic_path = $blog->profile_pic
                 ? asset('storage/' . $blog->profile_pic)
@@ -467,11 +467,18 @@ class BlogService
             return $blog;
         });
 
+        $hasMore = $blogs->count() > $limit;
+        if ($hasMore) {
+            $blogs = $blogs->slice(0, $limit); // Remove extra record
+        }
+
         $data = [
             'blogs' => $blogs,
             'draw' => $request->draw,
             'start' => $offset,
             'length' => $limit,
+            'hasMore' => $hasMore,
+            'nextStart' => $hasMore ? $offset + $limit : null,
             'recordsFiltered' => ( $filter || ( $request->length || $request->start ) ) ? $blogs->count() : $blogCount,
             'recordsTotal' => $filter ? $blogCount : Blog::where( 'status', 10 )->count(),
         ];
