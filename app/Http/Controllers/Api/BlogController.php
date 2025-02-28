@@ -28,11 +28,15 @@ class BlogController extends Controller {
     /**
      * 1. Get all blogs
      * 
+     * <strong>color</strong></br>
+     * 2: insights<br>
+     * 3: partners<br>
+     * 
      * @group Blog API
      * 
-     * @bodyParam length string required The length of the table. Example: 10
-     * @bodyParam start string required The start of the record of the table. Example: 0
-     * @bodyParam type string The type of the filter. Example: 1
+     * @bodyParam length integer required The length of the table. Example: 10
+     * @bodyParam start integer required The start of the record of the table. Example: 0
+     * @bodyParam type integer The type of the filter. Example: 1
      * @bodyParam category string The category of the blog ( id, title ) . Example: test
      * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
      * 
