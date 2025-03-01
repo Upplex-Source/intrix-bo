@@ -64,4 +64,7 @@ return [
     'claim_per_user' => 'Claim Per User',
     'voucher_fully_claimed' => 'Voucher fully Claimed',
     'voucher_you_have_maximum_used' => 'You have reached maximum usage for this voucher',
+    'voucher_not_started_x' => 'Voucher is not usable yet. Please wait until :time',
+    'voucher_expired' => 'Voucher is expired',
+    'voucher_not_found' => 'Voucher not found',
 ];

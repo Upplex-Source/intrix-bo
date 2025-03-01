@@ -1660,28 +1660,29 @@ class OrderService
         if ($request->promo_code) {
             // Validate voucher
             $voucher = Voucher::where('status', 10)
-                ->where(function ($query) use ($request) {
-                    $query->where('id', $request->promo_code)
-                        ->orWhere('promo_code', $request->promo_code);
-                })
-                ->where(function ($query) {
-                    $query->whereNull('start_date')
-                        ->orWhere('start_date', '<=', Carbon::now());
-                })
-                ->where(function ($query) {
-                    $query->whereNull('expired_date')
-                        ->orWhere('expired_date', '>=', Carbon::now());
-                })
-                ->first();
-    
-            if (!$voucher || $voucher->total_claimable <= 0) {
+            ->where(fn($query) => 
+                $query->where('id', $request->promo_code)
+                      ->orWhere('promo_code', $request->promo_code)
+            )
+            ->first();
+        
+            if (!$voucher) {
+                $errorKey = 'voucher_not_found';
+            } elseif ($voucher->start_date && $voucher->start_date > now()) {
+                $errorKey = 'voucher_not_started_x';
+                $errorParams = ['time' => $voucher->start_date->format('d M Y, H:i A')];
+            } elseif ($voucher->expired_date && $voucher->expired_date < now()) {
+                $errorKey = 'voucher_expired';
+            } elseif ($voucher->total_claimable <= 0) {
+                $errorKey = 'voucher_fully_claimed';
+            }
+            
+            if (isset($errorKey)) {
                 return response()->json([
-                    'message_key' => 'voucher_fully_claimed',
-                    'message' => __('voucher.voucher_fully_claimed'),
+                    'message_key' => $errorKey,
+                    'message' => __('voucher.' . $errorKey, $errorParams ?? []),
                     'errors' => [
-                        'voucher' => [
-                            __('voucher.voucher_fully_claimed')
-                        ]
+                        'voucher' => [__('voucher.' . $errorKey, $errorParams ?? [])]
                     ]
                 ], 422);
             }
