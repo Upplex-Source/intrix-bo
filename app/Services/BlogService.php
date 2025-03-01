@@ -102,7 +102,7 @@ class BlogService
         
         if (!empty($request->category)) {
             $model->whereHas('category', function ($query) use ($request) {
-                $query->where('title', 'LIKE', '%' . $request->category . '%');
+                $query->where('title', $request->category);
             });
             $filter = true;
         }        

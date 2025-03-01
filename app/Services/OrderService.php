@@ -1621,7 +1621,7 @@ class OrderService
                         ->exists();
     
                     if (!$exists) {
-                        $fail(__('The :attribute must exist in either the promo_code or id column.'));
+                        $fail(__('The :attribute promo_code exist in either the promo_code or id column.'));
                     }
                 },
             ],
@@ -1676,11 +1676,11 @@ class OrderService
     
             if (!$voucher || $voucher->total_claimable <= 0) {
                 return response()->json([
-                    'message_key' => 'voucher_not_available',
-                    'message' => __('voucher.voucher_not_available'),
+                    'message_key' => 'voucher_fully_claimed',
+                    'message' => __('voucher.voucher_fully_claimed'),
                     'errors' => [
                         'voucher' => [
-                            __('voucher.voucher_not_available')
+                            __('voucher.voucher_fully_claimed')
                         ]
                     ]
                 ], 422);

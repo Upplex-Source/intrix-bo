@@ -262,7 +262,7 @@ $voucherTypes = $data['voucher_type'];
 <script>
 window.ckeupload_path = '{{ route( 'admin.voucher.ckeUpload' ) }}';
 window.csrf_token = '{{ csrf_token() }}';
-window.cke_element1 = 'voucher_create_description';
+window.cke_element = 'voucher_create_description';
 </script>
 <script src="{{ asset( 'admin/js/ckeditor/ckeditor-init.js' ) }}"></script>
 
