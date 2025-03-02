@@ -1702,10 +1702,10 @@ class OrderService
                 }else {
                     return response()->json([
                         'message_key' => 'voucher_not_available',
-                        'message' => "Minimum spend not reach, Minimum spend required: " . $buyQuantity,
+                        'message' => "Minimum spend not reach, Minimum spend required: RM" . $buyQuantity,
                         'errors' => [
                             'voucher' => [
-                               "Minimum spend not reach, Minimum spend required: " . $buyQuantity
+                               "Minimum spend not reach, Minimum spend required: RM" . $buyQuantity
                             ]
                         ]
                     ], 422);
@@ -1717,10 +1717,10 @@ class OrderService
                 }else {
                     return response()->json([
                         'message_key' => 'voucher_not_available',
-                        'message' => "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity'],
+                        'message' => "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity'],
                         'errors' => [
                             'voucher' => [
-                               "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity']
+                               "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity']
                             ]
                         ]
                     ], 422);
@@ -1733,10 +1733,10 @@ class OrderService
                 }else {
                     return response()->json([
                         'message_key' => 'voucher_not_available',
-                        'message' => "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity'],
+                        'message' => "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity'],
                         'errors' => [
                             'voucher' => [
-                               "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity']
+                               "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity']
                             ]
                         ]
                     ], 422);
