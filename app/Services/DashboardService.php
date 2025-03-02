@@ -29,11 +29,11 @@ class DashboardService
     public static function getDashboardData( $request ) {
 
         $today_revenue = Helper::numberFormat( 
-            Order::whereIn( 'status', [1,3] )->whereDate('created_at', Carbon::today())->sum('total_price') + 
+            Order::where( 'status', 10 )->whereDate('created_at', Carbon::today())->sum('total_price') + 
             WalletTransaction::whereDate('created_at', Carbon::today())->where( 'type',1 )->where('transaction_type', 1 )->where( 'status', 10 )->sum( 'amount' ), 
             2);
         $total_revenue = Helper::numberFormat( 
-            Order::whereIn( 'status', [1,3] )->sum('total_price') + 
+            Order::where( 'status', 10 )->sum('total_price') + 
             WalletTransaction::where( 'type',1 )->where('transaction_type', 1 )->where( 'status', 10 )->sum( 'amount' ), 
             2, true );
         $new_users = Helper::numberFormat(
