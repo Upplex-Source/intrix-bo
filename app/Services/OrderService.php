@@ -1702,10 +1702,10 @@ class OrderService
                 }else {
                     return response()->json([
                         'message_key' => 'voucher_not_available',
-                        'message' => __('voucher.voucher_not_available'),
+                        'message' => "Minimum spend not reach, Minimum spend required: " . $buyQuantity,
                         'errors' => [
                             'voucher' => [
-                               'Minimum amount not reach'
+                               "Minimum spend not reach, Minimum spend required: " . $buyQuantity
                             ]
                         ]
                     ], 422);
@@ -1717,10 +1717,10 @@ class OrderService
                 }else {
                     return response()->json([
                         'message_key' => 'voucher_not_available',
-                        'message' => __('voucher.voucher_not_available'),
+                        'message' => "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity'],
                         'errors' => [
                             'voucher' => [
-                               'Minimum amount not reach'
+                               "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity']
                             ]
                         ]
                     ], 422);
@@ -1733,10 +1733,10 @@ class OrderService
                 }else {
                     return response()->json([
                         'message_key' => 'voucher_not_available',
-                        'message' => __('voucher.voucher_not_available'),
+                        'message' => "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity'],
                         'errors' => [
                             'voucher' => [
-                               'Minimum amount not reach'
+                               "Minimum spend not reach, Minimum spend required: " . $adjustment['buy_quantity']
                             ]
                         ]
                     ], 422);
