@@ -1483,33 +1483,34 @@ class OrderService
             
             $userCart->save();
 
-            // $merchantKey = config('services.ipay88.merchant_key');
-            // $merchantCode = config('services.ipay88.merchant_code');
-
-            // $request = new \IPay88\Payment\Request( $merchantKey );
-            // $order_amount = number_format($order->total_price, 2, '.', '');
-            // $data = array(
-            //     'merchantCode' => $request->setMerchantCode( $merchantCode ),
-            //     'paymentId' =>  '',
-            //     'refNo' => $request->setRefNo( $order->reference ),
-            //     'amount' => '1.0',
-            //     'currency' => $request->setCurrency( 'MYR' ),
-            //     'prodDesc' => $request->setProdDesc( 'Testing' ),
-            //     'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
-            //     'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
-            //     'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
-            //     'remark' => $request->setRemark( 'test' ),
-            //     'lang' => $request->setLang( 'UTF-8' ),
-            //     'signature' => $request->getSignature(),
-    		// 	'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
-            //     'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
-            //     'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
-            // );
-
-            // return response()->json([
-            //     'status' => 'success',
-            //     'payment_url' => route('payment.show', ['payment_data' => $data])
-            // ]);
+            if( $request->test_pg ) {
+                $merchantKey = config('services.ipay88.merchant_key');
+                $merchantCode = config('services.ipay88.merchant_code');
+    
+                $request = new \IPay88\Payment\Request( $merchantKey );
+                $order_amount = number_format($order->total_price, 2, '.', '');
+                $data = array(
+                    'merchantCode' => $request->setMerchantCode( $merchantCode ),
+                    'paymentId' =>  '',
+                    'refNo' => $request->setRefNo( $order->reference ),
+                    'amount' => $order_amount,
+                    'currency' => $request->setCurrency( 'MYR' ),
+                    'prodDesc' => $request->setProdDesc( 'Testing' ),
+                    'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
+                    'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
+                    'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
+                    'remark' => $request->setRemark( 'test' ),
+                    'lang' => $request->setLang( 'UTF-8' ),
+                    'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
+                    'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
+                    'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
+                );
+    
+                return response()->json([
+                    'status' => 'success',
+                    'payment_url' => route('payment.show', ['payment_data' => $data])
+                ]);
+            }
 
             // $url2= "";
             // $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
