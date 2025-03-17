@@ -194,7 +194,7 @@ class Ipay88Service {
         $orderStatus = false;
 
         if( $order ){
-            $orderTransaction = OrderTransaction::where( 'order_id', $order->idate )->first(); 
+            $orderTransaction = OrderTransaction::where( 'order_id', $order->id )->first(); 
             $returnStatus = intval( $request->Status );
             $order->status = $returnStatus == 0 ? 20 : 10;
 
