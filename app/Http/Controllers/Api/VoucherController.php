@@ -67,9 +67,15 @@ class VoucherController extends Controller
      * 3: SATIN GOLD<br>
      * 4: GUNMETAL GREY<br>
      * 
+     * <strong>type</strong></br>
+     * 1: BUY NOW<br>
+     * 2: CART<br>
+     * 
      * @group Order API
      * 
-     * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
+     * @queryParam session_key string optional The unique identifier for the cart. Must be provided if type is 2 Example: abcd-1234
+     * @bodyParam type required integer To verify cart or buy now product . Example: 1
+     * @bodyParam product_code string required The product_code of the product. Example: 5-IN-1
      * @bodyParam color required strong The color of the product. Example: CHROME
      * @bodyParam quantity required integer The quantity of the product. Example: 1
      * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
@@ -78,6 +84,10 @@ class VoucherController extends Controller
      */
     public function validatePromoCode( Request $request ) {
 
-        return OrderService::validatePromoCode( $request );
+        if( $reqeust->type == 1 ){
+            return OrderService::validatePromoCode( $request );
+        } else {
+            return VoucherService::validateVoucher( $request );
+        }
     }
 }

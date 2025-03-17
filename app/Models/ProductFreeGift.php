@@ -18,10 +18,13 @@ class ProductFreeGift extends Model
 {
     use HasFactory, LogsActivity;
 
+    protected $table = 'product_free_gifts';
+
     protected $fillable = [
         'product_id',
         'title',
         'description',
+        'code',
         'color',
         'image',
         'status',
@@ -30,7 +33,13 @@ class ProductFreeGift extends Model
         'specification',
         'features',
         'whats_included',
+        'price',
+        'discount_price',
     ];
+
+    public function freeGiftProducts() {
+        return $this->belongsToMany( Product::class, 'products_product_free_gifts','free_gift_id', 'product_id' );
+    }
 
     public function product() {
         return $this->belongsTo( Product::class, 'product_id' );
@@ -38,6 +47,10 @@ class ProductFreeGift extends Model
 
     public function getPathAttribute() {
         return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : null;
+    }
+
+    public function getImagePathAttribute() {
+        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
     }
 
     public function getEncryptedIdAttribute() {
@@ -52,6 +65,7 @@ class ProductFreeGift extends Model
         'product_id',
         'title',
         'description',
+        'code',
         'color',
         'image',
         'status',
@@ -60,6 +74,8 @@ class ProductFreeGift extends Model
         'specification',
         'features',
         'whats_included',
+        'price',
+        'discount_price',
     ];
 
     protected static $logName = 'product_free_gifts';

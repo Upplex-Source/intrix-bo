@@ -719,6 +719,7 @@ class VoucherService
 
         $attributeName = [
             'promo_code' => __( 'voucher.promo_code' ),
+            'session_key' => __( 'cart.session_key' ),
         ];
         
         foreach ( $attributeName as $key => $aName ) {
@@ -728,8 +729,8 @@ class VoucherService
         $validator->setAttributeNames( $attributeName )->validate();
 
         $validator = Validator::make( $request->all(), [
-            'cart' => [ 'required', function( $attribute, $value, $fail ) {
-                $cart = Cart::find( $value )->where('status', 10);
+            'session_key' => [ 'required', function( $attribute, $value, $fail ) {
+                $cart = Cart::where( 'session_key', $value )->where('status', 10);
                 if ( !$cart ) {
                     $fail( __( 'validation.exists' ) );
                     return false;
@@ -806,7 +807,7 @@ class VoucherService
             }
         }
 
-        $cart = Cart::find( $request->cart );
+        $cart = Cart::where( 'session_key', $value )->where('status', 10)->first();
 
         if ( $voucher->discount_type == 3 ) {
 

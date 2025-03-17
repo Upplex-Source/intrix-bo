@@ -51,6 +51,8 @@ class Order extends Model
         'postcode',
         'calling_code',
         'phone_number',  
+        'add_on_id',
+        'free_gift_id',
     ];
 
     protected $hidden = [
@@ -151,6 +153,8 @@ class Order extends Model
         'postcode',
         'calling_code',
         'phone_number',  
+        'add_on_id',
+        'free_gift_id',
     ];
 
     protected static $logName = 'orders';

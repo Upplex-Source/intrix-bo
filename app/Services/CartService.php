@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\{
     DB,
     Validator,
 };
+use Illuminate\Validation\Rule;
 
 use App\Models\{
     Cart,
@@ -25,6 +26,8 @@ use App\Models\{
     UserBundleHistoryMeta,
     Option,
     UserNotification,
+    ProductAddOn,
+    ProductFreeGift,
 };
 
 use App\Services\{
@@ -54,8 +57,8 @@ class CartService {
     
         // Start by querying carts for the authenticated user
         $query = Cart::with(['cartMetas' => function ($query) {
-        $query->orderBy('created_at', 'DESC');
-    }, 'voucher'])
+                $query->orderBy('created_at', 'DESC');
+            }, 'voucher'])
             ->where('status', 10)
             ->orderBy('created_at', 'DESC');
     
@@ -71,7 +74,7 @@ class CartService {
         // Use paginate instead of get
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
         $userCarts = $query->paginate($perPage);
-    
+
         // Modify each cart and its related data
         $userCarts->getCollection()->transform(function ($cart) {
             // Make vending machine attributes hidden and add additional attributes
@@ -132,7 +135,7 @@ class CartService {
 
         $validator = Validator::make($request->all(), [
             'product_code' => [ 'required', 'exists:products,code'  ],
-            'color' => [ 'required', 'exists:product_variants,title'  ],
+            'color' => [ 'required', 'exists:product_variants,color'  ],
             'quantity' => [ 'integer', 'min:1'  ],
             'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'session_key' => ['nullable', 'exists:carts,session_key'],
@@ -185,6 +188,7 @@ class CartService {
                     'additional_charges' => 0,
                     'payment_plan' => NULL,
                     'remarks' => NULL,
+                    'step' => 1,
                 ]
             );
 
@@ -202,19 +206,30 @@ class CartService {
                     break;
             }
 
-            $cartMeta = CartMeta::create( [
-                'cart_id' => $cart->id ,
-                'product_id' => $product->id ,
-                'product_variant_id' => $productVariant->id ,
-                'user_id' => NULL ,
-                'total_price' => $productPrice * $request->quantity,
-                'discount' => NULL ,
-                'status' => 10 ,
-                'products' => NULL ,
-                'payment_plan' => $request->payment_plan ,
-                'additional_charges' => NULL ,
-                'quantity' => $request->quantity,
-            ] );
+            $cartMeta = CartMeta::updateOrCreate(
+                [
+                    'cart_id' => $cart->id,
+                    'product_id' => $product->id,
+                    'product_variant_id' => $productVariant->id,
+                ], // Search criteria
+            
+                [
+                    'user_id' => NULL,
+                    'discount' => NULL,
+                    'status' => 10,
+                    'products' => NULL,
+                    'payment_plan' => $request->payment_plan,
+                    'additional_charges' => NULL,
+                    'total_price' => ($productPrice * $request->quantity), // Default for new entry
+                    'quantity' => $request->quantity, // Default for new entry
+                ]
+            );
+            
+            // If the record already existed, manually increment quantity & total_price
+            if (!$cartMeta->wasRecentlyCreated) {
+                $cartMeta->increment('quantity', $request->quantity);
+                $cartMeta->increment('total_price', $productPrice * $request->quantity);
+            }
 
             $cart->load( ['cartMetas'] );
 
@@ -564,6 +579,168 @@ class CartService {
         return $orderPrice;
     }
 
+    public static function updateCartAddon( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
+            'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
+            'add_on' => [
+                'nullable',
+                'required_without:free_gift',
+                Rule::exists('product_add_ons', 'code')->where('status', 10),
+            ],
+            'free_gift' => [
+                'nullable',
+                'required_without:add_on',
+                Rule::exists('product_free_gifts', 'code')->where('status', 10),
+            ],
+        ] );
+
+        $validator->validate();
+        $user = auth()->user();
+        $query = Cart::with(['cartMetas']);
+    
+        if ($request->has('id')) {
+            $query->where('id', $request->id);
+        }
+    
+        if ($request->has('session_key')) {
+            $query->where('session_key', $request->session_key);
+        }
+    
+        // Retrieve the cart(s) based on the applied filters
+        $updateCart = $query->first();
+
+        if ( !$updateCart ) {
+            return response()->json( [
+                'message' => '',
+                'message_key' => 'cart_not_found',
+                'errors' => [
+                    'cart' => 'Cart not found'
+                ]
+            ], 422 );
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            if( $request->add_on ) {
+                $addOn = ProductAddOn::find($request->add_on);
+                if( $updateCart->addOn ){
+                    $updateCart->total_price -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
+                }
+                $updateCart->add_on_id = $addOn->id;
+                $updateCart->total_price += $addOn->discount_price ? $addOn->discount_price : 0;
+            }
+
+            if( $request->free_gift ) {
+                $freeGift = ProductFreeGift::find($request->free_gift);
+                if( $updateCart->freeGift ){
+                    $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
+                }
+                $updateCart->free_gift_id = $freeGift->id;
+                $updateCart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
+            }
+
+            $updateCart->save();
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'update_cart_success',
+        ] );
+    }
+
+    public static function updateCartAddress( $request ) {
+
+        $validator = Validator::make( $request->all(), [
+            'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
+            'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
+            'fullname' => ['nullable', 'required_without:company_name'],
+            'company_name' => ['nullable', 'required_without:fullname'],
+            'email' => ['required'],
+            'phone_number' => ['required'],
+            'address_1' => ['required'],
+            'address_2' => ['nullable'],
+            'city' => ['required'],
+            'state' => ['required'],
+            'postcode' => ['required'],
+            'country' => ['required'],
+            'remarks' => ['nullable'],
+            'payment_plan' => ['required'],
+        ] );
+
+        $validator->validate();
+        $user = auth()->user();
+        $query = Cart::with(['cartMetas']);
+    
+        if ($request->has('id')) {
+            $query->where('id', $request->id);
+        }
+    
+        if ($request->has('session_key')) {
+            $query->where('session_key', $request->session_key);
+        }
+    
+        // Retrieve the cart(s) based on the applied filters
+        $updateCart = $query->first();
+
+        if ( !$updateCart ) {
+            return response()->json( [
+                'message' => '',
+                'message_key' => 'cart_not_found',
+                'errors' => [
+                    'cart' => 'Cart not found'
+                ]
+            ], 422 );
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $updateCart->fullname = $request->fullname;
+            $updateCart->company_name = $request->company_name;
+            $updateCart->email = $request->email;
+            $updateCart->phone_number = $request->phone_number;
+            $updateCart->address_1 = $request->address_1;
+            $updateCart->address_2 = $request->address_2;
+            $updateCart->city = $request->city;
+            $updateCart->state = $request->state;
+            $updateCart->postcode = $request->postcode;
+            $updateCart->country = $request->country;
+            $updateCart->remarks = $request->remarks;
+            $updateCart->payment_plan = $request->payment_plan;
+            $updateCart->step = 2;
+
+            $updateCart->save();
+            DB::commit();
+
+        } catch ( \Throwable $th ) {
+
+            DB::rollback();
+
+            return response()->json( [
+                'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
+            ], 500 );
+        }
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'update_cart_address_success',
+        ] );
+    }
+
     public static function deleteCart( $request ) {
 
         $validator = Validator::make( $request->all(), [
@@ -573,8 +750,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::where('user_id', $user->id)
-        ->with(['cartMetas','vendingMachine']);
+        $query = Cart::with(['cartMetas']);
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
@@ -635,10 +811,14 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::where('user_id', $user->id);
+        $query = Cart::with(['cartMetas']);    
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
+        }
+    
+        if ($request->has('session_key')) {
+            $query->where('session_key', $request->session_key);
         }
     
         // Retrieve the cart(s) based on the applied filters
@@ -659,83 +839,17 @@ class CartService {
         try {
         
             CartMeta::where('id', $request->cart_item)->delete();
-            $orderPrice = 0;
-            
-            foreach ( $updateCart->cartMetas as $cartProduct ) {
 
-                $froyos = json_decode($cartProduct->froyos,true);
-                $froyoCount = count($froyos);
-                $syrups = json_decode($cartProduct->syrups,true);
-                $syrupCount = count($syrups);
-                $toppings = json_decode($cartProduct->toppings,true);
-                $toppingCount = count($toppings);
-                $product = Product::find($cartProduct->product_id);
+            $updateCart->load(['cartMetas']);
 
-                $orderPrice += $product->price ?? 0;
+            $orderPrice = $updateCart->cartMetas->sum(fn($meta) => $meta->product->price ?? 0);
 
-                    $froyoPrices = Froyo::whereIn('id', $froyos)->pluck('price', 'id')->toArray();
-                    asort($froyoPrices);
-
-                    $froyoCount = count($froyos);
-                    $freeCount = $product->free_froyo_quantity;
-
-                    if ($froyoCount >= $freeCount) {
-                        $chargeableCount = $froyoCount - $freeCount;
-                        $chargeableFroyoPrices = array_slice($froyoPrices, 0, $chargeableCount, true);
-                        $totalDeduction = array_sum($chargeableFroyoPrices);
-
-                            $metaPrice -= $totalDeduction;
-                            $orderPrice -= $totalDeduction;
-                    }else{
-                        $totalDeduction = array_sum($froyoPrices);
-                            $metaPrice -= $totalDeduction;
-                            $orderPrice -= $totalDeduction;
-                    }
-
-                    $syrupPrices = Syrup::whereIn('id', $syrups)->pluck('price', 'id')->toArray();
-                    asort($syrupPrices);
-                        
-                    $toppingCount = count($toppings);
-                    $freeCount = $product->free_syrup_quantity;
-
-                    if ($syrupCount > $freeCount) {
-                        $chargeableCount = $syrupCount - $freeCount;
-                        $chargeablesyrupPrices = array_slice($syrupPrices, 0, $chargeableCount, true);
-                        $totalDeduction = array_sum($chargeablesyrupPrices);
-
-                            $metaPrice -= $totalDeduction;
-                            $orderPrice -= $totalDeduction;
-                    }else{
-                        $totalDeduction = array_sum($syrupPrices);
-                            $metaPrice -= $totalDeduction;
-                            $orderPrice -= $totalDeduction;
-                    }
-
-                    $toppingPrices = Topping::whereIn('id', $toppings)->pluck('price', 'id')->toArray();
-                    asort($toppingPrices);
-                        
-                    $toppingCount = count($toppings);
-                    $freeCount = $product->free_topping_quantity;
-
-                    if ($toppingCount > $freeCount) {
-                        $chargeableCount = $toppingCount - $freeCount;
-                        $chargeabletoppingPrices = array_slice($toppingPrices, 0, $chargeableCount, true);
-                        $totalDeduction = array_sum($chargeabletoppingPrices);
-
-                            $metaPrice -= $totalDeduction;
-                            $orderPrice -= $totalDeduction;
-                    }else{
-                        $totalDeduction = array_sum($toppingPrices);
-                            $metaPrice -= $totalDeduction;
-                            $orderPrice -= $totalDeduction;
-                    }
-            }
-
-            $updateCart->total_price = Helper::numberFormatV2($orderPrice,2);
+            $updateCart->total_price = Helper::numberFormatV2($orderPrice, 2);
             $taxSettings = Option::getTaxesSettings();
-
-            $updateCart->tax = $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * Helper::numberFormatV2($updateCart->total_price,2)) : 0;
-            $updateCart->total_price += Helper::numberFormatV2($updateCart->tax,2);
+            $updateCart->tax = $taxSettings
+                ? (Helper::numberFormatV2(($taxSettings->option_value / 100), 2) * Helper::numberFormatV2($updateCart->total_price, 2))
+                : 0;
+            $updateCart->total_price += Helper::numberFormatV2($updateCart->tax, 2);
             $updateCart->save();
 
             DB::commit();
@@ -748,22 +862,23 @@ class CartService {
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
             ], 500 );
         }
-
-        $cartMetas = $updateCart->cartMetas->map(function ($meta) {
-            return [
-                'id' => $meta->id,
-                'subtotal' => $meta->total_price,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
-            ];
-        });
+        
+        if( $updateCart->cartMetas ) {
+            $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                    'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
+                ];
+            });
+        }
 
         return response()->json( [
             'message' => '',
             'message_key' => 'delete_cart_item_success',
             'sesion_key' => $updateCart->session_key,
             'cart_id' => $updateCart->id,
-            'vending_machine' => $updateCart->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $updateCart->vendingMachine->operational_hour),
             'total' => $updateCart->total_price,
             'cart_metas' => $cartMetas
         ] );

@@ -24,6 +24,8 @@ use App\Http\Controllers\Admin\{
     SyrupController,
     ToppingController,
     ProductController,
+    ProductAddOnController,
+    ProductFreeGiftController,
     VendingMachineStockController,
     VendingMachineProductController,
     OrderController,
@@ -211,6 +213,46 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
     
             } );
 
+            Route::prefix( 'product-add-ons' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view product_add_ons' ] ], function() {
+                    Route::get( '/', [ ProductAddOnController::class, 'index' ] )->name( 'admin.module_parent.product_add_on.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add product_add_ons' ] ], function() {
+                    Route::get( 'add', [ ProductAddOnController::class, 'add' ] )->name( 'admin.product_add_on.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit product_add_ons' ] ], function() {
+                    Route::get( 'edit', [ ProductAddOnController::class, 'edit' ] )->name( 'admin.product_add_on.edit' );
+                } );
+    
+                Route::post( 'all-product-add-ons', [ ProductAddOnController::class, 'allProductAddOns' ] )->name( 'admin.product_add_on.allProductAddOns' );
+                Route::post( 'one-product-add-on', [ ProductAddOnController::class, 'oneProductAddOn' ] )->name( 'admin.product_add_on.oneProductAddOn' );
+                Route::post( 'create-product-add-on', [ ProductAddOnController::class, 'createProductAddOn' ] )->name( 'admin.product_add_on.createProductAddOn' );
+                Route::post( 'update-product-add-on', [ ProductAddOnController::class, 'updateProductAddOn' ] )->name( 'admin.product_add_on.updateProductAddOn' );
+                Route::post( 'update-product-add-on-status', [ ProductAddOnController::class, 'updateProductAddOnStatus' ] )->name( 'admin.product_add_on.updateProductAddOnStatus' );
+                Route::post( 'remove-product-add-on-gallery-image', [ ProductAddOnController::class, 'removeProductAddOnGalleryImage' ] )->name( 'admin.product_add_on.removeProductAddOnGalleryImage' );
+    
+            } );
+
+            Route::prefix( 'product-free-gifts' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view product_free_gifts' ] ], function() {
+                    Route::get( '/', [ ProductFreeGiftController::class, 'index' ] )->name( 'admin.module_parent.product_free_gift.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add product_free_gifts' ] ], function() {
+                    Route::get( 'add', [ ProductFreeGiftController::class, 'add' ] )->name( 'admin.product_free_gift.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit product_free_gifts' ] ], function() {
+                    Route::get( 'edit', [ ProductFreeGiftController::class, 'edit' ] )->name( 'admin.product_free_gift.edit' );
+                } );
+            
+                Route::post( 'all-product-free-gifts', [ ProductFreeGiftController::class, 'allProductFreeGifts' ] )->name( 'admin.product_free_gift.allProductFreeGifts' );
+                Route::post( 'one-product-free-gift', [ ProductFreeGiftController::class, 'oneProductFreeGift' ] )->name( 'admin.product_free_gift.oneProductFreeGift' );
+                Route::post( 'create-product-free-gift', [ ProductFreeGiftController::class, 'createProductFreeGift' ] )->name( 'admin.product_free_gift.createProductFreeGift' );
+                Route::post( 'update-product-free-gift', [ ProductFreeGiftController::class, 'updateProductFreeGift' ] )->name( 'admin.product_free_gift.updateProductFreeGift' );
+                Route::post( 'update-product-free-gift-status', [ ProductFreeGiftController::class, 'updateProductFreeGiftStatus' ] )->name( 'admin.product_free_gift.updateProductFreeGiftStatus' );
+                Route::post( 'remove-product-free-gift-gallery-image', [ ProductFreeGiftController::class, 'removeProductFreeGiftGalleryImage' ] )->name( 'admin.product_free_gift.removeProductFreeGiftGalleryImage' );
+            
+            } );
+
             Route::prefix( 'orders' )->group( function() {
                 Route::group( [ 'middleware' => [ 'permission:view orders' ] ], function() {
                     Route::get( '/', [ OrderController::class, 'index' ] )->name( 'admin.module_parent.order.index' );
@@ -355,66 +397,11 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
 } );
 
 Route::prefix( 'ipay88' )->group( function() {
-    Route::get( 'initiate', [ PaymentController::class, 'initEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
-    Route::any( 'notify', [ PaymentController::class, 'notifyEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
-    Route::any( 'query', [ PaymentController::class, 'queryEghl' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
-    Route::any( 'callback', [PaymentController::class, 'callback'] )->name( 'payment.callback' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::get( 'initiate', [ PaymentController::class, 'initIpay88' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'notify', [ PaymentController::class, 'notifyIpay88' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'query', [ PaymentController::class, 'queryIpay88' ] )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
+    Route::any( 'callback', [PaymentController::class, 'callbackIpay88'] )->name( 'payment.callback' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
     Route::get( 'start-payment', [PaymentController::class, 'startPayment'] )->name( 'payment.startPayment' )->withoutMiddleware( [ \App\Http\Middleware\VerifyCsrfToken::class ] );
 } );
 
-
-if( 1 == 2 ){
-    Route::prefix('eghl-test')->group(function () {
-        Route::get('/', function () {
-            $order = Order::latest()->first();
-    
-            $data = [
-                'TransactionType' => 'SALE',
-                'PymtMethod' => 'ANY',
-                'ServiceID' => config('services.eghl.merchant_id'),
-                'PaymentID' => $order->reference . '-' . $order->payment_attempt,
-                'OrderNumber' => $order->reference,
-                'PaymentDesc' => $order->reference,
-                'MerchantName' => 'Yobe Froyo',
-                'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
-                'Amount' => $order->total_price,
-                'CurrencyCode' => 'MYR',
-                'CustIP' => request()->ip(),
-                'CustName' => $order->user->username ?? 'Yobe Guest',
-                'HashValue' => '',
-                'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
-                'CustPhone' => $order->user->phone_number,
-                'MerchantTermsURL' => null,
-                'LanguageCode' => 'en',
-                'PageTimeout' => '780',
-            ];
-    
-            $data['HashValue'] = Helper::generatePaymentHash($data);
-            $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
-    
-            $orderTransaction = OrderTransaction::create( [
-                'order_id' => $order->id,
-                'checkout_id' => null,
-                'checkout_url' => null,
-                'payment_url' => $url2,
-                'transaction_id' => null,
-                'layout_version' => 'v1',
-                'redirect_url' => null,
-                'notify_url' => null,
-                'order_no' => $order->reference,
-                'order_title' => $order->reference,
-                'order_detail' => $order->reference,
-                'amount' => $order->total_price,
-                'currency' => 'MYR',
-                'transaction_type' => 1,
-                'status' => 10,
-            ] );
-    
-            $order->payment_url = $url2;
-            $order->order_transaction_id = $orderTransaction->id;
-            $order->save();
-    
-            return redirect($url2);
-        });
-    });
-}
+Route::get('/payment', [OrderController::class, 'showPaymentPage'])->name('payment.show');

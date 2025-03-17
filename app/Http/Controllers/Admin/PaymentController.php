@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\{
-    EghlService,
+    initIpay88Service,
 };
 
 use Helper;
@@ -18,24 +18,24 @@ class PaymentController extends Controller
         echo 'Close This';
     }
 
-    public function initEghl( Request $request ) {
+    public function initIpay88( Request $request ) {
 
-        return EghlService::init( $request );
+        return Ipay88Service::init( $request );
     }
 
-    public function notifyEghl( Request $request ) {
+    public function notifyIpay88( Request $request ) {
 
-        return EghlService::notify( $request );
+        return Ipay88Service::notify( $request );
     }
 
-    public function queryEghl( Request $request ) {
+    public function queryIpay88( Request $request ) {
 
-        return EghlService::query( $request );
+        return Ipay88Service::query( $request );
     }
 
-    public function callbackEghl( Request $request ) {
+    public function callbackIpay88( Request $request ) {
 
-        return EghlService::callback( $request );
+        return Ipay88Service::callback( $request );
     }
 
     public function success( Request $request ) {

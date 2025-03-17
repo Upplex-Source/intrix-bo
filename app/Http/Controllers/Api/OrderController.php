@@ -66,7 +66,7 @@ class OrderController extends Controller
      * 
      * @group Order API
      * 
-     * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
+     * @bodyParam product_code string required The product_code of the product. Example: 5-IN-1
      * @bodyParam color required strong The color of the product. Example: CHROME
      * @bodyParam quantity required integer The quantity of the product. Example: 1
      * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1

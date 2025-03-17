@@ -62,6 +62,10 @@ return [
     'orders' => 'Orders',
     'create' => 'Create',
     'duplicate' => 'Duplicate',
+    'free_gifts' => 'Free Gifts',
+    'add_ons' => 'Add Ons',
+    'product_free_gifts' => 'Product Free Gifts',
+    'product_add_ons' => 'Product Add Ons',
 
     'loading' => 'Loading...',
     'add' => 'Add',

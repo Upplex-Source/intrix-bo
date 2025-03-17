@@ -28,7 +28,8 @@ class CartController extends Controller
      * 3: SATIN GOLD<br>
      * 4: GUNMETAL GREY<br>
      * 
-     * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
+     * @queryParam session_key string optional The unique identifier for the cart. Used to add more product to the same cart Example: abcd-1234
+     * @bodyParam product_code string required The product_code of the product. Example: 5-IN-1
      * @bodyParam color required strong The color of the product. Example: CHROME
      * @bodyParam quantity required integer The quantity of the product. Example: 1
      * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
@@ -78,7 +79,8 @@ class CartController extends Controller
      * 
      * @group Cart API
      * 
-     * @bodyParam product_code string required The product_code of the prodcut. Example: 5-IN-1
+     * @queryParam session_key string required The unique identifier for the cart. Used to add more product to the update the cart Example: abcd-1234
+     * @bodyParam product_code string required The product_code of the product. Example: 5-IN-1
      * @bodyParam color required strong The color of the product. Example: CHROME
      * @bodyParam quantity required integer The quantity of the product. Example: 1
      * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
@@ -113,7 +115,7 @@ class CartController extends Controller
     }
 
     /**
-     * 4. Delete Cart Item
+     * 5. Delete Cart Item
      * 
      * <aside class="notice">session_key or cart id can be used to delete the cart</aside>
      * 
@@ -121,7 +123,7 @@ class CartController extends Controller
      * 
      * @group Cart API
      * 
-     * @bodyParam session_key string The session_key of the cart. Required only on second time Example: kn1i23onlas1
+     * @bodyParam session_key string The session_key of the cart.  kn1i23onlas1
      * @bodyParam id integer The ID of the cart. Example: 1
      * @bodyParam cart_item integer The ID of the cart item. Example: 1
      * 
@@ -129,5 +131,57 @@ class CartController extends Controller
     public function deleteCartItem( Request $request ) {
 
         return CartService::deleteCartItem( $request );
+    }
+
+    /**
+     * 6. Update Cart Addon/FreeGift
+     * 
+     * <aside class="notice">session_key or cart id can be used to update the cart</aside>
+     * 
+     * 
+     * 
+     * @group Cart API
+     * 
+     * @queryParam session_key string required The unique identifier for the cart. Used to add addon or free gift to the cart Example: abcd-1234
+     * @bodyParam add_on string nullable The add_on code of the product. Either `add_on` or `free_gift` must be provided. Example: ADD-ON
+     * @bodyParam free_gift string nullable The free_gift code of the product. Either `add_on` or `free_gift` must be provided. Example: FREE-GIFT
+     * 
+     */
+    public function updateCartAddon( Request $request ) {
+
+        return CartService::updateCartAddon( $request );
+    }
+
+    /**
+     * 8. Update Cart Address
+     * 
+     * <aside class="notice">session_key or cart id can be used to update the cart shipment</aside>
+     * 
+     * <strong>payment_plan</strong></br>
+     * 1: upfront<br>
+     * 2: monthly<br>
+     * 3: outright<br>
+     * 
+     * 
+     * @group Cart API
+     * 
+     * @queryParam session_key string required The unique identifier for the cart. Used to update shipment details to the cart Example: abcd-1234
+     * @bodyParam fullname string nullable The fullname of the guest. Example: Johnny
+     * @bodyParam company_name string nullable The company_name of the guest. Example: Johnny holdings
+     * @bodyParam email string nullable The email of the guest. Example: johnny@gmail.com
+     * @bodyParam phone_number string nullable The phone_number of the guest. Example: 1231231223
+     * @bodyParam address_1 string nullable The address_1 of the guest. Example: Lot 4, 1
+     * @bodyParam address_2 string nullable The address_2 of the guest. Example: Bandar Baru Bangi
+     * @bodyParam city string nullable The city of the guest. Example: Kajang
+     * @bodyParam state string nullable The state of the guest. Example: Selangor
+     * @bodyParam postcode string nullable The postcode of the guest. Example: 43000
+     * @bodyParam country string nullable The country of the guest. Example: Malaysia
+     * @bodyParam remarks string nullable The remarks for the order. Example: Be careful
+     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
+     * 
+     */
+    public function updateCartAddress( Request $request ) {
+
+        return CartService::updateCartAddress( $request );
     }
 }

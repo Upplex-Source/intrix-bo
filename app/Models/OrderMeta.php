@@ -26,6 +26,8 @@ class OrderMeta extends Model
         'total_price',
         'discount',
         'quantity',
+        'add_on_id',
+        'free_gift_id',
     ];
 
     public function order() {
@@ -134,6 +136,8 @@ class OrderMeta extends Model
         'total_price',
         'discount',
         'quantity',
+        'add_on_id',
+        'free_gift_id',
     ];
 
     protected static $logName = 'order_metas';

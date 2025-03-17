@@ -887,7 +887,7 @@ class OrderService
                 Rule::exists('carts', 'session_key')->where('status', 10),
             ],
             'cart_item' => [
-                'required',
+                'nullable',
                 Rule::exists('cart_metas', 'id')->where('status', 10),
             ],
             'promo_code' => [
@@ -912,7 +912,7 @@ class OrderService
             'postcode' => ['required'],
             'country' => ['required'],
             'remarks' => ['nullable'],
-            'payment_plan' => ['nullable'],
+            'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
         ]);
 
         $user = auth()->user();
@@ -970,7 +970,8 @@ class OrderService
                 'company_name' => $request->company_name,
             ] );
 
-            $checkoutCart = CartMeta::find( $request->cart_item );
+            // for checking payment plan
+            $presetCart = CartMeta::where( 'cart_id', $userCart->id )->first();
 
             $order = Order::create( [
                 'user_id' => null,
@@ -981,7 +982,7 @@ class OrderService
                 'reference' => Helper::generateOrderReference(),
                 'tax' => 0,
                 'remarks' => $request->remarks,
-                'payment_plan' => $checkoutCart->payment_plan ? $checkoutCart->payment_plan : $request->payment_plan,
+                'payment_plan' => $presetCart->payment_plan ? $presetCart->payment_plan : $request->payment_plan,
                 'guest_id' => $guest->id,
                 'fullname' => $request->fullname,
                 'email' => $request->email,
@@ -1001,35 +1002,36 @@ class OrderService
                 'company_name' => $request->company_name,
             ] );
 
+            foreach( $userCart->cartMetas as $checkoutCart ) {
+                $productPrice = $checkoutCart->product->price;
 
-            $productPrice = $checkoutCart->product->price;
-
-            switch ( $checkoutCart->payment_plan ) {
-                case 1:
-                    $productPrice = $checkoutCart->productVariant->upfront;
-                    break;
-                case 2:
-                    $productPrice = $checkoutCart->productVariant->monthly;
-                    break;
-                case 3:
-                    $productPrice = $checkoutCart->productVariant->outright;
-                    break;
+                switch ( $checkoutCart->payment_plan ) {
+                    case 1:
+                        $productPrice = $checkoutCart->productVariant->upfront;
+                        break;
+                    case 2:
+                        $productPrice = $checkoutCart->productVariant->monthly;
+                        break;
+                    case 3:
+                        $productPrice = $checkoutCart->productVariant->outright;
+                        break;
+                }
+    
+                $orderMeta = OrderMeta::create( [
+                    'order_id' => $order->id,
+                    'product_id' => $checkoutCart->product->id,
+                    'product_variant_id' => $checkoutCart->productVariant->id,
+                    'total_price' =>  $checkoutCart->quantity * $productPrice,
+                    'quantity' => $checkoutCart->quantity,
+                ] );
+    
+                $orderPrice += $orderMeta->total_price;
+    
+                $checkoutCart->status = 20;
+                $checkoutCart->save();
+    
+                $order->subtotal = $orderPrice;
             }
-
-            $orderMeta = OrderMeta::create( [
-                'order_id' => $order->id,
-                'product_id' => $checkoutCart->product->id,
-                'product_variant_id' => $checkoutCart->productVariant->id,
-                'total_price' =>  $checkoutCart->quantity * $productPrice,
-                'quantity' => $checkoutCart->quantity,
-            ] );
-
-            $orderPrice += $orderMeta->total_price;
-
-            $checkoutCart->status = 20;
-            $checkoutCart->save();
-
-            $order->subtotal = $orderPrice;
 
             if( $request->promo_code || $userCart->voucher_id ){
 
@@ -1115,28 +1117,29 @@ class OrderService
             // $payment = new Payment();
             // return redirect($payment->createPayment($order));
 
-            $request = new \IPay88\Payment\Request( $merchantKey );
-            $order_amount = number_format($order->total_price, 2, '.', '');
-            $data = array(
-                'merchantCode' => $request->setMerchantCode( $merchantCode ),
-                'paymentId' =>  '',
-                'refNo' => $request->setRefNo( $order->reference ),
-                'amount' => $request->setAmount( $order_amount ),
-                'currency' => $request->setCurrency( 'MYR' ),
-                'prodDesc' => $request->setProdDesc( 'Testing' ),
-                'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
-                'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
-                'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
-                'remark' => $request->setRemark( 'test' ),
-                'lang' => $request->setLang( 'UTF-8' ),
-                // 'signature' => $request->getSignature(),
-    			'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
-                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
-                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
-            );
+            // $request = new \IPay88\Payment\Request( $merchantKey );
+            // $order_amount = number_format($order->total_price, 2, '.', '');
+            // $data = array(
+            //     'merchantCode' => $request->setMerchantCode( $merchantCode ),
+            //     'paymentId' =>  '',
+            //     'refNo' => $request->setRefNo( $order->reference ),
+            //     'amount' => $request->setAmount( $order_amount ),
+            //     'currency' => $request->setCurrency( 'MYR' ),
+            //     'prodDesc' => $request->setProdDesc( 'Testing' ),
+            //     'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
+            //     'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
+            //     'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
+            //     'remark' => $request->setRemark( 'test' ),
+            //     'lang' => $request->setLang( 'UTF-8' ),
+            //     // 'signature' => $request->getSignature(),
+    		// 	'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
+            //     'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
+            //     'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
+            // );
 
             // $url2= "";
             // $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
+
             // try{ 
             //     $ch = curl_init();
             //     curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
@@ -1148,7 +1151,7 @@ class OrderService
             //     $response = curl_exec($ch);
             //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             //     curl_close($ch);
-        
+
             //     if ($httpCode == 200) {
 
             //         echo $response;
@@ -1192,11 +1195,6 @@ class OrderService
 
             // $order->payment_url = $url2;
             // $order->order_transaction_id = $orderTransaction->id;
-
-            // if( $order->userBundle && $order->total_price == 0 ){
-            //     $order->status = 3;
-            //     $order->payment_url = null;
-            // }
 
             $order->save();
 
@@ -1485,31 +1483,33 @@ class OrderService
             
             $userCart->save();
 
-            $merchantKey = config('services.ipay88.merchant_key');
-            $merchantCode = config('services.ipay88.merchant_code');
-            // dd($order);
-            // $payment = new Payment();
-            // return redirect($payment->createPayment($order));
+            // $merchantKey = config('services.ipay88.merchant_key');
+            // $merchantCode = config('services.ipay88.merchant_code');
 
-            $request = new \IPay88\Payment\Request( $merchantKey );
-            $order_amount = number_format($order->total_price, 2, '.', '');
-            $data = array(
-                'merchantCode' => $request->setMerchantCode( $merchantCode ),
-                'paymentId' =>  '',
-                'refNo' => $request->setRefNo( $order->reference ),
-                'amount' => $request->setAmount( $order_amount ),
-                'currency' => $request->setCurrency( 'MYR' ),
-                'prodDesc' => $request->setProdDesc( 'Testing' ),
-                'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
-                'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
-                'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
-                'remark' => $request->setRemark( 'test' ),
-                'lang' => $request->setLang( 'UTF-8' ),
-                // 'signature' => $request->getSignature(),
-    			'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
-                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
-                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
-            );
+            // $request = new \IPay88\Payment\Request( $merchantKey );
+            // $order_amount = number_format($order->total_price, 2, '.', '');
+            // $data = array(
+            //     'merchantCode' => $request->setMerchantCode( $merchantCode ),
+            //     'paymentId' =>  '',
+            //     'refNo' => $request->setRefNo( $order->reference ),
+            //     'amount' => '1.0',
+            //     'currency' => $request->setCurrency( 'MYR' ),
+            //     'prodDesc' => $request->setProdDesc( 'Testing' ),
+            //     'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
+            //     'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
+            //     'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
+            //     'remark' => $request->setRemark( 'test' ),
+            //     'lang' => $request->setLang( 'UTF-8' ),
+            //     'signature' => $request->getSignature(),
+    		// 	'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
+            //     'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
+            //     'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
+            // );
+
+            // return response()->json([
+            //     'status' => 'success',
+            //     'payment_url' => route('payment.show', ['payment_data' => $data])
+            // ]);
 
             // $url2= "";
             // $url2 = \IPay88\Payment\Request::make($merchantKey, $data);

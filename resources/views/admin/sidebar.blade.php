@@ -91,6 +91,7 @@
                                 @endcan
                                 @endif
 
+                                @if( 1 == 2 )
                                 @can( 'view products' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link">
@@ -98,6 +99,27 @@
                                             <span class="nk-menu-text">{{ __( 'template.products' ) }}</span>
                                         </a>
                                     </li>
+                                @endcan
+                                @endif
+
+                                @canany( [ 'view products', 'view product_add_ons', 'view product_free_gifts' ] )
+                                <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\ProductController' || $controller == 'App\Http\Controllers\Admin\ProductAddOnController' || $controller == 'App\Http\Controllers\Admin\ProductFreeGiftController') ? 'active current-page' : '' }}">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-money"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.products' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.product.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.products' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductAddOnController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.product_add_on.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.product_add_ons' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\ProductFreeGiftController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.product_free_gift.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.product_free_gifts' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
                                 @endcan
 
                                 @if( 1 == 2 )

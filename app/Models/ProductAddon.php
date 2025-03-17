@@ -10,41 +10,43 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
-use App\Traits\HasTranslations;
-
 use Helper;
 
-class Product extends Model
+use Carbon\Carbon;
+
+class ProductAddOn extends Model
 {
-    use HasFactory, LogsActivity, HasTranslations;
+    use HasFactory, LogsActivity;
+
+    protected $table = 'product_add_ons';
 
     protected $fillable = [
-        'code',
+        'product_id',
         'title',
         'description',
-        'price',
+        'code',
+        'color',
         'image',
-        'discount_price',
         'status',
-        'product_type',
+        'brochure',
+        'sku',
+        'specification',
+        'features',
+        'whats_included',
+        'price',
+        'discount_price',
     ];
 
-    public function freeGifts() {
-        return $this->belongsToMany( ProductFreeGift::class, 'products_product_free_gifts', 'product_id', 'free_gift_id' );
+    public function addOnProducts() {
+        return $this->belongsToMany( Product::class, 'products_product_add_ons','add_on_id', 'product_id' );
     }
-    
-    public function addOns() {
-        return $this->belongsToMany( ProductAddOn::class, 'products_product_add_ons', 'product_id', 'add_on_id' );
+
+    public function product() {
+        return $this->belongsTo( Product::class, 'product_id' );
     }
-    
-    public function productVariants()
-    {
-        return $this->hasMany(ProductVariant::class, 'product_id');
-    }
-    
-    public function productGalleries()
-    {
-        return $this->hasMany(ProductGallery::class, 'product_id');
+
+    public function getPathAttribute() {
+        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : null;
     }
 
     public function getImagePathAttribute() {
@@ -55,24 +57,28 @@ class Product extends Model
         return Helper::encode( $this->attributes['id'] );
     }
 
-    public $translatable = [ 'title', 'description' ];
-
     protected function serializeDate( DateTimeInterface $date ) {
         return $date->timezone( 'Asia/Kuala_Lumpur' )->format( 'Y-m-d H:i:s' );
     }
 
     protected static $logAttributes = [
-        'code',
+        'product_id',
         'title',
         'description',
-        'price',
+        'code',
+        'color',
         'image',
-        'discount_price',
         'status',
-        'product_type',
+        'brochure',
+        'sku',
+        'specification',
+        'features',
+        'whats_included',
+        'price',
+        'discount_price',
     ];
 
-    protected static $logName = 'categories';
+    protected static $logName = 'product_add_ons';
 
     protected static $logOnlyDirty = true;
 
@@ -81,6 +87,6 @@ class Product extends Model
     }
 
     public function getDescriptionForEvent( string $eventName ): string {
-        return "{$eventName} category";
+        return "{$eventName} product add on";
     }
 }

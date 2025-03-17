@@ -180,4 +180,12 @@ class OrderController extends Controller
         return OrderService::updateOrderStatusView( $request );
     }
 
+    public function showPaymentPage(Request $request)
+    {
+        $data = $request->all(); // Payment data sent from checkout API
+
+        return view('admin.order.payment_redirect', compact('data'));
+    }
+
+
 }

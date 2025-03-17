@@ -37,6 +37,20 @@ class Cart extends Model
         'guest_id',
         'payment_plan',
         'remarks',
+        'country',
+        'company_name',
+        'fullname',
+        'email',
+        'address_1',
+        'address_2',
+        'city',
+        'state',
+        'postcode',
+        'calling_code',
+        'phone_number',  
+        'add_on_id',
+        'free_gift_id',
+        'step',
     ];
 
     protected $hidden = [
@@ -47,6 +61,14 @@ class Cart extends Model
         'product_bundle_id',
         'outlet_id',
     ];
+
+    public function addOn() {
+        return $this->belongsTo( ProductAddOn::class, 'add_on_id' );
+    }
+
+    public function freeGift() {
+        return $this->belongsTo( ProductFreeGift::class, 'free_gift_id' );
+    }
 
     public function guest() {
         return $this->belongsTo( Guest::class, 'guest_id' );
@@ -115,6 +137,9 @@ class Cart extends Model
         'guest_id',
         'payment_plan',
         'remarks',
+        'add_on_id',
+        'free_gift_id',
+        'step',
     ];
 
     protected static $logName = 'carts';
