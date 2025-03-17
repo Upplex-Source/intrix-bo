@@ -181,12 +181,6 @@ class ProductService
             $updateProduct->description = $request->description ?? $updateProduct->description;
             $updateProduct->price = $request->price ?? $updateProduct->price;
             $updateProduct->discount_price = $request->discount_price ?? $updateProduct->discount_price;
-            $updateProduct->default_froyo_quantity = $request->default_froyo_quantity ?? $updateProduct->default_froyo_quantity;
-            $updateProduct->default_syrup_quantity = $request->default_syrup_quantity ?? $updateProduct->default_syrup_quantity;
-            $updateProduct->default_topping_quantity = $request->default_topping_quantity ?? $updateProduct->default_topping_quantity;
-            $updateProduct->free_froyo_quantity = $request->free_froyo_quantity ?? $updateProduct->free_froyo_quantity;
-            $updateProduct->free_syrup_quantity = $request->free_syrup_quantity ?? $updateProduct->free_syrup_quantity;
-            $updateProduct->free_topping_quantity = $request->free_topping_quantity ?? $updateProduct->free_topping_quantity;
 
             $image = explode( ',', $request->image );
 
