@@ -190,221 +190,35 @@ class Ipay88Service {
             'raw_response' => json_encode( $request->all() ),
         ] );
 
-        $response = (new IPay88\Payment\Response)->init(config('services.ipay88.merchant_code'));
-		echo "<pre>";
-		print_r($response);
+        $order = Order::where( 'reference', $request->RefNo )->first();
+        $orderStatus = false;
 
-        // // process order
-        // if (strpos($request->OrderNumber, 'TPP') !== false) {
+        if( $order ){
+            $orderTransaction = OrderTransaction::where( 'order_id', $order->idate )->first(); 
+            $order->status = $request->Status == 0 ? 20 : 10;
 
-        //     $orderStatus = false;
+            if( $request->Status == 1 ){
+                $orderStatus = true;
+                $orderTransaction->status = 11;
+            }
 
-        //     if($request->HashValue2 == Helper::generateResponseHash($request)){
-        //         $order = TopupRecord::where( 'reference', $request->OrderNumber )->first(); 
-    
-        //         $order->status = $request->TxnStatus == 0 ? 3 : 20;
-        //         if( $request->TxnStatus == 0 && $order){
-        //             $wallet = Wallet::lockForUpdate()->where( 'user_id', $order->user_id )->where( 'type', 1 )->first();
+            if( $request->TxnStatus != 0 ){
+                $order->payment_attempt += 1;
+                $orderTransaction->status = 20;
+            }
+            
+            $order->payment_method = 2;
+            $order->save();
+            $orderTransaction->save();
+        }
 
-        //             WalletService::transact( $wallet, [
-        //                 'amount' => $order->amount,
-        //                 'remark' => '',
-        //                 'type' => $wallet->type,
-        //                 'transaction_type' => 1,
-        //             ] );
-        //             $orderStatus = true;
-
-        //             UserService::createUserNotification(
-        //                 $order->user->id,
-        //                 'notification.topup_success',
-        //                 'notification.topup_success_content',
-        //                 'topup',
-        //                 'wallet'
-        //             );
-        
-        //         }
-
-        //         if( $request->TxnStatus != 0 ) {
-        //             UserService::createUserNotification(
-        //                 $order->user->id,
-        //                 'notification.topup_failed',
-        //                 'notification.topup_failed_content',
-        //                 'topup',
-        //                 'wallet'
-        //             );
-        //         }
-        //     }
-    
-        //     return response()->json( [
-        //         'message' => '',
-        //         'message_key' => 'topup_status',
-        //         'data' => [
-        //             'status' => $orderStatus
-        //         ],
-        //     ] );
-        // }else if( strpos($request->OrderNumber, 'BDL') !== false ){
-        //     $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first();
-        //     $bundleStatus = false;
-    
-        //     if($request->HashValue2 == Helper::generateResponseHash($request) && $bundle){
-        //         $bundle = UserBundleTransaction::where( 'reference', $request->OrderNumber )->first(); 
-        //         $bundleOrder = Order::where( 'user_bundle_id', $bundle->user_bundle_id )->first();
-    
-        //         if( $request->TxnStatus == 0 ){
-        //             $userBundle = $bundle->userBundle;
-        //             $userBundle->status = 10;
-        //             $bundleOrder->status = 10;
-        //             $userBundle->save();
-        //             $bundleOrder->save();
-        //             $bundleStatus = true;
-
-        //             UserService::createUserNotification(
-        //                 $userBundle->user->id,
-        //                 'notification.user_bundle_success',
-        //                 'notification.user_bundle_success_content',
-        //                 'user_bundle',
-        //                 'user_bundle'
-        //             );
-
-
-        //         }else {
-        //             UserService::createUserNotification(
-        //                 $userBundle->user->id,
-        //                 'notification.user_bundle_failed',
-        //                 'notification.user_bundle_failed_content',
-        //                 'user_bundle',
-        //                 'user_bundle'
-        //             );
-        //         }
-                
-        //     }
-    
-        //     return response()->json( [
-        //         'message' => '',
-        //         'message_key' => 'bundle_purchased',
-        //         'data' => [
-        //             'status' => $bundleStatus
-        //         ],
-        //     ] );
-        // }else{
-
-        //     $order = Order::where( 'reference', $request->OrderNumber )->first();
-        //     $orderStatus = false;
-    
-        //     if($request->HashValue2 == Helper::generateResponseHash($request) && $order){
-        //         $order = Order::where( 'reference', $request->OrderNumber )->first(); 
-        //         $orderTransaction = OrderTransaction::where( 'order_no', $request->PaymentID )->first(); 
-        //         $bundle = $order->productBundle;
-
-        //         $order->status = $request->TxnStatus == 0 ? 3 : 20;
-
-        //         if( $request->TxnStatus == 0 ){
-        //             $orderStatus = true;
-        //             $orderTransaction->status = 11;
-
-        //             UserService::createUserNotification(
-        //                 $order->user->id,
-        //                 'notification.user_order_success',
-        //                 'notification.user_order_success_content',
-        //                 'order',
-        //                 'order'
-        //             );
-                    
-        //             if( $order->product_bundle_id ){
-                                
-        //                 $userBundle = UserBundle::create([
-        //                     'user_id' => $order->user->id,
-        //                     'product_bundle_id' => $bundle->id,
-        //                     'status' => 10,
-        //                     'total_cups' => $bundle->productBundleMetas->first()->quantity,
-        //                     'cups_left' => $bundle->productBundleMetas->first()->quantity - count( $order->orderMetas ),
-        //                     'last_used' => Carbon::now(),
-        //                     'payment_attempt' => 1,
-        //                     'payment_url' => 'null',
-        //                 ]);
-
-        //                 $bundleTransaction = UserBundleTransaction::create( [
-        //                     'user_id' => $order->user->id,
-        //                     'product_bundle_id' => $bundle->id,
-        //                     'user_bundle_id' => $userBundle->id,
-        //                     'reference' => Helper::generateBundleReference(),
-        //                     'price' => $bundle->price,
-        //                     'status' => 10,
-        //                     'payment_attempt' => 1,
-        //                     'payment_url' => 'null',
-        //                 ] );
-
-        //                 $order->user_bundle_id = $userBundle->id;
-        //                 $order->save();
-
-        //             }
-
-        //             // assign purchasing bonus
-        //             $spendingBonus = Option::getSpendingSettings();
-        //             $user = $order->user;
-        //             if( $spendingBonus ){
-
-        //                 $userBonusWallet = $user->wallets->where( 'type', 2 )->first();
-
-        //                 WalletService::transact( $userBonusWallet, [
-        //                     'amount' => $order->total_price * $spendingBonus->option_value,
-        //                     'remark' => 'Purchasing Bonus',
-        //                     'type' => 2,
-        //                     'transaction_type' => 24,
-        //                 ] );
-        //             }
-
-        //             // assign referral's purchasing bonus
-        //             $referralSpendingBonus = Option::getReferralSpendingSettings();
-        //             if( $user->referral && $referralSpendingBonus){
-
-        //                 $referralWallet = $user->referral->wallets->where('type',2)->first();
-
-        //                 if($referralWallet){
-        //                     WalletService::transact( $referralWallet, [
-        //                         'amount' => $order->total_price * $referralSpendingBonus->option_value,
-        //                         'remark' => 'Referral Purchasing Bonus',
-        //                         'type' => $referralWallet->type,
-        //                         'transaction_type' => 22,
-        //                     ] );
-        //                 }
-        //             }
-
-        //         }
-
-        //         if( $request->TxnStatus != 0 ){
-        //             $order->payment_attempt += 1;
-        //             $orderTransaction->status = 20;
-
-        //             if( $order->userBundle ){
-        //                 $userBundle = $order->userBundle;
-        //                 $userBundle->cups_left += count( $order->orderMetas );
-        //                 $userBundle->save();
-        //             }
-
-        //             UserService::createUserNotification(
-        //                 $order->user->id,
-        //                 'notification.user_order_failed',
-        //                 'notification.user_order_failed_content',
-        //                 'order',
-        //                 'order'
-        //             );
-
-        //         }
-                
-        //         $order->payment_method = 2;
-        //         $order->save();
-        //         $orderTransaction->save();
-        //     }
-    
-        //     return response()->json( [
-        //         'message' => '',
-        //         'message_key' => 'order_placed',
-        //         'data' => [
-        //             'status' => $orderStatus
-        //         ],
-        //     ] );
-        // }
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'order_placed',
+            'data' => [
+                'status' => $orderStatus
+            ],
+        ] );
     }
 
     public static function processTransaction( $orderId, $response ) {

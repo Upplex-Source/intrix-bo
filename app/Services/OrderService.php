@@ -1369,6 +1369,7 @@ class OrderService
                 'tax' => 0,
                 'remarks' => $request->remarks,
                 'payment_plan' => $request->payment_plan,
+                'payment_attempt' => 1,
                 'guest_id' => $guest->id,
                 'fullname' => $request->fullname,
                 'email' => $request->email,
@@ -1505,75 +1506,36 @@ class OrderService
                     'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
                     'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
                 );
+
+                $paymentUrl = route('payment.show', ['payment_data' => $data]);
+
+                $orderTransaction = OrderTransaction::create( [
+                    'order_id' => $order->id,
+                    'checkout_id' => null,
+                    'checkout_url' => null,
+                    'payment_url' => $paymentUrl,
+                    'transaction_id' => null,
+                    'layout_version' => 'v1',
+                    'redirect_url' => null,
+                    'notify_url' => null,
+                    'order_no' => $order->reference . '-' . $order->payment_attempt,
+                    'order_title' => $order->reference,
+                    'order_detail' => $order->reference,
+                    'amount' => $order->total_price,
+                    'currency' => 'MYR',
+                    'transaction_type' => 1,
+                    'status' => 10,
+                ] );
+    
+                $order->payment_url = $paymentUrl;
+                $order->order_transaction_id = $orderTransaction->id;
+                $order->save();
     
                 return response()->json([
                     'status' => 'success',
-                    'payment_url' => route('payment.show', ['payment_data' => $data])
+                    'payment_url' => $paymentUrl
                 ]);
             }
-
-            // $url2= "";
-            // $url2 = \IPay88\Payment\Request::make($merchantKey, $data);
-            // try{ 
-            //     $ch = curl_init();
-            //     curl_setopt($ch, CURLOPT_URL, 'https://payment.ipay88.com.my/epayment/entry.asp');
-            //     curl_setopt($ch, CURLOPT_POST, true);
-            //     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-            //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
-            //     // Execute cURL request
-            //     $response = curl_exec($ch);
-            //     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            //     curl_close($ch);
-        
-            //     if ($httpCode == 200) {
-
-            //         echo $response;
-
-            //         // return response()->json([
-            //         //     'success' => true,
-            //         //     'message' => 'Payment submitted successfully.',
-            //         //     'ipay88_response' => $response
-            //         // ]);
-            //     } else {
-            //         return response()->json([
-            //             'success' => false,
-            //             'message' => 'Failed to submit payment.',
-            //             'ipay88_response' => $response
-            //         ], 500);
-            //     }
-            // } catch (\Exception $e) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Error: ' . $e->getMessage(),
-            //     ], 500);
-            // }
-
-            // $orderTransaction = OrderTransaction::create( [
-            //     'order_id' => $order->id,
-            //     'checkout_id' => null,
-            //     'checkout_url' => null,
-            //     'payment_url' => $url2,
-            //     'transaction_id' => null,
-            //     'layout_version' => 'v1',
-            //     'redirect_url' => null,
-            //     'notify_url' => null,
-            //     'order_no' => $order->reference . '-' . $order->payment_attempt,
-            //     'order_title' => $order->reference,
-            //     'order_detail' => $order->reference,
-            //     'amount' => $order->total_price,
-            //     'currency' => 'MYR',
-            //     'transaction_type' => 1,
-            //     'status' => 10,
-            // ] );
-
-            // $order->payment_url = $url2;
-            // $order->order_transaction_id = $orderTransaction->id;
-
-            // if( $order->userBundle && $order->total_price == 0 ){
-            //     $order->status = 3;
-            //     $order->payment_url = null;
-            // }
 
             $order->save();
 
