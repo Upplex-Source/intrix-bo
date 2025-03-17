@@ -885,7 +885,21 @@ class OrderService
         $validator = Validator::make($request->all(), [
             'session_key' => [
                 'required',
-                Rule::exists('carts', 'session_key')->where('status', 10),
+                function ($attribute, $value, $fail) {
+                    $cart = DB::table('carts')->where('session_key', $value)->first();
+        
+                    if (!$cart) {
+                        return $fail('The session key does not exist.');
+                    }
+        
+                    if ($cart->status != 10) {
+                        return $fail('The cart status must be 10.');
+                    }
+        
+                    if ($cart->step != 2) {
+                        return $fail('Please Update the shipment Details');
+                    }
+                },
             ],
             'cart_item' => [
                 'nullable',

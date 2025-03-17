@@ -449,107 +449,55 @@ class ProductFreeGiftService
             ], 500 );
         }
     }
-
-    public static function getFreeGifts( $request )
-    {
-        if( !$request->user_free_gift ){
-
-            $productbundles = ProductFreeGift::where('status', 10)
-            ->orderBy( 'created_at', 'DESC' );
     
-            if ( $request && $request->title) {
-                $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
-            }
+    // client
+    public static function getFreeGifts( $request ) {
 
-            if ( $request && $request->bundle_id) {
-                $productbundles->where( 'id', 'LIKE', '%' . $request->bundle_id . '%' );
-            }
+        $now = Carbon::now('Asia/Kuala_Lumpur');
 
-            $productbundles = $productbundles->get();
-            $claimedFreeGiftIds = UserFreeGift::where('user_id', auth()->user()->id)
-            ->pluck('product_free_gift_id')
-            ->toArray();
+        $freeGift = ProductFreeGift::with( [
+            'freeGiftProducts',
+        ] )->select( 'product_free_gifts.*' )
+        ->where( 'status', 10 );
 
-            $productbundles = $productbundles->map(function ($productbundle) use ($claimedFreeGiftIds) {
-                $productbundle->claimed = in_array($productbundle->id, $claimedFreeGiftIds) ? 'purchased' : 'not purchased';
-                $productbundle->append( ['image_path','bundle_rules'] );
-                return $productbundle;
-            });
+        $filterObject = self::filter( $request, $freeGift );
+        $freeGift = $filterObject['model'];
+        $filter = $filterObject['filter'];
 
-        }else {
-            $productbundles = UserFreeGift::with([
-                'productFreeGift',
-                'activeCarts.cartMetas' // Load cartMetas for activeCarts
-            ])
-            ->where('user_id', auth()->user()->id)
-            ->where(function ($query) {
-                $query->where('cups_left', '>', 0)
-                      ->orWhereHas('activeCarts');
-            })
-            ->orderBy('created_at', 'DESC');
-        
+        $freeGiftCount = $freeGift->count();
 
-            if ( $request && $request->title) {
-                $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
-            }
+        $limit = $request->length ? $request->length : 10;
+        $offset = $request->start ? $request->start : 0;
 
-            if ( $request && $request->bundle_id) {
-                $productbundles->where( 'id', 'LIKE', '%' . $request->bundle_id . '%' );
-            }
-
-            $productbundles = $productbundles->get();
-
-            $productbundles = $productbundles->map(function ($productbundle){
-                $productbundle->append( ['bundle_status_label'] );
-                $productbundle->productFreeGift->append( ['image_path','bundle_rules'] );
-                $productbundle->bundle_rules = $productbundle->productFreeGift->bundle_rules;
-                $productbundle->cups_in_cart = $productbundle->activeCarts->sum(function ($cart) {
-                    return $cart->cartMetas->count();
-                });
-
-                if( $productbundle->activeCarts ){
-                    foreach( $productbundle->activeCarts as $cart ){
-
-                        if($cart->vendingMachine){
-                            $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
-                            ->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)
-                            ->setAttribute('image_path', $cart->vendingMachine->image_path);
-                        }
-
-                        $cartMetas = $cart->cartMetas->map(function ($meta) {
-                            return [
-                                'id' => $meta->id,
-                                'subtotal' => $meta->total_price,
-                                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
-                                    ->setAttribute('image_path', $meta->product->image_path),
-                                'froyo' => $meta->froyos_metas,
-                                'syrup' => $meta->syrups_metas,
-                                'topping' => $meta->toppings_metas,
-                            ];
-                        });
-                
-                        // Attach the cart metas to the cart object
-                        $cart->cartMetas = $cartMetas;
-                    }
-
-                    foreach( $productbundle->activeCarts as $userCart ) {
-                        $userCart->cart_metas = $userCart->cartMetas;
-                        // $userCart->cartMetas = null;
-                        unset($userCart->cartMetas);
-                        $userCart->cartMetas = $userCart->cart_metas;
-
-                    }
+        $freeGifts = $freeGift->skip($offset)->take($limit + 1)->get()->map(function ($freeGift) {
+            if( $freeGift->freeGiftProducts ){
+                $products = $freeGift->freeGiftProducts;
+                foreach( $products as $product ) {
+                    $product->append( ['image_path'] );
                 }
+            }
+            $freeGift->append( ['image_path'] );
 
-                return $productbundle;
-            });
+            return $freeGift;
+        });
+
+        $hasMore = $freeGifts->count() > $limit;
+        if ($hasMore) {
+            $freeGifts = $freeGifts->slice(0, $limit);
         }
-        return response()->json( [
-            'message' => '',
-            'message_key' => $request->user_free_gift ? 'get_user_free_gift_success' : 'get_product_free_gift_success',
-            'data' => $productbundles,
-        ] );
 
+        $data = [
+            'free_gifts' => $freeGifts,
+            'draw' => $request->draw,
+            'start' => $offset,
+            'length' => $limit,
+            'hasMore' => $hasMore,
+            'nextStart' => $hasMore ? $offset + $limit : null,
+            'recordsFiltered' => ( $filter || ( $request->length || $request->start ) ) ? $freeGifts->count() : $freeGiftCount,
+            'recordsTotal' => $filter ? $freeGiftCount : ProductFreeGift::where( 'status', 10 )->count(),
+        ];
+
+        return $data;
     }
 
 }

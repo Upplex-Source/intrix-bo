@@ -6,29 +6,47 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\{
-    ProductService
+    ProductAddOnService,
+    ProductFreeGiftService,
 };
 
 class ProductController extends Controller
 {
     /**
-     * 1. Get Products 
+     * 1. Get Add Ons 
      * 
-     * <aside class="notice">Get all Product that is in BO</aside>
+     * <aside class="notice">Get all Add on that is in BO</aside>
      * 
      * @authenticated
      * 
      * @group Product API
      * 
-     * @queryParam per_page integer Retrieve how many product in a page, default is 10. Example: 10
-     * @queryParam promo_code string The Product code to be filter. Example: XBMSD22
-     * @queryParam user_Product integer Retrieve all user's Product only Example: 1
-     * @queryParam Product_type integer The Product type to be filter Example: 1
-     * @queryParam discount_type integer The Product discount type to be filter Example: 2
+     * @bodyParam length integer required The length of the table. Example: 10
+     * @bodyParam start integer required The start of the record of the table. Example: 0
+     * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
      * 
      */
-    public function getProducts( Request $request ) {
+    public function getAddOns( Request $request ) {
 
-        return ProductService::getProducts( $request );
+        return ProductAddOnService::getAddOns( $request );
+    }
+
+    /**
+     * 1. Get Free Gifts
+     * 
+     * <aside class="notice">Get all Add on that is in BO</aside>
+     * 
+     * @authenticated
+     * 
+     * @group Product API
+     * 
+     * @bodyParam length integer required The length of the table. Example: 10
+     * @bodyParam start integer required The start of the record of the table. Example: 0
+     * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
+     * 
+     */
+    public function getFreeGifts( Request $request ) {
+
+        return ProductFreeGiftService::getFreeGifts( $request );
     }
 }

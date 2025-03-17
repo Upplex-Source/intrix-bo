@@ -451,106 +451,54 @@ class ProductAddOnService
         }
     }
 
-    public static function getAddOns( $request )
-    {
-        if( !$request->user_add_on ){
+    // client
+    public static function getAddOns( $request ) {
 
-            $productbundles = ProductAddOn::where('status', 10)
-            ->orderBy( 'created_at', 'DESC' );
-    
-            if ( $request && $request->title) {
-                $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
-            }
+        $now = Carbon::now('Asia/Kuala_Lumpur');
 
-            if ( $request && $request->bundle_id) {
-                $productbundles->where( 'id', 'LIKE', '%' . $request->bundle_id . '%' );
-            }
+        $addOn = ProductAddOn::with( [
+            'addOnProducts',
+        ] )->select( 'product_add_ons.*' )
+        ->where( 'status', 10 );
 
-            $productbundles = $productbundles->get();
-            $claimedAddOnIds = UserAddOn::where('user_id', auth()->user()->id)
-            ->pluck('product_add_on_id')
-            ->toArray();
+        $filterObject = self::filter( $request, $addOn );
+        $addOn = $filterObject['model'];
+        $filter = $filterObject['filter'];
 
-            $productbundles = $productbundles->map(function ($productbundle) use ($claimedAddOnIds) {
-                $productbundle->claimed = in_array($productbundle->id, $claimedAddOnIds) ? 'purchased' : 'not purchased';
-                $productbundle->append( ['image_path','bundle_rules'] );
-                return $productbundle;
-            });
+        $addOnCount = $addOn->count();
 
-        }else {
-            $productbundles = UserAddOn::with([
-                'productAddOn',
-                'activeCarts.cartMetas' // Load cartMetas for activeCarts
-            ])
-            ->where('user_id', auth()->user()->id)
-            ->where(function ($query) {
-                $query->where('cups_left', '>', 0)
-                      ->orWhereHas('activeCarts');
-            })
-            ->orderBy('created_at', 'DESC');
-        
+        $limit = $request->length ? $request->length : 10;
+        $offset = $request->start ? $request->start : 0;
 
-            if ( $request && $request->title) {
-                $productbundles->where( 'title', 'LIKE', '%' . $request->title . '%' );
-            }
-
-            if ( $request && $request->bundle_id) {
-                $productbundles->where( 'id', 'LIKE', '%' . $request->bundle_id . '%' );
-            }
-
-            $productbundles = $productbundles->get();
-
-            $productbundles = $productbundles->map(function ($productbundle){
-                $productbundle->append( ['bundle_status_label'] );
-                $productbundle->productAddOn->append( ['image_path','bundle_rules'] );
-                $productbundle->bundle_rules = $productbundle->productAddOn->bundle_rules;
-                $productbundle->cups_in_cart = $productbundle->activeCarts->sum(function ($cart) {
-                    return $cart->cartMetas->count();
-                });
-
-                if( $productbundle->activeCarts ){
-                    foreach( $productbundle->activeCarts as $cart ){
-
-                        if($cart->vendingMachine){
-                            $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
-                            ->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)
-                            ->setAttribute('image_path', $cart->vendingMachine->image_path);
-                        }
-
-                        $cartMetas = $cart->cartMetas->map(function ($meta) {
-                            return [
-                                'id' => $meta->id,
-                                'subtotal' => $meta->total_price,
-                                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
-                                    ->setAttribute('image_path', $meta->product->image_path),
-                                'froyo' => $meta->froyos_metas,
-                                'syrup' => $meta->syrups_metas,
-                                'topping' => $meta->toppings_metas,
-                            ];
-                        });
-                
-                        // Attach the cart metas to the cart object
-                        $cart->cartMetas = $cartMetas;
-                    }
-
-                    foreach( $productbundle->activeCarts as $userCart ) {
-                        $userCart->cart_metas = $userCart->cartMetas;
-                        // $userCart->cartMetas = null;
-                        unset($userCart->cartMetas);
-                        $userCart->cartMetas = $userCart->cart_metas;
-
-                    }
+        $addOns = $addOn->skip($offset)->take($limit + 1)->get()->map(function ($addOn) {
+            if( $addOn->addOnProducts ){
+                $products = $addOn->addOnProducts;
+                foreach( $products as $product ) {
+                    $product->append( ['image_path'] );
                 }
+            }
+            $addOn->append( ['image_path'] );
 
-                return $productbundle;
-            });
+            return $addOn;
+        });
+
+        $hasMore = $addOns->count() > $limit;
+        if ($hasMore) {
+            $addOns = $addOns->slice(0, $limit);
         }
-        return response()->json( [
-            'message' => '',
-            'message_key' => $request->user_add_on ? 'get_user_add_on_success' : 'get_product_add_on_success',
-            'data' => $productbundles,
-        ] );
 
+        $data = [
+            'add_ons' => $addOns,
+            'draw' => $request->draw,
+            'start' => $offset,
+            'length' => $limit,
+            'hasMore' => $hasMore,
+            'nextStart' => $hasMore ? $offset + $limit : null,
+            'recordsFiltered' => ( $filter || ( $request->length || $request->start ) ) ? $addOns->count() : $addOnCount,
+            'recordsTotal' => $filter ? $addOnCount : ProductAddOn::where( 'status', 10 )->count(),
+        ];
+
+        return $data;
     }
 
 }

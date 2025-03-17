@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\{
     CheckinController,
     ProductBundleController,
     BlogController,
+    ProductController,
 };
 
 use Illuminate\Support\Facades\Route;
@@ -70,9 +71,17 @@ Route::prefix( 'blogs' )->group( function() {
     Route::any( '/one-blog-by-slug', [ BlogController::class, 'oneBlogBySlug' ] );
 } );
 
+Route::prefix( 'add-ons' )->group( function() {
+    Route::any( '/', [ ProductController::class, 'getAddOns' ] );
+} );
+
+Route::prefix( 'free-gifts' )->group( function() {
+    Route::any( '/', [ ProductController::class, 'getFreeGifts' ] );
+} );
+
 if( 1 == 2 ){
 Route::prefix( 'products' )->group( function() {
-    Route::get( '/', [ ProductController::class, 'getProducts' ] );
+    Route::any( '/', [ ProductController::class, 'getProducts' ] );
 } );
 }
 
