@@ -40,6 +40,8 @@ Route::prefix( 'carts' )->group( function() {
     Route::post( 'add', [ CartController::class, 'addToCart' ] );
     Route::post( 'update', [ CartController::class, 'updateCart' ] );
     Route::get( '/', [ CartController::class, 'getCart' ] );
+    Route::post( 'update-add-on', [ CartController::class, 'updateCartAddon' ] );
+    Route::post( 'update-shipment', [ CartController::class, 'updateCartAddress' ] );
     Route::post( 'delete', [ CartController::class, 'deleteCart' ] );
     Route::post( 'delete-cart-item', [ CartController::class, 'deleteCartItem' ] );
 } );
@@ -131,8 +133,6 @@ if( 1 == 2 ){
         Route::prefix( 'carts' )->group( function() {
             Route::post( 'add', [ CartController::class, 'addToCart' ] );
             Route::post( 'update', [ CartController::class, 'updateCart' ] );
-            Route::post( 'update-add-on', [ CartController::class, 'updateCartAddon' ] );
-            Route::post( 'update-shipment', [ CartController::class, 'updateCartAddress' ] );
             Route::get( '/', [ CartController::class, 'getCart' ] );
             Route::post( 'delete', [ CartController::class, 'deleteCart' ] );
             Route::post( 'delete-cart-item', [ CartController::class, 'deleteCartItem' ] );

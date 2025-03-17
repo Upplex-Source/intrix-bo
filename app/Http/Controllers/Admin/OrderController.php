@@ -182,9 +182,7 @@ class OrderController extends Controller
 
     public function showPaymentPage(Request $request)
     {
-        $data = $request->all(); // Payment data sent from checkout API
-
-        return view('admin.order.payment_redirect', compact('data'));
+        return OrderService::showPaymentPage( $request );
     }
 
 

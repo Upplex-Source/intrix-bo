@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\{
     Validator,
     File,
 };
+
 use Illuminate\Validation\Rule;
 use App\Models\{
     FileManager,
@@ -1156,14 +1157,17 @@ class OrderService
     
                 $order->payment_url = $paymentUrl;
                 $order->order_transaction_id = $orderTransaction->id;
+                $order->status = 2;
                 $order->save();
     
+                DB::commit();
+
                 return response()->json([
                     'status' => 'success',
                     'payment_url' => $paymentUrl
                 ]);
             }
-            
+
             $order->save();
 
             DB::commit();
@@ -1497,8 +1501,11 @@ class OrderService
     
                 $order->payment_url = $paymentUrl;
                 $order->order_transaction_id = $orderTransaction->id;
+                $order->status = 2;
                 $order->save();
     
+                DB::commit();
+
                 return response()->json([
                     'status' => 'success',
                     'payment_url' => $paymentUrl
@@ -2017,5 +2024,21 @@ class OrderService
             'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas
         ] );
+    }
+
+    public static function showPaymentPage( $request ) {
+
+        $validator = Validator::make($request->all(), [
+            'payment_data.refNo' => [
+                'required',
+                Rule::exists('orders', 'reference')->whereIn('status', [ 1,2,3 ] ),
+            ],
+        ]);
+        
+        $validator->validate();
+
+        $data = $request->all();
+
+        return view('admin.order.payment_redirect', compact('data'));
     }
 }

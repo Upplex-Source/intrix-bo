@@ -71,7 +71,7 @@ class VoucherController extends Controller
      * 1: BUY NOW<br>
      * 2: CART<br>
      * 
-     * @group Order API
+     * @group Promo Code API
      * 
      * @queryParam session_key string optional The unique identifier for the cart. Must be provided if type is 2 Example: abcd-1234
      * @bodyParam type required integer To verify cart or buy now product . Example: 1
