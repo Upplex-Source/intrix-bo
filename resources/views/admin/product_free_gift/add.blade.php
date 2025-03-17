@@ -120,16 +120,16 @@ $product_free_gift_create = 'product_free_gift_create';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                
-                <div class="mb-3 row">
-                    <label for="{{ $product_free_gift_create }}_product" class="col-sm-5 form-label">{{ __( 'product_free_gift.product' ) }}</label>
-                    <div class="col-sm-7">
-                        <select class="form-select" id="{{ $product_free_gift_create }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product_free_gift.product' ) ] ) }}" multiple="multiple">
-                        </select>
-                        <div class="invalid-feedback"></div>
+                @if( 1 == 2 )
+                    <div class="mb-3 row">
+                        <label for="{{ $product_free_gift_create }}_product" class="col-sm-5 form-label">{{ __( 'product_free_gift.product' ) }}</label>
+                        <div class="col-sm-7">
+                            <select class="form-select" id="{{ $product_free_gift_create }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product_free_gift.product' ) ] ) }}" multiple="multiple">
+                            </select>
+                            <div class="invalid-feedback"></div>
+                        </div>
                     </div>
-                </div>
-
+                @endif
                 <div class="text-end">
                     <button id="{{ $product_free_gift_create }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -159,7 +159,7 @@ $product_free_gift_create = 'product_free_gift_create';
             } );
 
             let formData = new FormData();
-            formData.append( 'products', $( fc + '_product' ).val() );
+            // formData.append( 'products', $( fc + '_product' ).val() );
             formData.append( 'sku', $( fc + '_sku' ).val() );
             formData.append( 'title', $( fc + '_title' ).val() );
             formData.append( 'code', $( fc + '_code' ).val() );
@@ -204,46 +204,46 @@ $product_free_gift_create = 'product_free_gift_create';
             } );
         } );
 
-        $( fc + '_product' ).select2( {
-            theme: 'bootstrap-5',
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-            ajax: {
-                method: 'POST',
-                url: '{{ route( 'admin.product.allProducts' ) }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        title: params.term, // search term
-                        start: params.page ? params.page : 0,
-                        status: 10,
-                        length: 10,
-                        _token: '{{ csrf_token() }}',
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
+        // $( fc + '_product' ).select2( {
+        //     theme: 'bootstrap-5',
+        //     width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+        //     placeholder: $( this ).data( 'placeholder' ),
+        //     closeOnSelect: false,
+        //     ajax: {
+        //         method: 'POST',
+        //         url: '{{ route( 'admin.product.allProducts' ) }}',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function (params) {
+        //             return {
+        //                 title: params.term, // search term
+        //                 start: params.page ? params.page : 0,
+        //                 status: 10,
+        //                 length: 10,
+        //                 _token: '{{ csrf_token() }}',
+        //             };
+        //         },
+        //         processResults: function (data, params) {
+        //             params.page = params.page || 1;
 
-                    let processedResult = [];
+        //             let processedResult = [];
 
-                    data.products.map( function( v, i ) {
-                        processedResult.push( {
-                            id: v.id,
-                            text: v.title,
-                        } );
-                    } );
+        //             data.products.map( function( v, i ) {
+        //                 processedResult.push( {
+        //                     id: v.id,
+        //                     text: v.title,
+        //                 } );
+        //             } );
 
-                    return {
-                        results: processedResult,
-                        pagination: {
-                            more: ( params.page * 10 ) < data.recordsFiltered
-                        }
-                    };
-                }
-            }
-        } );
+        //             return {
+        //                 results: processedResult,
+        //                 pagination: {
+        //                     more: ( params.page * 10 ) < data.recordsFiltered
+        //                 }
+        //             };
+        //         }
+        //     }
+        // } );
 
         Dropzone.autoDiscover = false;
         const dropzone = new Dropzone( fc + '_image', { 

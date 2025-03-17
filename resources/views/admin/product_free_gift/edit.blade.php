@@ -121,6 +121,7 @@ $product_free_gift_edit = 'product_free_gift_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
+                @if( 1 == 2 )
                 
                 <div class="mb-3 row">
                     <label for="{{ $product_free_gift_edit }}_product" class="col-sm-5 form-label">{{ __( 'product_free_gift.product' ) }}</label>
@@ -130,7 +131,7 @@ $product_free_gift_edit = 'product_free_gift_edit';
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-
+                @endif
                 <div class="text-end">
                     <button id="{{ $product_free_gift_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -161,7 +162,7 @@ $product_free_gift_edit = 'product_free_gift_edit';
 
             let formData = new FormData();
             formData.append( 'id', '{{ request( 'id' ) }}' );
-            formData.append( 'products', $( fe + '_product' ).val() );
+            // formData.append( 'products', $( fe + '_product' ).val() );
             formData.append( 'sku', $( fe + '_sku' ).val() );
             formData.append( 'title', $( fe + '_title' ).val() );
             formData.append( 'code', $( fe + '_code' ).val() );
@@ -206,46 +207,46 @@ $product_free_gift_edit = 'product_free_gift_edit';
             } );
         } );
 
-        let productSelect2 = $( fe + '_product' ).select2( {
-            theme: 'bootstrap-5',
-            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
-            placeholder: $( this ).data( 'placeholder' ),
-            closeOnSelect: false,
-            ajax: {
-                method: 'POST',
-                url: '{{ route( 'admin.product.allProducts' ) }}',
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        title: params.term, // search term
-                        start: params.page ? params.page : 0,
-                        status: 10,
-                        length: 10,
-                        _token: '{{ csrf_token() }}',
-                    };
-                },
-                processResults: function (data, params) {
-                    params.page = params.page || 1;
+        // let productSelect2 = $( fe + '_product' ).select2( {
+        //     theme: 'bootstrap-5',
+        //     width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+        //     placeholder: $( this ).data( 'placeholder' ),
+        //     closeOnSelect: false,
+        //     ajax: {
+        //         method: 'POST',
+        //         url: '{{ route( 'admin.product.allProducts' ) }}',
+        //         dataType: 'json',
+        //         delay: 250,
+        //         data: function (params) {
+        //             return {
+        //                 title: params.term, // search term
+        //                 start: params.page ? params.page : 0,
+        //                 status: 10,
+        //                 length: 10,
+        //                 _token: '{{ csrf_token() }}',
+        //             };
+        //         },
+        //         processResults: function (data, params) {
+        //             params.page = params.page || 1;
 
-                    let processedResult = [];
+        //             let processedResult = [];
 
-                    data.products.map( function( v, i ) {
-                        processedResult.push( {
-                            id: v.id,
-                            text: v.title,
-                        } );
-                    } );
+        //             data.products.map( function( v, i ) {
+        //                 processedResult.push( {
+        //                     id: v.id,
+        //                     text: v.title,
+        //                 } );
+        //             } );
 
-                    return {
-                        results: processedResult,
-                        pagination: {
-                            more: ( params.page * 10 ) < data.recordsFiltered
-                        }
-                    };
-                }
-            }
-        } );
+        //             return {
+        //                 results: processedResult,
+        //                 pagination: {
+        //                     more: ( params.page * 10 ) < data.recordsFiltered
+        //                 }
+        //             };
+        //         }
+        //     }
+        // } );
         
         getProductFreeGift();
         Dropzone.autoDiscover = false;
@@ -276,11 +277,11 @@ $product_free_gift_edit = 'product_free_gift_edit';
                     $( fe + '_features' ).val( response.features );
                     $( fe + '_whats_included' ).val( response.whats_included );
 
-                    response.free_gift_products.forEach((product, index) => {
-                        let option1 = new Option( product.title, product.id, true, true );
-                        productSelect2.append( option1 );
-                        productSelect2.trigger( 'change' );
-                    });
+                    // response.free_gift_products.forEach((product, index) => {
+                    //     let option1 = new Option( product.title, product.id, true, true );
+                    //     productSelect2.append( option1 );
+                    //     productSelect2.trigger( 'change' );
+                    // });
 
                     const dropzone = new Dropzone( fe + '_image', {
                         url: '{{ route( 'admin.file.upload' ) }}',
