@@ -12,7 +12,10 @@ endpoints:
     uri: api/v1/blogs
     metadata:
       title: '1. Get all blogs'
-      description: ''
+      description: |-
+        <strong>type</strong></br>
+        2: insights<br>
+        3: partners<br>
       authenticated: false
       custom: []
     headers:
@@ -25,21 +28,28 @@ endpoints:
         name: length
         description: 'The length of the table.'
         required: true
-        example: '10'
-        type: string
+        example: 10
+        type: integer
         custom: []
       start:
         name: start
         description: 'The start of the record of the table.'
         required: true
-        example: '0'
-        type: string
+        example: 0
+        type: integer
         custom: []
       type:
         name: type
         description: 'The type of the filter.'
         required: false
-        example: '1'
+        example: 1
+        type: integer
+        custom: []
+      category:
+        name: category
+        description: 'The category of the blog ( id, title ) .'
+        required: false
+        example: test
         type: string
         custom: []
       created_date:
@@ -52,12 +62,12 @@ endpoints:
     responses:
       -
         status: 200
-        content: '{"blogs":[],"draw":null,"recordsFiltered":0,"recordsTotal":1}'
+        content: '{"blogs":[],"draw":null,"start":0,"length":10,"hasMore":false,"nextStart":null,"recordsFiltered":0,"recordsTotal":0}'
         headers:
           cache-control: 'no-cache, private'
           content-type: application/json
           x-ratelimit-limit: '100'
-          x-ratelimit-remaining: '93'
+          x-ratelimit-remaining: '96'
           access-control-allow-origin: '*'
         description: null
     responseFields: []
@@ -107,14 +117,14 @@ endpoints:
                   },
                   {
                       "file": "C:\\xampp\\htdocs\\intrix-backoffice\\app\\Services\\BlogService.php",
-                      "line": 411,
+                      "line": 492,
                       "function": "decode",
                       "class": "App\\Helpers\\Helper",
                       "type": "::"
                   },
                   {
                       "file": "C:\\xampp\\htdocs\\intrix-backoffice\\app\\Http\\Controllers\\Api\\BlogController.php",
-                      "line": 53,
+                      "line": 58,
                       "function": "_oneBlog",
                       "class": "App\\Services\\BlogService",
                       "type": "::"
@@ -587,16 +597,53 @@ endpoints:
           cache-control: 'no-cache, private'
           content-type: application/json
           x-ratelimit-limit: '100'
-          x-ratelimit-remaining: '92'
+          x-ratelimit-remaining: '94'
           access-control-allow-origin: '*'
         description: null
     responseFields: []
   -
     httpMethods:
-      - POST
+      0: GET
+      2: POST
+      3: PUT
+      4: PATCH
+      5: DELETE
+      6: OPTIONS
+    uri: api/v1/blogs/categories
+    metadata:
+      title: '4. Get Blog Categories'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters: []
+    responses:
+      -
+        status: 200
+        content: '{"categories":[]}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          x-ratelimit-limit: '100'
+          x-ratelimit-remaining: '95'
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+  -
+    httpMethods:
+      0: GET
+      2: POST
+      3: PUT
+      4: PATCH
+      5: DELETE
+      6: OPTIONS
     uri: api/v1/blogs/one-blog-by-slug
     metadata:
-      title: '2. Get one blog detail By slug'
+      title: '3. Get one blog detail By slug'
       description: ''
       authenticated: false
       custom: []
@@ -613,5 +660,499 @@ endpoints:
         example: '1'
         type: string
         custom: []
-    responses: []
+    responses:
+      -
+        status: 500
+        content: |-
+          {
+              "message": "Attempt to read property \"author\" on null",
+              "exception": "ErrorException",
+              "file": "C:\\xampp\\htdocs\\intrix-backoffice\\app\\Services\\BlogService.php",
+              "line": 530,
+              "trace": [
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\app\\Services\\BlogService.php",
+                      "line": 530,
+                      "function": "handleError",
+                      "class": "Illuminate\\Foundation\\Bootstrap\\HandleExceptions",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\app\\Http\\Controllers\\Api\\BlogController.php",
+                      "line": 71,
+                      "function": "oneBlogBySlug",
+                      "class": "App\\Services\\BlogService",
+                      "type": "::"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php",
+                      "line": 54,
+                      "function": "oneBlogBySlug",
+                      "class": "App\\Http\\Controllers\\Api\\BlogController",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php",
+                      "line": 45,
+                      "function": "callAction",
+                      "class": "Illuminate\\Routing\\Controller",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php",
+                      "line": 262,
+                      "function": "dispatch",
+                      "class": "Illuminate\\Routing\\ControllerDispatcher",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php",
+                      "line": 205,
+                      "function": "runController",
+                      "class": "Illuminate\\Routing\\Route",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+                      "line": 721,
+                      "function": "run",
+                      "class": "Illuminate\\Routing\\Route",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 128,
+                      "function": "Illuminate\\Routing\\{closure}",
+                      "class": "Illuminate\\Routing\\Router",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\app\\Http\\Middleware\\APIVersion.php",
+                      "line": 20,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "App\\Http\\Middleware\\APIVersion",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php",
+                      "line": 50,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Illuminate\\Routing\\Middleware\\SubstituteBindings",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php",
+                      "line": 127,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php",
+                      "line": 103,
+                      "function": "handleRequest",
+                      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php",
+                      "line": 55,
+                      "function": "handleRequestUsingNamedLimiter",
+                      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Illuminate\\Routing\\Middleware\\ThrottleRequests",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 103,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+                      "line": 723,
+                      "function": "then",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+                      "line": 698,
+                      "function": "runRouteWithinStack",
+                      "class": "Illuminate\\Routing\\Router",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+                      "line": 662,
+                      "function": "runRoute",
+                      "class": "Illuminate\\Routing\\Router",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php",
+                      "line": 651,
+                      "function": "dispatchToRoute",
+                      "class": "Illuminate\\Routing\\Router",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+                      "line": 167,
+                      "function": "dispatch",
+                      "class": "Illuminate\\Routing\\Router",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 128,
+                      "function": "Illuminate\\Foundation\\Http\\{closure}",
+                      "class": "Illuminate\\Foundation\\Http\\Kernel",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php",
+                      "line": 59,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Barryvdh\\Debugbar\\Middleware\\InjectDebugbar",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
+                      "line": 21,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php",
+                      "line": 31,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php",
+                      "line": 21,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php",
+                      "line": 40,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Http\\Middleware\\TrimStrings",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php",
+                      "line": 27,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php",
+                      "line": 86,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php",
+                      "line": 52,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Fruitcake\\Cors\\HandleCors",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\fideloper\\proxy\\src\\TrustProxies.php",
+                      "line": 57,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 167,
+                      "function": "handle",
+                      "class": "Fideloper\\Proxy\\TrustProxies",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php",
+                      "line": 103,
+                      "function": "Illuminate\\Pipeline\\{closure}",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+                      "line": 142,
+                      "function": "then",
+                      "class": "Illuminate\\Pipeline\\Pipeline",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php",
+                      "line": 111,
+                      "function": "sendRequestThroughRouter",
+                      "class": "Illuminate\\Foundation\\Http\\Kernel",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
+                      "line": 299,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Http\\Kernel",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
+                      "line": 287,
+                      "function": "callLaravelOrLumenRoute",
+                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
+                      "line": 89,
+                      "function": "makeApiCall",
+                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
+                      "line": 45,
+                      "function": "makeResponseCall",
+                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php",
+                      "line": 35,
+                      "function": "makeResponseCallIfConditionsPass",
+                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php",
+                      "line": 222,
+                      "function": "__invoke",
+                      "class": "Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php",
+                      "line": 179,
+                      "function": "iterateThroughStrategies",
+                      "class": "Knuckles\\Scribe\\Extracting\\Extractor",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php",
+                      "line": 116,
+                      "function": "fetchResponses",
+                      "class": "Knuckles\\Scribe\\Extracting\\Extractor",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php",
+                      "line": 123,
+                      "function": "processRoute",
+                      "class": "Knuckles\\Scribe\\Extracting\\Extractor",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php",
+                      "line": 80,
+                      "function": "extractEndpointsInfoFromLaravelApp",
+                      "class": "Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php",
+                      "line": 56,
+                      "function": "extractEndpointsInfoAndWriteToDisk",
+                      "class": "Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Commands\\GenerateDocumentation.php",
+                      "line": 55,
+                      "function": "get",
+                      "class": "Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php",
+                      "line": 36,
+                      "function": "handle",
+                      "class": "Knuckles\\Scribe\\Commands\\GenerateDocumentation",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php",
+                      "line": 40,
+                      "function": "Illuminate\\Container\\{closure}",
+                      "class": "Illuminate\\Container\\BoundMethod",
+                      "type": "::"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php",
+                      "line": 93,
+                      "function": "unwrapIfClosure",
+                      "class": "Illuminate\\Container\\Util",
+                      "type": "::"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php",
+                      "line": 37,
+                      "function": "callBoundMethod",
+                      "class": "Illuminate\\Container\\BoundMethod",
+                      "type": "::"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php",
+                      "line": 653,
+                      "function": "call",
+                      "class": "Illuminate\\Container\\BoundMethod",
+                      "type": "::"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php",
+                      "line": 136,
+                      "function": "call",
+                      "class": "Illuminate\\Container\\Container",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Command\\Command.php",
+                      "line": 298,
+                      "function": "execute",
+                      "class": "Illuminate\\Console\\Command",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php",
+                      "line": 121,
+                      "function": "run",
+                      "class": "Symfony\\Component\\Console\\Command\\Command",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Application.php",
+                      "line": 1040,
+                      "function": "run",
+                      "class": "Illuminate\\Console\\Command",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Application.php",
+                      "line": 301,
+                      "function": "doRunCommand",
+                      "class": "Symfony\\Component\\Console\\Application",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Application.php",
+                      "line": 171,
+                      "function": "doRun",
+                      "class": "Symfony\\Component\\Console\\Application",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php",
+                      "line": 94,
+                      "function": "run",
+                      "class": "Symfony\\Component\\Console\\Application",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php",
+                      "line": 129,
+                      "function": "run",
+                      "class": "Illuminate\\Console\\Application",
+                      "type": "->"
+                  },
+                  {
+                      "file": "C:\\xampp\\htdocs\\intrix-backoffice\\artisan",
+                      "line": 37,
+                      "function": "handle",
+                      "class": "Illuminate\\Foundation\\Console\\Kernel",
+                      "type": "->"
+                  }
+              ]
+          }
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          x-ratelimit-limit: '100'
+          x-ratelimit-remaining: '93'
+          access-control-allow-origin: '*'
+        description: null
     responseFields: []

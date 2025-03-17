@@ -80,8 +80,11 @@
                                     <li class="tocify-item level-2" data-unique="blog-api-GETapi-v1-blogs-details">
                         <a href="#blog-api-GETapi-v1-blogs-details">2. Get one blog detail</a>
                     </li>
-                                    <li class="tocify-item level-2" data-unique="blog-api-POSTapi-v1-blogs-one-blog-by-slug">
-                        <a href="#blog-api-POSTapi-v1-blogs-one-blog-by-slug">2. Get one blog detail By slug</a>
+                                    <li class="tocify-item level-2" data-unique="blog-api-GETapi-v1-blogs-categories">
+                        <a href="#blog-api-GETapi-v1-blogs-categories">4. Get Blog Categories</a>
+                    </li>
+                                    <li class="tocify-item level-2" data-unique="blog-api-GETapi-v1-blogs-one-blog-by-slug">
+                        <a href="#blog-api-GETapi-v1-blogs-one-blog-by-slug">3. Get one blog detail By slug</a>
                     </li>
                                                     </ul>
                             </ul>
@@ -103,7 +106,7 @@
                         <a href="#cart-api-POSTapi-v1-carts-delete">4. Delete Cart</a>
                     </li>
                                     <li class="tocify-item level-2" data-unique="cart-api-POSTapi-v1-carts-delete-cart-item">
-                        <a href="#cart-api-POSTapi-v1-carts-delete-cart-item">4. Delete Cart Item</a>
+                        <a href="#cart-api-POSTapi-v1-carts-delete-cart-item">5. Delete Cart Item</a>
                     </li>
                                                     </ul>
                             </ul>
@@ -123,6 +126,9 @@
                     </li>
                                     <li class="tocify-item level-2" data-unique="order-api-POSTapi-v1-orders-direct-checkout">
                         <a href="#order-api-POSTapi-v1-orders-direct-checkout">2. direct checkout</a>
+                    </li>
+                                    <li class="tocify-item level-2" data-unique="order-api-POSTapi-v1-promo-codes-validate">
+                        <a href="#order-api-POSTapi-v1-promo-codes-validate">3. validate voucher ( Apply Voucher )</a>
                     </li>
                                                     </ul>
                             </ul>
@@ -146,7 +152,7 @@
                             <li><a href="http://github.com/knuckleswtf/scribe">Documentation powered by Scribe ✍</a></li>
                     </ul>
         <ul class="toc-footer" id="last-updated">
-        <li>Last updated: February 17 2025</li>
+        <li>Last updated: March 17 2025</li>
     </ul>
 </div>
 
@@ -174,7 +180,9 @@ You can switch the language used with the tabs at the top right (or from the nav
 <p>
 </p>
 
-
+<p><strong>type</strong></br>
+2: insights<br>
+3: partners<br></p>
 
 <span id="example-requests-GETapi-v1-blogs">
 <blockquote>Example request:</blockquote>
@@ -186,9 +194,10 @@ You can switch the language used with the tabs at the top right (or from the nav
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"length\": \"10\",
-    \"start\": \"0\",
-    \"type\": \"1\",
+    \"length\": 10,
+    \"start\": 0,
+    \"type\": 1,
+    \"category\": \"test\",
     \"created_date\": \"2024-09-25 to 2024-09-27\"
 }"
 </code></pre></div>
@@ -205,9 +214,10 @@ const headers = {
 };
 
 let body = {
-    "length": "10",
-    "start": "0",
-    "type": "1",
+    "length": 10,
+    "start": 0,
+    "type": 1,
+    "category": "test",
     "created_date": "2024-09-25 to 2024-09-27"
 };
 
@@ -230,7 +240,7 @@ fetch(url, {
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
 x-ratelimit-limit: 100
-x-ratelimit-remaining: 93
+x-ratelimit-remaining: 96
 access-control-allow-origin: *
  </code></pre>
         </details>         <pre>
@@ -238,8 +248,12 @@ access-control-allow-origin: *
 <code class="language-json">{
     &quot;blogs&quot;: [],
     &quot;draw&quot;: null,
+    &quot;start&quot;: 0,
+    &quot;length&quot;: 10,
+    &quot;hasMore&quot;: false,
+    &quot;nextStart&quot;: null,
     &quot;recordsFiltered&quot;: 0,
-    &quot;recordsTotal&quot;: 1
+    &quot;recordsTotal&quot;: 0
 }</code>
  </pre>
     </span>
@@ -304,8 +318,8 @@ access-control-allow-origin: *
         </p>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <p>
-            <b><code>length</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
-                <input type="text"
+            <b><code>length</code></b>&nbsp;&nbsp;<small>integer</small>  &nbsp;
+                <input type="number"
                name="length"
                data-endpoint="GETapi-v1-blogs"
                value="10"
@@ -314,8 +328,8 @@ access-control-allow-origin: *
 <p>The length of the table.</p>
         </p>
                 <p>
-            <b><code>start</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
-                <input type="text"
+            <b><code>start</code></b>&nbsp;&nbsp;<small>integer</small>  &nbsp;
+                <input type="number"
                name="start"
                data-endpoint="GETapi-v1-blogs"
                value="0"
@@ -324,14 +338,24 @@ access-control-allow-origin: *
 <p>The start of the record of the table.</p>
         </p>
                 <p>
-            <b><code>type</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
-                <input type="text"
+            <b><code>type</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
                name="type"
                data-endpoint="GETapi-v1-blogs"
                value="1"
                data-component="body" hidden>
     <br>
 <p>The type of the filter.</p>
+        </p>
+                <p>
+            <b><code>category</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="category"
+               data-endpoint="GETapi-v1-blogs"
+               value="test"
+               data-component="body" hidden>
+    <br>
+<p>The category of the blog ( id, title ) .</p>
         </p>
                 <p>
             <b><code>created_date</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
@@ -400,7 +424,7 @@ fetch(url, {
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
 x-ratelimit-limit: 100
-x-ratelimit-remaining: 92
+x-ratelimit-remaining: 94
 access-control-allow-origin: *
  </code></pre>
         </details>         <pre>
@@ -420,14 +444,14 @@ access-control-allow-origin: *
         },
         {
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\app\\Services\\BlogService.php&quot;,
-            &quot;line&quot;: 411,
+            &quot;line&quot;: 492,
             &quot;function&quot;: &quot;decode&quot;,
             &quot;class&quot;: &quot;App\\Helpers\\Helper&quot;,
             &quot;type&quot;: &quot;::&quot;
         },
         {
             &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\app\\Http\\Controllers\\Api\\BlogController.php&quot;,
-            &quot;line&quot;: 53,
+            &quot;line&quot;: 58,
             &quot;function&quot;: &quot;_oneBlog&quot;,
             &quot;class&quot;: &quot;App\\Services\\BlogService&quot;,
             &quot;type&quot;: &quot;::&quot;
@@ -970,20 +994,137 @@ access-control-allow-origin: *
         </p>
         </form>
 
-            <h2 id="blog-api-POSTapi-v1-blogs-one-blog-by-slug">2. Get one blog detail By slug</h2>
+            <h2 id="blog-api-GETapi-v1-blogs-categories">4. Get Blog Categories</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-POSTapi-v1-blogs-one-blog-by-slug">
+<span id="example-requests-GETapi-v1-blogs-categories">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://localhost/api/v1/blogs/one-blog-by-slug" \
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/v1/blogs/categories" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/v1/blogs/categories"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-v1-blogs-categories">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary>
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+x-ratelimit-limit: 100
+x-ratelimit-remaining: 95
+access-control-allow-origin: *
+ </code></pre>
+        </details>         <pre>
+
+<code class="language-json">{
+    &quot;categories&quot;: []
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-v1-blogs-categories" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-v1-blogs-categories"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-blogs-categories"></code></pre>
+</span>
+<span id="execution-error-GETapi-v1-blogs-categories" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-v1-blogs-categories"></code></pre>
+</span>
+<form id="form-GETapi-v1-blogs-categories" data-method="GET"
+      data-path="api/v1/blogs/categories"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-blogs-categories', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-v1-blogs-categories"
+                    onclick="tryItOut('GETapi-v1-blogs-categories');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-v1-blogs-categories"
+                    onclick="cancelTryOut('GETapi-v1-blogs-categories');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-v1-blogs-categories" hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/blogs/categories</code></b>
+        </p>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/blogs/categories</code></b>
+        </p>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/blogs/categories</code></b>
+        </p>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>api/v1/blogs/categories</code></b>
+        </p>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/v1/blogs/categories</code></b>
+        </p>
+            <p>
+            <small class="badge badge-grey">OPTIONS</small>
+            <b><code>api/v1/blogs/categories</code></b>
+        </p>
+                    </form>
+
+            <h2 id="blog-api-GETapi-v1-blogs-one-blog-by-slug">3. Get one blog detail By slug</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-v1-blogs-one-blog-by-slug">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/v1/blogs/one-blog-by-slug" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1007,52 +1148,572 @@ let body = {
 };
 
 fetch(url, {
-    method: "POST",
+    method: "GET",
     headers,
     body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
 
-<span id="example-responses-POSTapi-v1-blogs-one-blog-by-slug">
-</span>
-<span id="execution-results-POSTapi-v1-blogs-one-blog-by-slug" hidden>
+<span id="example-responses-GETapi-v1-blogs-one-blog-by-slug">
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary>
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+x-ratelimit-limit: 100
+x-ratelimit-remaining: 93
+access-control-allow-origin: *
+ </code></pre>
+        </details>         <pre>
+
+<code class="language-json">{
+    &quot;message&quot;: &quot;Attempt to read property \&quot;author\&quot; on null&quot;,
+    &quot;exception&quot;: &quot;ErrorException&quot;,
+    &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\app\\Services\\BlogService.php&quot;,
+    &quot;line&quot;: 530,
+    &quot;trace&quot;: [
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\app\\Services\\BlogService.php&quot;,
+            &quot;line&quot;: 530,
+            &quot;function&quot;: &quot;handleError&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Bootstrap\\HandleExceptions&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\app\\Http\\Controllers\\Api\\BlogController.php&quot;,
+            &quot;line&quot;: 71,
+            &quot;function&quot;: &quot;oneBlogBySlug&quot;,
+            &quot;class&quot;: &quot;App\\Services\\BlogService&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Controller.php&quot;,
+            &quot;line&quot;: 54,
+            &quot;function&quot;: &quot;oneBlogBySlug&quot;,
+            &quot;class&quot;: &quot;App\\Http\\Controllers\\Api\\BlogController&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php&quot;,
+            &quot;line&quot;: 45,
+            &quot;function&quot;: &quot;callAction&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Controller&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php&quot;,
+            &quot;line&quot;: 262,
+            &quot;function&quot;: &quot;dispatch&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\ControllerDispatcher&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php&quot;,
+            &quot;line&quot;: 205,
+            &quot;function&quot;: &quot;runController&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Route&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 721,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Route&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 128,
+            &quot;function&quot;: &quot;Illuminate\\Routing\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\app\\Http\\Middleware\\APIVersion.php&quot;,
+            &quot;line&quot;: 20,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;App\\Http\\Middleware\\APIVersion&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php&quot;,
+            &quot;line&quot;: 50,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Middleware\\SubstituteBindings&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php&quot;,
+            &quot;line&quot;: 127,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php&quot;,
+            &quot;line&quot;: 103,
+            &quot;function&quot;: &quot;handleRequest&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Middleware\\ThrottleRequests&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\ThrottleRequests.php&quot;,
+            &quot;line&quot;: 55,
+            &quot;function&quot;: &quot;handleRequestUsingNamedLimiter&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Middleware\\ThrottleRequests&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Middleware\\ThrottleRequests&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 103,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 723,
+            &quot;function&quot;: &quot;then&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 698,
+            &quot;function&quot;: &quot;runRouteWithinStack&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 662,
+            &quot;function&quot;: &quot;runRoute&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php&quot;,
+            &quot;line&quot;: 651,
+            &quot;function&quot;: &quot;dispatchToRoute&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;dispatch&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Routing\\Router&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 128,
+            &quot;function&quot;: &quot;Illuminate\\Foundation\\Http\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\barryvdh\\laravel-debugbar\\src\\Middleware\\InjectDebugbar.php&quot;,
+            &quot;line&quot;: 59,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Barryvdh\\Debugbar\\Middleware\\InjectDebugbar&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php&quot;,
+            &quot;line&quot;: 21,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php&quot;,
+            &quot;line&quot;: 31,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php&quot;,
+            &quot;line&quot;: 21,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php&quot;,
+            &quot;line&quot;: 40,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\TrimStrings&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize.php&quot;,
+            &quot;line&quot;: 27,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php&quot;,
+            &quot;line&quot;: 86,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\fruitcake\\laravel-cors\\src\\HandleCors.php&quot;,
+            &quot;line&quot;: 52,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Fruitcake\\Cors\\HandleCors&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\fideloper\\proxy\\src\\TrustProxies.php&quot;,
+            &quot;line&quot;: 57,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 167,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Fideloper\\Proxy\\TrustProxies&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php&quot;,
+            &quot;line&quot;: 103,
+            &quot;function&quot;: &quot;Illuminate\\Pipeline\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php&quot;,
+            &quot;line&quot;: 142,
+            &quot;function&quot;: &quot;then&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Pipeline\\Pipeline&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php&quot;,
+            &quot;line&quot;: 111,
+            &quot;function&quot;: &quot;sendRequestThroughRouter&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 299,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Http\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 287,
+            &quot;function&quot;: &quot;callLaravelOrLumenRoute&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 89,
+            &quot;function&quot;: &quot;makeApiCall&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 45,
+            &quot;function&quot;: &quot;makeResponseCall&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Strategies\\Responses\\ResponseCalls.php&quot;,
+            &quot;line&quot;: 35,
+            &quot;function&quot;: &quot;makeResponseCallIfConditionsPass&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php&quot;,
+            &quot;line&quot;: 222,
+            &quot;function&quot;: &quot;__invoke&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Strategies\\Responses\\ResponseCalls&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php&quot;,
+            &quot;line&quot;: 179,
+            &quot;function&quot;: &quot;iterateThroughStrategies&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Extractor&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Extracting\\Extractor.php&quot;,
+            &quot;line&quot;: 116,
+            &quot;function&quot;: &quot;fetchResponses&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Extractor&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php&quot;,
+            &quot;line&quot;: 123,
+            &quot;function&quot;: &quot;processRoute&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Extracting\\Extractor&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php&quot;,
+            &quot;line&quot;: 80,
+            &quot;function&quot;: &quot;extractEndpointsInfoFromLaravelApp&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\GroupedEndpoints\\GroupedEndpointsFromApp.php&quot;,
+            &quot;line&quot;: 56,
+            &quot;function&quot;: &quot;extractEndpointsInfoAndWriteToDisk&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\knuckleswtf\\scribe\\src\\Commands\\GenerateDocumentation.php&quot;,
+            &quot;line&quot;: 55,
+            &quot;function&quot;: &quot;get&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\GroupedEndpoints\\GroupedEndpointsFromApp&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php&quot;,
+            &quot;line&quot;: 36,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Knuckles\\Scribe\\Commands\\GenerateDocumentation&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Util.php&quot;,
+            &quot;line&quot;: 40,
+            &quot;function&quot;: &quot;Illuminate\\Container\\{closure}&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\BoundMethod&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php&quot;,
+            &quot;line&quot;: 93,
+            &quot;function&quot;: &quot;unwrapIfClosure&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\Util&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\BoundMethod.php&quot;,
+            &quot;line&quot;: 37,
+            &quot;function&quot;: &quot;callBoundMethod&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\BoundMethod&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Container\\Container.php&quot;,
+            &quot;line&quot;: 653,
+            &quot;function&quot;: &quot;call&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\BoundMethod&quot;,
+            &quot;type&quot;: &quot;::&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php&quot;,
+            &quot;line&quot;: 136,
+            &quot;function&quot;: &quot;call&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Container\\Container&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Command\\Command.php&quot;,
+            &quot;line&quot;: 298,
+            &quot;function&quot;: &quot;execute&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Console\\Command&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php&quot;,
+            &quot;line&quot;: 121,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Command\\Command&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Application.php&quot;,
+            &quot;line&quot;: 1040,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Console\\Command&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Application.php&quot;,
+            &quot;line&quot;: 301,
+            &quot;function&quot;: &quot;doRunCommand&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\symfony\\console\\Application.php&quot;,
+            &quot;line&quot;: 171,
+            &quot;function&quot;: &quot;doRun&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Application.php&quot;,
+            &quot;line&quot;: 94,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Symfony\\Component\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php&quot;,
+            &quot;line&quot;: 129,
+            &quot;function&quot;: &quot;run&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Console\\Application&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        },
+        {
+            &quot;file&quot;: &quot;C:\\xampp\\htdocs\\intrix-backoffice\\artisan&quot;,
+            &quot;line&quot;: 37,
+            &quot;function&quot;: &quot;handle&quot;,
+            &quot;class&quot;: &quot;Illuminate\\Foundation\\Console\\Kernel&quot;,
+            &quot;type&quot;: &quot;-&gt;&quot;
+        }
+    ]
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-v1-blogs-one-blog-by-slug" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTapi-v1-blogs-one-blog-by-slug"></span>:
+                id="execution-response-status-GETapi-v1-blogs-one-blog-by-slug"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-v1-blogs-one-blog-by-slug"></code></pre>
+    <pre class="json"><code id="execution-response-content-GETapi-v1-blogs-one-blog-by-slug"></code></pre>
 </span>
-<span id="execution-error-POSTapi-v1-blogs-one-blog-by-slug" hidden>
+<span id="execution-error-GETapi-v1-blogs-one-blog-by-slug" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-v1-blogs-one-blog-by-slug"></code></pre>
+    <pre><code id="execution-error-message-GETapi-v1-blogs-one-blog-by-slug"></code></pre>
 </span>
-<form id="form-POSTapi-v1-blogs-one-blog-by-slug" data-method="POST"
+<form id="form-GETapi-v1-blogs-one-blog-by-slug" data-method="GET"
       data-path="api/v1/blogs/one-blog-by-slug"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-blogs-one-blog-by-slug', this);">
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-v1-blogs-one-blog-by-slug', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-v1-blogs-one-blog-by-slug"
-                    onclick="tryItOut('POSTapi-v1-blogs-one-blog-by-slug');">Try it out ⚡
+                    id="btn-tryout-GETapi-v1-blogs-one-blog-by-slug"
+                    onclick="tryItOut('GETapi-v1-blogs-one-blog-by-slug');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-v1-blogs-one-blog-by-slug"
-                    onclick="cancelTryOut('POSTapi-v1-blogs-one-blog-by-slug');" hidden>Cancel 🛑
+                    id="btn-canceltryout-GETapi-v1-blogs-one-blog-by-slug"
+                    onclick="cancelTryOut('GETapi-v1-blogs-one-blog-by-slug');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-v1-blogs-one-blog-by-slug" hidden>Send Request 💥
+                    id="btn-executetryout-GETapi-v1-blogs-one-blog-by-slug" hidden>Send Request 💥
             </button>
             </h3>
             <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/v1/blogs/one-blog-by-slug</code></b>
+        </p>
+            <p>
             <small class="badge badge-black">POST</small>
+            <b><code>api/v1/blogs/one-blog-by-slug</code></b>
+        </p>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/v1/blogs/one-blog-by-slug</code></b>
+        </p>
+            <p>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>api/v1/blogs/one-blog-by-slug</code></b>
+        </p>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/v1/blogs/one-blog-by-slug</code></b>
+        </p>
+            <p>
+            <small class="badge badge-grey">OPTIONS</small>
             <b><code>api/v1/blogs/one-blog-by-slug</code></b>
         </p>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
@@ -1060,7 +1721,7 @@ fetch(url, {
             <b><code>slug</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
                 <input type="text"
                name="slug"
-               data-endpoint="POSTapi-v1-blogs-one-blog-by-slug"
+               data-endpoint="GETapi-v1-blogs-one-blog-by-slug"
                value="1"
                data-component="body" hidden>
     <br>
@@ -1093,7 +1754,7 @@ fetch(url, {
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost/api/v1/carts/add" \
+    "http://localhost/api/v1/carts/add?session_key=abcd-1234" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1111,6 +1772,12 @@ fetch(url, {
     <pre><code class="language-javascript">const url = new URL(
     "http://localhost/api/v1/carts/add"
 );
+
+const params = {
+    "session_key": "abcd-1234",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
     "Content-Type": "application/json",
@@ -1175,7 +1842,18 @@ fetch(url, {
             <small class="badge badge-black">POST</small>
             <b><code>api/v1/carts/add</code></b>
         </p>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                    <p>
+                <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="session_key"
+               data-endpoint="POSTapi-v1-carts-add"
+               value="abcd-1234"
+               data-component="query" hidden>
+    <br>
+<p>optional The unique identifier for the cart. Used to add more product to the same cart</p>
+            </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <p>
             <b><code>product_code</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
                 <input type="text"
@@ -1184,7 +1862,7 @@ fetch(url, {
                value="5-IN-1"
                data-component="body" hidden>
     <br>
-<p>The product_code of the prodcut.</p>
+<p>The product_code of the product.</p>
         </p>
                 <p>
             <b><code>color</code></b>&nbsp;&nbsp;<small>required</small>     <i>optional</i> &nbsp;
@@ -1260,7 +1938,7 @@ fetch(url, {
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost/api/v1/carts/update" \
+    "http://localhost/api/v1/carts/update?session_key=abcd-1234" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1280,6 +1958,12 @@ fetch(url, {
     <pre><code class="language-javascript">const url = new URL(
     "http://localhost/api/v1/carts/update"
 );
+
+const params = {
+    "session_key": "abcd-1234",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
     "Content-Type": "application/json",
@@ -1346,7 +2030,18 @@ fetch(url, {
             <small class="badge badge-black">POST</small>
             <b><code>api/v1/carts/update</code></b>
         </p>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                    <p>
+                <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="session_key"
+               data-endpoint="POSTapi-v1-carts-update"
+               value="abcd-1234"
+               data-component="query" hidden>
+    <br>
+<p>The unique identifier for the cart. Used to add more product to the update the cart</p>
+            </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <p>
             <b><code>product_code</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
                 <input type="text"
@@ -1355,7 +2050,7 @@ fetch(url, {
                value="5-IN-1"
                data-component="body" hidden>
     <br>
-<p>The product_code of the prodcut.</p>
+<p>The product_code of the product.</p>
         </p>
                 <p>
             <b><code>color</code></b>&nbsp;&nbsp;<small>required</small>     <i>optional</i> &nbsp;
@@ -1483,7 +2178,7 @@ fetch(url, {
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
 x-ratelimit-limit: 100
-x-ratelimit-remaining: 96
+x-ratelimit-remaining: 99
 access-control-allow-origin: *
  </code></pre>
         </details>         <pre>
@@ -1683,7 +2378,7 @@ fetch(url, {
         </p>
         </form>
 
-            <h2 id="cart-api-POSTapi-v1-carts-delete-cart-item">4. Delete Cart Item</h2>
+            <h2 id="cart-api-POSTapi-v1-carts-delete-cart-item">5. Delete Cart Item</h2>
 
 <p>
 </p>
@@ -1700,7 +2395,7 @@ fetch(url, {
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"session_key\": \"kn1i23onlas1\",
+    \"session_key\": \"quo\",
     \"id\": 1,
     \"cart_item\": 1
 }"
@@ -1718,7 +2413,7 @@ const headers = {
 };
 
 let body = {
-    "session_key": "kn1i23onlas1",
+    "session_key": "quo",
     "id": 1,
     "cart_item": 1
 };
@@ -1778,10 +2473,10 @@ fetch(url, {
                 <input type="text"
                name="session_key"
                data-endpoint="POSTapi-v1-carts-delete-cart-item"
-               value="kn1i23onlas1"
+               value="quo"
                data-component="body" hidden>
     <br>
-<p>The session_key of the cart. Required only on second time</p>
+<p>The session_key of the cart.  kn1i23onlas1</p>
         </p>
                 <p>
             <b><code>id</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
@@ -1869,7 +2564,7 @@ fetch(url, {
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
 x-ratelimit-limit: 100
-x-ratelimit-remaining: 95
+x-ratelimit-remaining: 98
 access-control-allow-origin: *
  </code></pre>
         </details>         <pre>
@@ -2470,7 +3165,7 @@ fetch(url, {
                value="5-IN-1"
                data-component="body" hidden>
     <br>
-<p>The product_code of the prodcut.</p>
+<p>The product_code of the product.</p>
         </p>
                 <p>
             <b><code>color</code></b>&nbsp;&nbsp;<small>required</small>     <i>optional</i> &nbsp;
@@ -2624,6 +3319,192 @@ fetch(url, {
         </p>
         </form>
 
+            <h2 id="order-api-POSTapi-v1-promo-codes-validate">3. validate voucher ( Apply Voucher )</h2>
+
+<p>
+</p>
+
+<p><strong>payment_plan</strong></br>
+1: upfront<br>
+2: monthly<br>
+3: outright<br></p>
+<p><strong>color</strong></br>
+1: CHROME<br>
+2: MATTE BLACK<br>
+3: SATIN GOLD<br>
+4: GUNMETAL GREY<br></p>
+<p><strong>type</strong></br>
+1: BUY NOW<br>
+2: CART<br></p>
+
+<span id="example-requests-POSTapi-v1-promo-codes-validate">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost/api/v1/promo-codes/validate?session_key=abcd-1234" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"type\": \"1\",
+    \"product_code\": \"5-IN-1\",
+    \"color\": \"CHROME\",
+    \"quantity\": \"1\",
+    \"promo_code\": 0,
+    \"payment_plan\": 1
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/v1/promo-codes/validate"
+);
+
+const params = {
+    "session_key": "abcd-1234",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "type": "1",
+    "product_code": "5-IN-1",
+    "color": "CHROME",
+    "quantity": "1",
+    "promo_code": 0,
+    "payment_plan": 1
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-promo-codes-validate">
+</span>
+<span id="execution-results-POSTapi-v1-promo-codes-validate" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-promo-codes-validate"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-promo-codes-validate"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-promo-codes-validate" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-promo-codes-validate"></code></pre>
+</span>
+<form id="form-POSTapi-v1-promo-codes-validate" data-method="POST"
+      data-path="api/v1/promo-codes/validate"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      data-headers='{"Content-Type":"application\/json","Accept":"application\/json"}'
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-promo-codes-validate', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-promo-codes-validate"
+                    onclick="tryItOut('POSTapi-v1-promo-codes-validate');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-promo-codes-validate"
+                    onclick="cancelTryOut('POSTapi-v1-promo-codes-validate');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-promo-codes-validate" hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/promo-codes/validate</code></b>
+        </p>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                    <p>
+                <b><code>session_key</code></b>&nbsp;&nbsp;<small>string</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="session_key"
+               data-endpoint="POSTapi-v1-promo-codes-validate"
+               value="abcd-1234"
+               data-component="query" hidden>
+    <br>
+<p>optional The unique identifier for the cart. Must be provided if type is 2</p>
+            </p>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <p>
+            <b><code>type</code></b>&nbsp;&nbsp;<small>required</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="type"
+               data-endpoint="POSTapi-v1-promo-codes-validate"
+               value="1"
+               data-component="body" hidden>
+    <br>
+<p>integer To verify cart or buy now product .</p>
+        </p>
+                <p>
+            <b><code>product_code</code></b>&nbsp;&nbsp;<small>string</small>  &nbsp;
+                <input type="text"
+               name="product_code"
+               data-endpoint="POSTapi-v1-promo-codes-validate"
+               value="5-IN-1"
+               data-component="body" hidden>
+    <br>
+<p>The product_code of the product.</p>
+        </p>
+                <p>
+            <b><code>color</code></b>&nbsp;&nbsp;<small>required</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="color"
+               data-endpoint="POSTapi-v1-promo-codes-validate"
+               value="CHROME"
+               data-component="body" hidden>
+    <br>
+<p>strong The color of the product.</p>
+        </p>
+                <p>
+            <b><code>quantity</code></b>&nbsp;&nbsp;<small>required</small>     <i>optional</i> &nbsp;
+                <input type="text"
+               name="quantity"
+               data-endpoint="POSTapi-v1-promo-codes-validate"
+               value="1"
+               data-component="body" hidden>
+    <br>
+<p>integer The quantity of the product.</p>
+        </p>
+                <p>
+            <b><code>promo_code</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="promo_code"
+               data-endpoint="POSTapi-v1-promo-codes-validate"
+               value="0"
+               data-component="body" hidden>
+    <br>
+<p>The ID of the promotion/voucher to apply.</p>
+        </p>
+                <p>
+            <b><code>payment_plan</code></b>&nbsp;&nbsp;<small>integer</small>     <i>optional</i> &nbsp;
+                <input type="number"
+               name="payment_plan"
+               data-endpoint="POSTapi-v1-promo-codes-validate"
+               value="1"
+               data-component="body" hidden>
+    <br>
+<p>nullable The payment_plan integer for the order.</p>
+        </p>
+        </form>
+
         <h1 id="promo-code-api">Promo Code API</h1>
 
     
@@ -2687,7 +3568,7 @@ fetch(url, {
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
 x-ratelimit-limit: 100
-x-ratelimit-remaining: 94
+x-ratelimit-remaining: 97
 access-control-allow-origin: *
  </code></pre>
         </details>         <pre>

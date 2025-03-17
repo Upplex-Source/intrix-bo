@@ -195,14 +195,15 @@ class Ipay88Service {
 
         if( $order ){
             $orderTransaction = OrderTransaction::where( 'order_id', $order->idate )->first(); 
-            $order->status = $request->Status == 0 ? 20 : 10;
+            $returnStatus = intval( $request->Status );
+            $order->status = $returnStatus == 0 ? 20 : 10;
 
-            if( $request->Status == 1 ){
+            if( $returnStatus == 1 ){
                 $orderStatus = true;
                 $orderTransaction->status = 11;
             }
 
-            if( $request->TxnStatus != 0 ){
+            if( $returnStatus != 0 ){
                 $order->payment_attempt += 1;
                 $orderTransaction->status = 20;
             }

@@ -59,7 +59,7 @@ endpoints:
           cache-control: 'no-cache, private'
           content-type: application/json
           x-ratelimit-limit: '100'
-          x-ratelimit-remaining: '95'
+          x-ratelimit-remaining: '98'
           access-control-allow-origin: '*'
         description: null
     responseFields: []
@@ -246,7 +246,7 @@ endpoints:
     bodyParameters:
       product_code:
         name: product_code
-        description: 'The product_code of the prodcut.'
+        description: 'The product_code of the product.'
         required: true
         example: 5-IN-1
         type: string
@@ -348,6 +348,86 @@ endpoints:
         required: false
         example: 'Be careful'
         type: string
+        custom: []
+      payment_plan:
+        name: payment_plan
+        description: 'nullable The payment_plan integer for the order.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/promo-codes/validate
+    metadata:
+      title: '3. validate voucher ( Apply Voucher )'
+      description: |-
+        <strong>payment_plan</strong></br>
+        1: upfront<br>
+        2: monthly<br>
+        3: outright<br>
+
+        <strong>color</strong></br>
+        1: CHROME<br>
+        2: MATTE BLACK<br>
+        3: SATIN GOLD<br>
+        4: GUNMETAL GREY<br>
+
+        <strong>type</strong></br>
+        1: BUY NOW<br>
+        2: CART<br>
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      session_key:
+        name: session_key
+        description: 'optional The unique identifier for the cart. Must be provided if type is 2'
+        required: false
+        example: abcd-1234
+        type: string
+        custom: []
+    bodyParameters:
+      type:
+        name: type
+        description: 'integer To verify cart or buy now product .'
+        required: false
+        example: '1'
+        type: required
+        custom: []
+      product_code:
+        name: product_code
+        description: 'The product_code of the product.'
+        required: true
+        example: 5-IN-1
+        type: string
+        custom: []
+      color:
+        name: color
+        description: 'strong The color of the product.'
+        required: false
+        example: CHROME
+        type: required
+        custom: []
+      quantity:
+        name: quantity
+        description: 'integer The quantity of the product.'
+        required: false
+        example: '1'
+        type: required
+        custom: []
+      promo_code:
+        name: promo_code
+        description: 'The ID of the promotion/voucher to apply.'
+        required: false
+        example: 0
+        type: integer
         custom: []
       payment_plan:
         name: payment_plan

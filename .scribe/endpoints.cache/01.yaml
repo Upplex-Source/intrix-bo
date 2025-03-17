@@ -26,11 +26,18 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
-    queryParameters: []
+    queryParameters:
+      session_key:
+        name: session_key
+        description: 'optional The unique identifier for the cart. Used to add more product to the same cart'
+        required: false
+        example: abcd-1234
+        type: string
+        custom: []
     bodyParameters:
       product_code:
         name: product_code
-        description: 'The product_code of the prodcut.'
+        description: 'The product_code of the product.'
         required: true
         example: 5-IN-1
         type: string
@@ -97,11 +104,18 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
-    queryParameters: []
+    queryParameters:
+      session_key:
+        name: session_key
+        description: 'The unique identifier for the cart. Used to add more product to the update the cart'
+        required: true
+        example: abcd-1234
+        type: string
+        custom: []
     bodyParameters:
       product_code:
         name: product_code
-        description: 'The product_code of the prodcut.'
+        description: 'The product_code of the product.'
         required: true
         example: 5-IN-1
         type: string
@@ -201,7 +215,7 @@ endpoints:
           cache-control: 'no-cache, private'
           content-type: application/json
           x-ratelimit-limit: '100'
-          x-ratelimit-remaining: '96'
+          x-ratelimit-remaining: '99'
           access-control-allow-origin: '*'
         description: null
     responseFields: []
@@ -241,7 +255,7 @@ endpoints:
       - POST
     uri: api/v1/carts/delete-cart-item
     metadata:
-      title: '4. Delete Cart Item'
+      title: '5. Delete Cart Item'
       description: '<aside class="notice">session_key or cart id can be used to delete the cart</aside>'
       authenticated: false
       custom: []
@@ -253,9 +267,9 @@ endpoints:
     bodyParameters:
       session_key:
         name: session_key
-        description: 'The session_key of the cart. Required only on second time'
+        description: 'The session_key of the cart.  kn1i23onlas1'
         required: false
-        example: kn1i23onlas1
+        example: quo
         type: string
         custom: []
       id:
