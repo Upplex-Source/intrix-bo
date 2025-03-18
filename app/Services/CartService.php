@@ -324,6 +324,9 @@ class CartService {
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
                 'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? $meta->productVariant->id : null,
+                'payment_plan' => $meta->payment_plan,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
             ];
@@ -723,9 +726,35 @@ class CartService {
             ], 500 );
         }
 
+        $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? $meta->productVariant->id : null,
+                'payment_plan' => $meta->payment_plan,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
+            ];
+        });
+
+        if($updateCart->voucher){
+            $updateCart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
+            ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
+        }
+
         return response()->json( [
             'message' => '',
             'message_key' => 'update_cart_success',
+            'sesion_key' => $updateCart->session_key,
+            'cart_id' => $updateCart->id,
+            'total' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
+            'cart_metas' => $cartMetas,
+            'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
+            'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
+            'tax' =>  Helper::numberFormatV2($updateCart->tax, 2,false, true),
+            'voucher' => $updateCart->voucher ? $updateCart->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
     }
 
@@ -803,9 +832,35 @@ class CartService {
             ], 500 );
         }
 
+        $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? $meta->productVariant->id : null,
+                'payment_plan' => $meta->payment_plan,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
+            ];
+        });
+
+        if($updateCart->voucher){
+            $updateCart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
+            ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
+        }
+
         return response()->json( [
             'message' => '',
             'message_key' => 'update_cart_address_success',
+            'sesion_key' => $updateCart->session_key,
+            'cart_id' => $updateCart->id,
+            'total' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
+            'cart_metas' => $cartMetas,
+            'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
+            'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
+            'tax' =>  Helper::numberFormatV2($updateCart->tax, 2,false, true),
+            'voucher' => $updateCart->voucher ? $updateCart->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
     }
 
