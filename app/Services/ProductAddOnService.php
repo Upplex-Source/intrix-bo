@@ -188,7 +188,7 @@ class ProductAddOnService
             $updateProductAddOn->features = $request->features ? $request->features : $updateProductAddOn->features;
             $updateProductAddOn->whats_included = $request->whats_included ? $request->sku : $updateProductAddOn->whats_included;
             $updateProductAddOn->price = $request->price ? $request->price : $updateProductAddOn->price;
-            $updateProductAddOn->discount_price = $request->discount_price ? $request->sku : $updateProductAddOn->discount_price;
+            $updateProductAddOn->discount_price = $request->discount_price ? $request->discount_price : $updateProductAddOn->discount_price;
 
             $image = explode( ',', $request->image );
 

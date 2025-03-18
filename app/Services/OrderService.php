@@ -33,6 +33,8 @@ use App\Models\{
     UserBundleHistoryMeta,
     UserBundleTransaction,
     Guest,
+    ProductAddOn,
+    ProductFreeGift,
 };
 
 use Helper;
@@ -893,7 +895,7 @@ class OrderService
                     }
         
                     if ($cart->status != 10) {
-                        return $fail('The cart status must be 10.');
+                        return $fail('Cart has Expired');
                     }
         
                     if ($cart->step != 2) {
@@ -1015,34 +1017,46 @@ class OrderService
                 'last_visit' => now(), // Store current timestamp
                 'country' => $request->country,
                 'company_name' => $request->company_name,
+                'add_on_id' => $userCart->add_on_id,
+                'free_gift_id' => $userCart->free_gift_id,
             ] );
+
+            if( $userCart->add_on_id ) {
+                $addOn = $userCart->addOn;
+                $orderPrice += $addOn->discount_price ? $addOn->discount_price : 0;
+            }
+    
+            if( $userCart->free_gift_id ) {
+                $freeGift = $userCart->freeGift;
+                $orderPrice += $freeGift->discount_price ? $freeGift->discount_price : 0;
+            }
 
             foreach( $userCart->cartMetas as $checkoutCart ) {
                 $productPrice = $checkoutCart->product->price;
 
                 switch ( $checkoutCart->payment_plan ) {
                     case 1:
-                        $productPrice = $checkoutCart->productVariant->upfront;
+                        $productPrice = $checkoutCart->productVariant ? $checkoutCart->productVariant->upfront : $checkoutCart->product->price;
                         break;
                     case 2:
-                        $productPrice = $checkoutCart->productVariant->monthly;
+                        $productPrice = $checkoutCart->productVariant ? $checkoutCart->productVariant->monthly : $checkoutCart->product->price;
                         break;
                     case 3:
-                        $productPrice = $checkoutCart->productVariant->outright;
+                        $productPrice = $checkoutCart->productVariant ? $checkoutCart->productVariant->outright : $checkoutCart->product->price;
                         break;
                 }
     
                 $orderMeta = OrderMeta::create( [
                     'order_id' => $order->id,
                     'product_id' => $checkoutCart->product->id,
-                    'product_variant_id' => $checkoutCart->productVariant->id,
+                    'product_variant_id' => $checkoutCart->productVariant ? $checkoutCart->productVariant->id : null,
                     'total_price' =>  $checkoutCart->quantity * $productPrice,
                     'quantity' => $checkoutCart->quantity,
                 ] );
     
                 $orderPrice += $orderMeta->total_price;
     
-                $checkoutCart->status = 20;
+                // $checkoutCart->status = 20;
                 $checkoutCart->save();
     
                 $order->subtotal = $orderPrice;
@@ -1120,13 +1134,17 @@ class OrderService
             $order->total_price += Helper::numberFormatV2($order->tax,2,false,true);
 
             if (!$userCart->cartMetas->contains('status', 10)) {
-                $userCart->status = 20;
+                // $userCart->status = 20;
                 $userCart->save();
             }
             
             $userCart->save();
 
-            if( $request->test_pg ) {
+            $hasTestProduct = $userCart->cartMetas->contains(function ($cartMeta) {
+                return $cartMeta->product && $cartMeta->product->code === 'TEST';
+            });
+
+            if( $hasTestProduct ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
     
@@ -1200,7 +1218,7 @@ class OrderService
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
             ];
         });
 
@@ -1241,11 +1259,64 @@ class OrderService
             'postcode' => ['required'],
             'country' => ['required'],
             'remarks' => ['nullable'],
-            'payment_plan' => ['nullable'],
             'product_code' => [ 'required', 'exists:products,code'  ],
             'color' => [ 'required', 'exists:product_variants,color'  ],
             'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'quantity' => [ 'numeric', 'min:1'  ],
+            'add_on' => [
+                'nullable',
+                Rule::exists('product_add_ons', 'code')->where('status', 10),
+                function ($attribute, $value, $fail) use ($request) {
+                    // Ensure product_code exists
+                    if (!isset($request->product_code)) {
+                        return $fail('The product_code is required for validation.');
+                    }
+
+                    // Get the product by code
+                    $product = Product::where('code', $request->product_code)->where( 'status', 10 )->first();
+                    if (!$product) {
+                        return $fail('Invalid product code.');
+                    }
+
+                    // Get the free gift
+                    $addOn = ProductAddOn::where('code', $value)->first();
+                    if (!$addOn) {
+                        return $fail('Invalid free gift code.');
+                    }
+
+                    // Check if the product is linked to the free gift
+                    if (!$addOn->addOnProducts()->where('product_id', $product->id)->exists()) {
+                        return $fail('The selected free gift is not applicable for this product.');
+                    }
+                },
+            ],
+           'free_gift' => [
+                'nullable',
+                Rule::exists('product_free_gifts', 'code')->where('status', 10),
+                function ($attribute, $value, $fail) use ($request) {
+                    // Ensure product_code exists
+                    if (!isset($request->product_code)) {
+                        return $fail('The product_code is required for validation.');
+                    }
+
+                    // Get the product by code
+                    $product = Product::where('code', $request->product_code)->where( 'status', 10 )->first();
+                    if (!$product) {
+                        return $fail('Invalid product code.');
+                    }
+
+                    // Get the free gift
+                    $freeGift = ProductFreeGift::where('code', $value)->first();
+                    if (!$freeGift) {
+                        return $fail('Invalid free gift code.');
+                    }
+
+                    // Check if the product is linked to the free gift
+                    if (!$freeGift->freeGiftProducts()->where('product_id', $product->id)->exists()) {
+                        return $fail('The selected free gift is not applicable for this product.');
+                    }
+                },
+            ],
         ]);
 
         $validator->validate();
@@ -1278,20 +1349,20 @@ class OrderService
 
         switch ( $request->payment_plan ) {
             case 1:
-                $productPrice = $productVariant->upfront;
+                $productPrice = $productVariant ? $productVariant->upfront : $product->price;
                 break;
             case 2:
-                $productPrice = $productVariant->monthly;
+                $productPrice = $productVariant ? $productVariant->monthly : $product->price;
                 break;
             case 3:
-                $productPrice = $productVariant->outright;
+                $productPrice = $productVariant ? $productVariant->outright : $product->price;
                 break;
         }
 
         $cartMeta = CartMeta::create( [
             'cart_id' => $userCart->id ,
             'product_id' => $product->id ,
-            'product_variant_id' => $productVariant->id ,
+            'product_variant_id' => $productVariant ? $productVariant->id : null,
             'user_id' => NULL ,
             'total_price' => $productPrice * $request->quantity,
             'discount' => NULL ,
@@ -1373,14 +1444,26 @@ class OrderService
                 'last_visit' => now(), // Store current timestamp
                 'country' => $request->country,
                 'company_name' => $request->company_name,
+                'add_on_id' => $request->add_on_id,
+                'free_gift_id' => $request->free_gift_id,
             ] );
+
+            if( $request->add_on ) {
+                $addOn = ProductAddOn::where ( 'code', $request->add_on)->first();
+                $orderPrice += $addOn->discount_price ? $addOn->discount_price : 0;
+            }
+    
+            if( $request->free_gift ) {
+                $freeGift = ProductFreeGift::where ( 'code', $request->free_gift)->first();
+                $orderPrice += $freeGift->discount_price ? $freeGift->discount_price : 0;
+            }
 
             $checkoutCart = CartMeta::find( $request->cart_item );
 
             $orderMeta = OrderMeta::create( [
                 'order_id' => $order->id,
                 'product_id' => $checkoutCart->product->id,
-                'product_variant_id' => $checkoutCart->productVariant->id,
+                'product_variant_id' => $checkoutCart->productVariant ? $checkoutCart->productVariant->id : null,
                 'total_price' =>  $checkoutCart->quantity * $checkoutCart->product->price,
                 'quantity' => $checkoutCart->quantity,
             ] );
@@ -1470,7 +1553,7 @@ class OrderService
             
             $userCart->save();
 
-            if( $request->test_pg ) {
+            if( $request->product_code == 'TEST' ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
     

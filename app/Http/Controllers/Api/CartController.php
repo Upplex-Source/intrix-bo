@@ -153,7 +153,7 @@ class CartController extends Controller
     }
 
     /**
-     * 7. Update Cart Address
+     * 7. Update Cart Shipment Details
      * 
      * <aside class="notice">session_key or cart id can be used to update the cart shipment</aside>
      * 

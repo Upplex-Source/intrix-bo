@@ -56,7 +56,7 @@ class CartService {
         $user = auth()->user();
     
         // Start by querying carts for the authenticated user
-        $query = Cart::with(['cartMetas' => function ($query) {
+        $query = Cart::with(['cartMetas', 'addon', 'freeGift' => function ($query) {
                 $query->orderBy('created_at', 'DESC');
             }, 'voucher'])
             ->where('status', 10)
@@ -87,6 +87,14 @@ class CartService {
                 $cart->vendingMachine->makeHidden(['created_at', 'updated_at', 'status'])
                 ->setAttribute('operational_hour', $cart->vendingMachine->operational_hour)
                 ->setAttribute('image_path', $cart->vendingMachine->image_path);
+            }
+
+            if($cart->addOn){
+                $cart->addOn->setAttribute('image_path', $cart->addOn->image_path);
+            }
+
+            if($cart->freeGift){
+                $cart->freeGift->setAttribute('image_path', $cart->freeGift->image_path);
             }
     
             // Process each cart meta data
@@ -196,13 +204,13 @@ class CartService {
 
             switch ( $request->payment_plan ) {
                 case 1:
-                    $productPrice = $productVariant->upfront;
+                    $productPrice = $productVariant ? $productVariant->upfront : $product->price;
                     break;
                 case 2:
-                    $productPrice = $productVariant->monthly;
+                    $productPrice = $productVariant ? $productVariant->monthly : $product->price;
                     break;
                 case 3:
-                    $productPrice = $productVariant->outright;
+                    $productPrice = $productVariant ? $productVariant->outrigh : $product->pricet;
                     break;
             }
 
@@ -210,7 +218,7 @@ class CartService {
                 [
                     'cart_id' => $cart->id,
                     'product_id' => $product->id,
-                    'product_variant_id' => $productVariant->id,
+                    'product_variant_id' => $productVariant ? $productVariant->id : null,
                 ], // Search criteria
             
                 [
@@ -313,7 +321,7 @@ class CartService {
                 'subtotal' => $meta->total_price,
                 'quantity' => $meta->quantity,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
+                'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
             ];
         });
 
@@ -349,7 +357,26 @@ class CartService {
             'product_code' => [ 'nullable', 'exists:products,code'  ],
             'color' => [ 'nullable', 'exists:product_variants,title'  ],
             'quantity' => [ 'integer', 'min:1'  ],
-            'cart_item' => ['nullable', 'exists:cart_metas,id'],
+            'cart_item' => ['nullable', 'exists:cart_metas,id',
+                function ($attribute, $value, $fail) use ( $request ) {
+                    $cart = Cart::with(['cartMetas']);    
+    
+                    if ($request->has('id')) {
+                        $cart->where('id', $request->id);
+                    }
+                
+                    if ($request->has('session_key')) {
+                        $cart->where('session_key', $request->session_key);
+                    }
+                
+                    // Retrieve the cart(s) based on the applied filters
+                    $updateCart = $cart->first();
+
+                    if ( count($updateCart->cartMetas->where( 'id', $value )) == 0 ) {
+                        $fail(__('Cart Item not available'));
+                    }
+                },
+            ],
             'promo_code' => [
                 'nullable',
                 function ($attribute, $value, $fail) {
@@ -404,7 +431,7 @@ class CartService {
                 $product = Product::where('code', $cartItem->product->code )->first();
 
                 $request->merge( [
-                    'color' => $cartItem->productVariant->color
+                    'color' => $cartItem->productVariant ? $cartItem->productVariant->color : null
                 ] );
 
             }else{
@@ -428,20 +455,20 @@ class CartService {
 
                 switch ( $request->payment_plan ) {
                     case 1:
-                        $productPrice = $productVariant->upfront;
+                        $productPrice = $productVariant ? $productVariant->upfront : $product->price;
                         break;
                     case 2:
-                        $productPrice = $productVariant->monthly;
+                        $productPrice = $productVariant ? $productVariant->monthly : $product->price;
                         break;
                     case 3:
-                        $productPrice = $productVariant->outright;
+                        $productPrice = $productVariant ? $productVariant->outright : $product->price;
                         break;
                 }
 
                 if ($cartMeta) {
                     $cartMeta->update([
                         'product_id'        => $product->id,
-                        'product_variant_id'=> $productVariant->id,
+                        'product_variant_id'=> $productVariant ? $productVariant->id : null,
                         'quantity'          => $request->quantity,
                         'total_price'       => $productPrice * $request->quantity,
                         'payment_plan'      => $paymentPlan,
@@ -456,20 +483,20 @@ class CartService {
 
                 switch ( $request->payment_plan ) {
                     case 1:
-                        $productPrice = $productVariant->upfront;
+                        $productPrice = $productVariant ? $productVariant->upfront : $product->price;
                         break;
                     case 2:
-                        $productPrice = $productVariant->monthly;
+                        $productPrice = $productVariant ? $productVariant->monthly : $product->price;
                         break;
                     case 3:
-                        $productPrice = $productVariant->outright;
+                        $productPrice = $productVariant ? $productVariant->outright : $product->price;
                         break;
                 }
 
                 $cartMeta = CartMeta::create([
                     'cart_id'           => $updateCart->id,
                     'product_id'        => $product->id,
-                    'product_variant_id'=> $productVariant->id,
+                    'product_variant_id'=> $productVariant ? $productVariant->id : null,
                     'quantity'          => $request->quantity,
                     'total_price'       => $productPrice * $request->quantity,
                     'status'            => 10,
@@ -516,7 +543,7 @@ class CartService {
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 'quantity' => $meta->quantity,
             ];
         });
@@ -588,11 +615,43 @@ class CartService {
                 'nullable',
                 'required_without:free_gift',
                 Rule::exists('product_add_ons', 'code')->where('status', 10),
+                function ($attribute, $value, $fail) use ($request) {
+
+                    $cart = Cart::where('session_key', $request->session_key)->first();
+                    $cartMeta = $cart->cartMetas->pluck('product_id');
+
+                    // Get the free gift
+                    $freeGift = ProductAddOn::where('code', $value)->first();
+                    if (!$freeGift) {
+                        return $fail('Invalid free gift code.');
+                    }
+
+                    // Check if the product is linked to the free gift
+                    if (!$freeGift->addOnProducts()->whereIn('product_id', $cartMeta)->exists()) {
+                        return $fail('The selected free gift is not applicable for this product.');
+                    }
+                },
             ],
             'free_gift' => [
                 'nullable',
                 'required_without:add_on',
                 Rule::exists('product_free_gifts', 'code')->where('status', 10),
+                function ($attribute, $value, $fail) use ($request) {
+
+                    $cart = Cart::where('session_key', $request->session_key)->first();
+                    $cartMeta = $cart->cartMetas->pluck('product_id');
+
+                    // Get the free gift
+                    $freeGift = ProductFreeGift::where('code', $value)->first();
+                    if (!$freeGift) {
+                        return $fail('Invalid free gift code.');
+                    }
+
+                    // Check if the product is linked to the free gift
+                    if (!$freeGift->freeGiftProducts()->whereIn('product_id', $cartMeta)->exists()) {
+                        return $fail('The selected free gift is not applicable for this product.');
+                    }
+                },
             ],
         ] );
 
@@ -626,7 +685,7 @@ class CartService {
         try {
 
             if( $request->add_on ) {
-                $addOn = ProductAddOn::find($request->add_on);
+                $addOn = ProductAddOn::where( 'code', $request->add_on)->first();
                 if( $updateCart->addOn ){
                     $updateCart->total_price -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
                 }
@@ -635,7 +694,7 @@ class CartService {
             }
 
             if( $request->free_gift ) {
-                $freeGift = ProductFreeGift::find($request->free_gift);
+                $freeGift = ProductFreeGift::where( 'code', $request->free_gift)->first();
                 if( $updateCart->freeGift ){
                     $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                 }
@@ -668,7 +727,7 @@ class CartService {
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
             'fullname' => ['nullable', 'required_without:company_name'],
             'company_name' => ['nullable', 'required_without:fullname'],
-            'email' => ['required'],
+            'email' => ['required', 'email'],
             'phone_number' => ['required'],
             'address_1' => ['required'],
             'address_2' => ['nullable'],
@@ -677,7 +736,7 @@ class CartService {
             'postcode' => ['required'],
             'country' => ['required'],
             'remarks' => ['nullable'],
-            'payment_plan' => ['required'],
+            'payment_plan' => ['required', 'in:1,2,3'],
         ] );
 
         $validator->validate();
@@ -806,7 +865,27 @@ class CartService {
 
         $validator = Validator::make( $request->all(), [
             'id' => ['nullable', 'exists:carts,id'],
-            'cart_item' => ['nullable', 'exists:cart_metas,id'],
+            'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
+            'cart_item' => ['nullable', 'exists:cart_metas,id',
+                function ($attribute, $value, $fail) use ( $request ) {
+                    $cart = Cart::with(['cartMetas']);    
+    
+                    if ($request->has('id')) {
+                        $cart->where('id', $request->id);
+                    }
+                
+                    if ($request->has('session_key')) {
+                        $cart->where('session_key', $request->session_key);
+                    }
+                
+                    // Retrieve the cart(s) based on the applied filters
+                    $updateCart = $cart->first();
+
+                    if ( count($updateCart->cartMetas->where( 'id', $value )) == 0 ) {
+                        $fail(__('Cart Item not available'));
+                    }
+                },
+            ],
         ] );
 
         $validator->validate();
