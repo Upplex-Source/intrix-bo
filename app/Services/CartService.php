@@ -355,7 +355,7 @@ class CartService {
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
             'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'product_code' => [ 'nullable', 'exists:products,code'  ],
-            'color' => [ 'nullable', 'exists:product_variants,title'  ],
+            'color' => [ 'nullable', 'exists:product_variants,color'  ],
             'quantity' => [ 'integer', 'min:1'  ],
             'cart_item' => ['nullable', 'exists:cart_metas,id',
                 function ($attribute, $value, $fail) use ( $request ) {
