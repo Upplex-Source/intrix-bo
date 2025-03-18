@@ -354,9 +354,24 @@ class CartService {
             'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
             'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
-            'product_code' => [ 'nullable', 'exists:products,code'  ],
-            'color' => [ 'nullable', 'exists:product_variants,color'  ],
-            'quantity' => [ 'integer', 'min:1'  ],
+            'product_code' => ['nullable', Rule::exists('products', 'code')],
+            'color' => [
+                'nullable',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (!$request->product_code) {
+                        return;
+                    }
+
+                    $exists = \DB::table('product_variants')
+                        ->where('color', $value)
+                        ->where('product_id', Product::where( 'code', $request->product_code )->first()->id)
+                        ->exists();
+
+                    if (!$exists) {
+                        $fail('The selected color is invalid for the given product code.');
+                    }
+                } ],
+            'quantity' => [ 'required', 'integer', 'min:1'  ],
             'cart_item' => ['nullable', 'exists:cart_metas,id',
                 function ($attribute, $value, $fail) use ( $request ) {
                     $cart = Cart::with(['cartMetas']);    
@@ -426,17 +441,7 @@ class CartService {
         
             $voucher = Voucher::where('promo_code', $request->promo_code)->where('status', 10)->first();
 
-            if( $request->cart_item ){
-                $cartItem = CartMeta::find( $request->cart_item );
-                $product = Product::where('code', $cartItem->product->code )->first();
-
-                $request->merge( [
-                    'color' => $cartItem->productVariant ? $cartItem->productVariant->color : null
-                ] );
-
-            }else{
-                $product = Product::where('code', $request->product_code)->first();
-            }
+            $product = Product::where('code', $request->product_code)->first();
 
             $productVariant = ProductVariant::where('color', $request->color)
                 ->where('product_id', $product->id)
