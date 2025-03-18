@@ -1056,7 +1056,7 @@ class OrderService
     
                 $orderPrice += $orderMeta->total_price;
     
-                // $checkoutCart->status = 20;
+                $checkoutCart->status = 20;
                 $checkoutCart->save();
     
                 $order->subtotal = $orderPrice;
@@ -1134,7 +1134,7 @@ class OrderService
             $order->total_price += Helper::numberFormatV2($order->tax,2,false,true);
 
             if (!$userCart->cartMetas->contains('status', 10)) {
-                // $userCart->status = 20;
+                $userCart->status = 20;
                 $userCart->save();
             }
             
