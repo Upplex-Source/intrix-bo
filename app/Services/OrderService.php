@@ -856,9 +856,10 @@ class OrderService
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
                         ->setAttribute('image_path', $meta->product->image_path),
-                    'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
+                    'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 ];
             });
 
