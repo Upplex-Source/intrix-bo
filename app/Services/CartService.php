@@ -557,6 +557,9 @@ class CartService {
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                 'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? $meta->productVariant->id : null,
+                'payment_plan' => $meta->payment_plan,
             ];
         });
 
