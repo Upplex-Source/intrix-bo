@@ -83,8 +83,8 @@ class OrderController extends Controller
      * @bodyParam remarks string nullable The remarks for the order. Example: Be careful
      * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
      * 
-     * @bodyParam add_on string nullable The add_on code of the product. Example: ADD-ON
-     * @bodyParam free_gift string nullable The free_gift code of the product. Example: FREE-GIFT
+     * @bodyParam add_on string nullable The add_on code get via add on api. Example: ADD-ON
+     * @bodyParam free_gift string nullable The free_gift code get via free gift api. Example: FREE-GIFT
      */
     public function directCheckout( Request $request ) {
 
