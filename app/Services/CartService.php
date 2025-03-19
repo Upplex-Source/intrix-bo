@@ -801,6 +801,8 @@ class CartService {
             ];
         });
 
+        $updateCart->load( [ 'addOn', 'freeGift' ] );
+
         if($updateCart->voucher){
             $updateCart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
