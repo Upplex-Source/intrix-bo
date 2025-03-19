@@ -20,29 +20,11 @@ class OrderController extends Controller
      * 2: monthly<br>
      * 3: outright<br>
      * 
-     * <strong>color</strong></br>
-     * 1: CHROME<br>
-     * 2: MATTE BLACK<br>
-     * 3: SATIN GOLD<br>
-     * 4: GUNMETAL GREY<br>
      * 
      * @group Order API
      * 
      * @bodyParam session_key string The session_key of the cart. Example: kn1i23onlas1
-     * @bodyParam cart_item integer required The ID of the cart item. Example: 12
      * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
-     * @bodyParam fullname string required The fullname of the guest. Example: Johnny
-     * @bodyParam company_name string nullable The company_name of the guest. Example: Johnny holdings
-     * @bodyParam email string required The email of the guest. Example: johnny@gmail.com
-     * @bodyParam phone_number string nullable The phone_number of the guest. Example: 1231231223
-     * @bodyParam address_1 string required The address_1 of the guest. Example: Lot 4, 1
-     * @bodyParam address_2 string nullable The address_2 of the guest. Example: Bandar Baru Bangi
-     * @bodyParam city string required The city of the guest. Example: Kajang
-     * @bodyParam state string required The state of the guest. Example: Selangor
-     * @bodyParam postcode string required The postcode of the guest. Example: 43000
-     * @bodyParam country string required The country of the guest. Example: Malaysia
-     * @bodyParam remarks string nullable The remarks for the order. Example: Be careful
-     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
      * 
      */
     public function cartCheckout( Request $request ) {
