@@ -1236,7 +1236,7 @@ class OrderService
             'payment_url' => $order->payment_url,
             'reference' => $order->reference,
             'order_id' => $order->id,
-            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
+            'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
             'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
@@ -1648,7 +1648,7 @@ class OrderService
             'payment_url' => $order->payment_url,
             'sesion_key' => $order->session_key,
             'order_id' => $order->id,
-            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
+            'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
             'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
         ] );
