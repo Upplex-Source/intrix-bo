@@ -721,6 +721,7 @@ class VoucherService
         $attributeName = [
             'promo_code' => __( 'voucher.promo_code' ),
             'session_key' => __( 'cart.session_key' ),
+            'session_key' => __( 'cart.session_key' ),
         ];
         
         foreach ( $attributeName as $key => $aName ) {
@@ -766,18 +767,18 @@ class VoucherService
         }
 
         // user's usage
-        $user = auth()->user();
-        $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
+        // $user = auth()->user();
+        // $voucherUsages = VoucherUsage::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->get();
 
-        if ( $voucherUsages->count() > $voucher->usable_amount ) {
-            return response()->json( [
-                'message_key' => 'voucher_you_have_maximum_used',
-                'message' => __('voucher.voucher_you_have_maximum_used'),
-                'errors' => [
-                    'voucher' => __('voucher.voucher_you_have_maximum_used')
-                ]
-            ], 422 );
-        }
+        // if ( $voucherUsages->count() > $voucher->usable_amount ) {
+        //     return response()->json( [
+        //         'message_key' => 'voucher_you_have_maximum_used',
+        //         'message' => __('voucher.voucher_you_have_maximum_used'),
+        //         'errors' => [
+        //             'voucher' => __('voucher.voucher_you_have_maximum_used')
+        //         ]
+        //     ], 422 );
+        // }
 
         // total claimable
         if ( $voucher->total_claimable <= 0 ) {
@@ -791,29 +792,36 @@ class VoucherService
         }
 
         // check is user able to claim this
-        $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->first();
-        if(!$userVoucher){
-            $userPoints = $user->wallets->where( 'type', 2 )->first();
+        // $userVoucher = UserVoucher::where( 'voucher_id', $voucher->id )->where( 'user_id', $user->id )->first();
+        // if(!$userVoucher){
+        //     $userPoints = $user->wallets->where( 'type', 2 )->first();
 
-            if ( $userPoints->balance < $voucher->points_required ) {
+        //     if ( $userPoints->balance < $voucher->points_required ) {
 
-                return response()->json( [
-                    'message_key' => 'minimum_points_required',
-                    'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
-                    'errors' => [
-                        'voucher' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
-                    ]
-                ], 422 );
+        //         return response()->json( [
+        //             'message_key' => 'minimum_points_required',
+        //             'message' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+        //             'errors' => [
+        //                 'voucher' => 'Mininum of ' . $voucher->points_required . ' points is required to claim this voucher',
+        //             ]
+        //         ], 422 );
     
-            }
-        }
+        //     }
+        // }
 
         $cart = Cart::where( 'session_key', $value )->where('status', 10)->first();
 
-        if ( $voucher->discount_type == 3 ) {
+        $subtotal = $cart->subtotal;
+        $discountAmount = 0;
+        $finalPrice = 0;
 
-            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+
+        if ( $voucher->discount_type == 3 ) {
             
+            $buyQuantity = $adjustment['buy_quantity'] ?? 0;
+            $getProductId = $adjustment['get_product'] ?? null;
+
             $x = $cart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
 
             if ( $x < $adjustment->buy_quantity ) {
@@ -826,27 +834,52 @@ class VoucherService
 
                         ]
                 ], 422 );
+            }else{
+                $getProduct = Product::find($getProductId);
+                $discountAmount = $getProduct->price;
             }
 
-        } else {
-
-            $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-
-            if ( $cart->total_price < $adjustment->buy_quantity ) {
-                return response()->json( [
-                    'required_amount' => $adjustment->buy_quantity,
-                    'message' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] ),
-                    'message_key' => 'voucher.min_spend_of_x',
+        } elseif ($voucher->discount_type == 2) {
+            // Fixed discount
+            if ($subtotal >= ($adjustment['buy_quantity'] ?? 0)) {
+                $discountAmount = $adjustment['discount_quantity'] ?? 0;
+            }else {
+                return response()->json([
+                    'message_key' => 'voucher_not_available',
+                    'message' => "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity'],
                     'errors' => [
-                        'voucher' => __( 'voucher.min_spend_of_x', [ 'title' => $adjustment->buy_quantity . ' ' . Product::where( 'id', $adjustment->buy_products[0] )->value( 'title' ) ] )
+                        'voucher' => [
+                           "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity']
+                        ]
                     ]
-                ], 422 );
+                ], 422);
             }
-
+        } else {
+            // Percentage discount
+            $percentage = $adjustment['discount_quantity'] ?? 0;
+            if ($subtotal >= ($adjustment['buy_quantity'] ?? 0)) {
+                $discountAmount = ($subtotal * $percentage) / 100;
+            }else {
+                return response()->json([
+                    'message_key' => 'voucher_not_available',
+                    'message' => "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity'],
+                    'errors' => [
+                        'voucher' => [
+                           "Minimum spend not reach, Minimum spend required: RM" . $adjustment['buy_quantity']
+                        ]
+                    ]
+                ], 422);
+            }
         }
+        
+        // Final price after discount
+        $finalPrice = max(0, $subtotal - $discountAmount);
     
         return response()->json( [
             'message' => 'voucher.voucher_validated',
+            'subtotal' => number_format($subtotal, 2),
+            'discount' => number_format($discountAmount, 2),
+            'final_price' => number_format($finalPrice, 2),
         ] );
     }
 
