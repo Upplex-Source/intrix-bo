@@ -72,6 +72,14 @@ class Order extends Model
         return $discountTypes[$this->attributes['status']] ?? null;
     }
 
+    public function addOn() {
+        return $this->belongsTo( ProductAddOn::class, 'add_on_id' );
+    }
+
+    public function freeGift() {
+        return $this->belongsTo( ProductFreeGift::class, 'free_gift_id' );
+    }
+
     public function guest() {
         return $this->belongsTo( Guest::class, 'guest_id' );
     }

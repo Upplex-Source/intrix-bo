@@ -128,7 +128,6 @@ class CartService {
             // $userCart->cartMetas = null;
             unset($userCart->cartMetas);
             $userCart->cartMetas = $userCart->cart_metas;
-
         }
     
         // Return the response with the paginated carts data
@@ -423,7 +422,7 @@ class CartService {
         }
 
         $user = auth()->user();
-        $query = Cart::with(['cartMetas'])
+        $query = Cart::with(['cartMetas', 'addon', 'freeGift'])
         ->where('status',10);
     
         if ($request->has('id')) {
@@ -672,7 +671,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas']);
+        $query = Cart::with(['cartMetas','addon', 'freeGift']);
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
@@ -703,18 +702,22 @@ class CartService {
                 $addOn = ProductAddOn::where( 'code', $request->add_on)->first();
                 if( $updateCart->addOn ){
                     $updateCart->total_price -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
+                    $updateCart->subtotal -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
                 }
                 $updateCart->add_on_id = $addOn->id;
                 $updateCart->total_price += $addOn->discount_price ? $addOn->discount_price : 0;
+                $updateCart->subtotal += $addOn->discount_price ? $addOn->discount_price : 0;
             }
 
             if( $request->free_gift ) {
                 $freeGift = ProductFreeGift::where( 'code', $request->free_gift)->first();
                 if( $updateCart->freeGift ){
                     $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
+                    $updateCart->subtotal -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                 }
                 $updateCart->free_gift_id = $freeGift->id;
                 $updateCart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
+                $updateCart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
             }
 
             $updateCart->save();
@@ -782,7 +785,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas']);
+        $query = Cart::with(['cartMetas','addon', 'freeGift']);
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
@@ -876,7 +879,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas']);
+        $query = Cart::with(['cartMetas','addon', 'freeGift']);
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
@@ -935,7 +938,7 @@ class CartService {
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
             'cart_item' => ['nullable', 'exists:cart_metas,id',
                 function ($attribute, $value, $fail) use ( $request ) {
-                    $cart = Cart::with(['cartMetas']);    
+                    $cart = Cart::with(['cartMetas','addon', 'freeGift']);    
     
                     if ($request->has('id')) {
                         $cart->where('id', $request->id);
@@ -957,7 +960,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas']);    
+        $query = Cart::with(['cartMetas','addon', 'freeGift']);    
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
