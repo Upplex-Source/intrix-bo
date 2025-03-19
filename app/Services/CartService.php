@@ -765,12 +765,14 @@ class CartService {
                 if ($cartAddOn) {
 
                     if ($request->quantity < 0 ) {
-                        if ($cartAddOn->quantity > 1) {
+                        $decrementValue = abs($request->quantity); // Convert negative to positive
 
-                            $cartAddOn->decrement('quantity', 1);
-                            $cartAddOn->decrement('total_price', $discountPrice);
+                        if ($cartAddOn->quantity > $decrementValue) {
+                            // If the decrement value is less than current quantity, just decrement
+                            $cartAddOn->decrement('quantity', $decrementValue);
+                            $cartAddOn->decrement('total_price', $discountPrice * $decrementValue);
                         } else {
-
+                            // If decrementing would make it zero or negative, delete the add-on
                             $cartAddOn->delete();
                         }
 
