@@ -785,8 +785,8 @@ class CartService {
 
                     } else {
                         // Otherwise, update or increment quantity normally
-                        // $cartAddOn->increment('quantity', $request->quantity);
-                        // $cartAddOn->increment('total_price', $discountPrice * $request->quantity);
+                        $cartAddOn->increment('quantity', $request->quantity);
+                        $cartAddOn->increment('total_price', $discountPrice * $request->quantity);
 
                         $updateCart->total_price += $discountPrice * $request->quantity;   
                         $updateCart->subtotal += $discountPrice * $request->quantity;   
@@ -816,7 +816,7 @@ class CartService {
                 if( $request->type == 1  ){
                     $updateCart->total_price -= $updateCart->addOns->sum( 'total_price' );   
                     $updateCart->subtotal -= $updateCart->addOns->sum( 'total_price' );   
-                    $updateCart->addOns->delete();
+                    $updateCart->addOns()->delete();
                 }
             }
 
