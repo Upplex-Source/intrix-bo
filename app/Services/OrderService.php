@@ -973,22 +973,22 @@ class OrderService
             $guest = Guest::where('email', $request->email)->first() 
                 ?? $userCart->guest 
                 ?? Guest::create([
-                'fullname' => $request->fullname,
-                'email' => $request->email,
+                'fullname' => $userCart->fullname,
+                'email' => $userCart->email,
                 'session_key' => $userCart->session_key,
-                'address_1' => $request->address_1,
-                'address_2' => $request->address_2,
-                'city' => $request->city,
-                'state' => $request->state,
-                'postcode' => $request->postcode,
+                'address_1' => $userCart->address_1,
+                'address_2' => $userCart->address_2,
+                'city' => $userCart->city,
+                'state' => $userCart->state,
+                'postcode' => $userCart->postcode,
                 'calling_code' => '+60',
                 'status' => 10,
-                'phone_number' => $request->phone_number,  
+                'phone_number' => $userCart->phone_number,  
                 'ip_address' => $request->ip(), // Get client's IP address
                 'user_agent' => $request->header('User-Agent'), // Get client's user agent
                 'last_visit' => now(), // Store current timestamp
-                'country' => $request->country,
-                'company_name' => $request->company_name,
+                'country' => $userCart->country,
+                'company_name' => $userCart->company_name,
             ] );
 
             // for checking payment plan
@@ -1005,22 +1005,22 @@ class OrderService
                 'remarks' => $request->remarks,
                 'payment_plan' => $presetCart->payment_plan ? $presetCart->payment_plan : $request->payment_plan,
                 'guest_id' => $guest->id,
-                'fullname' => $request->fullname,
-                'email' => $request->email,
+                'fullname' => $userCart->fullname,
+                'email' => $userCart->email,
                 'session_key' => $userCart->session_key,
-                'address_1' => $request->address_1,
-                'address_2' => $request->address_2,
-                'city' => $request->city,
-                'state' => $request->state,
-                'postcode' => $request->postcode,
+                'address_1' => $userCart->address_1,
+                'address_2' => $userCart->address_2,
+                'city' => $userCart->city,
+                'state' => $userCart->state,
+                'postcode' => $userCart->postcode,
                 'calling_code' => '+60',
                 'status' => 10,
                 'phone_number' => $request->phone_number,  
                 'ip_address' => $request->ip(), // Get client's IP address
                 'user_agent' => $request->header('User-Agent'), // Get client's user agent
                 'last_visit' => now(), // Store current timestamp
-                'country' => $request->country,
-                'company_name' => $request->company_name,
+                'country' => $userCart->country,
+                'company_name' => $userCart->company_name,
                 'add_on_id' => $userCart->add_on_id,
                 'free_gift_id' => $userCart->free_gift_id,
             ] );
@@ -1251,6 +1251,16 @@ class OrderService
             'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
             'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'subtotal' => Helper::numberFormatV2($order->subtotal, 2,false, true),
+            'discount' =>  Helper::numberFormatV2($order->discount, 2,false, true),
+            'tax' =>  Helper::numberFormatV2($order->tax, 2,false, true),
+            'tranction_date' => $order->created_at->format('Y-m-d'),
+            'payment_method' => 'Credit Card',
+            'shipment_method' => 'Free Shipping ( 3 - 7 days )',
+            'delivery_address' => $order->address_1 . $order->address_2 . $order->city . $order->postcode . $order->state,
+            'contact_name' => $order->fullname ? $order->fullname : $order->company_name,
+            'phone_number' => $order->phone_number,
+            'email' => $order->email,
         ] );
     }
 
