@@ -74,12 +74,15 @@ class VoucherController extends Controller
      * @group Promo Code API
      * 
      * @queryParam session_key string optional The unique identifier for the cart. Must be provided if type is 2 Example: abcd-1234
-     * @bodyParam type required integer To verify cart or buy now product . Example: 1
+     * @bodyParam type integer required To verify cart or buy now product . Example: 1
+     * @bodyParam promo_code integer required The ID of the promotion/voucher to apply. Example: BUY1FREE1
+     * 
+     * <aside class="notice">Below only required when type is 1</aside>
+     * 
      * @bodyParam product_code string required The product_code of the product. Example: 5-IN-1
-     * @bodyParam color required strong The color of the product. Example: CHROME
-     * @bodyParam quantity required integer The quantity of the product. Example: 1
-     * @bodyParam promo_code integer The ID of the promotion/voucher to apply. Example: BUY1FREE1
-     * @bodyParam payment_plan integer nullable The payment_plan integer for the order. Example: 1
+     * @bodyParam color string required The color of the product. Example: 1
+     * @bodyParam quantity integer required The quantity of the product. Example: 1
+     * @bodyParam payment_plan integer required nullable The payment_plan integer for the order. Example: 1
      * 
      */
     public function validatePromoCode( Request $request ) {
