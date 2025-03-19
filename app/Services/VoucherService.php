@@ -815,7 +815,7 @@ class VoucherService
         $discountAmount = 0;
         $finalPrice = 0;
 
-        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
+        $adjustment = json_decode( $voucher->buy_x_get_y_adjustment, true );
 
         if ( $voucher->discount_type == 3 ) {
             
