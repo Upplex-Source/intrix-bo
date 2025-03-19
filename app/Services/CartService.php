@@ -336,6 +336,16 @@ class CartService {
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         }
 
+        if($cart->addOn){
+            $cart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        } 
+        
+        if($cart->freeGift){
+            $cart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        }
+
         return response()->json( [
             'message' => '',
             'message_key' => 'add_to_cart_success',
@@ -343,6 +353,8 @@ class CartService {
             'cart_id' => $cart->id,
             'total_price' => Helper::numberFormatV2($cart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
+            'add_on' => $cart->addOn,
+            'free_gift' => $cart->freeGift,
             'subtotal' => Helper::numberFormatV2($cart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($cart->discount, 2,false, true),
             'tax' =>  Helper::numberFormatV2($cart->tax, 2,false, true),
@@ -562,6 +574,16 @@ class CartService {
             ];
         });
 
+        if($updateCart->addOn){
+            $updateCart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        } 
+        
+        if($updateCart->freeGift){
+            $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        }
+
         return response()->json( [
             'message' => '',
             'message_key' => 'update_cart_success',
@@ -569,6 +591,8 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
+            'add_on' => $updateCart->addOn,
+            'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
             'tax' =>  Helper::numberFormatV2($updateCart->tax, 2,false, true),
@@ -750,6 +774,16 @@ class CartService {
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         }
 
+        if($updateCart->addOn){
+            $updateCart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        } 
+        
+        if($updateCart->freeGift){
+            $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        }
+
         return response()->json( [
             'message' => '',
             'message_key' => 'update_cart_success',
@@ -757,6 +791,8 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
+            'add_on' => $updateCart->addOn,
+            'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
             'tax' =>  Helper::numberFormatV2($updateCart->tax, 2,false, true),
@@ -854,6 +890,16 @@ class CartService {
         if($updateCart->voucher){
             $updateCart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
+        } ;
+        
+        if($updateCart->addOn){
+            $updateCart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        } 
+        
+        if($updateCart->freeGift){
+            $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
         }
 
         return response()->json( [
@@ -863,6 +909,8 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
+            'add_on' => $updateCart->addOn,
+            'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
             'tax' =>  Helper::numberFormatV2($updateCart->tax, 2,false, true),
