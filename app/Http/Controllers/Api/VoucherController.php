@@ -84,7 +84,7 @@ class VoucherController extends Controller
      */
     public function validatePromoCode( Request $request ) {
 
-        if( $reqeust->type == 1 ){
+        if( $request->type == 1 ){
             return OrderService::validatePromoCode( $request );
         } else {
             return VoucherService::validateVoucher( $request );
