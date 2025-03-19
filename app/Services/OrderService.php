@@ -1217,6 +1217,16 @@ class OrderService
             ], 500 );
         }
 
+        if($order->addOn){
+           $order->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+           ->append([ 'image_path' ]);
+        } 
+       
+        if($order->freeGift){
+            $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        }
+
         $orderMetas = $order->orderMetas->map(function ($meta) {
             return [
                 'id' => $meta->id,
@@ -1236,6 +1246,8 @@ class OrderService
             'payment_url' => $order->payment_url,
             'reference' => $order->reference,
             'order_id' => $order->id,
+            'add_on' => $order->addOn,
+            'free_gift' => $order->freeGift,
             'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
             'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
@@ -1630,6 +1642,16 @@ class OrderService
             ], 500 );
         }
 
+        if($order->addOn){
+           $order->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+           ->append([ 'image_path' ]);
+        } 
+       
+        if($order->freeGift){
+            $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+        }
+
         $orderMetas = $order->orderMetas->map(function ($meta) {
             return [
                 'id' => $meta->id,
@@ -1648,6 +1670,8 @@ class OrderService
             'payment_url' => $order->payment_url,
             'sesion_key' => $order->session_key,
             'order_id' => $order->id,
+            'add_on' => $order->addOn,
+            'free_gift' => $order->freeGift,
             'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
             'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
