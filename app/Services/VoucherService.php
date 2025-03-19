@@ -809,7 +809,7 @@ class VoucherService
         //     }
         // }
 
-        $cart = Cart::where( 'session_key', $value )->where('status', 10)->first();
+        $cart = Cart::where( 'session_key', $request->session_key )->where('status', 10)->first();
 
         $subtotal = $cart->subtotal;
         $discountAmount = 0;
