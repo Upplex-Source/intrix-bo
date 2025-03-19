@@ -57,7 +57,7 @@ class CartService {
         $user = auth()->user();
     
         // Start by querying carts for the authenticated user
-        $query = Cart::with(['cartMetas', 'addon', 'freeGift' => function ($query) {
+        $query = Cart::with(['cartMetas', 'addons', 'freeGift' => function ($query) {
                 $query->orderBy('created_at', 'DESC');
             }, 'voucher'])
             ->where('status', 10)
@@ -90,9 +90,13 @@ class CartService {
                 ->setAttribute('image_path', $cart->vendingMachine->image_path);
             }
 
-            if($cart->addOn){
-                $cart->addOn->setAttribute('image_path', $cart->addOn->image_path);
-            }
+            if($cart->addOns){
+                $addOns = $cart->addOns;
+                foreach( $addOns as $addOn ) {
+                    $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                    ->append([ 'image_path' ]);
+                }
+            } 
 
             if($cart->freeGift){
                 $cart->freeGift->setAttribute('image_path', $cart->freeGift->image_path);
@@ -448,7 +452,7 @@ class CartService {
         }
 
         $user = auth()->user();
-        $query = Cart::with(['cartMetas', 'addon', 'freeGift'])
+        $query = Cart::with(['cartMetas', 'addons', 'freeGift'])
         ->where('status',10);
     
         if ($request->has('id')) {
@@ -909,7 +913,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas','addon', 'freeGift']);
+        $query = Cart::with(['cartMetas','addons', 'freeGift']);
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
@@ -1018,7 +1022,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas','addon', 'freeGift']);
+        $query = Cart::with(['cartMetas','addons', 'freeGift']);
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
@@ -1077,7 +1081,7 @@ class CartService {
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
             'cart_item' => ['nullable', 'exists:cart_metas,id',
                 function ($attribute, $value, $fail) use ( $request ) {
-                    $cart = Cart::with(['cartMetas','addon', 'freeGift']);    
+                    $cart = Cart::with(['cartMetas','addons', 'freeGift']);    
     
                     if ($request->has('id')) {
                         $cart->where('id', $request->id);
@@ -1099,7 +1103,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas','addon', 'freeGift']);    
+        $query = Cart::with(['cartMetas','addons', 'freeGift']);    
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
