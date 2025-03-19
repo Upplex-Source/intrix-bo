@@ -753,7 +753,7 @@ class CartService {
                 $updateCart->subtotal += $addOn->discount_price ? $addOn->discount_price : 0;
             }else {
 
-                if( $updateCart->addOn && !$reqeust->free_gift ){
+                if( $updateCart->addOn && !$request->free_gift ){
                     $updateCart->total_price -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
                     $updateCart->subtotal -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
                     $updateCart->add_on_id = null;  
@@ -770,7 +770,7 @@ class CartService {
                 $updateCart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
                 $updateCart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
             }else {
-                if( $updateCart->freeGift && !$reqeust->add_on  ){
+                if( $updateCart->freeGift && !$request->add_on  ){
                     $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                     $updateCart->subtotal -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                     $updateCart->free_gift_id = null;  
