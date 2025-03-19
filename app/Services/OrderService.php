@@ -971,26 +971,26 @@ class OrderService
 
             $taxSettings = Option::getTaxesSettings();
 
-            $guest = Guest::where('email', $request->email)->first() 
-                ?? $userCart->guest 
-                ?? Guest::create([
-                'fullname' => $userCart->fullname,
-                'email' => $userCart->email,
-                'session_key' => $userCart->session_key,
-                'address_1' => $userCart->address_1,
-                'address_2' => $userCart->address_2,
-                'city' => $userCart->city,
-                'state' => $userCart->state,
-                'postcode' => $userCart->postcode,
-                'calling_code' => '+60',
-                'status' => 10,
-                'phone_number' => $userCart->phone_number,  
-                'ip_address' => $request->ip(), // Get client's IP address
-                'user_agent' => $request->header('User-Agent'), // Get client's user agent
-                'last_visit' => now(), // Store current timestamp
-                'country' => $userCart->country,
-                'company_name' => $userCart->company_name,
-            ] );
+            // $guest = Guest::where('email', $request->email)->first() 
+            //     ?? $userCart->guest 
+            //     ?? Guest::create([
+            //     'fullname' => $userCart->fullname,
+            //     'email' => $userCart->email,
+            //     'session_key' => $userCart->session_key,
+            //     'address_1' => $userCart->address_1,
+            //     'address_2' => $userCart->address_2,
+            //     'city' => $userCart->city,
+            //     'state' => $userCart->state,
+            //     'postcode' => $userCart->postcode,
+            //     'calling_code' => '+60',
+            //     'status' => 10,
+            //     'phone_number' => $userCart->phone_number,  
+            //     'ip_address' => $request->ip(), // Get client's IP address
+            //     'user_agent' => $request->header('User-Agent'), // Get client's user agent
+            //     'last_visit' => now(), // Store current timestamp
+            //     'country' => $userCart->country,
+            //     'company_name' => $userCart->company_name,
+            // ] );
 
             // for checking payment plan
             $presetCart = CartMeta::where( 'cart_id', $userCart->id )->first();
@@ -1005,7 +1005,7 @@ class OrderService
                 'tax' => 0,
                 'remarks' => $request->remarks,
                 'payment_plan' => $presetCart->payment_plan ? $presetCart->payment_plan : $request->payment_plan,
-                'guest_id' => $guest->id,
+                // 'guest_id' => $guest->id,
                 'fullname' => $userCart->fullname,
                 'email' => $userCart->email,
                 'session_key' => $userCart->session_key,

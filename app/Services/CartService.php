@@ -622,7 +622,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_on' => $updateCart->addOn,
+            'add_on_metas' => $updateCart->addOns,
             'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
