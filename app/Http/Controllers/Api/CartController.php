@@ -139,7 +139,7 @@ class CartController extends Controller
      * <aside class="notice">session_key or cart id can be used to update the cart</aside>
      * 
      * <strong>type</strong></br>
-     * 1: add pn<br>
+     * 1: add on<br>
      * 2: free gift<br>
      * 
      * @group Cart API
