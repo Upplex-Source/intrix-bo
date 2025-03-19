@@ -306,6 +306,7 @@ class CartService {
             }
 
             if( $cart->addOns ) {
+                dd($cart->addOns,$cart->addOns->sum( 'total_price' ));
                 $cart->total_price += $cart->addOns->sum( 'total_price' );
                 $cart->subtotal += $cart->addOns->sum( 'total_price' );   
             }
