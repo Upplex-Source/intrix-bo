@@ -68,4 +68,5 @@ return [
     'voucher_not_started_x' => 'Voucher is not usable yet. Please wait until :time',
     'voucher_expired' => 'Voucher is expired',
     'voucher_not_found' => 'Voucher not found',
+    'voucher_validated' => 'Voucher Checked! ',
 ];
