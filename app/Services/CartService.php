@@ -818,7 +818,7 @@ class CartService {
                 $updateCart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
                 $updateCart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
             }else {
-                if( $type == 2  ){
+                if( $request->type == 2  ){
                     $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                     $updateCart->subtotal -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                     $updateCart->free_gift_id = null;  
