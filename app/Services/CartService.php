@@ -764,7 +764,7 @@ class CartService {
 
                 if ($cartAddOn) {
 
-                    if ($request->quantity == -1) {
+                    if ($request->quantity < 0 ) {
                         if ($cartAddOn->quantity > 1) {
 
                             $cartAddOn->decrement('quantity', 1);
