@@ -715,6 +715,7 @@ class VoucherService
 
         $validator = Validator::make( $request->all(), [
             'promo_code' => [ 'required' ],
+            'type' => [ 'required' ],
         ] );
 
         $attributeName = [

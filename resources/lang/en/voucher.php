@@ -44,6 +44,7 @@ return [
     'used' => 'Used',
     'expired' => 'Expired',
     'active' => 'Active',
+    'type' => 'Voucher Validation Type',
 
     'min_spend_of_x' => 'Minimum spend of RM:title not reach',
     'min_quantity_of_x' => 'Minimum quanitity of :title required',
