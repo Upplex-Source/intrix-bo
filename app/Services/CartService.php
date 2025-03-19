@@ -777,7 +777,7 @@ class CartService {
             'postcode' => ['required'],
             'country' => ['required'],
             'remarks' => ['nullable'],
-            'payment_plan' => ['required', 'in:1,2,3'],
+            'payment_plan' => ['nullable', 'in:1,2,3'],
         ] );
 
         $validator->validate();
