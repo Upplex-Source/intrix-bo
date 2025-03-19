@@ -306,14 +306,13 @@ class CartService {
             }
 
             if( $cart->addOns ) {
-                dd($cart->addOns,$cart->addOns->sum( 'total_price' ));
-                $cart->total_price += $cart->addOns->sum( 'total_price' );
-                $cart->subtotal += $cart->addOns->sum( 'total_price' );   
+                $orderPrice += $cart->addOns->sum( 'total_price' );
+                $subtotal += $cart->addOns->sum( 'total_price' );   
             }
 
             if( $cart->freeGift ) {
-                $cart->total_price += $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
-                $cart->subtotal += $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
+                $orderPrice += $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
+                $subtotal += $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
             }
 
             $cart->total_price = Helper::numberFormatV2($orderPrice,2);
@@ -558,13 +557,13 @@ class CartService {
             }
 
             if( $cart->addOns ) {
-                $cart->total_price += $cart->addOns->sum( 'total_price' );
-                $cart->subtotal += $cart->addOns->sum( 'total_price' );   
+                $orderPrice += $cart->addOns->sum( 'total_price' );
+                $subtotal += $cart->addOns->sum( 'total_price' );   
             }
 
             if( $updateCart->freeGift ) {
-                $updateCart->total_price += $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
-                $updateCart->subtotal += $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
+                $orderPrice += $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
+                $subtotal += $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
             }
 
             $updateCart->total_price = Helper::numberFormatV2($orderPrice, 2);
