@@ -138,13 +138,17 @@ class CartController extends Controller
      * 
      * <aside class="notice">session_key or cart id can be used to update the cart</aside>
      * 
-     * 
+     * <strong>type</strong></br>
+     * 1: add pn<br>
+     * 2: free gift<br>
      * 
      * @group Cart API
      * 
      * @queryParam session_key string required The unique identifier for the cart. Used to add addon or free gift to the cart Example: abcd-1234
      * @bodyParam add_on string nullable The add_on code get via get add on api. Either `add_on` or `free_gift` must be provided. Example: ADD-ON
      * @bodyParam free_gift string nullable The free_gift code get via get free gift api. Either `add_on` or `free_gift` must be provided. Example: FREE-GIFT
+     * @bodyParam quantity required integer The quantity of the addon/quantity. Example: 1, -1 to deduct
+     * @bodyParam type required integer The type to be change. Example: 1
      * 
      */
     public function updateCartAddon( Request $request ) {

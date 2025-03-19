@@ -62,6 +62,10 @@ class Cart extends Model
         'outlet_id',
     ];
 
+    public function addOns() {
+        return $this->hasMany( CartAddOn::class, 'cart_id' );
+    }
+
     public function addOn() {
         return $this->belongsTo( ProductAddOn::class, 'add_on_id' );
     }

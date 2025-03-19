@@ -14,7 +14,7 @@ use Helper;
 
 use Carbon\Carbon;
 
-class orderAddOn extends Model
+class OrderAddOn extends Model
 {
     use HasFactory, LogsActivity;
 

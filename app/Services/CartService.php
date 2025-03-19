@@ -242,7 +242,7 @@ class CartService {
                 $cartMeta->increment('total_price', $productPrice * $request->quantity);
             }
 
-            $cart->load( ['cartMetas'] );
+            $cart->load( ['cartMetas', 'addOns', 'freeGift'] );
 
             foreach( $cart->cartMetas as $cartMetas ) {
                 $orderPrice += $cartMetas->total_price;
@@ -300,9 +300,9 @@ class CartService {
                 $cart->voucher_id = $voucher->id;
             }
 
-            if( $cart->addOn ) {
-                $cart->total_price += $cart->addOn->discount_price ? $cart->addOn->discount_price : 0;   
-                $cart->subtotal += $cart->addOn->discount_price ? $cart->addOn->discount_price : 0;   
+            if( $cart->addOns ) {
+                $cart->total_price += $cart->addOns->sum( 'total_price' );
+                $cart->subtotal += $cart->addOns->sum( 'total_price' );   
             }
 
             if( $cart->freeGift ) {
@@ -346,9 +346,12 @@ class CartService {
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         }
 
-        if($cart->addOn){
-            $cart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-            ->append([ 'image_path' ]);
+        if($cart->addOns){
+            $addOns = $cart->addOns;
+            foreach( $addOns as $addOn ) {
+                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+            }
         } 
         
         if($cart->freeGift){
@@ -363,7 +366,7 @@ class CartService {
             'cart_id' => $cart->id,
             'total_price' => Helper::numberFormatV2($cart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_on' => $cart->addOn,
+            'add_ons' => $cart->addOns,
             'free_gift' => $cart->freeGift,
             'subtotal' => Helper::numberFormatV2($cart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($cart->discount, 2,false, true),
@@ -548,9 +551,9 @@ class CartService {
                 $orderPrice = self::applyVoucherDiscount($updateCart, $voucher, $orderPrice, $request);
             }
 
-            if( $updateCart->addOn ) {
-                $updateCart->total_price += $cart->addOn->discount_price ? $cart->addOn->discount_price : 0;   
-                $updateCart->subtotal += $cart->addOn->discount_price ? $cart->addOn->discount_price : 0;   
+            if( $cart->addOns ) {
+                $cart->total_price += $cart->addOns->sum( 'total_price' );
+                $cart->subtotal += $cart->addOns->sum( 'total_price' );   
             }
 
             if( $updateCart->freeGift ) {
@@ -594,9 +597,12 @@ class CartService {
             ];
         });
 
-        if($updateCart->addOn){
-            $updateCart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-            ->append([ 'image_path' ]);
+        if($updateCart->addOns){
+            $addOns = $updateCart->addOns;
+            foreach( $addOns as $addOn ) {
+                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+            }
         } 
         
         if($updateCart->freeGift){
@@ -669,6 +675,8 @@ class CartService {
         $validator = Validator::make( $request->all(), [
             'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
+            'quantity' => [ 'required' ],
+            'type' => [ 'required', 'in:1,2' ],
             'add_on' => [
                 'nullable',
                 // 'required_without:free_gift',
@@ -715,7 +723,7 @@ class CartService {
 
         $validator->validate();
         $user = auth()->user();
-        $query = Cart::with(['cartMetas','addon', 'freeGift']);
+        $query = Cart::with(['cartMetas','addons', 'freeGift']);
     
         if ($request->has('id')) {
             $query->where('id', $request->id);
@@ -743,21 +751,60 @@ class CartService {
         try {
 
             if( $request->add_on ) {
-                $addOn = ProductAddOn::where( 'code', $request->add_on)->first();
-                if( $updateCart->addOn ){
-                    $updateCart->total_price -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
-                    $updateCart->subtotal -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
-                }
-                $updateCart->add_on_id = $addOn->id;
-                $updateCart->total_price += $addOn->discount_price ? $addOn->discount_price : 0;
-                $updateCart->subtotal += $addOn->discount_price ? $addOn->discount_price : 0;
-            }else {
 
-                if( $updateCart->addOn && $request->free_gift ){
-                    $updateCart->total_price -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
-                    $updateCart->subtotal -= $updateCart->addOn->discount_price ? $updateCart->addOn->discount_price : 0;   
-                    $updateCart->add_on_id = null;  
+                $addOn = ProductAddOn::where( 'code', $request->add_on)->first();
+
+                $discountPrice = $addOn->discount_price ? $addOn->discount_price : 0;
+
+                $cartAddOn = CartAddOn::where([
+                    'cart_id'   => $updateCart->id,
+                    'add_on_id' => $addOn->id,
+                ])->first();
+
+                if ($cartAddOn) {
+
+                    if ($request->quantity == -1) {
+                        if ($cartAddOn->quantity > 1) {
+
+                            $cartAddOn->decrement('quantity', 1);
+                            $cartAddOn->decrement('total_price', $discountPrice);
+                        } else {
+
+                            $cartAddOn->delete();
+                        }
+
+                        $updateCart->total_price -= $discountPrice;   
+                        $updateCart->subtotal -= $discountPrice;   
+
+                    } else {
+                        // Otherwise, update or increment quantity normally
+                        $cartAddOn->increment('quantity', $request->quantity);
+                        $cartAddOn->increment('total_price', $discountPrice * $request->quantity);
+
+                        $updateCart->total_price -= $discountPrice * $request->quantity;   
+                        $updateCart->subtotal -= $discountPrice * $request->quantity;   
+                    }
+                } else {
+                    // If there's no existing record and quantity is positive, create a new add-on
+                    if ($request->quantity > 0) {
+                        $cartAddOn = CartAddOn::create([
+                            'cart_id'            => $updateCart->id,
+                            'add_on_id'          => $addOn->id,
+                            'user_id'            => null,
+                            'discount'           => null,
+                            'status'             => 10,
+                            'products'           => null,
+                            'payment_plan'       => $request->payment_plan,
+                            'additional_charges' => null,
+                            'total_price'        => $discountPrice * $request->quantity,
+                            'quantity'           => $request->quantity,
+                        ]);
+
+                        $updateCart->total_price += $discountPrice * $request->quantity;   
+                        $updateCart->subtotal += $discountPrice * $request->quantity;   
+                    }
                 }
+
             }
 
             if( $request->free_gift ) {
@@ -770,7 +817,7 @@ class CartService {
                 $updateCart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
                 $updateCart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
             }else {
-                if( $updateCart->freeGift && $request->add_on  ){
+                if( $type == 2  ){
                     $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                     $updateCart->subtotal -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                     $updateCart->free_gift_id = null;  
@@ -802,16 +849,19 @@ class CartService {
             ];
         });
 
-        $updateCart->load( [ 'addOn', 'freeGift' ] );
+        $updateCart->load( [ 'addOns', 'freeGift' ] );
 
         if($updateCart->voucher){
             $updateCart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         }
 
-         if($updateCart->addOn){
-            $updateCart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-            ->append([ 'image_path' ]);
+         if($updateCart->addOns){
+            $addOns = $updateCart->addOns;
+            foreach( $addOns as $addOn ) {
+                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+            }
         } 
         
         if($updateCart->freeGift){
@@ -826,7 +876,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_on' => $updateCart->addOn,
+            'add_ons' => $updateCart->addOns,
             'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
@@ -927,9 +977,12 @@ class CartService {
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         } ;
         
-        if($updateCart->addOn){
-            $updateCart->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-            ->append([ 'image_path' ]);
+        if($updateCart->addOns){
+            $addOns = $updateCart->addOns;
+            foreach( $addOns as $addOn ) {
+                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+            }
         } 
         
         if($updateCart->freeGift){

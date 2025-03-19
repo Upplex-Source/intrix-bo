@@ -1066,6 +1066,24 @@ class OrderService
                 $order->subtotal = $orderPrice;
             }
 
+            foreach( $userCart->addOns as $checkoutCart ) {
+                $productPrice = $checkoutCart->addOn->discount_price ?? 0;
+    
+                $orderMeta = OrderAddOn::create( [
+                    'order_id' => $order->id,
+                    'add_on_id' => $checkoutCart->addOn->id,
+                    'total_price' =>  $checkoutCart->quantity * $productPrice,
+                    'payment_plan' => $checkoutCart->payment_plan,
+                ] );
+    
+                $orderPrice += $orderMeta->total_price;
+    
+                $checkoutCart->status = 20;
+                $checkoutCart->save();
+    
+                $order->subtotal = $orderPrice;
+            }
+
             if( $request->promo_code || $userCart->voucher_id ){
 
                 if( $request->promo_code ) {
@@ -1217,9 +1235,12 @@ class OrderService
             ], 500 );
         }
 
-        if($order->addOn){
-           $order->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-           ->append([ 'image_path' ]);
+        if($order->addOns){
+            $addOns = $order->addOns;
+            foreach( $addOns as $addOn ) {
+                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+            }
         } 
        
         if($order->freeGift){
@@ -1246,7 +1267,7 @@ class OrderService
             'payment_url' => $order->payment_url,
             'reference' => $order->reference,
             'order_id' => $order->id,
-            'add_on' => $order->addOn,
+            'add_ons' => $order->addOns,
             'free_gift' => $order->freeGift,
             'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
