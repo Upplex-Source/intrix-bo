@@ -1239,7 +1239,7 @@ class OrderService
         if($order->addOns){
             $addOns = $order->addOns;
             foreach( $addOns as $addOn ) {
-                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
                 ->append([ 'image_path' ]);
             }
         } 

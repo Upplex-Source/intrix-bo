@@ -350,7 +350,7 @@ class CartService {
         if($cart->addOns){
             $addOns = $cart->addOns;
             foreach( $addOns as $addOn ) {
-                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
                 ->append([ 'image_path' ]);
             }
         } 
@@ -601,7 +601,7 @@ class CartService {
         if($updateCart->addOns){
             $addOns = $updateCart->addOns;
             foreach( $addOns as $addOn ) {
-                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
                 ->append([ 'image_path' ]);
             }
         } 
@@ -860,7 +860,7 @@ class CartService {
          if($updateCart->addOns){
             $addOns = $updateCart->addOns;
             foreach( $addOns as $addOn ) {
-                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
                 ->append([ 'image_path' ]);
             }
         } 
@@ -981,7 +981,7 @@ class CartService {
         if($updateCart->addOns){
             $addOns = $updateCart->addOns;
             foreach( $addOns as $addOn ) {
-                $addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
                 ->append([ 'image_path' ]);
             }
         } 
