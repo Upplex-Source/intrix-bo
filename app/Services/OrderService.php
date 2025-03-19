@@ -35,6 +35,7 @@ use App\Models\{
     Guest,
     ProductAddOn,
     ProductFreeGift,
+    OrderAddOn,
 };
 
 use Helper;

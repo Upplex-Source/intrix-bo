@@ -28,6 +28,7 @@ use App\Models\{
     UserNotification,
     ProductAddOn,
     ProductFreeGift,
+    CartAddOn,
 };
 
 use App\Services\{
