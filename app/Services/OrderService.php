@@ -1268,7 +1268,7 @@ class OrderService
             'payment_url' => $order->payment_url,
             'reference' => $order->reference,
             'order_id' => $order->id,
-            'add_ons' => $order->addOns,
+            'add_on_metas' => $order->addOns,
             'free_gift' => $order->freeGift,
             'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,

@@ -367,7 +367,7 @@ class CartService {
             'cart_id' => $cart->id,
             'total_price' => Helper::numberFormatV2($cart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_ons' => $cart->addOns,
+            'add_on_metas' => $cart->addOns,
             'free_gift' => $cart->freeGift,
             'subtotal' => Helper::numberFormatV2($cart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($cart->discount, 2,false, true),
@@ -782,8 +782,8 @@ class CartService {
                         $cartAddOn->increment('quantity', $request->quantity);
                         $cartAddOn->increment('total_price', $discountPrice * $request->quantity);
 
-                        $updateCart->total_price -= $discountPrice * $request->quantity;   
-                        $updateCart->subtotal -= $discountPrice * $request->quantity;   
+                        $updateCart->total_price += $discountPrice * $request->quantity;   
+                        $updateCart->subtotal += $discountPrice * $request->quantity;   
                     }
                 } else {
                     // If there's no existing record and quantity is positive, create a new add-on
@@ -877,7 +877,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_ons' => $updateCart->addOns,
+            'add_on_metas' => $updateCart->addOns,
             'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
