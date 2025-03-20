@@ -831,7 +831,7 @@ class CartService {
                     
                 } else {
                     // If there's no existing record and quantity is positive, create a new add-on
-                    if ($request->quantity > 0) {
+                    if ($request->quantity > 0 && $request->action != 'remove' ) {
                         $cartAddOn = CartAddOn::create([
                             'cart_id'            => $updateCart->id,
                             'add_on_id'          => $addOn->id,
