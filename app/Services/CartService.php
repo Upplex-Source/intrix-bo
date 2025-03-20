@@ -818,7 +818,7 @@ class CartService {
                     } else {
 
                         if( $request->action == 'remove' ) {
-                            $updateCart->addOns()->delete();
+                            $cartAddOn->delete();
                         } else {
                             // Otherwise, update or increment quantity normally
                             $cartAddOn->increment('quantity', $request->quantity);
