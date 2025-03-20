@@ -1089,7 +1089,8 @@ class OrderService
                     'add_on_id' => $checkoutCart->addOn->id,
                     'total_price' =>  $checkoutCart->quantity * $productPrice,
                     'payment_plan' => $checkoutCart->payment_plan,
-                ] );
+                    'quantity'           => $request->quantity,
+                    ] );
     
                 $orderPrice += $orderMeta->total_price;
     
