@@ -539,7 +539,7 @@ class CartService {
                     ]);
                 }
             } else {
-                CartMeta::where('cart_id', $updateCart->id)->delete();
+                $cartMeta = CartMeta::where('cart_id', $updateCart->id)->where( 'product_id', $product->id )->where( 'product_variant_id', $productVariant->id )->first();
         
                 $paymentPlan = $request->payment_plan;
 
@@ -557,15 +557,24 @@ class CartService {
                         break;
                 }
 
-                $cartMeta = CartMeta::create([
-                    'cart_id'           => $updateCart->id,
-                    'product_id'        => $product->id,
-                    'product_variant_id'=> $productVariant ? $productVariant->id : null,
-                    'quantity'          => $request->quantity,
-                    'total_price'       => $productPrice * $request->quantity,
-                    'status'            => 10,
-                    'payment_plan'      => $request->payment_plan ,
-                ]);
+                // $cartMeta = CartMeta::create([
+                //     'cart_id'           => $updateCart->id,
+                //     'product_id'        => $product->id,
+                //     'product_variant_id'=> $productVariant ? $productVariant->id : null,
+                //     'quantity'          => $request->quantity,
+                //     'total_price'       => $productPrice * $request->quantity,
+                //     'status'            => 10,
+                //     'payment_plan'      => $request->payment_plan ,
+                // ]);
+
+                if( $cartMeta->quantity - $request->quantity <= 0 ) {
+                    $cartMeta->delete();
+                }else {
+                    $cartMeta->quantity -= $request->quantity;
+                    $cartMeta->total_price = $productPrice * $request->quantity;
+                    $cartMeta->payment_plan = $request->payment_plan;
+                    $cartMeta->save();
+                }
             }
 
             $updateCart->load( ['cartMetas'] );
