@@ -239,6 +239,11 @@ class CartService {
                     break;
             }
 
+            $originalCartMeta = CartMeta::where('cart_id', $cart->id)
+            ->where( 'product_id', $product->id )
+            ->where( 'product_variant_id', $productVariant->id )
+            ->first();
+
             $cartMeta = CartMeta::updateOrCreate(
                 [
                     'cart_id' => $cart->id,
@@ -253,17 +258,10 @@ class CartService {
                     'products' => NULL,
                     'payment_plan' => $request->payment_plan,
                     'additional_charges' => NULL,
-                    'total_price' => ($productPrice * $request->quantity), // Default for new entry
-                    'quantity' => DB::raw("COALESCE(quantity, 0) + {$request->quantity}") // Ensures it increments on update
+                    'total_price' => ($productPrice * ( $originalCartMeta ? ( $originalCartMeta->quantity + $request->quantity ): $request->quantity ) ), // Default for new entry
+                    'quantity' => $originalCartMeta ? ( $originalCartMeta->quantity + $request->quantity ): $request->quantity, // Default for new entry
                 ]
             );
-
-            // Ensure total_price is correct
-            if (!$cartMeta->wasRecentlyCreated) {
-                $cartMeta->update([
-                    'total_price' => DB::raw("total_price + " . ($productPrice * $request->quantity))
-                ]);
-            }
 
             $cart->load( ['cartMetas', 'addOns', 'freeGift'] );
 
@@ -572,7 +570,7 @@ class CartService {
                     $cartMeta->delete();
                 }else {
                     $cartMeta->quantity -= $request->quantity;
-                    $cartMeta->total_price = $productPrice * $request->quantity;
+                    $cartMeta->total_price = $productPrice * $cartMeta->quantity;
                     $cartMeta->payment_plan = $request->payment_plan;
                     $cartMeta->save();
                 }
