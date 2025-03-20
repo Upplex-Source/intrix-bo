@@ -494,7 +494,7 @@ var statusMapper = @json( $data['status'] ),
                         $('#modal_order_view .selections').append(
                             `<div>
                                 <h6>Add On: ${freeGift.title} (${freeGift.code})</h6>
-                                <h6>Price: ${freeGift.discount_price} ( x ${freeGift.quantity} unit)</h6>
+                                <h6>Price: ${freeGift.discount_price}</h6>
                             </div><hr>`
                         );
                     }
