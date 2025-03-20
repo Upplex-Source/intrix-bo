@@ -254,14 +254,15 @@ class CartService {
                     'payment_plan' => $request->payment_plan,
                     'additional_charges' => NULL,
                     'total_price' => ($productPrice * $request->quantity), // Default for new entry
-                    'quantity' => $request->quantity, // Default for new entry
+                    'quantity' => DB::raw("COALESCE(quantity, 0) + {$request->quantity}") // Ensures it increments on update
                 ]
             );
-            
-            // If the record already existed, manually increment quantity & total_price
+
+            // Ensure total_price is correct
             if (!$cartMeta->wasRecentlyCreated) {
-                $cartMeta->increment('quantity', $request->quantity);
-                $cartMeta->increment('total_price', $productPrice * $request->quantity);
+                $cartMeta->update([
+                    'total_price' => DB::raw("total_price + " . ($productPrice * $request->quantity))
+                ]);
             }
 
             $cart->load( ['cartMetas', 'addOns', 'freeGift'] );
