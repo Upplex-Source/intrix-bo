@@ -381,7 +381,6 @@ class Helper {
         $url = config( 'services.sms.sms_url' );
 
         $request = array(
-            // 'api_key' => '1be74d22361e24a88b228e3359a9b8a2394833431ec8329dec548f40cb70e0dc',
             'api_key' => config( 'services.sms.api_key' ),
             'action' => 'send',
             'to' => $mobile,
