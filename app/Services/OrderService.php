@@ -244,7 +244,7 @@ class OrderService
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
-                'quantity' => $meta->quantity,
+                'quantity' => $meta->quantity ? $meta->quantity : 0,
                 'add_on' => $meta->addOn->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->addOn->image_path),
             ];
         });
