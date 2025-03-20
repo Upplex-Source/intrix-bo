@@ -90,13 +90,13 @@ class CartService {
                 ->setAttribute('image_path', $cart->vendingMachine->image_path);
             }
 
-            if($cart->addOns){
-                $addOns = $cart->addOns;
-                foreach( $addOns as $addOn ) {
-                    $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-                    ->append([ 'image_path' ]);
-                }
-            } 
+            // if($cart->addOns){
+            //     $addOns = $cart->addOns;
+            //     foreach( $addOns as $addOn ) {
+            //         $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+            //         ->append([ 'image_path' ]);
+            //     }
+            // } 
 
             if($cart->freeGift){
                 $cart->freeGift->setAttribute('image_path', $cart->freeGift->image_path);
@@ -116,9 +116,22 @@ class CartService {
                     'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 ];
             });
+
+            $addOnMetas = $cart->addOns->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
+                    'color' => null,
+                    'color_code' => null,
+                    'payment_plan' => $meta->payment_plan,
+                    'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+                ];
+            });
     
             // Attach the cart metas to the cart object
             $cart->cartMetas = $cartMetas;
+            $cart->addOnMetas = $addOnMetas;
             
             if( !$cart->tax ) {
                 $taxSettings = Option::getTaxesSettings();
@@ -130,9 +143,12 @@ class CartService {
 
         foreach( $userCarts as $userCart ) {
             $userCart->cart_metas = $userCart->cartMetas;
+            $userCart->add_on_metas = $userCart->addOnMetas;
             // $userCart->cartMetas = null;
             unset($userCart->cartMetas);
+            unset($userCart->addOnMetas);
             $userCart->cartMetas = $userCart->cart_metas;
+            $userCart->addOnMetas = $userCart->add_on_metas;
         }
     
         // Return the response with the paginated carts data
@@ -351,13 +367,17 @@ class CartService {
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         }
 
-        if($cart->addOns){
-            $addOns = $cart->addOns;
-            foreach( $addOns as $addOn ) {
-                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-                ->append([ 'image_path' ]);
-            }
-        } 
+        $addOnMetas = $cart->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
         
         if($cart->freeGift){
             $cart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
@@ -371,7 +391,7 @@ class CartService {
             'cart_id' => $cart->id,
             'total_price' => Helper::numberFormatV2($cart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_on_metas' => $cart->addOns,
+            'add_on_metas' => $addOnMetas,
             'free_gift' => $cart->freeGift,
             'subtotal' => Helper::numberFormatV2($cart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($cart->discount, 2,false, true),
@@ -602,13 +622,17 @@ class CartService {
             ];
         });
 
-        if($updateCart->addOns){
-            $addOns = $updateCart->addOns;
-            foreach( $addOns as $addOn ) {
-                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-                ->append([ 'image_path' ]);
-            }
-        } 
+        $addOnMetas = $updateCart->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
         
         if($updateCart->freeGift){
             $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
@@ -622,7 +646,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_on_metas' => $updateCart->addOns,
+            'add_on_metas' => $addOnMetas,
             'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
@@ -869,13 +893,17 @@ class CartService {
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         }
 
-         if($updateCart->addOns){
-            $addOns = $updateCart->addOns;
-            foreach( $addOns as $addOn ) {
-                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-                ->append([ 'image_path' ]);
-            }
-        } 
+        $addOnMetas = $updateCart->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
         
         if($updateCart->freeGift){
             $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
@@ -889,7 +917,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_on_metas' => $updateCart->addOns,
+            'add_on_metas' => $addOnMetas,
             'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
@@ -985,18 +1013,30 @@ class CartService {
             ];
         });
 
+        $addOnMetas = $updateCart->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+
         if($updateCart->voucher){
             $updateCart->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
             ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
         } ;
         
-        if($updateCart->addOns){
-            $addOns = $updateCart->addOns;
-            foreach( $addOns as $addOn ) {
-                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-                ->append([ 'image_path' ]);
-            }
-        } 
+        // if($updateCart->addOns){
+        //     $addOns = $updateCart->addOns;
+        //     foreach( $addOns as $addOn ) {
+        //         $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+        //         ->append([ 'image_path' ]);
+        //     }
+        // } 
         
         if($updateCart->freeGift){
             $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
@@ -1010,7 +1050,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => Helper::numberFormatV2($updateCart->total_price, 2,false, true),
             'cart_metas' => $cartMetas,
-            'add_on' => $updateCart->addOn,
+            'add_on_metas' => $addOnMetas,
             'free_gift' => $updateCart->freeGift,
             'subtotal' => Helper::numberFormatV2($updateCart->subtotal, 2,false, true),
             'discount' =>  Helper::numberFormatV2($updateCart->discount, 2,false, true),
@@ -1176,13 +1216,28 @@ class CartService {
             });
         }
 
+        if( $updateCart->addOnMetas ) {
+            $addOnMetas = $updateCart->addOnMetas->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
+                    'color' => null,
+                    'color_code' => null,
+                    'payment_plan' => $meta->payment_plan,
+                    'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+                ];
+            });
+        }
+
         return response()->json( [
             'message' => '',
             'message_key' => 'delete_cart_item_success',
             'sesion_key' => $updateCart->session_key,
             'cart_id' => $updateCart->id,
             'total_price' => $updateCart->total_price,
-            'cart_metas' => $cartMetas
+            'cart_metas' => $cartMetas,
+            'add_on_metas' => $addOnMetas
         ] );
     }
 

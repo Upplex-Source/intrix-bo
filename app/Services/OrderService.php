@@ -1236,13 +1236,17 @@ class OrderService
             ], 500 );
         }
 
-        if($order->addOns){
-            $addOns = $order->addOns;
-            foreach( $addOns as $addOn ) {
-                $addOn->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-                ->append([ 'image_path' ]);
-            }
-        } 
+        $addOnMetas = $order->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
        
         if($order->freeGift){
             $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
@@ -1268,7 +1272,7 @@ class OrderService
             'payment_url' => $order->payment_url,
             'reference' => $order->reference,
             'order_id' => $order->id,
-            'add_on_metas' => $order->addOns,
+            'add_on_metas' => $addOnMetas,
             'free_gift' => $order->freeGift,
             'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
             'order_metas' => $orderMetas,
