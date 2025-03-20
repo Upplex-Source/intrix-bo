@@ -100,6 +100,7 @@ class CartService {
 
             if($cart->freeGift){
                 $cart->freeGift->setAttribute('image_path', $cart->freeGift->image_path);
+                $cart->freeGift->subtotal = $cart->freeGift->discount_price;
             }
     
             // Process each cart meta data
@@ -815,13 +816,19 @@ class CartService {
                         $updateCart->subtotal -= $discountPrice;   
 
                     } else {
-                        // Otherwise, update or increment quantity normally
-                        $cartAddOn->increment('quantity', $request->quantity);
-                        $cartAddOn->increment('total_price', $discountPrice * $request->quantity);
 
-                        $updateCart->total_price += $discountPrice * $request->quantity;   
-                        $updateCart->subtotal += $discountPrice * $request->quantity;   
+                        if( $request->action == 'remove' ) {
+                            $updateCart->addOns()->delete();
+                        } else {
+                            // Otherwise, update or increment quantity normally
+                            $cartAddOn->increment('quantity', $request->quantity);
+                            $cartAddOn->increment('total_price', $discountPrice * $request->quantity);
+
+                            $updateCart->total_price += $discountPrice * $request->quantity;   
+                            $updateCart->subtotal += $discountPrice * $request->quantity; 
+                        }  
                     }
+                    
                 } else {
                     // If there's no existing record and quantity is positive, create a new add-on
                     if ($request->quantity > 0) {
@@ -852,14 +859,21 @@ class CartService {
             }
 
             if( $request->free_gift ) {
-                $freeGift = ProductFreeGift::where( 'code', $request->free_gift)->first();
-                if( $updateCart->freeGift ){
+
+                if( $request->action == 'remove' ) {
                     $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
                     $updateCart->subtotal -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
+                    $updateCart->free_gift_id = null;  
+                } else {
+                    $freeGift = ProductFreeGift::where( 'code', $request->free_gift)->first();
+                    if( $updateCart->freeGift ){
+                        $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
+                        $updateCart->subtotal -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   
+                    }
+                    $updateCart->free_gift_id = $freeGift->id;
+                    $updateCart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
+                    $updateCart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
                 }
-                $updateCart->free_gift_id = $freeGift->id;
-                $updateCart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
-                $updateCart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
             }else {
                 if( $request->type == 2  ){
                     $updateCart->total_price -= $updateCart->freeGift->discount_price ? $updateCart->freeGift->discount_price : 0;   

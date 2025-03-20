@@ -142,6 +142,10 @@ class CartController extends Controller
      * 1: add on<br>
      * 2: free gift<br>
      * 
+     * <strong>action</strong></br>
+     * remove: remove<br>
+     * update: update<br>
+     * 
      * @group Cart API
      * 
      * @queryParam session_key string required The unique identifier for the cart. Used to add addon or free gift to the cart Example: abcd-1234
@@ -149,6 +153,7 @@ class CartController extends Controller
      * @bodyParam free_gift string nullable The free_gift code get via get free gift api. Either `add_on` or `free_gift` must be provided. Example: FREE-GIFT
      * @bodyParam quantity required integer The quantity of the addon/quantity. Example: 1, -1 to deduct
      * @bodyParam type required integer The type to be change. Example: 1
+     * @bodyParam action nullable string The action to be performed. Example: remove
      * 
      */
     public function updateCartAddon( Request $request ) {
