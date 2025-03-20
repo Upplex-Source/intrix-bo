@@ -818,6 +818,10 @@ class CartService {
                     } else {
 
                         if( $request->action == 'remove' ) {
+
+                            $updateCart->total_price -= $cartAddOn->total_price;   
+                            $updateCart->subtotal -= $cartAddOn->total_price;   
+
                             $cartAddOn->delete();
                         } else {
                             // Otherwise, update or increment quantity normally
