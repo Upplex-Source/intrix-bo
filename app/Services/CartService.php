@@ -576,9 +576,9 @@ class CartService {
                 $orderPrice = self::applyVoucherDiscount($updateCart, $voucher, $orderPrice, $request);
             }
 
-            if( $cart->addOns ) {
-                $orderPrice += $cart->addOns->sum( 'total_price' );
-                $subtotal += $cart->addOns->sum( 'total_price' );   
+            if( $updateCart->addOns ) {
+                $orderPrice += $updateCart->addOns->sum( 'total_price' );
+                $subtotal += $updateCart->addOns->sum( 'total_price' );   
             }
 
             if( $updateCart->freeGift ) {
