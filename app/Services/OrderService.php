@@ -1251,6 +1251,9 @@ class OrderService
         if($order->freeGift){
             $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
             ->append([ 'image_path' ]);
+
+            $order->freeGift->subtotal = $order->freeGift->discount_price;
+
         }
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
@@ -1686,6 +1689,8 @@ class OrderService
         if($order->freeGift){
             $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
             ->append([ 'image_path' ]);
+
+            $order->freeGift->subtotal = $order->freeGift->discount_price;
         }
 
         $orderMetas = $order->orderMetas->map(function ($meta) {

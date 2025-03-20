@@ -382,6 +382,8 @@ class CartService {
         if($cart->freeGift){
             $cart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
             ->append([ 'image_path' ]);
+
+            $cart->freeGift->subtotal = $cart->freeGift->discount_price;
         }
 
         return response()->json( [
@@ -637,6 +639,9 @@ class CartService {
         if($updateCart->freeGift){
             $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
             ->append([ 'image_path' ]);
+
+            $updateCart->freeGift->subtotal = $updateCart->freeGift->discount_price;
+
         }
 
         return response()->json( [
@@ -704,7 +709,7 @@ class CartService {
         $validator = Validator::make( $request->all(), [
             'id' => ['nullable', 'exists:carts,id', 'required_without:session_key'],
             'session_key' => ['nullable', 'exists:carts,session_key', 'required_without:id'],
-            'quantity' => [ 'required' ],
+            'quantity' => [ 'nullable', ],
             'type' => [ 'required', 'in:1,2' ],
             'add_on' => [
                 'nullable',
@@ -778,6 +783,8 @@ class CartService {
         DB::beginTransaction();
 
         try {
+
+            $request->quantity = $request->quantity ? $request->quantity : 0;
 
             if( $request->add_on ) {
 
@@ -908,6 +915,8 @@ class CartService {
         if($updateCart->freeGift){
             $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
             ->append([ 'image_path' ]);
+
+            $updateCart->freeGift->subtotal = $updateCart->freeGift->discount_price;
         }
 
         return response()->json( [
@@ -1041,6 +1050,8 @@ class CartService {
         if($updateCart->freeGift){
             $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
             ->append([ 'image_path' ]);
+
+            $updateCart->freeGift->subtotal = $updateCart->freeGift->discount_price;
         }
 
         return response()->json( [
