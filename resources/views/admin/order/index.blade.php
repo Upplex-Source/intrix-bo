@@ -488,7 +488,7 @@ var statusMapper = @json( $data['status'] ),
                         );
                     });
 
-                    const freeGift = response.freeGift;
+                    const freeGift = response.free_gift;
 
                     if( freeGift ) {
                         $('#modal_order_view .selections').append(
