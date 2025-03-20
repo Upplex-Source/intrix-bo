@@ -169,7 +169,7 @@ class OrderService
         }
 
         if ( !empty( $request->reference ) ) {
-            $model->where( 'orders.reference', 'LIKE', '%' . $request->customer . '%' );
+            $model->where( 'orders.reference', 'LIKE', '%' . $request->reference . '%' );
             $filter = true;
         }
 
@@ -1089,8 +1089,8 @@ class OrderService
                     'add_on_id' => $checkoutCart->addOn->id,
                     'total_price' =>  $checkoutCart->quantity * $productPrice,
                     'payment_plan' => $checkoutCart->payment_plan,
-                    'quantity'           => $request->quantity,
-                    ] );
+                    'quantity' => $checkoutCart->quantity,
+                ] );
     
                 $orderPrice += $orderMeta->total_price;
     
