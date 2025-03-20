@@ -227,7 +227,7 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'orderMetas','user'
+            'orderMetas','user', 'addOns', 'freeGift'
         ] )->find( $request->id );
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
@@ -239,9 +239,23 @@ class OrderService
                 'product_variant' => $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
             ];
         });
+
+        $addOnMetas = $order->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'add_on' => $meta->addOn->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+
+        if( $order->freeGift ) {
+            $order->freeGift->append( ['image_path'] );
+        }
     
         // Attach the cart metas to the cart object
         $order->orderMetas = $orderMetas;
+        $order->addOnMetas = $addOnMetas;
 
         return response()->json( $order );
     }

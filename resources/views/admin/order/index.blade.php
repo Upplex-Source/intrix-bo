@@ -444,7 +444,7 @@ var statusMapper = @json( $data['status'] ),
                     _token: '{{ csrf_token() }}',
                 },
                 success: function( response ) {
-                    console.log(response)
+
                     $('#{{ $order_view }}_id').val(response.id);
                     $('#{{ $order_view }}_fullname').val(response.fullname ? response.fullname : response.company_name || '-');
                     $('#{{ $order_view }}_email').val(response.email || '-');
@@ -476,6 +476,28 @@ var statusMapper = @json( $data['status'] ),
                             </div><hr>`
                         );
                     });
+
+                    const addOnMetas = response.addOnMetas || [];
+                    addOnMetas.forEach((meta) => {
+
+                        $('#modal_order_view .selections').append(
+                            `<div>
+                                <h6>Add On: ${meta.add_on.title} (${meta.add_on.code})</h6>
+                                <h6>Price: ${meta.product.discount_price} ( x ${meta.quantity} unit)</h6>
+                            </div><hr>`
+                        );
+                    });
+
+                    const freeGift = response.freeGift;
+
+                    if( freeGift ) {
+                        $('#modal_order_view .selections').append(
+                            `<div>
+                                <h6>Add On: ${freeGift.title} (${freeGift.code})</h6>
+                                <h6>Price: ${freeGift.discount_price} ( x ${freeGift.quantity} unit)</h6>
+                            </div><hr>`
+                        );
+                    }
 
                     modalmt5Detail.show();
                     
