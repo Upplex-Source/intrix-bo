@@ -147,7 +147,7 @@ class CartService {
             $userCart->add_on_metas = $userCart->addOnMetas;
             // $userCart->cartMetas = null;
             unset($userCart->cartMetas);
-            unset($userCart->addOnMetas);
+            unset($userCart->addOns);
             $userCart->cartMetas = $userCart->cart_metas;
             $userCart->addOnMetas = $userCart->add_on_metas;
         }
