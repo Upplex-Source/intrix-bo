@@ -493,8 +493,7 @@ var statusMapper = @json( $data['status'] ),
                     if( freeGift ) {
                         $('#modal_order_view .selections').append(
                             `<div>
-                                <h6>Add On: ${freeGift.title} (${freeGift.code})</h6>
-                                <h6>Price: ${freeGift.discount_price}</h6>
+                                <h6>Free Gift: ${freeGift.title} (${freeGift.code})</h6>
                             </div><hr>`
                         );
                     }
