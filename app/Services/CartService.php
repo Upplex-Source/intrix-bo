@@ -241,7 +241,7 @@ class CartService {
 
             $originalCartMeta = CartMeta::where('cart_id', $cart->id)
             ->where( 'product_id', $product->id )
-            ->where( 'product_variant_id', $productVariant->id )
+            ->where( 'product_variant_id', $productVariant ? $productVariant->id : null )
             ->first();
 
             $cartMeta = CartMeta::updateOrCreate(
@@ -538,7 +538,7 @@ class CartService {
                     ]);
                 }
             } else {
-                $cartMeta = CartMeta::where('cart_id', $updateCart->id)->where( 'product_id', $product->id )->where( 'product_variant_id', $productVariant->id )->first();
+                $cartMeta = CartMeta::where('cart_id', $updateCart->id)->where( 'product_id', $product->id )->where( 'product_variant_id', $productVariant ? $productVariant->id : null )->first();
         
                 $paymentPlan = $request->payment_plan;
 
