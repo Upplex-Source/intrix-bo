@@ -1255,6 +1255,8 @@ class CartService {
             });
         }
 
+        $addOnMetas = array();
+
         if( $updateCart->addOnMetas ) {
             $addOnMetas = $updateCart->addOnMetas->map(function ($meta) {
                 return [
