@@ -235,7 +235,7 @@ class CartService {
                     $productPrice = $productVariant ? $productVariant->monthly : $product->price;
                     break;
                 case 3:
-                    $productPrice = $productVariant ? $productVariant->outrigh : $product->pricet;
+                    $productPrice = $productVariant ? $productVariant->outrigh : $product->price;
                     break;
             }
 
