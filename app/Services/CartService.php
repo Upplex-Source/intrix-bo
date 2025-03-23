@@ -1456,7 +1456,7 @@ class CartService {
         }
     
         return response()->json( [
-            'message' => 'voucher.voucher_validated',
+            'message' => __( 'voucher.voucher_validated' ),
         ] );
     }
 
@@ -1620,7 +1620,7 @@ class CartService {
         }
     
         return response()->json( [
-            'message' => 'voucher.voucher_validated',
+            'message' => __( 'voucher.voucher_validated' ),
         ] );
     }
 

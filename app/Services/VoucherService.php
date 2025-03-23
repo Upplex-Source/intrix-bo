@@ -876,7 +876,7 @@ class VoucherService
         $finalPrice = max(0, $subtotal - $discountAmount);
     
         return response()->json( [
-            'message' => 'voucher.voucher_validated',
+            'message' => __( 'voucher.voucher_validated' ),
             'subtotal' => number_format($subtotal, 2),
             'discount' => number_format($discountAmount, 2),
             'final_price' => number_format($finalPrice, 2),
