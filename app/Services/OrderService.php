@@ -1179,7 +1179,7 @@ class OrderService
             $userCart->save();
 
             $hasTestProduct = $userCart->cartMetas->contains(function ($cartMeta) {
-                return $cartMeta->product && $cartMeta->product->code === 'TEST';
+                return $cartMeta->product && $cartMeta->product->code === '5-IN-1';
             });
 
             if( $hasTestProduct ) {
@@ -1627,7 +1627,7 @@ class OrderService
             
             $userCart->save();
 
-            if( $request->product_code == 'TEST' ) {
+            if( $request->product_code == '5-IN-1' ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
     
