@@ -236,18 +236,20 @@ class OrderService
                 'subtotal' => $meta->total_price,
                 'quantity' => $meta->quantity,
                 'product' => $meta->product->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
-                'product_variant' => $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path) : null,
             ];
         });
 
-        $addOnMetas = $order->addOns->map(function ($meta) {
-            return [
-                'id' => $meta->id,
-                'subtotal' => $meta->total_price,
-                'quantity' => $meta->quantity ? $meta->quantity : 0,
-                'add_on' => $meta->addOn->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->addOn->image_path),
-            ];
-        });
+        if( $order->addOns ) {
+            $addOnMetas = $order->addOns->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity ? $meta->quantity : 0,
+                    'add_on' => $meta->addOn->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->addOn->image_path),
+                ];
+            });
+        }
 
         if( $order->freeGift ) {
             $order->freeGift->append( ['image_path'] );
