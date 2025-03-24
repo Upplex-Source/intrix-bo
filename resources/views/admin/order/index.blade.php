@@ -493,7 +493,7 @@ var statusMapper = @json( $data['status'] ),
                     const addOnMetas = response.addOnMetas || [];
                     addOnMetas.forEach((meta) => {
                         $('#modal_order_view .selections').append(
-                            `<div class="d-flex align-items-center border-bottom py-2">
+                            `<div class="d-flex align-items-center justify-content-around border-bottom py-2">
                                 <img src="${meta.add_on.image_path}" alt="${meta.add_on.title}" width="100" height="100" class="me-3">
                                 <div class="flex-grow-1">
                                     <strong class="mb-1">Add On: ${meta.add_on.title}</strong>
@@ -512,11 +512,27 @@ var statusMapper = @json( $data['status'] ),
                     const freeGift = response.free_gift;
                     if (freeGift) {
                         $('#modal_order_view .selections').append(
-                            `<div class="d-flex align-items-center justify-content-around border-bottom py-2">
+                            `<div class="d-flex align-items-center justify-content-start border-bottom py-2">
                                 <img src="${freeGift.image_path}" alt="${freeGift.title}" width="100" height="100" class="me-3">
                                 <div>
                                     <strong class="mb-1">Free Gift: ${freeGift.title}</strong>
                                 </div>
+                            </div>`
+                        );
+                    }
+
+                    const voucher = response.voucher;
+                    if (voucher) {
+                        $('#modal_order_view .selections').append(
+                            `<div class="mt-3">
+                                <strong class="d-flex justify-content-between">
+                                    <span>Promo Code:</span>
+                                    <span>${response.voucher.promo_code}</span>
+                                </strong>
+                                <strong class="d-flex justify-content-between">
+                                    <span>Discount:</span>
+                                    <span>MYR ${response.order_discount_formatted}</span>
+                                </strong>
                             </div>`
                         );
                     }

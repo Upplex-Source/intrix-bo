@@ -226,7 +226,7 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'orderMetas', 'user', 'addOns', 'freeGift'
+            'orderMetas', 'user', 'addOns', 'freeGift', 'voucher'
         ] )->find( $request->id );
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
