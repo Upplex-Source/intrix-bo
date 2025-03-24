@@ -50,4 +50,8 @@ return [
     'city' => 'City',
     'remarks' => 'Remarks',
     'quantity' => 'Quantity',
+
+    'upfront' => 'Upfront',
+    'monthly' => 'Monthly',
+    'outright' => 'Outright',
 ];

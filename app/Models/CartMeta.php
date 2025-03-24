@@ -31,6 +31,17 @@ class CartMeta extends Model
         'quantity',
         'payment_plan',
     ];
+    
+    public function getPaymentPlanLabelAttribute()
+    {
+        $paymentPlan = [
+            1 => __('order.upfront'),
+            2 => __('order.monthly'),
+            3 => __('order.outright'),
+        ];
+
+        return $paymentPlan[$this->attributes['payment_plan']] ?? null;
+    }
 
     public function cart() {
         return $this->belongsTo( Cart::class, 'cart_id' );

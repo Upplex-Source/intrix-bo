@@ -78,8 +78,7 @@ class OrderService
         $order = Order::with( [
             'user',
             'orderMetas',
-        ] )->select( 'orders.*' )
-        ->orderBy( 'created_at', 'DESC' );
+        ] )->select( 'orders.*' );
             
         $filterObject = self::filter( $request, $order );
         $order = $filterObject['model'];
@@ -101,7 +100,7 @@ class OrderService
                     $order->orderBy( 'orders.farm_id', $dir );
                     break;
                 case 5:
-                    $order->orderBy( 'orders.buyer_id', $dir );
+                    $order->orderBy( 'total_price', $dir );
                     break;
                 case 6:
                     $order->orderBy( 'orders.status', $dir );
@@ -227,14 +226,17 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'orderMetas','user', 'addOns', 'freeGift'
+            'orderMetas', 'user', 'addOns', 'freeGift'
         ] )->find( $request->id );
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
+
             return [
                 'id' => $meta->id,
-                'subtotal' => $meta->total_price,
-                'quantity' => $meta->quantity,
+                'payment_plan' => $meta->payment_plan_label,
+                'order_meta_price' => Helper::numberFormatV2($meta->total_price / $meta->quantity, 2, true, false),
+                'subtotal' => Helper::numberFormatV2($meta->total_price, 2, true, false),
+                'quantity' => Helper::numberFormatV2($meta->quantity, 2, true, false),
                 'product' => $meta->product->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
                 'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path) : null,
             ];
@@ -258,6 +260,10 @@ class OrderService
         // Attach the cart metas to the cart object
         $order->orderMetas = $orderMetas;
         $order->addOnMetas = $addOnMetas;
+
+        $order->order_subtotal_formatted = Helper::numberFormatV2($order->subtotal, 2, true, false);
+        $order->order_discount_formatted = Helper::numberFormatV2($order->discount, 2, true, false);
+        $order->order_total_formatted = Helper::numberFormatV2($order->total_price, 2, true, false);
 
         return response()->json( $order );
     }

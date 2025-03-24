@@ -93,6 +93,17 @@ $columns = [
             </div>
             <div class="modal-body">
                 <div class="row">
+                    <!-- Order Details -->
+                    <div class="col-md-12">
+                        <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderDetails" aria-expanded="false" aria-controls="orderDetails" style="cursor: pointer;">
+                            <strong>Order Details</strong>
+                            <em class="icon ni ni-chevron-down"></em>
+                        </div>
+                        <div class="mt-2" id="orderDetails">
+                            <div class="selections mt-3"></div>
+                        </div>
+                    </div>
+
                     <!-- Left Side: User & Address Details -->
                     <div class="col-md-6">
                         <!-- User Information -->
@@ -227,17 +238,6 @@ $columns = [
                                         <input type="text" class="form-control-plaintext" id="{{ $order_view }}_remarks" readonly>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Order Details -->
-                        <div class="mb-3">
-                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderDetails" aria-expanded="false" aria-controls="orderDetails" style="cursor: pointer;">
-                                <strong>Order Details</strong>
-                                <em class="icon ni ni-chevron-down"></em>
-                            </div>
-                            <div class="mt-2" id="orderDetails">
-                                <div class="selections mt-3"></div>
                             </div>
                         </div>
                     </div>
@@ -445,6 +445,8 @@ var statusMapper = @json( $data['status'] ),
                 },
                 success: function( response ) {
 
+                    $('#modal_order_view .selections').empty();
+
                     $('#{{ $order_view }}_id').val(response.id);
                     $('#{{ $order_view }}_fullname').val(response.fullname ? response.fullname : response.company_name || '-');
                     $('#{{ $order_view }}_email').val(response.email || '-');
@@ -463,40 +465,78 @@ var statusMapper = @json( $data['status'] ),
                     $('#{{ $order_view }}_postcode').val(response.postcode || '-');
                     $('#{{ $order_view }}_remarks').val(response.remarks || '-');
 
-                    $('#modal_order_view .selections').empty();
-
                     const orderMetas = response.orderMetas || [];
                     orderMetas.forEach((meta) => {
-
                         $('#modal_order_view .selections').append(
-                            `<div>
-                                <h6>Product: ${meta.product.title} (${meta.product.code})</h6>
-                                <h6>Variant: ${ meta.product_variant ? meta.product_variant.title : null }</h6>
-                                <h6>Price: ${meta.product.price} ( x ${meta.quantity} unit)</h6>
-                            </div><hr>`
+                            `<div class="d-flex align-items-center justify-content-around border-bottom py-2">
+                                <img src="${meta.product.image_path}" alt="${meta.product.title}" width="100" height="100" class="me-3">
+                                <div>
+                                    <strong>${meta.product.title} (${meta.product.code})</strong><br>
+                                    <small>Color: ${meta.product_variant ? meta.product_variant.title : 'N/A'}</small><br>
+                                    <small>Payment Method: ${meta.payment_plan}</small><br>
+                                </div>
+                                <div >
+                                    <strong>${meta.quantity}</strong>
+                                </div>
+                                <div>
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.order_meta_price }</strong>
+                                </div>
+                                <div>
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.subtotal }</strong>
+                                </div>
+                            </div>`
                         );
                     });
 
                     const addOnMetas = response.addOnMetas || [];
                     addOnMetas.forEach((meta) => {
-
                         $('#modal_order_view .selections').append(
-                            `<div>
-                                <h6>Add On: ${meta.add_on.title} (${meta.add_on.code})</h6>
-                                <h6>Price: ${meta.add_on.discount_price} ( x ${meta.quantity} unit)</h6>
-                            </div><hr>`
+                            `<div class="d-flex align-items-center border-bottom py-2">
+                                <img src="${meta.add_on.image_path}" alt="${meta.add_on.title}" width="100" height="100" class="me-3">
+                                <div class="flex-grow-1">
+                                    <strong class="mb-1">Add On: ${meta.add_on.title}</strong>
+                                </div>
+                                <div class="text-end">
+                                    <strong class="mb-1">Price: ${meta.add_on.discount_price}</strong>
+                                    <small>Qty: ${meta.quantity}</small>
+                                </div>
+                                <div class="text-end ms-3">
+                                    <strong class="mb-1">Total: ${meta.add_on.discount_price * meta.quantity}</strong>
+                                </div>
+                            </div>`
                         );
                     });
 
                     const freeGift = response.free_gift;
-
-                    if( freeGift ) {
+                    if (freeGift) {
                         $('#modal_order_view .selections').append(
-                            `<div>
-                                <h6>Free Gift: ${freeGift.title} (${freeGift.code})</h6>
-                            </div><hr>`
+                            `<div class="d-flex align-items-center justify-content-around border-bottom py-2">
+                                <img src="${freeGift.image_path}" alt="${freeGift.title}" width="100" height="100" class="me-3">
+                                <div>
+                                    <strong class="mb-1">Free Gift: ${freeGift.title}</strong>
+                                </div>
+                            </div>`
                         );
                     }
+
+                    $('#modal_order_view .selections').append(
+                        `<div class="mt-3">
+                            <strong class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <span>MYR ${response.order_subtotal_formatted}</span>
+                            </strong>
+                            <strong class="d-flex justify-content-between">
+                                <span>Discount:</span>
+                                <span>MYR ${response.order_discount_formatted}</span>
+                            </strong>
+                            <strong class="d-flex justify-content-between">
+                                <span>Total:</span>
+                                <span>MYR ${response.order_total_formatted}</span>
+                            </strong>
+                        </div>`
+                    );
 
                     modalmt5Detail.show();
                     
