@@ -11,7 +11,7 @@
 </head>
 <body onload="document.getElementById('paymentForm').submit();">
     <p>Redirecting to payment gateway...</p>
-    <form id="paymentForm" action="https://payment.ipay88.com.my/epayment/entry.asp" method="POST">
+    <form id="paymentForm" action="https://sandbox.ipay88.com.my/epayment/entry.asp" method="POST">
         @foreach($payment_data as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
         @endforeach
