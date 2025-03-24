@@ -503,10 +503,11 @@ var statusMapper = @json( $data['status'] ),
                                 </div>
                                 <div>
                                     <strong class="text-end">MYR</strong><br>
-                                    <strong>${ meta.add_on.order_meta_price }</strong>
+                                    <strong>${ meta.order_meta_price }</strong>
                                 </div>
-                                <div class="text-end ms-3">
-                                    <strong class="mb-1">Total: ${meta.subtotal}</strong>
+                                <div >
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.subtotal }</strong>
                                 </div>
                             </div>`
                         );
