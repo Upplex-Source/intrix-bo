@@ -246,6 +246,7 @@ class OrderService
             $addOnMetas = $order->addOns->map(function ($meta) {
                 return [
                     'id' => $meta->id,
+                    'order_meta_price' => Helper::numberFormatV2($meta->total_price / $meta->quantity, 2, true, false),
                     'subtotal' => $meta->total_price,
                     'quantity' => $meta->quantity ? $meta->quantity : 0,
                     'add_on' => $meta->addOn->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->addOn->image_path),

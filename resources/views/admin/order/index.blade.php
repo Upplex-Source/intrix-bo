@@ -495,15 +495,18 @@ var statusMapper = @json( $data['status'] ),
                         $('#modal_order_view .selections').append(
                             `<div class="d-flex align-items-center justify-content-around border-bottom py-2">
                                 <img src="${meta.add_on.image_path}" alt="${meta.add_on.title}" width="100" height="100" class="me-3">
-                                <div class="flex-grow-1">
+                                <div>
                                     <strong class="mb-1">Add On: ${meta.add_on.title}</strong>
                                 </div>
-                                <div class="text-end">
-                                    <strong class="mb-1">Price: ${meta.add_on.discount_price}</strong>
-                                    <small>Qty: ${meta.quantity}</small>
+                                <div >
+                                    <strong>${meta.quantity}</strong>
+                                </div>
+                                <div>
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.add_on.order_meta_price }</strong>
                                 </div>
                                 <div class="text-end ms-3">
-                                    <strong class="mb-1">Total: ${meta.add_on.discount_price * meta.quantity}</strong>
+                                    <strong class="mb-1">Total: ${meta.subtotal}</strong>
                                 </div>
                             </div>`
                         );
