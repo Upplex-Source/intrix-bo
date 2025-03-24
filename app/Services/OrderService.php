@@ -1182,6 +1182,8 @@ class OrderService
                 return $cartMeta->product && $cartMeta->product->code === '5-IN-1';
             });
 
+            $paymentUrl = '';
+
             if( $hasTestProduct ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
@@ -1232,10 +1234,11 @@ class OrderService
     
                 DB::commit();
 
-                return response()->json([
-                    'status' => 'success',
-                    'payment_url' => $paymentUrl
-                ]);
+                // return response()->json([
+                //     'message' => '',
+                //     'message_key' => 'create_order_success',
+                //     'payment_url' => $paymentUrl
+                // ]);
             }
 
             $order->save();
@@ -1254,6 +1257,7 @@ class OrderService
         $addOnMetas = $order->addOns->map(function ($meta) {
             return [
                 'id' => $meta->id,
+                'payment_url' => $paymentUrl,
                 'subtotal' => $meta->total_price,
                 'quantity' => $meta->quantity,
                 'color' => null,
@@ -1626,6 +1630,7 @@ class OrderService
             }
             
             $userCart->save();
+            $paymentUrl = '';
 
             if( $request->product_code == '5-IN-1' ) {
                 $merchantKey = config('services.ipay88.merchant_key');
@@ -1677,10 +1682,10 @@ class OrderService
     
                 DB::commit();
 
-                return response()->json([
-                    'status' => 'success',
-                    'payment_url' => $paymentUrl
-                ]);
+                // return response()->json([
+                //     'status' => 'success',
+                //     'payment_url' => $paymentUrl
+                // ]);
             }
 
             $order->save();
@@ -1722,8 +1727,8 @@ class OrderService
 
         return response()->json( [
             'message' => '',
+            'payment_url' => $paymentUrl,
             'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
-            'payment_url' => $order->payment_url,
             'sesion_key' => $order->session_key,
             'order_id' => $order->id,
             'add_on' => $order->addOn,
