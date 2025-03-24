@@ -236,7 +236,7 @@ class OrderService
                 'payment_plan' => $meta->payment_plan_label,
                 'order_meta_price' => Helper::numberFormatV2($meta->total_price / $meta->quantity, 2, true, false),
                 'subtotal' => Helper::numberFormatV2($meta->total_price, 2, true, false),
-                'quantity' => Helper::numberFormatV2($meta->quantity, 2, true, false),
+                'quantity' => $meta->quantity,
                 'product' => $meta->product->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
                 'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path) : null,
             ];
