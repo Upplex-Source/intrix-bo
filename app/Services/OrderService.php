@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\{
     Storage,
     Validator,
     File,
+    Mail,
 };
 
 use Illuminate\Validation\Rule;
@@ -37,6 +38,8 @@ use App\Models\{
     ProductFreeGift,
     OrderAddOn,
 };
+
+use App\Mail\ContactFormMail;
 
 use Helper;
 use IPay88\Request\RequestBuilder as IPay88RequestBuilder;
@@ -2242,5 +2245,20 @@ class OrderService
         $data = $request->all();
 
         return view('admin.order.payment_redirect', compact('data'));
+    }
+
+    public static function contactUs( $request )
+    {
+        $validated = $request->validate( [
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone_number' => 'nullable|string',
+            'location' => 'nullable|string',
+            'model' => 'nullable|string',
+        ] );
+
+        Mail::send( new ContactFormMail( $validated ) );
+
+        return back()->with( 'success', 'Your message has been sent!' );
     }
 }

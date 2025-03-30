@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\{
     ProductBundleController,
     BlogController,
     ProductController,
+    ContactController,
 };
 
 use Illuminate\Support\Facades\Route;
@@ -77,6 +78,10 @@ Route::prefix( 'add-ons' )->group( function() {
 
 Route::prefix( 'free-gifts' )->group( function() {
     Route::any( '/', [ ProductController::class, 'getFreeGifts' ] );
+} );
+
+Route::prefix( 'contact-us' )->group( function() {
+    Route::any( '/', [ ContactController::class, 'contactUs' ] );
 } );
 
 if( 1 == 2 ){
