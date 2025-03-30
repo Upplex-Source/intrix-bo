@@ -14,8 +14,7 @@ class ContactController extends Controller
     /**
      * 1. Contact Us Form Submission
      * 
-     * 
-     * @group Check-in API
+     * @group Contact-us API
      * 
      * @queryParam full_name string required Fullname of requestor. Example: Adam
      * @queryParam email string required email of requestor. Example: adameve@mail.com
