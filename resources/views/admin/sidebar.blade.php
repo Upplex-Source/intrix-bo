@@ -31,7 +31,7 @@
                                     </a>
                                 </li>
                                 @endcan
-                                @if( 1 = 2 )
+                                @if( 1 == 2 )
                                 @can( 'view roles' )
                                 <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\RoleController' ? 'active current-page' : '' }}">
                                     <a href="{{ route( 'admin.module_parent.role.index' ) }}" class="nk-menu-link">
