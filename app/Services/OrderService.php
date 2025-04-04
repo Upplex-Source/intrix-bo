@@ -840,7 +840,7 @@ class OrderService
         $validator = Validator::make($request->all(), [
             'id' => ['nullable', 'exists:orders,id'],
             'status' => ['nullable', 'in:1,2,3,10,20'],
-            'reference' => ['nullable', 'exists:orders,reference'],
+            'reference' => ['required', 'exists:orders,reference'],
             'per_page' => ['nullable', 'integer', 'min:1'], // Validate per_page input
         ]);
     
