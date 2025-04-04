@@ -207,6 +207,14 @@ class Ipay88Service {
                 $order->payment_attempt += 1;
                 $orderTransaction->status = 20;
 
+                return redirect()->away( config( 'services.frontend.url' ) . '/order/failed' . '?' . http_build_query([
+                    'order_id'     => null,
+                    'payment_url'  => null,
+                    'reference'    => null,
+                    'total_price'  => null,
+                    'message'      => 'Oops something when wrong, Please try ordering Again.',
+                ]) );
+
                 return response()->json( [
                     'message' => 'Oops something when wrong, Please try ordering Again.',
                     'message_key' => 'order_failed,',
@@ -254,6 +262,14 @@ class Ipay88Service {
                 ];
             });
 
+            return redirect()->away( config( 'services.frontend.url' ) . '/order/success' . '?' . http_build_query([
+                'order_id'     => $order->id,
+                'payment_url'  => $order->payment_url,
+                'reference'    => $order->reference,
+                'total_price'  => Helper::numberFormatV2($order->total_price, 2, true),
+                'message'      => 'Order created successfully. Please proceed with the payment.',
+            ]) );
+            
             return response()->json( [
                 'message' => '',
                 'message_key' => 'create_order_success',
