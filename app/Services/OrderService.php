@@ -867,10 +867,6 @@ class OrderService
             $query->where('reference', $request->reference);
         }
     
-        if ($request->has('user_bundle')) {
-            $query->whereHas('userBundle');
-        }
-    
         // Use paginate instead of get
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
         $userOrders = $query->paginate($perPage);
@@ -1196,7 +1192,7 @@ class OrderService
 
             $paymentUrl = '';
 
-            if( $hasTestProduct ) {
+            // if( $hasTestProduct ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
     
@@ -1251,7 +1247,7 @@ class OrderService
                 //     'message_key' => 'create_order_success',
                 //     'payment_url' => $paymentUrl
                 // ]);
-            }
+            // }
 
             $order->save();
 
@@ -1644,7 +1640,7 @@ class OrderService
             $userCart->save();
             $paymentUrl = '';
 
-            if( $request->product_code == 'TEST' ) {
+            // if( $request->product_code == 'TEST' ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
     
@@ -1698,7 +1694,7 @@ class OrderService
                 //     'status' => 'success',
                 //     'payment_url' => $paymentUrl
                 // ]);
-            }
+            // }
 
             $order->save();
 
