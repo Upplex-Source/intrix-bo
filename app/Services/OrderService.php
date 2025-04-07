@@ -849,6 +849,7 @@ class OrderService
     
         // Get the current authenticated user
         $user = auth()->user();
+        $isOne = false;
     
         // Start by querying orders for the authenticated user
         $query = Order::with(['voucher'])
@@ -857,6 +858,7 @@ class OrderService
         // Apply filters
         if ($request->has('id')) {
             $query->where('id', $request->id);
+            $isOne = true;
         }
     
         if ($request->has('status')) {
@@ -865,7 +867,69 @@ class OrderService
     
         if ($request->has('reference')) {
             $query->where('reference', $request->reference);
+            $isOne = true;
         }
+
+        if ( $isOne ) {
+            $order = $query->first();
+        
+            if ( ! $order ) {
+                return response()->json([
+                    'message' => 'Order not found',
+                    'message_key' => 'order_not_found',
+                ], 404);
+            }
+        
+            $order->append( ['order_status_label'] );
+        
+            if($order->addOn){
+                $order->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+            } 
+        
+            if($order->freeGift){
+                $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+    
+                $order->freeGift->subtotal = $order->freeGift->discount_price;
+            }
+
+            $orderMetas = $order->orderMetas->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
+                    'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                    'color_code' => $meta->productVariant ? intval($meta->productVariant->color) : null,
+                    'payment_plan' => $meta->payment_plan,
+                    'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                        ->setAttribute('image_path', $meta->product->image_path),
+                    'product_variant' => $meta->productVariant
+                        ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])
+                            ->setAttribute('image_path', $meta->productVariant->image_path)
+                        : null,
+                ];
+            });
+
+            $userOrder->order_metas = $orderMetas;
+            $userOrder->orderMetas = null;
+            unset($userOrder->orderMetas);
+        
+            return response()->json([
+                'message' => '',
+                'payment_url' => $order->payment_url ?? null,
+                'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
+                'session_key' => $order->session_key,
+                'order_id' => $order->id,
+                'add_on' => $order->addOn,
+                'free_gift' => $order->freeGift,
+                'total_price' => Helper::numberFormatV2($order->total_price, 2, true),
+                'order_metas' => $orderMetas,
+                'voucher' => $order->voucher
+                    ? $order->voucher->makeHidden(['description', 'created_at', 'updated_at'])
+                    : null,
+            ]);
+        }        
     
         // Use paginate instead of get
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
@@ -899,7 +963,7 @@ class OrderService
             $userOrder->orderMetas = null;
             unset($userOrder->orderMetas);
         }
-    
+
         // Return the paginated response
         return response()->json([
             'message' => '',

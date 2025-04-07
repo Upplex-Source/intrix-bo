@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\{
     BlogController,
     ProductController,
     ContactController,
+    GuideController,
 };
 
 use Illuminate\Support\Facades\Route;
@@ -82,6 +83,18 @@ Route::prefix( 'free-gifts' )->group( function() {
 
 Route::prefix( 'contact-us' )->group( function() {
     Route::any( '/', [ ContactController::class, 'contactUs' ] );
+} );
+
+Route::prefix( 'where-to-find-us' )->group( function() {
+    Route::any( 'countries', [ GuideController::class, 'getCountries' ] );
+    Route::any( 'states', [ GuideController::class, 'getStates' ] );
+    Route::any( 'branches', [ GuideController::class, 'getBranches' ] );
+} );
+
+Route::prefix( 'guides-resources' )->group( function() {
+    Route::any( 'installation-guides', [ GuideController::class, 'getInstallationGuides' ] );
+    Route::any( 'product-brochures', [ GuideController::class, 'getProductBrochures' ] );
+    Route::any( 'videos', [ GuideController::class, 'getVideos' ] );
 } );
 
 if( 1 == 2 ){

@@ -179,6 +179,46 @@
                                     </ul>
                                 </li>
                                 @endcan
+                                
+                                @can( 'view guides' )
+                                <li class="nk-menu-item has-sub {{ ( $controller == 'App\Http\Controllers\Admin\GuideCountryController' || $controller == 'App\Http\Controllers\Admin\GuideBranchController' ) ? 'active current-page' : '' }}">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-globe"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.countries' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideCountryController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.guide_country.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.countries' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideBranchController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.guide_branch.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.branches' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
+
+                                @can( 'view guides' )
+                                <li class="nk-menu-item has-sub {{ ( $controller == 'App\Http\Controllers\Admin\GuideController' ) ? 'active current-page' : '' }}">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-file-text"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.guides' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.guide.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.guides' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'addProductBrochures' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.guide.addProductBrochures' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.product_brochures' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'addInstallationGuides' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.guide.addInstallationGuides' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.installation_guides' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'addVideos' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.guide.addVideos' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.videos' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
 
                                 @can( 'view settings' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\SettingController' ? 'active current-page' : '' }}">

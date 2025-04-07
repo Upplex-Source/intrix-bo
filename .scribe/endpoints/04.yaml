@@ -1,0 +1,109 @@
+name: 'Product API'
+description: ''
+endpoints:
+  -
+    httpMethods:
+      0: GET
+      2: POST
+      3: PUT
+      4: PATCH
+      5: DELETE
+      6: OPTIONS
+    uri: api/v1/add-ons
+    metadata:
+      title: '1. Get Add Ons'
+      description: '<aside class="notice">Get all Add on that is in BO</aside>'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      length:
+        name: length
+        description: 'The length of the table.'
+        required: true
+        example: 10
+        type: integer
+        custom: []
+      start:
+        name: start
+        description: 'The start of the record of the table.'
+        required: true
+        example: 0
+        type: integer
+        custom: []
+      created_date:
+        name: created_date
+        description: 'The date of the filter.'
+        required: false
+        example: '2024-09-25 to 2024-09-27'
+        type: string
+        custom: []
+    responses:
+      -
+        status: 200
+        content: '{"add_ons":[{"id":1,"product_id":null,"title":"tesss","code":"tesss","description":"tesss","color":null,"image":"product-add-on\/1\/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png","status":10,"brochure":null,"sku":"tesss","specification":"tesss","features":"tesss","whats_included":"tesss","price":"12.00","discount_price":"0.00","created_at":"2025-03-17 16:29:32","updated_at":"2025-03-17 16:29:32","image_path":"http:\/\/localhost\/storage\/product-add-on\/1\/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png","add_on_products":[{"id":4,"code":"LITE","title":"Intrix One Tap Lite","image":null,"description":"Intrix One Tap Lite","price":"39.00","discount_price":"39.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"add_on_id":1,"product_id":4}},{"id":5,"code":"TEST","title":"TEST","image":null,"description":"TEST","price":"1.00","discount_price":"1.00","status":10,"created_at":"2025-03-18 11:05:00","updated_at":"2025-03-18 11:05:00","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"add_on_id":1,"product_id":5}},{"id":3,"code":"2-IN-1","title":"Intrix One Tap 2 in 1","image":null,"description":"Intrix One Tap Lite","price":"45.00","discount_price":"45.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"add_on_id":1,"product_id":3}},{"id":2,"code":"4-IN-1","title":"Intrix One Tap 4 in 1","image":null,"description":"Intrix One Tap Lite","price":"52.00","discount_price":"52.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"add_on_id":1,"product_id":2}},{"id":1,"code":"5-IN-1","title":"Intrix One Tap 5 in 1","image":null,"description":"Intrix One Tap Lite","price":"75.00","discount_price":"75.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"add_on_id":1,"product_id":1}}]}],"draw":null,"start":0,"length":10,"hasMore":false,"nextStart":null,"recordsFiltered":1,"recordsTotal":1}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          x-ratelimit-limit: '100'
+          x-ratelimit-remaining: '92'
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []
+  -
+    httpMethods:
+      0: GET
+      2: POST
+      3: PUT
+      4: PATCH
+      5: DELETE
+      6: OPTIONS
+    uri: api/v1/free-gifts
+    metadata:
+      title: '1. Get Free Gifts'
+      description: '<aside class="notice">Get all Add on that is in BO</aside>'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters: []
+    bodyParameters:
+      length:
+        name: length
+        description: 'The length of the table.'
+        required: true
+        example: 10
+        type: integer
+        custom: []
+      start:
+        name: start
+        description: 'The start of the record of the table.'
+        required: true
+        example: 0
+        type: integer
+        custom: []
+      created_date:
+        name: created_date
+        description: 'The date of the filter.'
+        required: false
+        example: '2024-09-25 to 2024-09-27'
+        type: string
+        custom: []
+    responses:
+      -
+        status: 200
+        content: '{"free_gifts":[{"id":1,"title":"tesst gift","description":"123123","color":null,"image":"product-add-on\/1\/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png","status":10,"brochure":null,"sku":"12312","specification":"123123123","features":"12313","whats_included":"123","created_at":"2025-03-16 21:09:02","updated_at":"2025-03-18 11:38:39","price":"0.00","discount_price":"0.00","product_id":null,"code":"gggg","image_path":"http:\/\/localhost\/storage\/product-add-on\/1\/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png","free_gift_products":[{"id":1,"code":"5-IN-1","title":"Intrix One Tap 5 in 1","image":null,"description":"Intrix One Tap Lite","price":"75.00","discount_price":"75.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"free_gift_id":1,"product_id":1}}]},{"id":2,"title":"unassco","description":null,"color":null,"image":null,"status":10,"brochure":null,"sku":null,"specification":null,"features":null,"whats_included":null,"created_at":"2025-03-16 21:09:13","updated_at":"2025-03-17 16:31:52","price":"0.00","discount_price":"0.00","product_id":null,"code":"unassco","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","free_gift_products":[{"id":5,"code":"TEST","title":"TEST","image":null,"description":"TEST","price":"1.00","discount_price":"1.00","status":10,"created_at":"2025-03-18 11:05:00","updated_at":"2025-03-18 11:05:00","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"free_gift_id":2,"product_id":5}},{"id":4,"code":"LITE","title":"Intrix One Tap Lite","image":null,"description":"Intrix One Tap Lite","price":"39.00","discount_price":"39.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"free_gift_id":2,"product_id":4}},{"id":3,"code":"2-IN-1","title":"Intrix One Tap 2 in 1","image":null,"description":"Intrix One Tap Lite","price":"45.00","discount_price":"45.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"free_gift_id":2,"product_id":3}},{"id":2,"code":"4-IN-1","title":"Intrix One Tap 4 in 1","image":null,"description":"Intrix One Tap Lite","price":"52.00","discount_price":"52.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"free_gift_id":2,"product_id":2}},{"id":1,"code":"5-IN-1","title":"Intrix One Tap 5 in 1","image":null,"description":"Intrix One Tap Lite","price":"75.00","discount_price":"75.00","status":10,"created_at":"2025-02-08 13:22:04","updated_at":"2025-02-08 13:22:04","image_path":"http:\/\/localhost\/admin\/images\/placeholder.png?v=1.07","pivot":{"free_gift_id":2,"product_id":1}}]}],"draw":null,"start":0,"length":10,"hasMore":false,"nextStart":null,"recordsFiltered":2,"recordsTotal":2}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          x-ratelimit-limit: '100'
+          x-ratelimit-remaining: '91'
+          access-control-allow-origin: '*'
+        description: null
+    responseFields: []

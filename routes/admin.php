@@ -38,6 +38,10 @@ use App\Http\Controllers\Admin\{
     ProductBundleController,
     UserBundleController,
     BlogController,
+    GuideController,
+    GuideCountryController,
+    GuideBranchController,
+    GuideStateController,
 };
 
 use App\Models\{
@@ -372,6 +376,103 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'all-blog-categories', [ BlogController::class, 'allBlogCategories' ] )->name( 'admin.blog.allBlogCategories' );
 
 
+            } );
+
+            Route::prefix( 'guides' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view guides' ] ], function() {
+                    Route::get( '/', [ GuideController::class, 'index' ] )->name( 'admin.module_parent.guide.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guides' ] ], function() {
+                    Route::get( 'add', [ GuideController::class, 'add' ] )->name( 'admin.guide.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guides' ] ], function() {
+                    Route::get( 'add-product-brochures', [ GuideController::class, 'add' ] )->name( 'admin.guide.addProductBrochures' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guides' ] ], function() {
+                    Route::get( 'add-installation-guides', [ GuideController::class, 'add' ] )->name( 'admin.guide.addInstallationGuides' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guides' ] ], function() {
+                    Route::get( 'add-videos', [ GuideController::class, 'add' ] )->name( 'admin.guide.addVideos' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit guides' ] ], function() {
+                    Route::get( 'edit', [ GuideController::class, 'edit' ] )->name( 'admin.guide.edit' );
+                } );
+    
+                Route::post( 'update-order', [ GuideController::class, 'updateOrder' ] )->name( 'admin.guide.updateOrder' );
+                Route::post( 'all-guides', [ GuideController::class, 'allGuides' ] )->name( 'admin.guide.allGuides' );
+                Route::post( 'one-guide', [ GuideController::class, 'oneGuide' ] )->name( 'admin.guide.oneGuide' );
+                Route::post( 'create-guide', [ GuideController::class, 'createGuide' ] )->name( 'admin.guide.createGuide' );
+                Route::post( 'update-guide', [ GuideController::class, 'updateGuide' ] )->name( 'admin.guide.updateGuide' );
+                Route::post( 'delete-guide', [ GuideController::class, 'deleteGuide' ] )->name( 'admin.guide.deleteGuide' );
+                Route::post( 'update-guide-status', [ GuideController::class, 'updateGuideStatus' ] )->name( 'admin.guide.updateGuideStatus' );
+                Route::post( 'remove-guide-gallery-image', [ GuideController::class, 'removeGuideGalleryImage' ] )->name( 'admin.guide.removeGuideGalleryImage' );
+                Route::post( 'ckeUpload', [ GuideController::class, 'ckeUpload' ] )->name( 'admin.guide.ckeUpload' );
+            } );
+
+            Route::prefix( 'guide-countries' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view guide-countries' ] ], function() {
+                    Route::get( '/', [ GuideCountryController::class, 'index' ] )->name( 'admin.module_parent.guide_country.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guide-countries' ] ], function() {
+                    Route::get( 'add', [ GuideCountryController::class, 'add' ] )->name( 'admin.guide_country.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit guide-countries' ] ], function() {
+                    Route::get( 'edit', [ GuideCountryController::class, 'edit' ] )->name( 'admin.guide_country.edit' );
+                } );
+    
+                Route::post( 'update-order', [ GuideCountryController::class, 'updateOrder' ] )->name( 'admin.guide_country.updateOrder' );
+                Route::post( 'all-guide-countries', [ GuideCountryController::class, 'allGuideCountries' ] )->name( 'admin.guide_country.allGuideCountries' );
+                Route::post( 'one-guide-country', [ GuideCountryController::class, 'oneGuideCountry' ] )->name( 'admin.guide_country.oneGuideCountry' );
+                Route::post( 'create-guide-country', [ GuideCountryController::class, 'createGuideCountry' ] )->name( 'admin.guide_country.createGuideCountry' );
+                Route::post( 'update-guide-country', [ GuideCountryController::class, 'updateGuideCountry' ] )->name( 'admin.guide_country.updateGuideCountry' );
+                Route::post( 'delete-guide-country', [ GuideCountryController::class, 'deleteGuideCountry' ] )->name( 'admin.guide_country.deleteGuideCountry' );
+                Route::post( 'update-guide-country-status', [ GuideCountryController::class, 'updateGuideCountryStatus' ] )->name( 'admin.guide_country.updateGuideCountryStatus' );
+                Route::post( 'remove-guide-gallery-image', [ GuideCountryController::class, 'removeGuideCountryGalleryImage' ] )->name( 'admin.guide_country.removeGuideCountryGalleryImage' );
+                Route::post( 'ckeUpload', [ GuideCountryController::class, 'ckeUpload' ] )->name( 'admin.guide_country.ckeUpload' );
+            } );
+
+            Route::prefix( 'guide-branches' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view guide-branches' ] ], function() {
+                    Route::get( '/', [ GuideBranchController::class, 'index' ] )->name( 'admin.module_parent.guide_branch.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guide-branches' ] ], function() {
+                    Route::get( 'add', [ GuideBranchController::class, 'add' ] )->name( 'admin.guide_branch.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit guide-branches' ] ], function() {
+                    Route::get( 'edit', [ GuideBranchController::class, 'edit' ] )->name( 'admin.guide_branch.edit' );
+                } );
+    
+                Route::post( 'update-order', [ GuideBranchController::class, 'updateOrder' ] )->name( 'admin.guide_branch.updateOrder' );
+                Route::post( 'all-guide-branches', [ GuideBranchController::class, 'allGuideBranches' ] )->name( 'admin.guide_branch.allGuideBranches' );
+                Route::post( 'one-guide-branch', [ GuideBranchController::class, 'oneGuideBranch' ] )->name( 'admin.guide_branch.oneGuideBranch' );
+                Route::post( 'create-guide-branch', [ GuideBranchController::class, 'createGuideBranch' ] )->name( 'admin.guide_branch.createGuideBranch' );
+                Route::post( 'update-guide-branch', [ GuideBranchController::class, 'updateGuideBranch' ] )->name( 'admin.guide_branch.updateGuideBranch' );
+                Route::post( 'delete-guide-branch', [ GuideBranchController::class, 'deleteGuideBranch' ] )->name( 'admin.guide_branch.deleteGuideBranch' );
+                Route::post( 'update-guide-branch-status', [ GuideBranchController::class, 'updateGuideBranchStatus' ] )->name( 'admin.guide_branch.updateGuideBranchStatus' );
+                Route::post( 'remove-guide-gallery-image', [ GuideBranchController::class, 'removeGuideBranchGalleryImage' ] )->name( 'admin.guide_branch.removeGuideBranchGalleryImage' );
+                Route::post( 'ckeUpload', [ GuideBranchController::class, 'ckeUpload' ] )->name( 'admin.guide_branch.ckeUpload' );
+            } );
+
+            Route::prefix( 'guide-states' )->group( function() {
+                Route::group( [ 'middleware' => [ 'permission:view guide-states' ] ], function() {
+                    Route::get( '/', [ GuideStateController::class, 'index' ] )->name( 'admin.module_parent.guide_state.index' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:add guide-states' ] ], function() {
+                    Route::get( 'add', [ GuideStateController::class, 'add' ] )->name( 'admin.guide_state.add' );
+                } );
+                Route::group( [ 'middleware' => [ 'permission:edit guide-states' ] ], function() {
+                    Route::get( 'edit', [ GuideStateController::class, 'edit' ] )->name( 'admin.guide_state.edit' );
+                } );
+    
+                Route::post( 'update-order', [ GuideStateController::class, 'updateOrder' ] )->name( 'admin.guide_state.updateOrder' );
+                Route::post( 'all-guide-states', [ GuideStateController::class, 'allGuideStates' ] )->name( 'admin.guide_state.allGuideStates' );
+                Route::post( 'one-guide-state', [ GuideStateController::class, 'oneGuideState' ] )->name( 'admin.guide_state.oneGuideState' );
+                Route::post( 'create-guide-state', [ GuideStateController::class, 'createGuideState' ] )->name( 'admin.guide_state.createGuideState' );
+                Route::post( 'update-guide-state', [ GuideStateController::class, 'updateGuideState' ] )->name( 'admin.guide_state.updateGuideState' );
+                Route::post( 'delete-guide-state', [ GuideStateController::class, 'deleteGuideState' ] )->name( 'admin.guide_state.deleteGuideState' );
+                Route::post( 'update-guide-state-status', [ GuideStateController::class, 'updateGuideStateStatus' ] )->name( 'admin.guide_state.updateGuideStateStatus' );
+                Route::post( 'remove-guide-gallery-image', [ GuideStateController::class, 'removeGuideStateGalleryImage' ] )->name( 'admin.guide_state.removeGuideStateGalleryImage' );
+                Route::post( 'ckeUpload', [ GuideStateController::class, 'ckeUpload' ] )->name( 'admin.guide_state.ckeUpload' );
             } );
 
         } );
