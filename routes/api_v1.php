@@ -92,8 +92,8 @@ Route::prefix( 'where-to-find-us' )->group( function() {
 } );
 
 Route::prefix( 'guides-resources' )->group( function() {
-    Route::any( 'installation-guides', [ GuideController::class, 'getInstallationGuides' ] );
     Route::any( 'product-brochures', [ GuideController::class, 'getProductBrochures' ] );
+    Route::any( 'installation-guides', [ GuideController::class, 'getInstallationGuides' ] );
     Route::any( 'videos', [ GuideController::class, 'getVideos' ] );
 } );
 
