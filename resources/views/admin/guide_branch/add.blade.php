@@ -161,7 +161,7 @@ $guide_branch_create = 'guide_branch_create';
                 data: function (params) {
                     return {
                         title: params.term, // search term
-                        start: params.page ? params.page : 0,
+                        start: params.page ? params.page+10 : 0,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };
