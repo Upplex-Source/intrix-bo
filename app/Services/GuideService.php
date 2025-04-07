@@ -974,6 +974,16 @@ class GuideService
             $updateGuide = GuideCountry::find( $request->id );
             $updateGuide->status = $updateGuide->status == 10 ? 20 : 10;
 
+            if( $updateGuide->status == 20 ){
+                GuideBranch::where( 'country_id', $updateGuide->id )->update( [ 'status' => 20 ] );
+                GuideState::where( 'country_id', $updateGuide->id )->update( [ 'status' => 20 ] );
+                Guide::where( 'country_id', $updateGuide->id )->update( [ 'status' => 20 ] );
+            } else {
+                GuideBranch::where( 'country_id', $updateGuide->id )->update( [ 'status' => 10 ] );
+                GuideState::where( 'country_id', $updateGuide->id )->update( [ 'status' => 10 ] );
+                Guide::where( 'country_id', $updateGuide->id )->update( [ 'status' => 10 ] );
+            }
+
             $updateGuide->save();
             DB::commit();
 
