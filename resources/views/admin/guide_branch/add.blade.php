@@ -159,6 +159,9 @@ $guide_branch_create = 'guide_branch_create';
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
+                    
+                    let page = params.page || 1;
+
                     return {
                         title: params.term, // search term
                         start: ( page - 1 ) * 10,
