@@ -249,9 +249,12 @@ $guide_edit = 'guide_edit';
                 dataType: 'json',
                 delay: 250,
                 data: function (params) {
+
+                    let page = params.page || 1;
+
                     return {
-                        title: params.term, // search term
-                        start: params.page ? params.page : 0,
+                        title: params.term,
+                        start: ( page - 1 ) * 10,
                         length: 10,
                         _token: '{{ csrf_token() }}',
                     };

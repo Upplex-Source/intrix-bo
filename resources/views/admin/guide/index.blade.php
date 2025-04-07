@@ -292,7 +292,7 @@ var statusMapper = @json( $data['status'] ),
         $( document ).on( 'click', '.dt-status', function() {
 
             $.ajax( {
-                url: '{{ route( 'admin.guide.updateGuideStatus' ) }}',
+                url: '{{ route( 'admin.guide_country.updateGuideCountryStatus' ) }}',
                 type: 'POST',
                 data: {
                     'id': $( this ).data( 'id' ),
