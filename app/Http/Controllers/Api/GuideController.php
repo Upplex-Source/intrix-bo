@@ -30,6 +30,8 @@ class GuideController extends Controller {
      * 
      * @group Where-To-Find-Us API
      * 
+     * @bodyParam country string The resources' country to be filtered ( id or name ). Example: Malaysia
+     * 
      */ 
     public function getCountries( Request $request ) {
         
@@ -64,7 +66,27 @@ class GuideController extends Controller {
     }
 
     /**
-     * 4. Get Product Brochures ( sorted )
+     * 4. Get Guide and resources
+     * 
+     * <strong>file_type</strong></br>
+     * 1: product brochures<br>
+     * 2: installation guide<br>
+     * 3: videos<br>
+     * 
+     * @group Where-To-Find-Us API
+     * 
+     * @bodyParam country string The resources' country to be filtered ( id or name ). Example: Malaysia
+     * @bodyParam file_type interger The resources' file_type to be filtered . Example: 1
+     * 
+     * 
+     */ 
+    public function getGuideAndResources( Request $request ) {
+        
+        return GuideService::getGuideAndResources( $request );
+    }
+
+    /**
+     * 5. Get Product Brochures ( sorted )
      * 
      * @group Where-To-Find-Us API
      * 
@@ -78,7 +100,7 @@ class GuideController extends Controller {
     }
 
     /**
-     * 5. Get Installation Guide ( sorted )
+     * 6. Get Installation Guide ( sorted )
      * 
      * @group Where-To-Find-Us API
      * 
@@ -92,7 +114,7 @@ class GuideController extends Controller {
     }
 
     /**
-     * 4. Get Videos ( sorted )
+     * 7. Get Videos ( sorted )
      * 
      * @group Where-To-Find-Us API
      * 

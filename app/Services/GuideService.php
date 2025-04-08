@@ -1469,9 +1469,24 @@ class GuideService
     // member
     public static function getCountries( $request )
     {
-        $guideCountries = GuideCountry::where('status', 10)->get();
+        $guideCountries = GuideCountry::with( [ 'states.branches' ] )->where('status', 10)
+        ->when( $request->country, function ( $query ) use ( $request ) {
+            $query->where( 'id', $request->country )
+                ->orWhere( 'name', $request->country );
+        })->get();
 
         $guideCountries->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
+
+        foreach( $guideCountries as $guideCountry ){
+            foreach( $guideCountry->states as $state ){
+
+                $state->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
+
+                if( $state->branches ){
+                    $state->branches->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
+                }
+            }
+        }
 
         return response()->json( [
             'message' => '',
@@ -1596,7 +1611,33 @@ class GuideService
             'states' => $guideVideos,
         ] );
 
+    } 
+    
+    public static function getGuideAndResources( $request )
+    {
+        $guideVideos = Guide::where('status', 10)
+        ->when( $request->file_type, function ( $query ) use ( $request ) {
+            $query->where( 'file_type', $request->file_type );
+        })
+        ->when( $request->country, function ( $query ) use ( $request ) {
+            $query->whereHas( 'country', function ( $q ) use ( $request ) {
+                $q->where( 'id', $request->country )
+                  ->orWhere( 'name', $request->country );
+            });
+        })
+        ->orderBy( 'sequence' )
+        ->get();
+
+        $guideVideos->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
+
+        $guideVideos->append( [ 'filePath' ] );
+
+        return response()->json( [
+            'message' => '',
+            'message_key' => 'get_guide_and_resources_success',
+            'states' => $guideVideos,
+        ] );
+
     }
 
-    
 }
