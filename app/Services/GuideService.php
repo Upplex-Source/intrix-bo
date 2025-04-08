@@ -1559,7 +1559,7 @@ class GuideService
         return response()->json( [
             'message' => '',
             'message_key' => 'get_installation_guides_success',
-            'states' => $guideInstallations,
+            'installtion_guides' => $guideInstallations,
         ] );
 
     }
@@ -1583,7 +1583,7 @@ class GuideService
         return response()->json( [
             'message' => '',
             'message_key' => 'get_product_brochures_success',
-            'states' => $guideProductBrochures,
+            'product_brochures' => $guideProductBrochures,
         ] );
 
     }
@@ -1608,7 +1608,7 @@ class GuideService
         return response()->json( [
             'message' => '',
             'message_key' => 'get_videos_success',
-            'states' => $guideVideos,
+            'videos' => $guideVideos,
         ] );
 
     } 
@@ -1635,7 +1635,7 @@ class GuideService
         return response()->json( [
             'message' => '',
             'message_key' => 'get_guide_and_resources_success',
-            'states' => $guideVideos,
+            'guides_and_resources' => $guideVideos,
         ] );
 
     }
