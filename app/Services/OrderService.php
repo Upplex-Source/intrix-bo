@@ -1288,7 +1288,7 @@ class OrderService
                 $userCart->status = 21;
                 $userCart->save();
             }
-            
+            $userCart->order_id = $order->id;
             $userCart->save();
 
             $hasTestProduct = $userCart->cartMetas->contains(function ($cartMeta) {
@@ -1742,7 +1742,8 @@ class OrderService
                 $userCart->status = 21;
                 $userCart->save();
             }
-            
+
+            $userCart->order_id = $order->id;
             $userCart->save();
             $paymentUrl = '';
 
@@ -2228,14 +2229,13 @@ class OrderService
     public static function retryPayment( $request ) {
 
         $validator = Validator::make($request->all(), [
-            'order_id' => ['required', 'exists:orders,id'],
+            'reference' => ['required', 'exists:orders,reference'],
         ]);
         
         $validator->validate();
 
-        $order = Order::where('id', $request->order_id)
+        $order = Order::where('reference', $request->reference)
             ->where('status', '!=', 3)
-            ->where('user_id', auth()->user()->id )
             ->first();
 
         if (!$order) {
@@ -2250,38 +2250,36 @@ class OrderService
 
         DB::beginTransaction();
         try {
-                
-            $data = [
-                'TransactionType' => 'SALE',
-                'PymtMethod' => 'ANY',
-                'ServiceID' => config('services.eghl.merchant_id'),
-                'PaymentID' => $order->reference . '-' . $order->payment_attempt,
-                'OrderNumber' => $order->reference,
-                'PaymentDesc' => $order->reference,
-                'MerchantName' => 'Yobe Froyo',
-                'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
-                'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
-                'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
-                'Amount' => Helper::numberFormatV2($order->total_price, 2),
-                'CurrencyCode' => 'MYR',
-                'CustIP' => request()->ip(),
-                'CustName' => $order->user->username ?? 'Yobe Guest',
-                'HashValue' => '',
-                'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
-                'CustPhone' => $order->user->phone_number,
-                'MerchantTermsURL' => null,
-                'LanguageCode' => 'en',
-                'PageTimeout' => '780',
-            ];
 
-            $data['HashValue'] = Helper::generatePaymentHash($data);
-            $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
-            
+            $merchantKey = config('services.ipay88.merchant_key');
+            $merchantCode = config('services.ipay88.merchant_code');
+
+            $request = new \IPay88\Payment\Request( $merchantKey );
+            $order_amount = number_format(1, 2, '.', '');
+            $data = array(
+                'merchantCode' => $request->setMerchantCode( $merchantCode ),
+                'paymentId' =>  '',
+                'refNo' => $request->setRefNo( $order->reference ),
+                'amount' => $order_amount,
+                'currency' => $request->setCurrency( 'MYR' ),
+                'prodDesc' => $request->setProdDesc( 'Testing' ),
+                'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
+                'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
+                'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
+                'remark' => $request->setRemark( 'test' ),
+                'lang' => $request->setLang( 'UTF-8' ),
+                'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
+                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
+                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
+            );
+
+            $paymentUrl = route('payment.show', ['payment_data' => $data]);
+
             $orderTransaction = OrderTransaction::create( [
                 'order_id' => $order->id,
                 'checkout_id' => null,
                 'checkout_url' => null,
-                'payment_url' => $url2,
+                'payment_url' => $paymentUrl,
                 'transaction_id' => null,
                 'layout_version' => 'v1',
                 'redirect_url' => null,
@@ -2295,10 +2293,10 @@ class OrderService
                 'status' => 10,
             ] );
 
-            $order->payment_url = $url2;
+            $order->payment_url = $paymentUrl;
             $order->order_transaction_id = $orderTransaction->id;
+            $order->status = 2;
             $order->save();
-
             DB::commit();
 
         } catch ( \Throwable $th ) {
@@ -2310,26 +2308,62 @@ class OrderService
             ], 500 );
         }
 
+      $addOnMetas = $order->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'payment_url' => $paymentUrl,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+       
+        if($order->freeGift){
+            $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+
+            $order->freeGift->subtotal = $order->freeGift->discount_price;
+
+        }
+
         $orderMetas = $order->orderMetas->map(function ($meta) {
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
+                'payment_plan' => $meta->payment_plan,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'froyo' => $meta->froyos_metas,
-                'syrup' => $meta->syrups_metas,
-                'topping' => $meta->toppings_metas,
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
             ];
         });
 
         return response()->json( [
             'message' => '',
-            'message_key' => 'retry_payment_inititate',
+            'message_key' => 'create_order_success',
             'payment_url' => $order->payment_url,
-            'sesion_key' => $order->session_key,
+            'reference' => $order->reference,
+            'sesion_key' => null,
             'order_id' => $order->id,
-            'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
-            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
-            'order_metas' => $orderMetas
+            'add_on_metas' => $addOnMetas,
+            'free_gift' => $order->freeGift,
+            'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
+            'order_metas' => $orderMetas,
+            'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'subtotal' => Helper::numberFormatV2($order->subtotal, 2,false, true),
+            'discount' =>  Helper::numberFormatV2($order->discount, 2,false, true),
+            'tax' =>  Helper::numberFormatV2($order->tax, 2,false, true),
+            'tranction_date' => $order->created_at->format('Y-m-d'),
+            'payment_method' => 'Credit Card',
+            'shipment_method' => 'Free Shipping ( 3 - 7 days )',
+            'delivery_address' => $order->address_1 . $order->address_2 . $order->city . $order->postcode . $order->state,
+            'contact_name' => $order->fullname ? $order->fullname : $order->company_name,
+            'phone_number' => $order->phone_number,
+            'email' => $order->email,
         ] );
     }
 
