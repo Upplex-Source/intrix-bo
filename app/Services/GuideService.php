@@ -40,7 +40,7 @@ class GuideService
 
         $validator = Validator::make( $request->all(), [
             'country' => [ 'required' ],
-            'file' => ['required', 'mimes:jpeg,jpg,png,pdf,mp4,mpeg,quicktime,avi,webm'],
+            'file' => ['required', 'mimes:jpeg,jpg,png,pdf,mp4,mpeg,quicktime,avi,webm,mov'],
         ] );
 
         $attributeName = [
@@ -1554,7 +1554,7 @@ class GuideService
         })->get();
 
         $guideInstallations->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
-        $guideInstallations->append( [ 'filePath' ] );
+        $guideInstallations->append( [ 'filePath', 'fileTypeLabel' ] );
 
         return response()->json( [
             'message' => '',
