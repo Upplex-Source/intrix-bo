@@ -125,15 +125,19 @@ class GuideController extends Controller
 
         $this->data['data']['country'] = $request->id ? GuideCountry::find( Helper::decode( $request->id ) ) : null;
 
-        $guides = Guide::where( 'status', 10 )
-        ->where( 'file_type', $type )
-        ->when( $request->id, function ( $query ) use ( $request ) {
-            $query->where( 'country_id', Helper::decode( $request->id ) );
-        })
-        ->orderBy( 'sequence' )
-        ->get();
+        $guides = collect();
 
-        if ( $guides ) {
+        if( $request->id ){
+            $guides = Guide::where( 'status', 10 )
+            ->where( 'file_type', $type )
+            ->when( $request->id, function ( $query ) use ( $request ) {
+                $query->where( 'country_id', Helper::decode( $request->id ) );
+            })
+            ->orderBy( 'sequence' )
+            ->get();
+        }
+
+        if ( $guides->isNotEmpty() ) {
             $guides->append( [
                 'encrypted_id',
                 'file_path',
