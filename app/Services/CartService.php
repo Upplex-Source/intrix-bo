@@ -60,7 +60,7 @@ class CartService {
         $query = Cart::with(['cartMetas', 'addons', 'freeGift' => function ($query) {
                 $query->orderBy('created_at', 'DESC');
             }, 'voucher'])
-            ->whereIn('status', [ 21 ] )
+            ->whereIn('status', [ 21, 10 ] )
             ->orderBy('created_at', 'DESC');
     
         // Apply filters if 'id' or 'session_key' is provided
