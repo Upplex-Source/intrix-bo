@@ -142,7 +142,7 @@
         let myDropzone = new Dropzone(fc + '_image', {
             url: "{{ route('admin.guide.createGuide') }}",
             maxFiles: 10,
-            maxFilesize: 512,
+            maxFilesize: 720,
             acceptedFiles: "image/jpeg,image/jpg,image/png,application/pdf,video/mp4,video/mpeg,video/quicktime,video/avi,video/webm",
             addRemoveLinks: true,
             params: function() {
