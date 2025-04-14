@@ -922,6 +922,7 @@ class OrderService
                 'session_key' => $order->session_key,
                 'order_id' => $order->id,
                 'add_on' => $order->addOn,
+                'status' => $order->status_label,
                 'free_gift' => $order->freeGift,
                 'total_price' => Helper::numberFormatV2($order->total_price, 2, true),
                 'order_metas' => $orderMetas,
