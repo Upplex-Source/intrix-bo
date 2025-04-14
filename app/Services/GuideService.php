@@ -510,7 +510,7 @@ class GuideService
         $guides = $guides->get();
 
         foreach( $guides as $guide ) {
-            $guide->append( ['image_path'] );
+            $guide->append( ['image_path', 'file_type_label'] );
         }
 
         return response()->json( [
@@ -1578,7 +1578,7 @@ class GuideService
         })->get();
 
         $guideProductBrochures->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
-        $guideProductBrochures->append( [ 'filePath' ] );
+        $guideProductBrochures->append( [ 'filePath', 'fileTypeLabel' ] );
 
         return response()->json( [
             'message' => '',
@@ -1603,7 +1603,7 @@ class GuideService
 
         $guideVideos->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
 
-        $guideVideos->append( [ 'filePath' ] );
+        $guideVideos->append( [ 'filePath', 'fileTypeLabel' ] );
 
         return response()->json( [
             'message' => '',
@@ -1630,7 +1630,7 @@ class GuideService
 
         $guideVideos->makeHidden( [ 'image','currency_symbol','iso_alpha2_code','image','iso_alpha3_code','calling_code','status','created_at','updated_at','title','description' ] );
 
-        $guideVideos->append( [ 'filePath' ] );
+        $guideVideos->append( [ 'filePath', 'fileTypeLabel' ] );
 
         return response()->json( [
             'message' => '',

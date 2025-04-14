@@ -33,16 +33,16 @@ class Guide extends Model
         return $this->belongsTo(GuideCountry::class, 'country_id');
     }
 
-    public function getFileTypeLabelAttribute()
-    {
-        $fileType = [
-            '1' => __('guide.product_brochures'),
-            '2' => __('guide.installation_guides'),
-            '3' => __('guide.videos'),
-        ];
+    // public function getFileTypeLabelAttribute()
+    // {
+    //     $fileType = [
+    //         '1' => __('guide.product_brochures'),
+    //         '2' => __('guide.installation_guides'),
+    //         '3' => __('guide.videos'),
+    //     ];
 
-        return $fileType[$this->attributes['file_type']] ?? null;
-    }
+    //     return $fileType[$this->attributes['file_type']] ?? null;
+    // }
 
     public function getFilePathAttribute() {
         return $this->attributes['file'] ? asset( 'storage/' . $this->attributes['file'] ) : asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
@@ -74,7 +74,35 @@ class Guide extends Model
             default:
                 return asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
         }
-    }    
+    }
+
+    public function getFileTypeLabelAttribute() {
+        $file = $this->attributes['file'] ?? null;
+    
+        if ( ! $file ) {
+            return asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
+        }
+    
+        $extension = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );
+    
+        switch ( $extension ) {
+            case 'pdf':
+                return 'PDF';
+            case 'mp4':
+            case 'mov':
+            case 'avi':
+            case 'webm':
+                return 'Video';
+            case 'jpg':
+            case 'jpeg':
+            case 'png':
+            case 'gif':
+            case 'webp':
+                return 'Others';
+            default:
+                return 'Others';
+        }
+    }
     
     public function getEncryptedIdAttribute() {
         return Helper::encode( $this->attributes['id'] );

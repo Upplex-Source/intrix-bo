@@ -207,7 +207,7 @@ class Ipay88Service {
                 $order->payment_attempt += 1;
                 $orderTransaction->status = 20;
 
-                return redirect()->away( config( 'services.frontend.url' ) . 'order/failed' . '?' . http_build_query([
+                return redirect()->away( config( 'services.frontend.url' ) . 'order/' . $order->reference . '/failed' . '?' . http_build_query([
                     'order_id'     => null,
                     'payment_url'  => null,
                     'reference'    => null,
@@ -262,7 +262,7 @@ class Ipay88Service {
                 ];
             });
 
-            return redirect()->away( config( 'services.frontend.url' ) . 'order/success' . '?' . http_build_query([
+            return redirect()->away( config( 'services.frontend.url' ) . 'order/' . $order->reference . '/success' . '?' . http_build_query([
                 'order_id'     => $order->id,
                 'payment_url'  => $order->payment_url,
                 'reference'    => $order->reference,
