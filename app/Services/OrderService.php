@@ -2319,6 +2319,14 @@ class OrderService
 
         Mail::send( new ContactFormMail( $validated ) );
 
-        return back()->with( 'success', 'Your message has been sent!' );
+        // return back()->with( 'success', 'Your message has been sent!' );
+        return response()->json( [
+            'message' => 'Your message has been sent!',
+            'message_key' => 'message_sent,',
+            'data' => [
+                'status' => true
+            ],
+        ] );
+
     }
 }
