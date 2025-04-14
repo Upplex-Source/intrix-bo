@@ -276,6 +276,7 @@ class Ipay88Service {
                 'payment_url' => $order->payment_url,
                 'reference' => $order->reference,
                 'order_id' => $order->id,
+                'status' => $order->order_status_label,
                 'add_on_metas' => $addOnMetas,
                 'free_gift' => $order->freeGift,
                 'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
