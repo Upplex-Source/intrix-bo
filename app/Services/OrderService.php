@@ -1365,6 +1365,7 @@ class OrderService
             'message_key' => 'create_order_success',
             'payment_url' => $order->payment_url,
             'reference' => $order->reference,
+            'sesion_key' => $cart->session_key,
             'order_id' => $order->id,
             'add_on_metas' => $addOnMetas,
             'free_gift' => $order->freeGift,
