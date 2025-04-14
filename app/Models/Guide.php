@@ -63,6 +63,7 @@ class Guide extends Model
             case 'mp4':
             case 'mov':
             case 'avi':
+            case 'webm':
                 return asset( 'admin/images/file_video.png' );
             case 'jpg':
             case 'jpeg':

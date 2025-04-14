@@ -40,7 +40,7 @@ class GuideService
 
         $validator = Validator::make( $request->all(), [
             'country' => [ 'required' ],
-            'file' => [ 'required','mimes:jpeg,jpg,png,pdf,mp4,mpeg' ],
+            'file' => ['required', 'mimes:jpeg,jpg,png,pdf,mp4,mpeg,quicktime,avi,webm'],
         ] );
 
         $attributeName = [
