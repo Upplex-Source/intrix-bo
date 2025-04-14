@@ -870,67 +870,74 @@ class OrderService
             $isOne = true;
         }
 
-        if ( $isOne ) {
-            $order = $query->first();
+        // if ( $isOne ) {
+        //     $order = $query->first();
         
-            if ( ! $order ) {
-                return response()->json([
-                    'message' => 'Order not found',
-                    'message_key' => 'order_not_found',
-                ], 404);
-            }
+        //     if ( ! $order ) {
+        //         return response()->json([
+        //             'message' => 'Order not found',
+        //             'message_key' => 'order_not_found',
+        //         ], 404);
+        //     }
         
-            $order->append( ['order_status_label'] );
+        //     $order->append( ['order_status_label'] );
         
-            if($order->addOn){
-                $order->addOn->makeHidden( [ 'created_at', 'updated_at' ] )
-                ->append([ 'image_path' ]);
-            } 
+        //     $addOnMetas = $order->addOns->map(function ($meta) {
+        //         return [
+        //             'id' => $meta->id,
+        //             'subtotal' => $meta->total_price,
+        //             'quantity' => $meta->quantity,
+        //             'color' => null,
+        //             'color_code' => null,
+        //             'payment_plan' => $meta->payment_plan,
+        //             'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+        //         ];
+        //     });
         
-            if($order->freeGift){
-                $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
-                ->append([ 'image_path' ]);
+        //     if($order->freeGift){
+        //         $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+        //         ->append([ 'image_path' ]);
     
-                $order->freeGift->subtotal = $order->freeGift->discount_price;
-            }
+        //         $order->freeGift->subtotal = $order->freeGift->discount_price;
+        //     }
 
-            $orderMetas = $order->orderMetas->map(function ($meta) {
-                return [
-                    'id' => $meta->id,
-                    'subtotal' => $meta->total_price,
-                    'quantity' => $meta->quantity,
-                    'color' => $meta->productVariant ? $meta->productVariant->title : null,
-                    'color_code' => $meta->productVariant ? intval($meta->productVariant->color) : null,
-                    'payment_plan' => $meta->payment_plan,
-                    'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
-                        ->setAttribute('image_path', $meta->product->image_path),
-                    'product_variant' => $meta->productVariant
-                        ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])
-                            ->setAttribute('image_path', $meta->productVariant->image_path)
-                        : null,
-                ];
-            });
+        //     $orderMetas = $order->orderMetas->map(function ($meta) {
+        //         return [
+        //             'id' => $meta->id,
+        //             'subtotal' => $meta->total_price,
+        //             'quantity' => $meta->quantity,
+        //             'color' => $meta->productVariant ? $meta->productVariant->title : null,
+        //             'color_code' => $meta->productVariant ? intval($meta->productVariant->color) : null,
+        //             'payment_plan' => $meta->payment_plan,
+        //             'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+        //                 ->setAttribute('image_path', $meta->product->image_path),
+        //             'product_variant' => $meta->productVariant
+        //                 ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])
+        //                     ->setAttribute('image_path', $meta->productVariant->image_path)
+        //                 : null,
+        //         ];
+        //     });
 
-            // $userOrder->order_metas = $orderMetas;
-            // $userOrder->orderMetas = null;
-            // unset($userOrder->orderMetas);
+        //     // $userOrder->order_metas = $orderMetas;
+        //     // $userOrder->orderMetas = null;
+        //     // unset($userOrder->orderMetas);
         
-            return response()->json([
-                'message' => '',
-                'payment_url' => $order->payment_url ?? null,
-                'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
-                'session_key' => $order->session_key,
-                'order_id' => $order->id,
-                'add_on' => $order->addOn,
-                'status' => $order->order_status_label,
-                'free_gift' => $order->freeGift,
-                'total_price' => Helper::numberFormatV2($order->total_price, 2, true),
-                'order_metas' => $orderMetas,
-                'voucher' => $order->voucher
-                    ? $order->voucher->makeHidden(['description', 'created_at', 'updated_at'])
-                    : null,
-            ]);
-        }        
+        //     return response()->json([
+        //         'message' => '',
+        //         'payment_url' => $order->payment_url ?? null,
+        //         'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
+        //         'session_key' => $order->session_key,
+        //         'order_id' => $order->id,
+        //         'add_on' => $order->addOn,
+        //         'status' => $order->order_status_label,
+        //         'free_gift' => $order->freeGift,
+        //         'total_price' => Helper::numberFormatV2($order->total_price, 2, true),
+        //         'order_metas' => $orderMetas,
+        //         'voucher' => $order->voucher
+        //             ? $order->voucher->makeHidden(['description', 'created_at', 'updated_at'])
+        //             : null,
+        //     ]);
+        // }        
     
         // Use paginate instead of get
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
@@ -939,6 +946,16 @@ class OrderService
         // Modify each order and its related data
         $userOrders->getCollection()->transform(function ($order) {
             $order->append( ['order_status_label'] );
+
+            if($order->voucher){
+                $order->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
+                ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
+            }
+
+            if($order->freeGift){
+                $order->freeGift->setAttribute('image_path', $order->freeGift->image_path);
+                $order->freeGift->subtotal = $order->freeGift->discount_price;
+            }
     
             $orderMetas = $order->orderMetas->map(function ($meta) {
                 return [
@@ -954,15 +971,38 @@ class OrderService
                 ];
             });
 
+            
+            $addOnMetas = $order->addOns->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
+                    'color' => null,
+                    'color_code' => null,
+                    'payment_plan' => $meta->payment_plan,
+                    'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+                ];
+            });
+    
+            // Attach the cart metas to the cart object
+            $order->addOnMetas = $addOnMetas;
             $order->orderMetas = $orderMetas;
+
+            if( !$order->tax ) {
+                $taxSettings = Option::getTaxesSettings();
+                $order->tax = Helper::numberFormatV2( ( $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * $cart->total_price) : 0 ), 2, true);
+            }
 
             return $order;
         });
 
         foreach( $userOrders as $userOrder ) {
             $userOrder->order_metas = $userOrder->orderMetas;
-            $userOrder->orderMetas = null;
+            $userOrder->add_on_metas = $userOrder->addOnMetas;
             unset($userOrder->orderMetas);
+            unset($userOrder->addOns);
+            $userOrder->orderMetas = $userOrder->order_metas;
+            $userOrder->addOnMetas = $userOrder->add_on_metas;
         }
 
         // Return the paginated response
