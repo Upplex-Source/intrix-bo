@@ -141,7 +141,7 @@
         Dropzone.autoDiscover = false;
         let myDropzone = new Dropzone(fc + '_image', {
             url: "{{ route('admin.guide.createGuide') }}",
-            maxFiles: 1,
+            maxFiles: 10,
             acceptedFiles: "image/jpeg,image/jpg,image/png,application/pdf,video/mp4,video/mpeg",
             addRemoveLinks: true,
             params: function() {
@@ -151,33 +151,27 @@
                     _token: "{{ csrf_token() }}"
                 };
             },
-            success: function(file, response) {
-                if (response.status == 200) {
-                    let newGuide = $(`
-                        <li class="list-group-item d-flex flex-column align-items-center justify-content-center position-relative" data-id="${response.data.id}${response.data.id}">
+            success: function ( file, response ) {
+                if ( response.status == 200 ) {
+                    let newGuide = $( `
+                        <li class="list-group-item d-flex flex-column align-items-center justify-content-center position-relative" data-id="${response.data.id}">
                             <img src="${response.data.url}" class="guide-img rounded">
                             <p class="text-center">${response.data.title}</p>
-                            <!-- Dropdown -->
                             <div class="dropdown mt-2">
                                 <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <em class="icon ni ni-more-h"></em>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li>
-                                        <button class="dropdown-item edit-guide" data-id="${response.data.id}">Edit</button>
-                                    </li>
-                                    <li>
-                                        <button class="dropdown-item text-danger delete-guide" data-id="${response.data.id}">Delete</button>
-                                    </li>
+                                    <li><button class="dropdown-item edit-guide" data-id="${response.data.id}">Edit</button></li>
+                                    <li><button class="dropdown-item text-danger delete-guide" data-id="${response.data.id}">Delete</button></li>
                                 </ul>
                             </div>
                         </li>
                     `);
-                    $("#guide-list").append(newGuide);
-                
-                    // ✅ Remove file preview to allow new uploads
-                    myDropzone.removeFile(file);
+                    $( "#guide-list" ).append( newGuide );
 
+                    // ✅ Remove preview for that file
+                    myDropzone.removeFile( file );
                 }
             }
         });
@@ -307,6 +301,7 @@
                 country_id: countryId,
                 length: 100,
                 start: 0,
+                status: 10,
                 _token: '{{ csrf_token() }}'
             },
             success: function ( response ) {
