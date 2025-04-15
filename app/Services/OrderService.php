@@ -2235,7 +2235,7 @@ class OrderService
         $validator->validate();
 
         $order = Order::where('reference', $request->reference)
-            ->where('status', '!=', 3)
+            ->where('status', '!=', 10)
             ->first();
 
         if (!$order) {
@@ -2259,7 +2259,7 @@ class OrderService
             $data = array(
                 'merchantCode' => $request->setMerchantCode( $merchantCode ),
                 'paymentId' =>  '',
-                'refNo' => $request->setRefNo( $order->reference ),
+                'refNo' => $request->setRefNo( $order->reference . '-' . $order->payment_attempt ),
                 'amount' => $order_amount,
                 'currency' => $request->setCurrency( 'MYR' ),
                 'prodDesc' => $request->setProdDesc( 'Testing' ),
