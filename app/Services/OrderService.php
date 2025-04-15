@@ -2369,18 +2369,27 @@ class OrderService
 
     public static function showPaymentPage( $request ) {
 
-        $validator = Validator::make($request->all(), [
-            'payment_data.refNo' => [
-                'required',
-                Rule::exists('orders', 'reference')->whereIn('status', [ 1,2,3 ] ),
-            ],
-        ]);
-        
-        $validator->validate();
-
         $data = $request->all();
 
-        return view('admin.order.payment_redirect', compact('data'));
+        $rawRefNo = data_get( $data, 'payment_data.refNo' );
+    
+        // Remove last -digit(s) using regex
+        $refNo = preg_replace( '/-\d+$/', '', $rawRefNo );    
+    
+        $exists = DB::table( 'orders' )
+        ->where( function ( $query ) use ( $refNo, $rawRefNo ) {
+            $query->where( 'reference', $refNo )
+                  ->orWhere( 'reference', $rawRefNo );
+        })
+        ->whereIn( 'status', [ 1, 2, 3 ] )
+        ->exists();
+    
+        if ( ! $exists ) {
+            return back()->withErrors([ 'payment_data.refNo' => 'Invalid or non-existing reference.' ]);
+        }
+    
+        // If it passed
+        return view( 'admin.order.payment_redirect', compact( 'data' ) );
     }
 
     public static function contactUs( $request )
