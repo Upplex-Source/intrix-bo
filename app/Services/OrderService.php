@@ -2256,10 +2256,11 @@ class OrderService
 
             $request = new \IPay88\Payment\Request( $merchantKey );
             $order_amount = number_format(1, 2, '.', '');
+            $newReference = $order->reference . '-' . $order->payment_attempt;
             $data = array(
                 'merchantCode' => $request->setMerchantCode( $merchantCode ),
                 'paymentId' =>  '',
-                'refNo' => $request->setRefNo( $order->reference . '-' . $order->payment_attempt ),
+                'refNo' => $request->setRefNo( $newReference ),
                 'amount' => $order_amount,
                 'currency' => $request->setCurrency( 'MYR' ),
                 'prodDesc' => $request->setProdDesc( 'Testing' ),
@@ -2296,6 +2297,7 @@ class OrderService
             $order->payment_url = $paymentUrl;
             $order->order_transaction_id = $orderTransaction->id;
             $order->status = 2;
+            $order->reference = $newReference;
             $order->save();
             DB::commit();
 
