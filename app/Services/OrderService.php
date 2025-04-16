@@ -1370,7 +1370,6 @@ class OrderService
         $addOnMetas = $order->addOns->map(function ($meta) {
             return [
                 'id' => $meta->id,
-                'payment_url' => $paymentUrl,
                 'subtotal' => $meta->total_price,
                 'quantity' => $meta->quantity,
                 'color' => null,
@@ -2313,7 +2312,6 @@ class OrderService
       $addOnMetas = $order->addOns->map(function ($meta) {
             return [
                 'id' => $meta->id,
-                'payment_url' => $paymentUrl,
                 'subtotal' => $meta->total_price,
                 'quantity' => $meta->quantity,
                 'color' => null,

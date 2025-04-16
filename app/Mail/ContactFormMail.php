@@ -24,7 +24,7 @@ class ContactFormMail extends Mailable
     public function build()
     {
         return $this->from( $this->data['email'], $this->data['full_name'] )
-                    ->to( 'intrix.ecommerce@intrixgroup.com' )
+                    ->to( 'gmoon94@gmail.com' )
                     ->subject( 'New Contact Form Submission' )
                     ->view( 'admin.mail.contact' )
                     ->with( 'data', $this->data );
