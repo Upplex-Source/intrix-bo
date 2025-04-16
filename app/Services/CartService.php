@@ -1317,6 +1317,8 @@ class CartService {
             });
         }
 
+        $addOnMetas = array();
+
         if( $updateCart->addOns ) {
             $addOnMetas = $updateCart->addOns->map(function ($meta) {
                 return [
@@ -1340,7 +1342,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => $updateCart->total_price,
             'cart_metas' => $cartMetas,
-            'add_on_metas' => $updateCart->addOns,
+            'add_on_metas' => $addOnMetas,
             'free_gift' => $updateCart->freeGift,
         ] );
     }
