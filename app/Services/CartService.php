@@ -1286,7 +1286,7 @@ class CartService {
             $updateCart->total_price += Helper::numberFormatV2($updateCart->tax, 2);
             $updateCart->save();
 
-            DB::commit();
+            // DB::commit();
 
         } catch ( \Throwable $th ) {
 
@@ -1296,8 +1296,7 @@ class CartService {
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
             ], 500 );
         }
-        
-        $updateCart->load( ['freeGift'] );
+
         if($updateCart->freeGift){
             $updateCart->freeGift->setAttribute('image_path', $updateCart->freeGift->image_path);
             $updateCart->freeGift->subtotal = $updateCart->freeGift->discount_price;
@@ -1318,10 +1317,8 @@ class CartService {
             });
         }
 
-        $addOnMetas = array();
-
-        if( $updateCart->addOnMetas ) {
-            $addOnMetas = $updateCart->addOnMetas->map(function ($meta) {
+        if( $updateCart->addOns ) {
+            $addOnMetas = $updateCart->addOns->map(function ($meta) {
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
@@ -1334,6 +1331,8 @@ class CartService {
             });
         }
 
+        $updateCart->load( ['freeGift', 'addOns', 'cartMetas'] );
+
         return response()->json( [
             'message' => '',
             'message_key' => 'delete_cart_item_success',
@@ -1341,7 +1340,7 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => $updateCart->total_price,
             'cart_metas' => $cartMetas,
-            'add_on_metas' => $addOnMetas,
+            'add_on_metas' => $updateCart->addOns,
             'free_gift' => $updateCart->freeGift,
         ] );
     }
