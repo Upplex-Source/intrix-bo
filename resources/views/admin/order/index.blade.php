@@ -104,7 +104,6 @@ $columns = [
                         </div>
                     </div>
 
-                    <!-- Left Side: User & Address Details -->
                     <div class="col-md-6">
                         <!-- User Information -->
                         <div class="mb-3">
@@ -117,65 +116,64 @@ $columns = [
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">User</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_fullname" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_fullname" >
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Email</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_email" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_email" >
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Phone Number</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_phone_number" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_phone_number" >
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Reference</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_reference" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_reference" >
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Address Details -->
                         <div class="mb-3">
-                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderAddress" aria-expanded="false" aria-controls="orderAddress" style="cursor: pointer;">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderadd" aria-expanded="false" aria-controls="orderadd" style="cursor: pointer;">
                                 <strong>Address Details</strong>
                                 <em class="icon ni ni-chevron-down"></em>
                             </div>
-                            <div class="collapse mt-2" id="orderAddress">
+                            <div class="collapse show mt-2" id="orderadd">
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Address 1</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_1" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_a1">
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Address 2</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_2" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_a2">
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">City</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_city" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_c">
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">State</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_state" readonly>
-                                    </div>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_s">
+                                    </div>sm
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Post Code</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_postcode" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_p">
                                     </div>
                                 </div>
                             </div>
@@ -186,40 +184,40 @@ $columns = [
                     <div class="col-md-6">
                         <!-- Payment Details -->
                         <div class="mb-3">
-                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#paymentDetails" aria-expanded="false" aria-controls="paymentDetails" style="cursor: pointer;">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#paymentDetails" aria-expanded="true" aria-controls="paymentDetails" style="cursor: pointer;">
                                 <strong>Payment Details</strong>
                                 <em class="icon ni ni-chevron-down"></em>
                             </div>
-                            <div class="collapse mt-2" id="paymentDetails">
+                            <div class="collapse show mt-2" id="paymentDetails">
 
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Payment Method</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_type" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_type" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Subtotal</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_subtotal" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_subtotal" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Tax</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_tax" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_tax" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Discount</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_discount" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_discount" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Total Price</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_total" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
@@ -235,7 +233,7 @@ $columns = [
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Remarks</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_remarks" readonly>
+                                        <textarea class="form-control form-control-sm" name="{{ $order_view }}_remarks" id="{{ $order_view }}_remarks" cols="30" rows="10"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -359,7 +357,6 @@ var statusMapper = @json( $data['status'] ),
  
                     @can( 'edit orders' )
                     edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
-                    edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
                     @endcan
 
                     @can( 'delete orders' )
@@ -458,11 +455,11 @@ var statusMapper = @json( $data['status'] ),
                     $('#{{ $order_view }}_tax').val( 'RM ' + ( response.tax || '0.00' ) );
                     $('#{{ $order_view }}_discount').val( 'RM ' + ( response.discount || '0.00' ) );
                     $('#{{ $order_view }}_total').val( 'RM ' + ( response.total_price || '0.00' ) );
-                    $('#{{ $order_view }}_address_1').val(response.address_1 || '-');
-                    $('#{{ $order_view }}_address_2').val(response.address_2 || '-');
-                    $('#{{ $order_view }}_city').val(response.city || '-');
-                    $('#{{ $order_view }}_state').val(response.state || '-');
-                    $('#{{ $order_view }}_postcode').val(response.postcode || '-');
+                    $('#{{ $order_view }}_a1').val(response.address_1 || '-');
+                    $('#{{ $order_view }}_a2').val(response.address_2 || '-');
+                    $('#{{ $order_view }}_c').val(response.city || '-');
+                    $('#{{ $order_view }}_s').val(response.state || '-');
+                    $('#{{ $order_view }}_p').val(response.postcode || '-');
                     $('#{{ $order_view }}_remarks').val(response.remarks || '-');
 
                     const orderMetas = response.orderMetas || [];
@@ -574,6 +571,17 @@ var statusMapper = @json( $data['status'] ),
             let formData = new FormData();
             formData.append( 'id', $( ov + '_id' ).val() );
             formData.append( 'status', $( ov + '_status' ).val() );
+            formData.append( 'fullname', $( ov + '_fullname' ).val() );
+            formData.append( 'email', $( ov + '_email' ).val() );
+            formData.append( 'phone_number', $( ov + '_phone_number' ).val() );
+
+            formData.append( 'address_1', $( ov + '_a1' ).val() );
+            formData.append( 'address_2', $( ov + '_a2' ).val() );
+            formData.append( 'city', $( ov + '_c' ).val() );
+            formData.append( 'state', $( ov + '_s' ).val() );
+            formData.append( 'postcode', $( ov + '_p' ).val() );
+            formData.append( 'remarks', $( ov + '_remarks' ).val() );
+
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {

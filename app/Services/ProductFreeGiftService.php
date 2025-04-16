@@ -29,6 +29,7 @@ use App\Models\{
     UserFreeGiftTransaction,
     Option,
     Order,
+    Cart
 };
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -453,12 +454,34 @@ class ProductFreeGiftService
     // client
     public static function getFreeGifts( $request ) {
 
+        $validator = Validator::make($request->all(), [
+            'session_key' => ['nullable', 'exists:carts,session_key'],
+        ]);
+
+        $cart = Cart::with(['cartMetas', 'addons', 'freeGift' => function ($query) {
+            $query->orderBy('created_at', 'DESC');
+        }, 'voucher'])
+        ->whereIn('status', [ 21, 10 ] )
+        ->where('session_key', $request->session_key)
+        ->first();
+        
+        $productIds = array();
+
+        if( $cart && !empty( $cart->cartMetas ) ){
+            $productIds = $cart->cartMetas->pluck( 'product_id' )->toArray();
+        }
+        
         $now = Carbon::now('Asia/Kuala_Lumpur');
 
         $freeGift = ProductFreeGift::with( [
             'freeGiftProducts',
         ] )->select( 'product_free_gifts.*' )
-        ->where( 'status', 10 );
+        ->where( 'status', 10 )
+        ->when( !empty( $productIds ), function ( $query ) use ( $productIds ) {
+            $query->whereHas( 'freeGiftProducts', function ( $q ) use ( $productIds ) {
+                $q->whereIn( 'product_id', $productIds );
+            });
+        });
 
         $filterObject = self::filter( $request, $freeGift );
         $freeGift = $filterObject['model'];

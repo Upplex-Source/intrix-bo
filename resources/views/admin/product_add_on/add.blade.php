@@ -89,7 +89,7 @@ $product_add_on_create = 'product_add_on_create';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_add_on_create }}_discount_price" class="col-sm-5 form-label">{{ __( 'product_add_on.discount_price' ) }}</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $product_add_on_create }}_discount_price">
@@ -97,7 +97,7 @@ $product_add_on_create = 'product_add_on_create';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_add_on_create }}_specification" class="col-sm-5 form-label">{{ __( 'product_add_on.specification' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" name="{{ $product_add_on_create }}_specification" id="{{ $product_add_on_create }}_specification" rows="5"></textarea>
@@ -105,7 +105,7 @@ $product_add_on_create = 'product_add_on_create';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_add_on_create }}_features" class="col-sm-5 form-label">{{ __( 'product_add_on.features' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" name="{{ $product_add_on_create }}_features" id="{{ $product_add_on_create }}_features" rows="5"></textarea>
@@ -113,7 +113,7 @@ $product_add_on_create = 'product_add_on_create';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_add_on_create }}_whats_included" class="col-sm-5 form-label">{{ __( 'product_add_on.whats_included' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" name="{{ $product_add_on_create }}_whats_included" id="{{ $product_add_on_create }}_whats_included" rows="5"></textarea>

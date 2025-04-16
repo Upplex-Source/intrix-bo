@@ -127,14 +127,16 @@ class GuideController extends Controller
 
         $guides = collect();
 
-        if( $request->id ){
-            $guides = Guide::where( 'status', 10 )
-            ->where( 'file_type', $type )
-            ->when( $request->id, function ( $query ) use ( $request ) {
-                $query->where( 'country_id', Helper::decode( $request->id ) );
-            })
-            ->orderBy( 'sequence' )
-            ->get();
+        if ( $request->id && $request->id != 'undefined') {
+            $decodedId = Helper::decode( $request->id );
+        
+            if ( $decodedId ) { // Only proceed if decoding is successful
+                $guides = Guide::where( 'status', 10 )
+                    ->where( 'file_type', $type )
+                    ->where( 'country_id', $decodedId )
+                    ->orderBy( 'sequence' )
+                    ->get();
+            }
         }
 
         if ( $guides->isNotEmpty() ) {

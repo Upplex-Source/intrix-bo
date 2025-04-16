@@ -95,14 +95,24 @@ class BlogService
             $filter = true;
         }
 
+        if( !empty( $request->title ) ){
+            $model->where( 'blogs.main_title', 'LIKE', '%' . $request->title . '%' );
+            $filter = true;
+        }
+
         if( !empty( $request->type ) ){
             $model->where( 'blogs.type', $request->type );
+            $filter = true;
+        }
+
+        if( !empty( $request->status ) ){
+            $model->where( 'blogs.status', $request->status );
             $filter = true;
         }
         
         if (!empty($request->category)) {
             $model->whereHas('category', function ($query) use ($request) {
-                $query->where('title', $request->category);
+                $query->where('id', $request->category);
             });
             $filter = true;
         }        

@@ -164,20 +164,12 @@
                                 @endcan
 
                                 @can( 'view voucher_usages' )
-                                <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\UserVoucherController' || $controller == 'App\Http\Controllers\Admin\VoucherUsageController') ? 'active current-page' : '' }}">
-                                    <a href="#" class="nk-menu-link nk-menu-toggle">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-ticket-plus"></em></span>
-                                        <span class="nk-menu-text">{{ __( 'template.user_vouchers' ) }}</span>
-                                    </a>
-                                    <ul class="nk-menu-sub">
-                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\UserVoucherController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
-                                            <a href="{{ route( 'admin.module_parent.user_voucher.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.user_vouchers' ) }}</span></a>
-                                        </li>
-                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VoucherUsageController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
-                                            <a href="{{ route( 'admin.module_parent.voucher_usage.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.voucher_usages' ) }}</span></a>
-                                        </li>
-                                    </ul>
-                                </li>
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VoucherUsageController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.voucher_usage.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-ticket-plus"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.voucher_usages' ) }}</span>
+                                        </a>
+                                    </li>
                                 @endcan
                                 
                                 @can( 'view guides' )

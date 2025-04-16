@@ -233,25 +233,32 @@ $columns = [
                 toolbar: {
                     show: false
                 },
+            },ticks: {
+                callback: function (value) {
+                    return parseInt(value);
+                }
             },
             yaxis: {
+                min: 0,
+                max: 5,
+                tickAmount: 5, // number of intervals between min and max (5 -> 0, 1, 2, 3, 4, 5)
                 labels: {
-                    formatter: function(value) {
-                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
+                    formatter: function ( value ) {
+                        return parseInt( value ); // still removes decimals
                     }
                 }
             },
             tooltip: {
                 y: {
                     formatter: function(value) {
-                        return value.toFixed(2); // Show exactly two decimals in the tooltip
+                        return parseInt(value);
                     }
                 }
             },
             xaxis: {
                 labels: {
                     formatter: function(value) {
-                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
+                        return parseInt(value);
                     }
                 }
             }
@@ -259,20 +266,21 @@ $columns = [
 
         // Create separate options for chart3 and chart4 with no decimals
         let chart1Options = JSON.parse(JSON.stringify(totalOrderOption));
-        // chart1Options.yaxis.labels.formatter = function(value) {
-        //     return Math.floor(2); // No decimal places for chart3
-        // };
-        // chart1Options.tooltip.y.formatter = function(value) {
-        //     return Math.floor(2); // No decimal places for chart3 tooltip
-        // };
+        chart1Options.yaxis.labels.formatter = function ( value ) {
+            return Math.floor( value );
+        };
+
+        chart1Options.tooltip.y.formatter = function ( value ) {
+            return Math.floor( value );
+        };
 
         let chart4Options = JSON.parse(JSON.stringify(totalOrderOption));
-        // chart4Options.yaxis.labels.formatter = function(value) {
-        //     return Math.floor(value); // No decimal places for chart4
-        // };
-        // chart4Options.tooltip.y.formatter = function(value) {
-        //     return Math.floor(value); // No decimal places for chart4 tooltip
-        // };
+        chart4Options.yaxis.labels.formatter = function(value) {
+            return Math.floor(value); // No decimal places for chart4
+        };
+        chart4Options.tooltip.y.formatter = function(value) {
+            return Math.floor(value); // No decimal places for chart4 tooltip
+        };
 
         // Assign options to charts
         let charts = [

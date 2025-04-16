@@ -17,13 +17,13 @@ class ProductController extends Controller
      * 
      * <aside class="notice">Get all Add on that is in BO</aside>
      * 
-     * @authenticated
-     * 
      * @group Product API
      * 
      * @bodyParam length integer required The length of the table. Example: 10
      * @bodyParam start integer required The start of the record of the table. Example: 0
      * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
+     * @bodyParam session_key string required The session_key of the cart. Example: kn1i23onlas1
+     * 
      * 
      */
     public function getAddOns( Request $request ) {
@@ -36,13 +36,13 @@ class ProductController extends Controller
      * 
      * <aside class="notice">Get all Add on that is in BO</aside>
      * 
-     * @authenticated
      * 
      * @group Product API
      * 
      * @bodyParam length integer required The length of the table. Example: 10
      * @bodyParam start integer required The start of the record of the table. Example: 0
      * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
+     * @bodyParam session_key string required The session_key of the cart. Example: kn1i23onlas1
      * 
      */
     public function getFreeGifts( Request $request ) {

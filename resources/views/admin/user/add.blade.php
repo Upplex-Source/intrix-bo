@@ -1,3 +1,24 @@
+<style>
+
+    /* Optional: center the image inside the preview */
+    .dropzone .dz-preview .dz-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;  /* or your desired size */
+        height: 100px;
+        margin: auto;
+        overflow: hidden;
+    }
+    
+    .dropzone .dz-preview .dz-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    </style>
+    
+
 <?php
 $user_create = 'user_create';
 ?>

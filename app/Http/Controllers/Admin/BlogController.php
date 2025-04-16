@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Services\BlogService;
 use Illuminate\Http\Request;
 
+use App\Models\{
+    BlogCategory,
+};
+
 class BlogController extends Controller
 {
     public function index() {
@@ -22,6 +26,11 @@ class BlogController extends Controller
         $type = \Helper::types();
         foreach( $type as $key => $t ) {
             $this->data['data']['types'][$key] = $t;
+        }
+
+        $categories = BlogCategory::where( 'status', 10 )->get();
+        foreach( $categories as $category ) {
+            $this->data['data']['categories'][$category->id] = $category->title;
         }
 
         $this->data['data']['status'] = [

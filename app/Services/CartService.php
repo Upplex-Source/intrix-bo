@@ -321,6 +321,35 @@ class CartService {
                 $cart->voucher_id = $voucher->id;
             }
 
+            // auto add free gift
+            $productIds = array();
+
+            if( $cart && !empty( $cart->cartMetas ) ){
+                $productIds = $cart->cartMetas->pluck( 'product_id' )->toArray();
+            }
+
+            $freeGift = ProductFreeGift::with( [
+                'freeGiftProducts',
+            ] )->select( 'product_free_gifts.*' )
+            ->where( 'status', 10 )
+            ->when( !empty( $productIds ), function ( $query ) use ( $productIds ) {
+                $query->whereHas( 'freeGiftProducts', function ( $q ) use ( $productIds ) {
+                    $q->whereIn( 'product_id', $productIds );
+                });
+            })
+            ->orderBy( 'created_at', 'ASC' )
+            ->first();
+
+            if( $freeGift ){
+                if( $cart->freeGift ){
+                    $cart->total_price -= $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
+                    $cart->subtotal -= $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
+                }
+                $cart->free_gift_id = $freeGift->id;
+                $cart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
+                $cart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
+            }
+
             if( $cart->addOns ) {
                 $orderPrice += $cart->addOns->sum( 'total_price' );
                 $subtotal += $cart->addOns->sum( 'total_price' );   
@@ -348,6 +377,7 @@ class CartService {
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
             ], 500 );
         }
+        $cart->load( [ 'addOns', 'freeGift' ] );
 
         $cartMetas = $cart->cartMetas->map(function ($meta) {
             return [
@@ -1221,6 +1251,33 @@ class CartService {
 
             $orderPrice = $updateCart->cartMetas->sum(fn($meta) => $meta->product->price ?? 0);
 
+            // delete free gift
+            $productIds = array();
+
+            if( $updateCart && !empty( $updateCart->cartMetas ) ){
+                $productIds = $updateCart->cartMetas->pluck( 'product_id' )->toArray();
+            }
+
+            $freeGift = ProductFreeGift::with( [
+                'freeGiftProducts',
+            ] )->select( 'product_free_gifts.*' )
+            ->where( 'status', 10 )
+            ->when( !empty( $productIds ), function ( $query ) use ( $productIds ) {
+                $query->whereHas( 'freeGiftProducts', function ( $q ) use ( $productIds ) {
+                    $q->whereIn( 'product_id', $productIds );
+                });
+            })
+            ->orderBy( 'created_at', 'ASC' )
+            ->first();
+
+            if( !$freeGift || empty($productIds) ){
+                $deleteGift = ProductFreeGift::find( $updateCart->free_gift_id );
+                $updateCart->free_gift_id = null;
+                $updateCart->total_price += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
+                $updateCart->subtotal += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
+                $updateCart->save();
+            }
+
             $updateCart->total_price = Helper::numberFormatV2($orderPrice, 2);
             $taxSettings = Option::getTaxesSettings();
             $updateCart->tax = $taxSettings
@@ -1240,6 +1297,12 @@ class CartService {
             ], 500 );
         }
         
+        $updateCart->load( ['freeGift'] );
+        if($updateCart->freeGift){
+            $updateCart->freeGift->setAttribute('image_path', $updateCart->freeGift->image_path);
+            $updateCart->freeGift->subtotal = $updateCart->freeGift->discount_price;
+        }
+
         if( $updateCart->cartMetas ) {
             $cartMetas = $updateCart->cartMetas->map(function ($meta) {
                 return [
@@ -1278,7 +1341,8 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => $updateCart->total_price,
             'cart_metas' => $cartMetas,
-            'add_on_metas' => $addOnMetas
+            'add_on_metas' => $addOnMetas,
+            'free_gift' => $updateCart->freeGift,
         ] );
     }
 

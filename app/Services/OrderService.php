@@ -779,6 +779,15 @@ class OrderService
 
             $updateOrder = Order::find( $request->id );
             $updateOrder->status = $request->status;
+            $updateOrder->fullname = $request->fullname;
+            $updateOrder->email = $request->email;
+            $updateOrder->phone_number = $request->phone_number;
+            $updateOrder->address_1 = $request->address_1;
+            $updateOrder->address_2 = $request->address_2;
+            $updateOrder->city = $request->city;
+            $updateOrder->state = $request->state;
+            $updateOrder->postcode = $request->postcode;
+            $updateOrder->remarks = $request->remarks;
 
             $updateOrder->save();
             DB::commit();

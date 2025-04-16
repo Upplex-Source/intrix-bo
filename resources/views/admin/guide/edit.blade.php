@@ -73,6 +73,9 @@ $guide_edit = 'guide_edit';
                     </div>
                 </div>
 
+                <input type="hidden" id="file_type">
+                <input type="hidden" id="country">
+
                 <div class="text-end">
                     <button id="{{ $guide_edit }}_cancel" type="button" class="btn btn-outline-secondary">{{ __( 'template.cancel' ) }}</button>
                     &nbsp;
@@ -129,7 +132,20 @@ $guide_edit = 'guide_edit';
                     modalSuccess.toggle();
 
                     document.getElementById( 'modal_success' ).addEventListener( 'hidden.bs.modal', function (event) {
-                        window.location.href = '{{ route( 'admin.module_parent.guide.index' ) }}';
+
+                        switch ( $( '#file_type' ).val() ) {
+                            case '1':
+                                window.location.href = '{{ route( 'admin.guide.addProductBrochures' ) }}?id=' + $( '#country' ).val() + '&type=' + $( '#file_type' ).val();
+                                break;
+                            case '2':
+                                window.location.href = '{{ route( 'admin.guide.addInstallationGuides' ) }}?id=' + $( '#country' ).val() + '&type=' + $( '#file_type' ).val();
+                                break;
+                            case '3':
+                                window.location.href = '{{ route( 'admin.guide.addVideos' ) }}?id=' + $( '#country' ).val() + '&type=' + $( '#file_type' ).val();
+                                break;      
+                            default:
+                                window.location.href = '{{ route( 'admin.guide.addProductBrochures' ) }}?id=' + $( '#country' ).val() + '&type=' + $( '#file_type' ).val();
+                        }
                     } );
                 },
                 error: function( error ) {
@@ -168,6 +184,8 @@ $guide_edit = 'guide_edit';
                     
                     $( fe + '_title' ).val( response.title );
                     $( fe + '_description' ).val( response.description );
+                    $( '#file_type' ).val( response.file_type );
+                    $( '#country' ).val( response.country ? response.country.encrypted_id : null );
 
                     if( response.country ) {
                         let option = new Option( response.country.name, response.country.id, true, true );
@@ -190,15 +208,6 @@ $guide_edit = 'guide_edit';
 
                                 myDropzone.files.push( mockFile );
                                 path = response.thumbnail_path;
-                                switch ( response.file_type ) {
-                                    case 1:
-                                        path = response.file_path;
-                                        break;
-                                
-                                    default:
-                                        path = response.thumbnail_path;
-                                        break;
-                                }
                                 myDropzone.displayExistingFile( mockFile, path );
                                 $( myDropzone.files[myDropzone.files.length - 1].previewElement ).data( 'id', cat_id );
                             }

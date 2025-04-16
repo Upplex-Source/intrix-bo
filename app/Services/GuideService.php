@@ -341,7 +341,11 @@ class GuideService
 
         $guide = Guide::with( ['country'] )->find( $request->id );
 
-        $guide->append( ['encrypted_id','file_path','thumbnail_path'] );
+        $guide->append( ['encrypted_id','file_path','thumbnail_path', 'file_type_label'] );
+
+        if( $guide->country ){
+            $guide->country->append( ['encrypted_id'] );
+        }
         
         return response()->json( $guide );
     }
