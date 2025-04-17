@@ -168,7 +168,7 @@ $columns = [
                                     <label class="col-sm-5 col-form-label">State</label>
                                     <div class="col-sm-7">
                                         <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_s">
-                                    </div>sm
+                                    </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Post Code</label>

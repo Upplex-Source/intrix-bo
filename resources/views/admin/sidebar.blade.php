@@ -64,6 +64,7 @@
                                 @endcan
                                 @endif
 
+                                @if( 1 == 2 )
                                 @can( 'view blogs' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\BlogController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.blog.index' ) }}" class="nk-menu-link">
@@ -73,7 +74,6 @@
                                     </li>
                                 @endcan
 
-                                @if( 1 == 2 )
                                 @can( 'view Wallets' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WalletController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.wallet.index' ) }}" class="nk-menu-link">

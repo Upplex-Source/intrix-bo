@@ -266,13 +266,13 @@ $columns = [
 
         // Create separate options for chart3 and chart4 with no decimals
         let chart1Options = JSON.parse(JSON.stringify(totalOrderOption));
-        chart1Options.yaxis.labels.formatter = function ( value ) {
-            return Math.floor( value );
-        };
+        // chart1Options.yaxis.labels.formatter = function ( value ) {
+        //     return Math.floor( 2 );
+        // };
 
-        chart1Options.tooltip.y.formatter = function ( value ) {
-            return Math.floor( value );
-        };
+        // chart1Options.tooltip.y.formatter = function ( value ) {
+        //     return Math.floor( 2 );
+        // };
 
         let chart4Options = JSON.parse(JSON.stringify(totalOrderOption));
         chart4Options.yaxis.labels.formatter = function(value) {
