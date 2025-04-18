@@ -1286,7 +1286,7 @@ class CartService {
             $updateCart->total_price += Helper::numberFormatV2($updateCart->tax, 2);
             $updateCart->save();
 
-            // DB::commit();
+            DB::commit();
 
         } catch ( \Throwable $th ) {
 
@@ -1297,8 +1297,12 @@ class CartService {
             ], 500 );
         }
 
+        $updateCart->load( ['freeGift', 'addOns', 'cartMetas'] );
+
         if($updateCart->freeGift){
             $updateCart->freeGift->setAttribute('image_path', $updateCart->freeGift->image_path);
+            $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
             $updateCart->freeGift->subtotal = $updateCart->freeGift->discount_price;
         }
 
@@ -1332,8 +1336,6 @@ class CartService {
                 ];
             });
         }
-
-        $updateCart->load( ['freeGift', 'addOns', 'cartMetas'] );
 
         return response()->json( [
             'message' => '',
