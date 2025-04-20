@@ -187,7 +187,7 @@ class GuideService
 
             $guideCount = $guide->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $guides = $guide->skip( $offset )->take( $limit )->get();
@@ -245,7 +245,7 @@ class GuideService
     
         $guideCount = $guide->count();
     
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
     
         // Paginate results
@@ -277,6 +277,29 @@ class GuideService
     private static function filter( $request, $model ) {
 
         $filter = false;
+
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
 
         if ( !empty( $request->title ) ) {
             $model->where( 'guides.title', 'LIKE', '%' . $request->title . '%' );
@@ -469,7 +492,7 @@ class GuideService
 
         $guideCount = $guide->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $guides = $guide->skip( $offset )->take( $limit )->get();
@@ -832,7 +855,7 @@ class GuideService
 
             $guideCount = $guide->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $guides = $guide->skip( $offset )->take( $limit )->get();
@@ -863,6 +886,29 @@ class GuideService
     private static function filterGuideCountry( $request, $model ) {
 
         $filter = false;
+
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
 
         if ( !empty( $request->name ) ) {
             $model->where( 'name', 'LIKE', '%' . $request->name . '%' );
@@ -1119,7 +1165,7 @@ class GuideService
 
             $guideCount = $guide->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $guides = $guide->skip( $offset )->take( $limit )->get();
@@ -1146,6 +1192,29 @@ class GuideService
     private static function filterGuideState( $request, $model ) {
 
         $filter = false;
+
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
 
         if ( !empty( $request->name ) ) {
             $model->where( 'name', 'LIKE', '%' . $request->name . '%' );
@@ -1227,7 +1296,7 @@ class GuideService
 
             $guideCount = $guide->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $guides = $guide->skip( $offset )->take( $limit )->get();
@@ -1255,6 +1324,29 @@ class GuideService
     private static function filterGuideBranch( $request, $model ) {
 
         $filter = false;
+
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
 
         if ( !empty( $request->title ) ) {
             $model->where( 'title', 'LIKE', '%' . $request->title . '%' );

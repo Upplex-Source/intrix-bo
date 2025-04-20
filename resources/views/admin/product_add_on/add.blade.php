@@ -122,7 +122,7 @@ $product_add_on_create = 'product_add_on_create';
                 </div>
                 
                 <div class="mb-3 row">
-                    <label for="{{ $product_add_on_create }}_product" class="col-sm-5 form-label">{{ __( 'product_add_on.product' ) }}</label>
+                    <label for="{{ $product_add_on_create }}_product" class="col-sm-5 form-label">{{ __( 'product_add_on.product_text' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $product_add_on_create }}_product" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'product_add_on.product' ) ] ) }}" multiple="multiple">
                         </select>

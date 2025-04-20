@@ -62,6 +62,12 @@ $columns = [
         'title' => __( 'voucher.start_date' ),
     ],
     [
+        'type' => 'input',       
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'voucher.expired_date' ) ] ),
+        'id' => 'expired_date',
+        'title' => __( 'voucher.expired_date' ),
+    ],
+    [
         'type' => 'select',
         'options' => $data['status'],
         'id' => 'status',
@@ -120,6 +126,7 @@ var statusMapper = @json( $data['status'] ),
             { data: 'title' },
             { data: 'promo_code' },
             { data: 'start_date' },
+            { data: 'expired_date' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -202,6 +209,13 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "expired_date" ) }}' ),
+                className: 'text-center',
+                render: function( data, type, row, meta ) {
+                    return data.split(' ')[0]
+                },
+            },
+            {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "status" ) }}' ),
                 render: function( data, type, row, meta ) {
                     return statusMapper[data];
@@ -262,6 +276,15 @@ var statusMapper = @json( $data['status'] ),
         } );
 
         $( '#start_date' ).flatpickr( {
+            mode: 'range',
+            disableMobile: true,
+            onClose: function( selected, dateStr, instance ) {
+                window[$( instance.element ).data('id')] = $( instance.element ).val();
+                dt_table.draw();
+            }
+        } );
+
+        $( '#expired_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
             onClose: function( selected, dateStr, instance ) {

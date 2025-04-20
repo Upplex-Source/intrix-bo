@@ -156,7 +156,7 @@ class VoucherUsageService
 
         $voucherCount = $voucher->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $voucher_usages = $voucher->skip( $offset )->take( $limit )->get();
@@ -183,6 +183,30 @@ class VoucherUsageService
     private static function filter( $request, $model ) {
 
         $filter = false;
+
+        
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
 
         if ( !empty( $request->id ) ) {
             $model->where( 'voucher_usages.id', '!=', Helper::decode($request->id) );
@@ -242,6 +266,13 @@ class VoucherUsageService
         if ( !empty( $request->vending_machine_id ) ) {
             $vendingMachineVoucherUsages = VendingMachineStock::where( 'vending_machine_id', $request->vending_machine_id )->pluck( 'voucher_id' );
             $model->whereNotIn( 'id', $vendingMachineVoucherUsages );
+            $filter = true;
+        }
+        
+        if (!empty($request->user)) {
+            $model->whereHas('order', function ($query) use ($request) {
+                $query->where('orders.email', 'LIKE', '%' . $request->user . '%');
+            });
             $filter = true;
         }
         

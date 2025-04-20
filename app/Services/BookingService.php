@@ -96,7 +96,7 @@ class BookingService
 
             $bookingCount = $booking->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $bookings = $booking->skip( $offset )->take( $limit )->get();

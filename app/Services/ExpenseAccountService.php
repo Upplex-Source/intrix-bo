@@ -226,7 +226,7 @@ class ExpenseAccountService
 
             $expense_accountCount = $expense_account->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $expenses_accounts = $expense_account->skip( $offset )->take( $limit )->get();

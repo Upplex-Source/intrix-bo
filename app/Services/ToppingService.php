@@ -214,7 +214,7 @@ class ToppingService
 
             $toppingCount = $topping->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $toppings = $topping->skip( $offset )->take( $limit )->get();

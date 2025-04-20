@@ -275,7 +275,7 @@ class ProductAddOnService
 
             $productAddOnCount = $productAddOn->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $productAddOns = $productAddOn->skip( $offset )->take( $limit )->get();
@@ -318,6 +318,29 @@ class ProductAddOnService
     private static function filter( $request, $model ) {
 
         $filter = false;
+
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'product_add_ons.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'product_add_ons.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
 
         if ( !empty( $request->name ) ) {
             $model->where('title', 'LIKE', '%' . $request->name . '%')
@@ -393,6 +416,11 @@ class ProductAddOnService
 
         if ( !empty( $request->custom_search ) ) {
             $model->where( 'title', 'LIKE', '%' . $request->custom_search . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->sku ) ) {
+            $model->where( 'product_add_ons.sku', 'LIKE', '%' . $request->sku . '%' );
             $filter = true;
         }
 

@@ -227,7 +227,7 @@ class ExpenseService
 
         $expenseCount = $expense->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $expenses = $expense->skip( $offset )->take( $limit )->get();

@@ -326,7 +326,7 @@ class VoucherService
 
             $voucherCount = $voucher->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $vouchers = $voucher->skip( $offset )->take( $limit )->get();
@@ -383,7 +383,7 @@ class VoucherService
     
         $voucherCount = $voucher->count();
     
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
     
         // Paginate results
@@ -462,6 +462,29 @@ class VoucherService
             $filter = true;
         }
 
+        if ( !empty( $request->expired_date ) ) {
+            if ( str_contains( $request->expired_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->expired_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.expired_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->expired_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.expired_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
         if ( !empty( $request->title ) ) {
             $model->where( 'vouchers.title', 'LIKE', '%' . $request->title . '%' );
             $filter = true;
@@ -496,6 +519,11 @@ class VoucherService
 
         if ( !empty( $request->code ) ) {
             $model->where( 'code', 'LIKE', '%' . $request->code . '%' );
+            $filter = true;
+        }
+
+        if ( !empty( $request->promo_code ) ) {
+            $model->where( 'promo_code', 'LIKE', '%' . $request->promo_code . '%' );
             $filter = true;
         }
 
@@ -631,7 +659,7 @@ class VoucherService
 
         $voucherCount = $voucher->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $vouchers = $voucher->skip( $offset )->take( $limit )->get();

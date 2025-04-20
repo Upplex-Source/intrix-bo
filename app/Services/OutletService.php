@@ -243,7 +243,7 @@ class OutletService
 
             $outletCount = $outlet->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $outlets = $outlet->skip( $offset )->take( $limit )->get();

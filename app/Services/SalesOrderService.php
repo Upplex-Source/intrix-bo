@@ -670,7 +670,7 @@ class SalesOrderService
 
             $salesorderCount = $salesorder->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $salesorders = $salesorder->skip( $offset )->take( $limit )->get();

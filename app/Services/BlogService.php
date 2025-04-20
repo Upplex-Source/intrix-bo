@@ -38,7 +38,7 @@ class BlogService
 
         $blogCount = $blog->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $blogs = $blog->skip( $offset )->take( $limit )->get();
@@ -603,7 +603,7 @@ class BlogService
 
         $blogCount = $blog->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $blogs = $blog->skip( $offset )->take( $limit )->get();

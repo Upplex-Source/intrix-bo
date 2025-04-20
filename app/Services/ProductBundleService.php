@@ -266,7 +266,7 @@ class ProductBundleService
 
             $productBundleCount = $productBundle->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $productBundles = $productBundle->skip( $offset )->take( $limit )->get();

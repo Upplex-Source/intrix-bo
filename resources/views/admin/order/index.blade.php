@@ -444,6 +444,13 @@ var statusMapper = @json( $data['status'] ),
 
                     $('#modal_order_view .selections').empty();
 
+                    // OR for individual fields
+                    $('#{{ $order_view }}_a1').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_a2').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_c').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_s').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_p').attr('autocomplete', 'nope');
+
                     $('#{{ $order_view }}_id').val(response.id);
                     $('#{{ $order_view }}_fullname').val(response.fullname ? response.fullname : response.company_name || '-');
                     $('#{{ $order_view }}_email').val(response.email || '-');
@@ -455,11 +462,13 @@ var statusMapper = @json( $data['status'] ),
                     $('#{{ $order_view }}_tax').val( 'RM ' + ( response.tax || '0.00' ) );
                     $('#{{ $order_view }}_discount').val( 'RM ' + ( response.discount || '0.00' ) );
                     $('#{{ $order_view }}_total').val( 'RM ' + ( response.total_price || '0.00' ) );
-                    $('#{{ $order_view }}_a1').val(response.address_1 || '-');
-                    $('#{{ $order_view }}_a2').val(response.address_2 || '-');
-                    $('#{{ $order_view }}_c').val(response.city || '-');
-                    $('#{{ $order_view }}_s').val(response.state || '-');
-                    $('#{{ $order_view }}_p').val(response.postcode || '-');
+
+                    $('#{{ $order_view }}_a1').val(response.address_1 || '-').prop('defaultValue', response.address_1 || '-');
+                    $('#{{ $order_view }}_a2').val(response.address_2 || '-').prop('defaultValue', response.address_2 || '-');
+                    $('#{{ $order_view }}_c').val(response.city || '-').prop('defaultValue', response.city || '-');
+                    $('#{{ $order_view }}_s').val(response.state || '-').prop('defaultValue', response.state || '-');
+                    $('#{{ $order_view }}_p').val(response.postcode || '-').prop('defaultValue', response.postcode || '-');
+
                     $('#{{ $order_view }}_remarks').val(response.remarks || '-');
 
                     const orderMetas = response.orderMetas || [];
@@ -565,6 +574,13 @@ var statusMapper = @json( $data['status'] ),
                 },
             } );
         } );
+
+        function setIfDifferent(selector, value) {
+            const $el = $(selector);
+            if ($el.val() !== value) {
+                $el.val(value);
+            }
+        }
 
         $( '#modal_order_view .btn-primary' ).on( 'click', function() {
 

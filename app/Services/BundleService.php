@@ -281,7 +281,7 @@ class BundleService
 
             $bundleCount = $bundle->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $bundles = $bundle->skip( $offset )->take( $limit )->get();
