@@ -453,8 +453,10 @@ var statusMapper = @json( $data['status'] ),
 
                     $('#{{ $order_view }}_id').val(response.id);
                     $('#{{ $order_view }}_fullname').val(response.fullname ? response.fullname : response.company_name || '-');
-                    $('#{{ $order_view }}_email').val(response.email || '-');
-                    $('#{{ $order_view }}_phone_number').val(response.phone_number || '-');
+
+                    $('#{{ $order_view }}_email').val(response.email || '-').prop('defaultValue', response.email || '-');
+                    $('#{{ $order_view }}_phone_number').val(response.phone_number || '-').prop('defaultValue', response.phone_number || '-');
+
                     $('#{{ $order_view }}_status').val(response.status || '-');
                     $('#{{ $order_view }}_reference').val(response.reference || '-');
                     $('#{{ $order_view }}_type').val('Online Payment');
@@ -463,11 +465,18 @@ var statusMapper = @json( $data['status'] ),
                     $('#{{ $order_view }}_discount').val( 'RM ' + ( response.discount || '0.00' ) );
                     $('#{{ $order_view }}_total').val( 'RM ' + ( response.total_price || '0.00' ) );
 
-                    $('#{{ $order_view }}_a1').val(response.address_1 || '-').prop('defaultValue', response.address_1 || '-');
-                    $('#{{ $order_view }}_a2').val(response.address_2 || '-').prop('defaultValue', response.address_2 || '-');
-                    $('#{{ $order_view }}_c').val(response.city || '-').prop('defaultValue', response.city || '-');
-                    $('#{{ $order_view }}_s').val(response.state || '-').prop('defaultValue', response.state || '-');
-                    $('#{{ $order_view }}_p').val(response.postcode || '-').prop('defaultValue', response.postcode || '-');
+
+                    const autofill = (selector, value) => {
+                        const $el = $(selector);
+                        $el.prop('readonly', true).val(value).prop('defaultValue', value);
+                        setTimeout(() => $el.prop('readonly', false), 50);
+                    };
+
+                    autofill('#{{ $order_view }}_a1', response.address_1 || '-');
+                    autofill('#{{ $order_view }}_a2', response.address_2 || '-');
+                    autofill('#{{ $order_view }}_c', response.city || '-');
+                    autofill('#{{ $order_view }}_s', response.state || '-');
+                    autofill('#{{ $order_view }}_p', response.postcode || '-');
 
                     $('#{{ $order_view }}_remarks').val(response.remarks || '-');
 
