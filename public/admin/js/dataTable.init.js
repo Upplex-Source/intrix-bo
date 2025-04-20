@@ -72,7 +72,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
                         dt.page.len(-1).draw();
                         dt.one('draw', function () {
                             $('.buttons-copy').click();
-                            settimeout(() => dt.page.len(10).draw(), 1000);
+                            setTimeout(() => dt.page.len(10).draw(), 1000);
                         });
                     }
                 }
@@ -110,7 +110,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
                         dt.page.len(-1).draw();
                         dt.one('draw', function () {
                             $('.buttons-excel').click();
-                            settimeout(() => dt.page.len(10).draw(), 1000);
+                            setTimeout(() => dt.page.len(10).draw(), 1000);
                         });
                     }
                 }
@@ -149,7 +149,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
                         dt.page.len(-1).draw();
                         dt.one('draw', function () {
                             $('.buttons-csv').click();
-                            settimeout(() => dt.page.len(10).draw(), 1000);
+                            setTimeout(() => dt.page.len(10).draw(), 1000);
                         });
                     }
                 }
@@ -187,7 +187,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
                         dt.page.len(-1).draw();
                         dt.one('draw', function () {
                             $('.buttons-pdf').click();
-                            settimeout(() => dt.page.len(10).draw(), 1000);
+                            setTimeout(() => dt.page.len(10).draw(), 1000);
                         });
                     }
                 }
