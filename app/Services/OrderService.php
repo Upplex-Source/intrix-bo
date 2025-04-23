@@ -1307,7 +1307,7 @@ class OrderService
                 $merchantCode = config('services.ipay88.merchant_code');
     
                 $request = new \IPay88\Payment\Request( $merchantKey );
-                $order_amount = number_format($order->total_price, 2, '.', '');
+                $order_amount = number_format($order->total_price, 2, '.', ',' );
                 $data = array(
                     'merchantCode' => $request->setMerchantCode( $merchantCode ),
                     'paymentId' =>  '',
@@ -1756,7 +1756,7 @@ class OrderService
                 $merchantCode = config('services.ipay88.merchant_code');
     
                 $request = new \IPay88\Payment\Request( $merchantKey );
-                $order_amount = number_format($order->total_price, 2, '.', '');
+                $order_amount = number_format($order->total_price, 2, '.', ',' );
                 $data = array(
                     'merchantCode' => $request->setMerchantCode( $merchantCode ),
                     'paymentId' =>  '',
@@ -2259,7 +2259,7 @@ class OrderService
             $merchantCode = config('services.ipay88.merchant_code');
 
             $request = new \IPay88\Payment\Request( $merchantKey );
-            $order_amount = number_format($order->total_price, 2, '.', '');
+            $order_amount = number_format($order->total_price, 2, '.', ',' );
             $newReference = $order->reference . '-' . $order->payment_attempt;
             $data = array(
                 'merchantCode' => $request->setMerchantCode( $merchantCode ),
