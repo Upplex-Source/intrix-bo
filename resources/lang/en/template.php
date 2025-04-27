@@ -76,6 +76,9 @@ return [
     'countries' => 'Countries & States',
     'branches' => 'Branches',
     'add_state' => 'Add State',
+    'add_variant' => 'Add Variant',
+    'remove_variant' => 'Remove Variant',
+    
 
     'update_product_brochures' => 'Update Product Brochures',
     'update_installation_guides' => 'Update Installation Guides',
@@ -137,6 +140,7 @@ return [
     'products_bundles' => 'Product Bundles',
     'product_stocks' => 'Product Inventories',
     'product_variants' => 'Product Variants',
+    'product_variant_title' => 'Product Variant Title',
     'product_galleries' => 'Product Galleries',
     'warehouses' => 'Warehouses',
     'parents' => 'Parents',

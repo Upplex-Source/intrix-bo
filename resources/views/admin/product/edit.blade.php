@@ -5,7 +5,7 @@ $product_edit = 'product_edit';
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.add_x', [ 'title' => Str::singular( __( 'template.menus' ) ) ] ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.edit_x', [ 'title' => Str::singular( __( 'template.menus' ) ) ] ) }}</h3>
         </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
@@ -71,6 +71,19 @@ $product_edit = 'product_edit';
                     <button id="{{ $product_edit }}_submit" type="button" class="btn btn-primary">{{ __( 'template.save_changes' ) }}</button>
                 </div>
             </div>
+            <div class="col-md-12 col-lg-6">
+                <h5 class="card-title mb-4">{{ __( 'template.product_variants' ) }}</h5>
+            
+                <div id="product-variants-wrapper">
+                    <!-- Dynamic Product Variants will be appended here -->
+                </div>
+            
+                <div class="text-end d-none">
+                    <button type="button" class="btn btn-sm btn-primary" id="add-variant-btn">
+                        <i class="bi bi-plus-lg"></i> {{ __( 'template.add_variant' ) }}
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -93,6 +106,23 @@ $product_edit = 'product_edit';
                 message: '{{ __( 'template.loading' ) }}'
             } );
 
+            let productVariants = [];
+
+            $('.variant-block').each( function() {
+                let variantId = $(this).data( 'variant-id' ) || null;
+                let title = $(this).find( '.variant-title' ).val() || null;
+                let imagePath = $(this).find( '.dropzone' ).data( 'image-path' ) || null;
+                let imageId = $(this).find( '.dropzone' ).data( 'image-id' ) || null;
+
+                productVariants.push( {
+                    id: variantId,
+                    title: title,
+                    image_path: imagePath,
+                    image_id: imageId
+                } );
+            });
+
+
             let formData = new FormData();
             formData.append( 'id', '{{ request('id') }}' );
             formData.append( 'code', $( fe + '_code' ).val() );
@@ -107,6 +137,7 @@ $product_edit = 'product_edit';
             formData.append( 'free_syrup_quantity', $( fe + '_free_syrup_quantity' ).val() );
             formData.append( 'free_topping_quantity', $( fe + '_free_topping_quantity' ).val() );
             formData.append( 'image', fileID );
+            formData.append( 'variants', JSON.stringify(productVariants) )
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -131,8 +162,14 @@ $product_edit = 'product_edit';
                         let errors = error.responseJSON.errors;
                         $.each( errors, function( key, value ) {
                             $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                            
+                            if( key == 'decoded_variants' ){
+                                $( '#modal_danger .caption-text' ).html( value );
+                                modalDanger.toggle();
+                            }
+
                         } );
-                    } else {
+                    }else {
                         $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
                         modalDanger.toggle();
                     }
@@ -141,6 +178,79 @@ $product_edit = 'product_edit';
         } );
 
         Dropzone.autoDiscover = false;
+        let variantIndex = 0;
+
+        function addProductVariant( variantOriginalId = '', title = '', imagePath = '' ) {
+            variantIndex++;
+            const variantId = 'product_variant_' + variantIndex;
+
+            let variantHtml = `
+                <div class="variant-block card mb-4 p-3 position-relative variant-item" id="${variantId}" data-variant-id="${variantOriginalId}">
+                    <div class="mb-3 row">
+                        <label class="col-sm-5 form-label">{{ __( 'product.title' ) }}</label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control variant-title" value="${title}">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>{{ __( 'product.image' ) }}</label>
+                        <div class="dropzone" id="${variantId}_image" data-image-path="${imagePath}" style="min-height: 0px;">
+                            <div class="dz-message needsclick">
+                                <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ __( 'template.drop_file_or_click_to_upload' ) }}</h3>
+                            </div>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-variant-btn">
+                            <i class="bi bi-dash-lg"></i> {{ __( 'template.remove_variant' ) }}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            $('#product-variants-wrapper').append( variantHtml );
+
+            // Initialize Dropzone
+            let dropzone = new Dropzone( `#${variantId}_image`, {
+                url: '{{ route( 'admin.file.upload' ) }}',
+                maxFiles: 1,
+                acceptedFiles: 'image/jpg,image/jpeg,image/png',
+                addRemoveLinks: true,
+                init: function() {
+                    let dz = this;
+                    if ( imagePath.length ) {
+                        let mockFile = { name: 'Uploaded', size: 1024, accepted: true };
+                        dz.files.push( mockFile );
+                        dz.displayExistingFile( mockFile, imagePath );
+                    }
+                },
+                removedfile: function( file ) {
+                    $( `#${variantId}_image` ).data( 'image-path', '' ); // clear image path
+                    file.previewElement.remove();
+                },
+                success: function( file, response ) {
+                    if ( response.status === 200 ) {
+                        $( `#${variantId}_image` ).data( 'image-path', response.data.id ); // Store uploaded URL
+                        $( `#${variantId}_image` ).data( 'image-id', response.data.id ); // Store uploaded URL
+                        file.previewElement.id = response.data.id;
+                    }
+                }
+            });
+        }
+
+        // Add new variant on button click
+        $('#add-variant-btn').on( 'click', function() {
+            addProductVariant();
+        });
+
+        // Remove variant
+        $(document).on( 'click', '.remove-variant-btn', function() {
+            $(this).closest('.variant-item').remove();
+        });
 
         getProduct();
 
@@ -230,6 +340,10 @@ $product_edit = 'product_edit';
                         }
                     } );
 
+                    $.each( response.active_product_variants, function( i, v ) {
+                        addProductVariant( v.id, v.title, v.image_path );
+                    } );
+
                     $( 'body' ).loading( 'stop' );
                 },
             } );
@@ -274,5 +388,45 @@ $product_edit = 'product_edit';
             } );
         }
 
+        
+
+        function removeVariantGallery( gallery ) {
+
+            resetInputValidation();
+
+            $( 'body' ).loading( {
+                message: '{{ __( 'template.loading' ) }}'
+            } );
+
+            let formData = new FormData();
+            formData.append( 'id', gallery );
+            formData.append( '_token', '{{ csrf_token() }}' );
+
+            $.ajax( {
+                url: '{{ route( 'admin.product.removeProductVariantGalleryImage' ) }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType:   false,
+                success: function( response ) {
+                    $( 'body' ).loading( 'stop' );
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.toggle();
+                },
+                error: function( error ) {
+                    $( 'body' ).loading( 'stop' );
+
+                    if ( error.status === 422 ) {
+                        let errors = error.responseJSON.errors;
+                        $.each( errors, function( key, value ) {
+                            $( fe + '_' + key ).addClass( 'is-invalid' ).nextAll( 'div.invalid-feedback' ).text( value );
+                        } );
+                    } else {
+                        $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
+                        modalDanger.toggle();
+                    }
+                }
+            } );
+        }
     } );
 </script>

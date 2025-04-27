@@ -56,6 +56,12 @@ $columns = [
         'title' => __( 'product.code' ),
     ],
     [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.product_variant' ) ] ),
+        'id' => 'product_variant',
+        'title' => __( 'product.product_variant' ),
+    ],
+    [
         'type' => 'default',
         'id' => 'price',
         'title' => __( 'product.price' ),
@@ -117,6 +123,7 @@ var statusMapper = @json( $data['status'] ),
             { data: 'image_path' },
             { data: 'title' },
             { data: 'code' },
+            { data: 'active_product_variants' },
             { data: 'price' },
             { data: 'status' },
             { data: 'encrypted_id' },
@@ -228,7 +235,7 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt('{{ Helper::columnIndex( $columns, "warehouse" ) }}'),
+                targets: parseInt('{{ Helper::columnIndex( $columns, "product_variant" ) }}'),
                 width: '10%',
                 render: function(data, type, row, meta) {
                     // Check if data is an array
@@ -240,9 +247,8 @@ var statusMapper = @json( $data['status'] ),
                         return data
                             .map(item => {
                                 // Check if the title and quantity exist
-                                const title = item?.title?.length > 0 ? item.title : '-';
-                                const quantity = item?.pivot.quantity != null ? item.pivot.quantity : '-';
-                                return `${title}: ${quantity}`;
+                                const title = item.title ? item.title : '-';
+                                return `${title}`;
                             })
                             .join('<br>'); // Join titles with line breaks
                     }

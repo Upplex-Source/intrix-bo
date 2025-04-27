@@ -42,6 +42,11 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class, 'product_id');
     }
     
+    public function activeProductVariants()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id')->where('status',10);
+    }
+    
     public function productGalleries()
     {
         return $this->hasMany(ProductGallery::class, 'product_id');

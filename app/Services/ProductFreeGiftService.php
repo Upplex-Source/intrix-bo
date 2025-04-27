@@ -484,6 +484,7 @@ class ProductFreeGiftService
 
         $validator = Validator::make($request->all(), [
             'session_key' => ['nullable', 'exists:carts,session_key'],
+            'product_code' => ['nullable', 'exists:prodcuts,code'],
         ]);
 
         $cart = Cart::with(['cartMetas', 'addons', 'freeGift' => function ($query) {
@@ -497,6 +498,13 @@ class ProductFreeGiftService
 
         if( $cart && !empty( $cart->cartMetas ) ){
             $productIds = $cart->cartMetas->pluck( 'product_id' )->toArray();
+        }
+        if ( $request->product_code ) {
+            $product = Product::where( 'code', $request->product_code )->value( 'id' );
+        
+            if ( $product ) {
+                $productIds[] = $product;
+            }
         }
         
         $now = Carbon::now('Asia/Kuala_Lumpur');

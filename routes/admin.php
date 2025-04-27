@@ -214,6 +214,7 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-product', [ ProductController::class, 'updateProduct' ] )->name( 'admin.product.updateProduct' );
                 Route::post( 'update-product-status', [ ProductController::class, 'updateProductStatus' ] )->name( 'admin.product.updateProductStatus' );
                 Route::post( 'remove-product-gallery-image', [ ProductController::class, 'removeProductGalleryImage' ] )->name( 'admin.product.removeProductGalleryImage' );
+                Route::post( 'remove-product-variant-gallery-image', [ ProductController::class, 'removeProductVariantGalleryImage' ] )->name( 'admin.product.removeProductVariantGalleryImage' );
     
             } );
 

@@ -43,8 +43,8 @@ class ProductVariant extends Model
         return $this->belongsTo( Product::class, 'product_id' );
     }
 
-    public function getPathAttribute() {
-        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : null;
+    public function getImagePathAttribute() {
+        return $this->attributes['image'] ? asset( 'storage/' . $this->attributes['image'] ) : asset( 'admin/images/placeholder.png' ) . Helper::assetVersion();
     }
 
     public function getEncryptedIdAttribute() {

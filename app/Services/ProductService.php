@@ -123,7 +123,7 @@ class ProductService
         }
 
         return response()->json( [
-            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.menus' ) ) ] ),
+            'message' => __( 'template.new_x_created', [ 'title' => Str::singular( __( 'template.products' ) ) ] ),
         ] );
     }
     
@@ -131,8 +131,9 @@ class ProductService
 
         $request->merge( [
             'id' => Helper::decode( $request->id ),
+            'decoded_variants' => json_decode( $request->variants )
         ] );
-    
+
         $validator = Validator::make( $request->all(), [
             'code' => [ 'nullable' ],
             'title' => [ 'nullable' ],
@@ -146,6 +147,18 @@ class ProductService
             'free_syrup_quantity' => [ 'nullable' ],
             'free_topping_quantity' => [ 'nullable' ],
             'image' => [ 'nullable' ],
+            'decoded_variants' => [
+                'nullable',
+                function ( $attribute, $value, $fail ) use ( $request ) {
+                    
+                    foreach ( $value as $val ) {
+                        if( !$val->title ){
+                            $fail( __( 'validation.x_required', [ 'title' => Str::singular( __( 'template.product_variant_title' ) ) ] ) );
+                            return false;
+                        }
+                    }
+                },
+            ],
         ] );
 
         $attributeName = [
@@ -173,7 +186,7 @@ class ProductService
         DB::beginTransaction();
 
         try {
-            
+
             $updateProduct = Product::find( $request->id );
   
             $updateProduct->code = $request->code ?? $updateProduct->code;
@@ -204,6 +217,94 @@ class ProductService
                 }
             }
 
+            if( $request->decoded_variants ){
+
+                $decodedVariants = $request->decoded_variants;
+
+                // remove variant
+                $currentVariantIds = collect( $decodedVariants )->pluck( 'id' )
+                ->filter()
+                ->values();
+                $removeProductVariants = ProductVariant::where( 'product_id', $updateProduct->id )
+                ->whereNotIn( 'id', $currentVariantIds )
+                ->update([ 'status' => 20 ]);
+
+                foreach( $decodedVariants as $decodedVariant ){
+                    if( $decodedVariant->id ){
+                        $variant = ProductVariant::find( $decodedVariant->id );
+                        $variant->title = $decodedVariant->title;
+
+                        if( $decodedVariant->image_id ){
+
+                            $imageFile = FileManager::find( $decodedVariant->image_id );
+
+                            if ( $imageFile ) {
+    
+                                $fileName = explode( '/', $imageFile->file );
+                                $fileExtention = pathinfo($fileName[1])['extension'];
+
+                                $target = 'product-variant/' . $variant->id . '/' . $fileName[1];
+                                Storage::disk( 'public' )->move( $imageFile->file, $target );
+    
+                                $variant->image = $target;
+                                $variant->save();
+    
+                                $imageFile->status = 10;
+                                $imageFile->save();
+    
+                            }
+                        }
+
+                        $variant->save();
+                    }else {
+
+                        $referedProductVariant = ProductVariant::where( 'product_id', $updateProduct->id )->where( 'status', 10 )->first();
+
+                        $newVariant = ProductVariant::create( [
+                            'product_id' => $updateProduct->id,
+                            'title' => strtoupper($decodedVariant->title),
+                            'description' => strtoupper($decodedVariant->title),
+                            'color' => strtoupper($decodedVariant->title),
+                            'image' => null,
+                            'price' => $referedProductVariant->price,
+                            'discount_price' => $referedProductVariant->discount_price,
+                            'installment_price' => $referedProductVariant->installment_price,
+                            'installment_rate' => $referedProductVariant->installment_rate,
+                            'status' => $referedProductVariant->status,
+                            'brochure' => $referedProductVariant->brochure,
+                            'sku' => $referedProductVariant->sku,
+                            'specification' => $referedProductVariant->specification,
+                            'features' => $referedProductVariant->features,
+                            'whats_included' => $referedProductVariant->whats_included,
+                            'upfront' => $referedProductVariant->upfront,
+                            'monthly' => $referedProductVariant->monthly,
+                            'outright' => $referedProductVariant->outright,
+                        ] );
+
+                        if( $decodedVariant->image_id ){
+
+                            $imageFile = FileManager::find( $decodedVariant->image_id );
+
+                            if ( $imageFile ) {
+    
+                                $fileName = explode( '/', $imageFile->file );
+                                $fileExtention = pathinfo($fileName[1])['extension'];
+    
+                                $target = 'product-variant/' . $newVariant->id . '/' . $fileName[1];
+                                Storage::disk( 'public' )->move( $imageFile->file, $target );
+    
+                                $newVariant->image = $target;
+                                $newVariant->save();
+    
+                                $imageFile->status = 10;
+                                $imageFile->save();
+    
+                            }
+                        }
+                    }
+                }
+            }
+
             $updateProduct->save();
             DB::commit();
 
@@ -217,13 +318,13 @@ class ProductService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.menus' ) ) ] ),
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'template.products' ) ) ] ),
         ] );
     }
 
     public static function allProducts( $request ) {
 
-        $products = Product::with( 'productVariants' )->select( 'products.*' );
+        $products = Product::with( 'activeProductVariants' )->select( 'products.*' );
 
         $filterObject = self::filter( $request, $products );
         $product = $filterObject['model'];
@@ -449,13 +550,20 @@ class ProductService
             'id' => Helper::decode( $request->id ),
         ] );
 
-        $product = Product::select( 'products.*' )->find( $request->id );
+        $product = Product::with( ['activeProductVariants'] )->select( 'products.*' )->find( $request->id );
 
         if ( $product ) {
             $product->append( [
                 'encrypted_id',
                 'image_path',
             ] );
+
+            if ( $product->activeProductVariants ) {
+                $product->activeProductVariants->append( [
+                    'encrypted_id',
+                    'image_path',
+                ] );
+            }
         }
         
         return response()->json( $product );
@@ -496,7 +604,7 @@ class ProductService
         }
 
         return response()->json( [
-            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.menus' ) ) ] ),
+            'message' => __( 'template.x_deleted', [ 'title' => Str::singular( __( 'template.products' ) ) ] ),
         ] );
     }
 
@@ -534,11 +642,49 @@ class ProductService
 
     public static function removeProductGalleryImage( $request ) {
 
-        $updateProduct = ProductGallery::find( $request->id );
-        $updateProduct->delete();
+        $updateProduct = Product::find( $request->id );
+
+        if ( $updateProduct && $updateProduct->image ) {
+
+            // Convert asset() URL to storage path
+            $imagePath = str_replace( asset( '' ), '', $updateProduct->image );
+    
+            // Attempt to delete the file
+            if ( Storage::disk( 'public' )->exists( $imagePath ) ) {
+                Storage::disk( 'public' )->delete( $imagePath );
+            }
+    
+            // Now set image to null
+            $updateProduct->image = null;
+            $updateProduct->save();
+        }
 
         return response()->json( [
             'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'product.galleries' ) ) ] ),
+        ] );
+    }
+
+    public static function removeProductVariantGalleryImage( $request ) {
+
+        $updateProduct = ProductVariant::find( $request->id );
+
+        if ( $updateProduct && $updateProduct->image ) {
+
+            // Convert asset() URL to storage path
+            $imagePath = str_replace( asset( '' ), '', $updateProduct->image );
+    
+            // Attempt to delete the file
+            if ( Storage::disk( 'public' )->exists( $imagePath ) ) {
+                Storage::disk( 'public' )->delete( $imagePath );
+            }
+    
+            // Now set image to null
+            $updateProduct->image = null;
+            $updateProduct->save();
+        }
+
+        return response()->json( [
+            'message' => __( 'template.x_updated', [ 'title' => Str::singular( __( 'product.product_variant_image' ) ) ] ),
         ] );
     }
 

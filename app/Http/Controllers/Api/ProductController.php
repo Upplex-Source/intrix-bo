@@ -43,6 +43,7 @@ class ProductController extends Controller
      * @bodyParam start integer required The start of the record of the table. Example: 0
      * @bodyParam created_date string The date of the filter. Example: 2024-09-25 to 2024-09-27
      * @bodyParam session_key string required The session_key of the cart. Example: kn1i23onlas1
+     * @bodyParam product_code string required The product_code of the product. Example: 5-IN-1
      * 
      */
     public function getFreeGifts( Request $request ) {
