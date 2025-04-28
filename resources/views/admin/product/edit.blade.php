@@ -217,7 +217,7 @@ $product_edit = 'product_edit';
             // Initialize Dropzone
             let dropzone = new Dropzone( `#${variantId}_image`, {
                 url: '{{ route( 'admin.file.upload' ) }}',
-                maxFiles: 1,
+                maxFiles: 2,
                 acceptedFiles: 'image/jpg,image/jpeg,image/png',
                 addRemoveLinks: true,
                 init: function() {
@@ -230,6 +230,7 @@ $product_edit = 'product_edit';
                 },
                 removedfile: function( file ) {
                     $( `#${variantId}_image` ).data( 'image-path', '' ); // clear image path
+                    $( `#${variantId}_image` ).data( 'image-id', null ); // Store uploaded URL
                     file.previewElement.remove();
                 },
                 success: function( file, response ) {
@@ -283,14 +284,14 @@ $product_edit = 'product_edit';
 
                     const dropzone = new Dropzone( fe + '_image', {
                         url: '{{ route( 'admin.file.upload' ) }}',
-                        maxFiles: 1,
+                        maxFiles: 2,
                         acceptedFiles: 'image/jpg,image/jpeg,image/png',
                         addRemoveLinks: true,
                         init: function() {
 
                             let that = this;
 
-                            if ( response.image != 0 ) {
+                            if ( response.image ) {
                                 let myDropzone = that,
                                     mockFile = { name: 'Default', size: 1024, accepted: true, id: response.id, isOld: true };
 
@@ -337,7 +338,7 @@ $product_edit = 'product_edit';
                     } );
 
                     $.each( response.active_product_variants, function( i, v ) {
-                        addProductVariant( v.id, v.title, v.image_path );
+                        addProductVariant( v.id, v.title, v.image ? v.image_path : null );
                     } );
 
                     $( 'body' ).loading( 'stop' );

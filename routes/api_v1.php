@@ -98,11 +98,9 @@ Route::prefix( 'guides-resources' )->group( function() {
     Route::any( 'videos', [ GuideController::class, 'getVideos' ] );
 } );
 
-if( 1 == 2 ){
 Route::prefix( 'products' )->group( function() {
     Route::any( '/', [ ProductController::class, 'getProducts' ] );
 } );
-}
 
 if( 1 == 2 ){
     Route::post( 'otp', [ UserController::class, 'requestOtp' ] );

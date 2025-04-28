@@ -688,9 +688,13 @@ class ProductService
         ] );
     }
 
-    public static function getMenus( $request ) {
+    public static function getProducts( $request ) {
 
-        $products = Product::select( 'products.*' )->where('status', 10)->where('product_type', 1);
+        $products = Product::with([
+            'freeGifts',
+            'addOns',
+            'activeProductVariants',
+        ] )->select( 'products.*' )->where('status', 10);
 
         $filterObject = self::filter( $request, $products );
         $product = $filterObject['model'];
@@ -716,10 +720,36 @@ class ProductService
 
             $productCount = $product->count();
 
-            $limit = 10;
-            $offset = 0;
+            $limit = $request->length ? $request->length : 10;
+            $offset = $request->start ? $request->start : 0;
+    
+            $products = $product->skip($offset)->take($limit + 1)->get()->map(function ($product) {
 
-            $products = $product->skip( $offset )->take( $limit )->get();
+                if( $product->freeGifts ){
+                    $freeGifts = $product->freeGifts;
+                    foreach( $freeGifts as $freeGift ) {
+                        $freeGift->append( ['image_path'] );
+                    }
+                }
+
+                if( $product->addOns ){
+                    $addOns = $product->addOns;
+                    foreach( $addOns as $addOn ) {
+                        $addOn->append( ['image_path'] );
+                    }
+                }
+
+                if( $product->activeProductVariants ){
+                    $activeProductVariants = $product->activeProductVariants;
+                    foreach( $activeProductVariants as $activeProductVariant ) {
+                        $activeProductVariant->append( ['image_path'] );
+                    }
+                }
+
+                $product->append( ['image_path'] );
+    
+                return $product;
+            });
 
             if ( $products ) {
 
@@ -738,7 +768,7 @@ class ProductService
 
             return response()->json([
                 'message' => '',
-                'message_key' => 'get_menu_success',
+                'message_key' => 'get_products_success',
                 'data' => $products,
             ]);
 
