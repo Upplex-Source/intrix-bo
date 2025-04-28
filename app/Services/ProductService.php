@@ -255,6 +255,15 @@ class ProductService
                             }
                         }
 
+                        if( !$decodedVariant->image_id && !$decodedVariant->image_path ){
+                            $imagePath = str_replace( asset( '' ), '', $variant->image );
+                            // Attempt to delete the file
+                            if ( Storage::disk( 'public' )->exists( $imagePath ) ) {
+                                Storage::disk( 'public' )->delete( $imagePath );
+                            }
+                            $variant->image = null;
+                        }
+
                         $variant->save();
                     }else {
 
