@@ -222,7 +222,7 @@ $product_edit = 'product_edit';
                 addRemoveLinks: true,
                 init: function() {
                     let dz = this;
-                    if ( imagePath.length ) {
+                    if ( imagePath ) {
                         let mockFile = { name: 'Uploaded', size: 1024, accepted: true };
                         dz.files.push( mockFile );
                         dz.displayExistingFile( mockFile, imagePath );
