@@ -1615,6 +1615,14 @@ class OrderService
                 'company_name' => $request->company_name,
             ] );
 
+            if( $request->free_gift ){
+                $freeGift = ProductFreeGift::where('code', $request->free_gift)->first();
+            }
+
+            if( $request->add_on ){
+                $addOn = ProductAddOn::where('code', $request->add_on)->first();
+            }
+
             $order = Order::create( [
                 'user_id' => null,
                 'product_id' => null,
@@ -1643,8 +1651,8 @@ class OrderService
                 'last_visit' => now(), // Store current timestamp
                 'country' => $request->country,
                 'company_name' => $request->company_name,
-                'add_on_id' => $request->add_on_id,
-                'free_gift_id' => $request->free_gift_id,
+                'add_on_id' => $request->add_on ? $addOn->id : null,
+                'free_gift_id' => $request->free_gift ? $freeGift->id : null,
             ] );
 
             if( $request->add_on ) {
