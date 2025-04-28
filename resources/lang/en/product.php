@@ -35,4 +35,5 @@ return [
     "product_type" => "Product Type",
     "product_variant" => "Product Variant",
     "product_variant_image" => "Product Variant Image",
+    "galleries" => "Product Images",
 ];

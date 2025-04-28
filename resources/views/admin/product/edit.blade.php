@@ -283,7 +283,7 @@ $product_edit = 'product_edit';
 
                     const dropzone = new Dropzone( fe + '_image', {
                         url: '{{ route( 'admin.file.upload' ) }}',
-                        maxFiles: 10,
+                        maxFiles: 1,
                         acceptedFiles: 'image/jpg,image/jpeg,image/png',
                         addRemoveLinks: true,
                         init: function() {
@@ -291,17 +291,13 @@ $product_edit = 'product_edit';
                             let that = this;
 
                             if ( response.image != 0 ) {
+                                let myDropzone = that,
+                                    mockFile = { name: 'Default', size: 1024, accepted: true, id: response.id, isOld: true };
 
-                                $.each( response.galleries, function( i, v ) {
-
-                                    let myDropzone = that,
-                                        mockFile = { name: 'Default', size: 1024, accepted: true, id: v.id, isOld: true };
-
-                                    myDropzone.files.push( mockFile );
-                                    myDropzone.displayExistingFile( mockFile, v.image_path );
-                                    $( myDropzone.files[myDropzone.files.length - 1].previewElement ).data( 'id', v.id );
+                                myDropzone.files.push( mockFile );
+                                myDropzone.displayExistingFile( mockFile, response.image_path );
+                                $( myDropzone.files[myDropzone.files.length - 1].previewElement ).data( 'id', response.id );
                                         
-                                } );
                             }
                         },
                         removedfile: function( file ) {
