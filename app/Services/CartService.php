@@ -112,6 +112,7 @@ class CartService {
                     'color' => $meta->productVariant ? $meta->productVariant->title : null,
                     'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                     'payment_plan' => $meta->payment_plan,
+                    'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
                         ->setAttribute('image_path', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path),
                     'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
@@ -387,7 +388,9 @@ class CartService {
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )
+                ->setAttribute('image_path', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
             ];
         });
@@ -662,6 +665,7 @@ class CartService {
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
@@ -948,6 +952,7 @@ class CartService {
                 'payment_plan' => $meta->payment_plan,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
@@ -1077,6 +1082,7 @@ class CartService {
                 'payment_plan' => $meta->payment_plan,
                 'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
@@ -1315,6 +1321,7 @@ class CartService {
                     'color' => $meta->productVariant ? $meta->productVariant->title : null,
                     'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                     'payment_plan' => $meta->payment_plan,
+                    'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                     'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                     'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
                 ];

@@ -259,6 +259,7 @@ class Ipay88Service {
                     'payment_plan' => $meta->payment_plan,
                     'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                     'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                    'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                 ];
             });
 
