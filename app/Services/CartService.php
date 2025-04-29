@@ -1278,9 +1278,11 @@ class CartService {
 
             if( !$freeGift || empty($productIds) ){
                 $deleteGift = ProductFreeGift::find( $updateCart->free_gift_id );
+                if( $deleteGift ){
+                    $updateCart->total_price += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
+                    $updateCart->subtotal += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
+                }
                 $updateCart->free_gift_id = null;
-                $updateCart->total_price += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
-                $updateCart->subtotal += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
                 $updateCart->save();
             }
 
