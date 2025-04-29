@@ -595,7 +595,7 @@ class CartService {
                     }else {
                         $cartMeta->quantity -= $request->quantity;
                         $cartMeta->total_price = $productPrice * $cartMeta->quantity;
-                        $cartMeta->payment_plan = $request->payment_plan;
+                        $cartMeta->payment_plan = $paymentPlan;
                         $cartMeta->save();
                     }
                 } else {
