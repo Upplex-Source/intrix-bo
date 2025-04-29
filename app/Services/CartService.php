@@ -573,7 +573,7 @@ class CartService {
             } else {
                 $cartMeta = CartMeta::where('cart_id', $updateCart->id)->where( 'product_id', $product->id )->where( 'product_variant_id', $productVariant ? $productVariant->id : null )->first();
         
-                $paymentPlan = $request->payment_plan;
+                $paymentPlan = $request->payment_plan ? $request->payment_plan : $cartMeta->payment_plan;
 
                 $productPrice = $product->price;
 
