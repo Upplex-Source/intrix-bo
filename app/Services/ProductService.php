@@ -795,16 +795,26 @@ class ProductService
                     foreach( $activeProductVariants as $activeProductVariant ) {
                         $activeProductVariant->append( ['image_path'] );
                         $variantImages[ $activeProductVariant->color ] = $activeProductVariant->image_path;
-                        $variantPaymentPlan[ 'upfront' ] = [
-                            'id' => 1,
-                            'price' => $activeProductVariant->upfront,
+                        $variantColors[] = [
+                            "id" => $activeProductVariant->color,
+                            "title" => $activeProductVariant->title,
                         ];
-                        $variantPaymentPlan[ 'outright' ] = [
-                            'id' => 3,
-                            'price' => $activeProductVariant->outright,
-                        ];
-                        $variantColors[ $activeProductVariant->color ] = $activeProductVariant->title;
                     }
+                    $presetVariant = $product->activeProductVariants->first();
+                    $source = $presetVariant ?? $product;
+                    
+                    $variantPaymentPlan = [
+                        [
+                            'id' => 1,
+                            'price' => $source->upfront ?? $source->price,
+                            'type' => 'Upfront Payment',
+                        ],
+                        [
+                            'id' => 3,
+                            'price' => $source->outright ?? $source->price,
+                            'type' => 'Outright Payment',
+                        ],
+                    ];
                 }
 
                 $product->variant_images = $variantImages;
