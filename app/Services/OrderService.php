@@ -230,6 +230,20 @@ class OrderService
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
 
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'payment_plan' => $meta->payment_plan_label,
@@ -1415,6 +1429,21 @@ class OrderService
         }
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -1867,6 +1896,21 @@ class OrderService
         }
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -2373,6 +2417,21 @@ class OrderService
         }
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+            
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,

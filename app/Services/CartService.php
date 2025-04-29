@@ -105,6 +105,21 @@ class CartService {
     
             // Process each cart meta data
             $cartMetas = $cart->cartMetas->map(function ($meta) {
+
+                $productPrice = $meta->product->price;
+
+                switch ( $meta->payment_plan ) {
+                    case 1:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                        break;
+                    case 2:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                        break;
+                    case 3:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                        break;
+                }
+
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
@@ -383,6 +398,21 @@ class CartService {
         $cart->load( [ 'addOns', 'freeGift' ] );
 
         $cartMetas = $cart->cartMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -660,6 +690,21 @@ class CartService {
         DB::commit();
 
         $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+            
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -950,6 +995,21 @@ class CartService {
         }
 
         $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -1083,6 +1143,21 @@ class CartService {
         }
 
         $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+            
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
