@@ -498,6 +498,18 @@ class ProductService
             $model->where( 'products.code', 'LIKE', '%' . $request->code . '%' );
             $filter = true;
         }
+
+        if ( !empty( $request->product_code ) ) {
+            $model->where( 'products.code', 'LIKE', '%' . $request->product_code . '%' );
+            $filter = true;
+        }
+
+        if (!empty($request->color)) {
+            $model->whereHas('productVariants', function ($query) use ($request) {
+                $query->where('color', 'LIKE', '%' . $request->color . '%');
+            });
+            $filter = true;
+        }
         
         if ( !empty( $request->id ) ) {
             $model->where( 'products.id', '!=', Helper::decode($request->id) );
@@ -699,6 +711,13 @@ class ProductService
 
     public static function getProducts( $request ) {
 
+        $validator = Validator::make($request->all(), [
+            'product_code' => [ 'nullable', 'exists:products,code'  ],
+            'color' => [ 'nullable', 'exists:product_variants,color'  ],
+        ]);
+
+        $validator->validate();
+
         $products = Product::with([
             'freeGifts',
             'addOns',
@@ -732,7 +751,9 @@ class ProductService
             $limit = $request->length ? $request->length : 10;
             $offset = $request->start ? $request->start : 0;
     
-            $products = $product->skip($offset)->take($limit + 1)->get()->map(function ($product) {
+            $products = $product->skip($offset)->take($limit + 1)->get()->map(function ($product) use( $request ) {
+                
+                $variantImages = []; // ← Build separately
 
                 if( $product->freeGifts ){
                     $freeGifts = $product->freeGifts;
@@ -752,10 +773,19 @@ class ProductService
                     $activeProductVariants = $product->activeProductVariants;
                     foreach( $activeProductVariants as $activeProductVariant ) {
                         $activeProductVariant->append( ['image_path'] );
+                        $variantImages[ $activeProductVariant->color ] = $activeProductVariant->image_path;
                     }
                 }
+                
+                $product->variant_images = $variantImages;
 
-                $product->append( ['image_path'] );
+                if( $request->color ){
+                    $variant = $product->activeProductVariants->where( 'color', $request->color )->first();
+
+                    if ( $variant ) {
+                        $product->image = $variant->image;
+                    }
+                }
     
                 return $product;
             });
