@@ -41,17 +41,17 @@ $product_edit = 'product_edit';
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $product_edit }}_price" class="col-sm-5 form-label">{{ __( 'product.price' ) }}</label>
+                    <label for="{{ $product_edit }}_upfront" class="col-sm-5 form-label">{{ __( 'product.upfront' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_edit }}_price">
+                        <input type="number" class="form-control" id="{{ $product_edit }}_upfront">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
-                    <label for="{{ $product_edit }}_discount_price" class="col-sm-5 form-label">{{ __( 'product.discount_price' ) }}</label>
+                    <label for="{{ $product_edit }}_outright" class="col-sm-5 form-label">{{ __( 'product.outright' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $product_edit }}_discount_price">
+                        <input type="number" class="form-control" id="{{ $product_edit }}_outright">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -128,8 +128,8 @@ $product_edit = 'product_edit';
             formData.append( 'code', $( fe + '_code' ).val() );
             formData.append( 'title', $( fe + '_title' ).val() );
             formData.append( 'description', $( fe + '_description' ).val() );
-            formData.append( 'price', $( fe + '_price' ).val() );
-            formData.append( 'discount_price', $( fe + '_discount_price' ).val() );
+            formData.append( 'upfront', $( fe + '_upfront' ).val() );
+            formData.append( 'outright', $( fe + '_outright' ).val() );
             formData.append( 'default_froyo_quantity', $( fe + '_default_froyo_quantity' ).val() );
             formData.append( 'default_syrup_quantity', $( fe + '_default_syrup_quantity' ).val() );
             formData.append( 'default_topping_quantity', $( fe + '_default_topping_quantity' ).val() );
@@ -180,7 +180,7 @@ $product_edit = 'product_edit';
         Dropzone.autoDiscover = false;
         let variantIndex = 0;
 
-        function addProductVariant( variantOriginalId = '', title = '', imagePath = '' ) {
+        function addProductVariant( variantOriginalId = '', title = '', imagePath = '', upfront = 0, monthly = 0, outright = 0, ) {
             variantIndex++;
             const variantId = 'product_variant_' + variantIndex;
 
@@ -273,6 +273,8 @@ $product_edit = 'product_edit';
                     $( fe + '_code' ).val( response.code );
                     $( fe + '_title' ).val( response.title );
                     $( fe + '_description' ).val( response.description );
+                    $( fe + '_upfront' ).val( response.upfront );
+                    $( fe + '_outright' ).val( response.outright );
                     $( fe + '_price' ).val( response.price );
                     $( fe + '_discount_price' ).val( response.discount_price );
                     $( fe + '_default_froyo_quantity' ).val( response.default_froyo_quantity );
@@ -338,7 +340,7 @@ $product_edit = 'product_edit';
                     } );
 
                     $.each( response.active_product_variants, function( i, v ) {
-                        addProductVariant( v.id, v.title, v.image ? v.image_path : null );
+                        addProductVariant( v.id, v.title, v.image ? v.image_path : null, v.upfront, v.monthly, v.outright );
                     } );
 
                     $( 'body' ).loading( 'stop' );

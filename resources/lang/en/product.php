@@ -36,4 +36,8 @@ return [
     "product_variant" => "Product Variant",
     "product_variant_image" => "Product Variant Image",
     "galleries" => "Product Images",
+
+    'upfront' => 'Upfront Price',
+    'monthly' => 'Monthly Price',
+    'outright' => 'Outright Price',
 ];

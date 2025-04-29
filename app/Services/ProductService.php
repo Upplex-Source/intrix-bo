@@ -138,8 +138,8 @@ class ProductService
             'code' => [ 'nullable' ],
             'title' => [ 'nullable' ],
             'description' => [ 'nullable' ],
-            'price' => [ 'nullable' ],
-            'discount_price' => [ 'nullable' ],
+            'upfront' => [ 'nullable', 'min:0' ],
+            'outright' => [ 'nullable', 'min:0' ],
             'default_froyo_quantity' => [ 'nullable' ],
             'default_syrup_quantity' => [ 'nullable' ],
             'default_topping_quantity' => [ 'nullable' ],
@@ -194,6 +194,22 @@ class ProductService
             $updateProduct->description = $request->description ?? $updateProduct->description;
             $updateProduct->price = $request->price ?? $updateProduct->price;
             $updateProduct->discount_price = $request->discount_price ?? $updateProduct->discount_price;
+
+            $updateFields = [];
+
+            if ( $request->has( 'upfront' ) ) {
+                $updateFields['upfront'] = $request->upfront;
+            }
+            
+            if ( $request->has( 'outright' ) ) {
+                $updateFields['outright'] = $request->outright;
+            }
+            
+            if ( ! empty( $updateFields ) ) {
+                $updateProduct->activeProductVariants->each( function ( $variant ) use ( $updateFields ) {
+                    $variant->update( $updateFields );
+                } );
+            }
 
             $image = explode( ',', $request->image );
 
@@ -584,6 +600,9 @@ class ProductService
                     'encrypted_id',
                     'image_path',
                 ] );
+
+                $product->upfront = $product->activeProductVariants->first()->upfront;
+                $product->outright = $product->activeProductVariants->first()->outright;
             }
         }
         
@@ -754,6 +773,7 @@ class ProductService
             $products = $product->skip($offset)->take($limit + 1)->get()->map(function ($product) use( $request ) {
                 
                 $variantImages = []; // ← Build separately
+                $variantPaymentPlan = []; // ← Build separately
 
                 if( $product->freeGifts ){
                     $freeGifts = $product->freeGifts;
@@ -774,10 +794,19 @@ class ProductService
                     foreach( $activeProductVariants as $activeProductVariant ) {
                         $activeProductVariant->append( ['image_path'] );
                         $variantImages[ $activeProductVariant->color ] = $activeProductVariant->image_path;
+                        $variantPaymentPlan[ 'upfront' ] = [
+                            'id' => 1,
+                            'price' => $activeProductVariant->upfront,
+                        ];
+                        $variantPaymentPlan[ 'outright' ] = [
+                            'id' => 3,
+                            'price' => $activeProductVariant->outright,
+                        ];
                     }
                 }
-                
+
                 $product->variant_images = $variantImages;
+                $product->payment_plan = $variantPaymentPlan;
 
                 if( $request->color ){
                     $variant = $product->activeProductVariants->where( 'color', $request->color )->first();
