@@ -774,6 +774,7 @@ class ProductService
                 
                 $variantImages = []; // ← Build separately
                 $variantPaymentPlan = []; // ← Build separately
+                $variantColors = []; // ← Build separately
 
                 if( $product->freeGifts ){
                     $freeGifts = $product->freeGifts;
@@ -802,11 +803,14 @@ class ProductService
                             'id' => 3,
                             'price' => $activeProductVariant->outright,
                         ];
+                        $variantColors[ $activeProductVariant->color ] = $activeProductVariant->title;
                     }
                 }
 
                 $product->variant_images = $variantImages;
                 $product->payment_plan = $variantPaymentPlan;
+                $product->colors = $variantColors;
+
 
                 if( $request->color ){
                     $variant = $product->activeProductVariants->where( 'color', $request->color )->first();

@@ -63,8 +63,13 @@ $columns = [
     ],
     [
         'type' => 'default',
-        'id' => 'price',
-        'title' => __( 'product.price' ),
+        'id' => 'upfront',
+        'title' => __( 'product.upfront' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'outright',
+        'title' => __( 'product.outright' ),
     ],
     [
         'type' => 'select',
@@ -124,7 +129,8 @@ var statusMapper = @json( $data['status'] ),
             { data: 'title' },
             { data: 'code' },
             { data: 'active_product_variants' },
-            { data: 'price' },
+            { data: 'active_product_variants' },
+            { data: 'active_product_variants' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -200,10 +206,31 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "price" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "upfront" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return '-';
+                        }
+                        return data ? data[0].upfront : '-' ;
+                    }else{
+                        return '-';
+                    }
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "outright" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return '-';
+                        }
+                        return data ? data[0].outright : '-' ;
+                    }else{
+                        return '-';
+                    }
                 },
             },
             {
