@@ -114,7 +114,9 @@ class CartService {
                     'payment_plan' => $meta->payment_plan,
                     'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
-                        ->setAttribute('image_path', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path),
+                        ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                        ->setAttribute( 'image_path', $meta->product->image_path )
+                        ->setAttribute( 'price', $productPrice ),
                     'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 ];
             });
@@ -389,8 +391,10 @@ class CartService {
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
                 'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )
-                ->setAttribute('image_path', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
             ];
         });
@@ -659,7 +663,10 @@ class CartService {
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 'quantity' => $meta->quantity,
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
@@ -950,7 +957,10 @@ class CartService {
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
                 'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
@@ -1080,7 +1090,10 @@ class CartService {
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
                 'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
@@ -1323,7 +1336,10 @@ class CartService {
                     'color' => $meta->productVariant ? $meta->productVariant->title : null,
                     'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                     'payment_plan' => $meta->payment_plan,
-                    'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+                    'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                        ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                        ->setAttribute( 'image_path', $meta->product->image_path )
+                        ->setAttribute( 'price', $productPrice ),
                     'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                     'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
                 ];
