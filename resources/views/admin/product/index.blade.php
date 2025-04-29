@@ -211,11 +211,11 @@ var statusMapper = @json( $data['status'] ),
                 render: function( data, type, row, meta ) {
                     if (Array.isArray(data)) {
                         if( data.length == 0 ){
-                            return '-';
+                            return row.price;
                         }
                         return data ? data[0].upfront : '-' ;
                     }else{
-                        return '-';
+                        return row.price;
                     }
                 },
             },
@@ -225,11 +225,11 @@ var statusMapper = @json( $data['status'] ),
                 render: function( data, type, row, meta ) {
                     if (Array.isArray(data)) {
                         if( data.length == 0 ){
-                            return '-';
+                            return row.price;
                         }
                         return data ? data[0].outright : '-' ;
                     }else{
-                        return '-';
+                        return row.price;
                     }
                 },
             },
