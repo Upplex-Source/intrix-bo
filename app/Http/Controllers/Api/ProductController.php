@@ -23,8 +23,8 @@ class ProductController extends Controller
      * 
      * @bodyParam length integer required The length of the table. Example: 10
      * @bodyParam start integer required The start of the record of the table. Example: 0
-     * @bodyParam product_code string required The product_code of the product. Example: 5-IN-1
-     * @bodyParam color required strong The color of the product. Example: CHROME
+     * @bodyParam product_code string optional The product_code of the product. Example: 5-IN-1
+     * @bodyParam color optional strong The color of the product. Example: 1
      * 
      * 
      */
