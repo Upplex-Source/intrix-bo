@@ -964,6 +964,21 @@ class OrderService
             }
     
             $orderMetas = $order->orderMetas->map(function ($meta) {
+
+                $productPrice = $meta->product->price;
+
+                switch ( $meta->payment_plan ) {
+                    case 1:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                        break;
+                    case 2:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                        break;
+                    case 3:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                        break;
+                }
+
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
@@ -972,7 +987,8 @@ class OrderService
                     'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                     'payment_plan' => $meta->payment_plan,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
-                        ->setAttribute('image_path', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path),
+                        ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                        ->setAttribute( 'price', $productPrice ),
                     'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                     'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                 ];
@@ -1671,7 +1687,7 @@ class OrderService
                 'order_id' => $order->id,
                 'product_id' => $checkoutCart->product->id,
                 'product_variant_id' => $checkoutCart->productVariant ? $checkoutCart->productVariant->id : null,
-                'total_price' =>  $checkoutCart->quantity * $checkoutCart->product->price,
+                'total_price' =>  $checkoutCart->total_price,
                 'quantity' => $checkoutCart->quantity,
             ] );
 
