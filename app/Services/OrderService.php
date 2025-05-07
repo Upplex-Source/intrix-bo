@@ -1901,13 +1901,13 @@ class OrderService
 
             switch ( $meta->payment_plan ) {
                 case 1:
-                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $meta->product->price;
                     break;
                 case 2:
-                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $meta->product->price;
                     break;
                 case 3:
-                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $meta->product->price;
                     break;
             }
 
