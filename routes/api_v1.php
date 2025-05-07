@@ -1,32 +1,5 @@
 <?php
 
-// Define allowed origins
-$allowed_origins = [
-    'https://intrixlifestyle.com',
-    'https://www.intrixlifestyle.com',
-    'https://backoffice.intrixlifestyle.com' // Adding the API's own domain
-];
-
-// Get the origin header from the request
-$origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-
-// Check if the origin is in our allowed list
-if (in_array($origin, $allowed_origins)) {
-    header("Access-Control-Allow-Origin: $origin");
-} 
-// If no origin header is present (same-origin request)
-elseif (empty($origin)) {
-    // Set the API's own domain or use the host from the request
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'backoffice.intrixlifestyle.com';
-    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https://' : 'http://';
-    header("Access-Control-Allow-Origin: $protocol$host");
-}
-
-// Rest of CORS headers
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
-header('Access-Control-Allow-Credentials: true');
-
 use App\Http\Controllers\Api\{
     UserController,
     MailContentController,
@@ -65,10 +38,6 @@ if( 1 == 2 ){
         Route::post('/', [MailContentController::class, 'createEnquiryMail']);
     } );
 }
-
-Route::match(['OPTIONS'], '*', function () {
-    return response()->json([], 200);
-});
 
 Route::prefix( 'carts' )->group( function() {
     Route::post( 'add', [ CartController::class, 'addToCart' ] );
