@@ -601,8 +601,8 @@ class ProductService
                     'image_path',
                 ] );
 
-                $product->upfront = $product->activeProductVariants->first()->upfront;
-                $product->outright = $product->activeProductVariants->first()->outright;
+                $product->upfront = $product->activeProductVariants->first()?->upfront;
+                $product->outright = $product->activeProductVariants->first()?->outright;
             }
         }
         
