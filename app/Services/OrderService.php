@@ -1575,7 +1575,7 @@ class OrderService
         // create a tmp cart
         $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
         $product = Product::where( 'code', $request->product_code )->first();
-        $productVariant = ProductVariant::where( 'color', $request->color )->where( 'product_id', $product->id )->first();
+        $productVariant = ProductVariant::where( 'color', $request->color ?? 1 )->where( 'product_id', $product->id )->first();
 
         $userCart = Cart::updateOrCreate(
             ['session_key' => $request->session_key], // Find cart by session_key
