@@ -43,6 +43,10 @@ Route::get('/cors-test', function() {
     return response()->json(['message' => 'CORS is working']);
 });
 
+Route::options('/{any}', function() {
+    return response('', 200);
+})->where('any', '.*');
+
 Route::prefix( 'carts' )->group( function() {
     Route::post( 'add', [ CartController::class, 'addToCart' ] );
     Route::post( 'update', [ CartController::class, 'updateCart' ] );
