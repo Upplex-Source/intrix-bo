@@ -1511,7 +1511,7 @@ class OrderService
             'country' => ['required'],
             'remarks' => ['nullable'],
             'product_code' => [ 'required', 'exists:products,code'  ],
-            'color' => [ 'required', 'exists:product_variants,color'  ],
+            'color' => [ 'nullable', 'exists:product_variants,color'  ],
             'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'quantity' => [ 'numeric', 'min:1'  ],
             'add_on' => [
@@ -1959,7 +1959,7 @@ class OrderService
             ],
             'quantity' => ['numeric', 'min:1'],
             'product_code' => ['required', 'exists:products,code'],
-            'color' => ['required', 'exists:product_variants,color'],
+            'color' => ['nullable', 'exists:product_variants,color'],
             'payment_plan' => ['nullable', 'in:1,2,3'],
         ]);
     
