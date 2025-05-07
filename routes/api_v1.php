@@ -39,6 +39,10 @@ if( 1 == 2 ){
     } );
 }
 
+Route::get('/cors-test', function() {
+    return response()->json(['message' => 'CORS is working']);
+});
+
 Route::prefix( 'carts' )->group( function() {
     Route::post( 'add', [ CartController::class, 'addToCart' ] );
     Route::post( 'update', [ CartController::class, 'updateCart' ] );
