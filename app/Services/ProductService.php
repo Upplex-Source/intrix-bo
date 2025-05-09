@@ -803,18 +803,28 @@ class ProductService
                     $presetVariant = $product->activeProductVariants->first();
                     $source = $presetVariant ?? $product;
                     
-                    $variantPaymentPlan = [
-                        [
-                            'id' => 1,
-                            'price' => $source->upfront ?? $source->price,
-                            'type' => 'Upfront Payment',
-                        ],
-                        [
-                            'id' => 3,
-                            'price' => $source->outright ?? $source->price,
-                            'type' => 'Outright Payment',
-                        ],
-                    ];
+                    if( in_array( $product->code, [ 'FONT', 'FILTER' ] ) ){
+                        $variantPaymentPlan = [
+                            [
+                                'id' => 3,
+                                'price' => $source->outright ?? $source->price,
+                                'type' => 'Outright Payment',
+                            ],
+                        ];
+                    }else {
+                        $variantPaymentPlan = [
+                            [
+                                'id' => 1,
+                                'price' => $source->upfront ?? $source->price,
+                                'type' => 'Upfront Payment',
+                            ],
+                            [
+                                'id' => 3,
+                                'price' => $source->outright ?? $source->price,
+                                'type' => 'Outright Payment',
+                            ],
+                        ];
+                    }
                 }
 
                 $product->variant_images = $variantImages;
