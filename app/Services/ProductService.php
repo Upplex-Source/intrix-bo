@@ -192,7 +192,7 @@ class ProductService
             $updateProduct->code = $request->code ?? $updateProduct->code;
             $updateProduct->title = $request->title ?? $updateProduct->title;
             $updateProduct->description = $request->description ?? $updateProduct->description;
-            $updateProduct->price = $request->price ?? $updateProduct->price;
+            $updateProduct->price = $request->outright;
             $updateProduct->discount_price = $request->discount_price ?? $updateProduct->discount_price;
 
             $updateFields = [];

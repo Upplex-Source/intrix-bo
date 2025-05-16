@@ -1502,7 +1502,7 @@ class OrderService
             'fullname' => ['required'],
             'company_name' => ['nullable'],
             'email' => ['required'],
-            'phone_number' => ['required'],
+            'phone_number' => ['nullable'],
             'address_1' => ['required'],
             'address_2' => ['nullable'],
             'city' => ['nullable'],
