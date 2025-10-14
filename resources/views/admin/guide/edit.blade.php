@@ -195,7 +195,7 @@ $guide_edit = 'guide_edit';
                     const dropzone = new Dropzone( fe + '_image', {
                         url: '{{ route( 'admin.file.upload' ) }}',
                         maxFiles: 10,
-                        acceptedFiles: 'image/jpg,image/jpeg,image/png',
+                        acceptedFiles: "image/jpeg,image/jpg,image/png,application/pdf,video/mp4,video/mpeg,video/quicktime,video/avi,video/webm",
                         addRemoveLinks: true,
                         init: function() {
 
