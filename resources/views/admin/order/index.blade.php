@@ -352,26 +352,31 @@ var statusMapper = @json( $data['status'] ),
                 render: function( data, type, row, meta ) {
 
                     @canany( [ 'edit orders', 'delete orders' ] )
-                    let edit = '', 
-                    status = '';
- 
+                    let edit = '',
+                    status = '',
+                    sendReceipt = '';
+
                     @can( 'edit orders' )
                     edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
+                    if( row.status == 10 ){
+                        sendReceipt = '<li class="dt-preview-receipt" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-eye"></em><span>Preview Receipt</span></a></li>';
+                        sendReceipt += '<li class="dt-send-receipt" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-mail"></em><span>Send Receipt</span></a></li>';
+                    }
                     @endcan
 
                     @can( 'delete orders' )
-                    status = row['status'] == 10 ? 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.order_canceled' ) }}</span></a></li>' : 
+                    status = row['status'] == 10 ?
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.order_canceled' ) }}</span></a></li>' :
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.order_placed' ) }}</span></a></li>';
                     @endcan
-                    
-                    let html = 
+
+                    let html =
                         `
                         <div class="dropdown">
                             <a class="dropdown-toggle btn btn-icon btn-trigger" href="#" type="button" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                             <div class="dropdown-menu">
                                 <ul class="link-list-opt">
-                                    `+edit+`
+                                    `+edit+sendReceipt+`
                                 </ul>
                             </div>
                         </div>
@@ -420,6 +425,32 @@ var statusMapper = @json( $data['status'] ),
                     dt_table.draw( false );
                     $( '#modal_success .caption-text' ).html( response.message );
                     modalSuccess.toggle();
+                },
+            } );
+        } );
+
+        $( document ).on( 'click', '.dt-preview-receipt', function() {
+            let id = $( this ).data( 'id' );
+            let url = '{{ route( 'admin.order.previewReceipt' ) }}?id=' + id;
+            window.open(url, '_blank');
+        } );
+
+        $( document ).on( 'click', '.dt-send-receipt', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.order.sendReceipt' ) }}',
+                type: 'POST',
+                data: {
+                    'id': $( this ).data( 'id' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function( response ) {
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.toggle();
+                },
+                error: function( error ) {
+                    $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
+                    modalDanger.toggle();
                 },
             } );
         } );

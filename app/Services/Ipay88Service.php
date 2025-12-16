@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
     DB,
     Validator,
+    Mail,
 };
 
 use App\Models\{
@@ -32,7 +33,12 @@ use App\Models\{
 };
 
 use App\Jobs\{
-    GenerateInsuranceReceipt
+    GenerateInsuranceReceipt,
+    SendOrderSuccessMail
+};
+
+use App\Mail\{
+    OrderSuccessMail
 };
 
 use App\Services\{
@@ -229,6 +235,7 @@ class Ipay88Service {
             $order->save();
             $orderTransaction->save();
 
+            // Prepare order data for email
             $addOnMetas = $order->addOns->map(function ($meta) {
                 return [
                     'id' => $meta->id,
@@ -262,6 +269,11 @@ class Ipay88Service {
                     'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                 ];
             });
+
+            // Send order success email
+            if( $returnStatus == 0 ){
+                SendOrderSuccessMail::dispatch($order, $orderMetas, $addOnMetas);
+            }
 
             return redirect()->away( config( 'services.frontend.url' ) . 'order/' . $order->reference . '/success' . '?' . http_build_query([
                 'order_id'     => $order->id,

@@ -24,7 +24,7 @@ class ContactFormMail extends Mailable
     public function build()
     {
         return $this->from( $this->data['email'], $this->data['full_name'] )
-                    ->to( 'gmoon94@gmail.com' )
+                    ->to( 'orenwh12@gmail.com' )
                     ->subject( 'New Contact Form Submission' )
                     ->view( 'admin.mail.contact' )
                     ->with( 'data', $this->data );

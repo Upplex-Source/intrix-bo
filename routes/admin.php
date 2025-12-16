@@ -275,6 +275,8 @@ Route::prefix( config( 'services.url.admin_path' ) )->group( function() {
                 Route::post( 'update-order', [ OrderController::class, 'updateOrder' ] )->name( 'admin.order.updateOrder' );
                 Route::post( 'update-order-status', [ OrderController::class, 'updateOrderStatus' ] )->name( 'admin.order.updateOrderStatus' );
                 Route::post( 'update-order-status-view', [ OrderController::class, 'updateOrderStatusView' ] )->name( 'admin.order.updateOrderStatusView' );
+                Route::post( 'send-receipt', [ OrderController::class, 'sendReceipt' ] )->name( 'admin.order.sendReceipt' );
+                Route::get( 'preview-receipt', [ OrderController::class, 'previewReceipt' ] )->name( 'admin.order.previewReceipt' );
 
                 Route::get( 'scanner', [ OrderController::class, 'scanner' ] )->name( 'admin.order.scanner' );
                 Route::post( 'scanned-order', [ OrderController::class, 'scannedOrder' ] )->name( 'admin.order.scannedOrder' );

@@ -2520,4 +2520,107 @@ class OrderService
         ] );
 
     }
+
+    public static function sendReceipt( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $order = Order::with( [
+            'orderMetas', 'addOns', 'freeGift'
+        ] )->find( $request->id );
+
+        if( !$order ) {
+            return response()->json( [
+                'message' => 'Order not found',
+                'message_key' => 'order_not_found',
+            ], 404 );
+        }
+
+        // Prepare add-on metas
+        $addOnMetas = $order->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+
+        // Prepare order metas
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
+                'payment_plan' => $meta->payment_plan,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+            ];
+        });
+
+        // Dispatch the job
+        \App\Jobs\SendOrderSuccessMail::dispatch($order, $orderMetas, $addOnMetas);
+
+        return response()->json( [
+            'message' => 'Receipt email has been queued for sending',
+            'message_key' => 'receipt_queued',
+        ] );
+    }
+
+    public static function previewReceipt( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $order = Order::with( [
+            'orderMetas', 'addOns', 'freeGift'
+        ] )->find( $request->id );
+
+        if( !$order ) {
+            return response()->json( [
+                'message' => 'Order not found',
+                'message_key' => 'order_not_found',
+            ], 404 );
+        }
+
+        // Prepare add-on metas
+        $addOnMetas = $order->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+
+        // Prepare order metas
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
+                'payment_plan' => $meta->payment_plan,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+            ];
+        });
+
+        // Return the email view
+        return view('admin.mail.order-success', compact('order', 'orderMetas', 'addOnMetas'));
+    }
 }
