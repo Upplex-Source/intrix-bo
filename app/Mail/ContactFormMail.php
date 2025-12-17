@@ -39,7 +39,7 @@ class ContactFormMail implements ShouldQueue
 
         // Send email using Brevo
         Helper::sendBrevoEmail(
-            'orenwh12@gmail.com',
+            'ecommerce@intrixgroup.com',
             'Admin',
             'New Contact Form Submission',
             $htmlContent
