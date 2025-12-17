@@ -4,12 +4,16 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Helper;
 
-class ContactFormMail extends Mailable
+class ContactFormMail implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public $data;
 
     /**
      * Create a new message instance.
@@ -21,12 +25,24 @@ class ContactFormMail extends Mailable
         $this->data = $data;
     }
 
-    public function build()
+    /**
+     * Execute the job.
+     *
+     * @return void
+     */
+    public function handle()
     {
-        return $this->from( $this->data['email'], $this->data['full_name'] )
-                    ->to( 'orenwh12@gmail.com' )
-                    ->subject( 'New Contact Form Submission' )
-                    ->view( 'admin.mail.contact' )
-                    ->with( 'data', $this->data );
+        // Render the email view to HTML
+        $htmlContent = view('admin.mail.contact', [
+            'data' => $this->data,
+        ])->render();
+
+        // Send email using Brevo
+        Helper::sendBrevoEmail(
+            'orenwh12@gmail.com',
+            'Admin',
+            'New Contact Form Submission',
+            $htmlContent
+        );
     }
 }

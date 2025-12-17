@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\{
     Storage,
     Validator,
     File,
-    Mail,
 };
 
 use Illuminate\Validation\Rule;
@@ -2508,7 +2507,7 @@ class OrderService
             'model' => 'nullable|string',
         ] );
 
-        Mail::send( new ContactFormMail( $validated ) );
+        ContactFormMail::dispatch( $validated );
 
         // return back()->with( 'success', 'Your message has been sent!' );
         return response()->json( [
