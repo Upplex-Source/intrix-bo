@@ -450,5 +450,42 @@ class Helper {
 
         return hash('sha256', $hashCombine);
     }
+
+    public static function sendBrevoEmail( $toEmail, $toName, $subject, $htmlContent, $attachments = [] )
+    {
+        $client = new \GuzzleHttp\Client();
+    
+        $data = [
+            'sender' => [
+                'name'  => config( 'mail.from.name' ),
+                'email' => config( 'mail.from.address' ),
+            ],
+            'to' => [[
+                'email' => $toEmail,
+                'name'  => $toName,
+            ]],
+            'subject'     => $subject,
+            'htmlContent' => $htmlContent,
+        ];
+    
+        if ( !empty( $attachments ) ) {
+            $data['attachment'] = [];
+            foreach ( $attachments as $file ) {
+                $data['attachment'][] = [
+                    'name'    => $file['name'],
+                    'content' => base64_encode( $file['content'] ),
+                ];
+            }
+        }
+    
+        return $client->post( 'https://api.brevo.com/v3/smtp/email', [
+            'headers' => [
+                'Accept'       => 'application/json',
+                'Content-Type' => 'application/json',
+                'api-key'      => config( 'services.brevo.key' ),
+            ],
+            'json' => $data,
+        ] )->getBody()->getContents();
+    }
     
 }

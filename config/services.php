@@ -67,4 +67,8 @@ return [
     'frontend' => [
         'url' => env('FRONTEND_URL')
     ],
+
+    'brevo' => [
+        'key' => env( 'BREVO_API_KEY' ),
+    ]
 ];

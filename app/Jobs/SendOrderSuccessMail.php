@@ -8,8 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\OrderSuccessMail;
+use Helper;
 
 class SendOrderSuccessMail implements ShouldQueue
 {
@@ -38,6 +37,19 @@ class SendOrderSuccessMail implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->order->email)->send(new OrderSuccessMail($this->order, $this->orderMetas, $this->addOnMetas));
+        // Render the email view to HTML
+        $htmlContent = view('admin.mail.order-success', [
+            'order' => $this->order,
+            'orderMetas' => $this->orderMetas,
+            'addOnMetas' => $this->addOnMetas,
+        ])->render();
+
+        // Send email using Brevo
+        Helper::sendBrevoEmail(
+            $this->order->email,
+            $this->order->fullname ?? $this->order->company_name,
+            'Order Confirmation - ' . $this->order->reference,
+            $htmlContent
+        );
     }
 }
