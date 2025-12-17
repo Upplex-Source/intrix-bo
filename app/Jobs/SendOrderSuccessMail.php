@@ -17,17 +17,19 @@ class SendOrderSuccessMail implements ShouldQueue
     public $order;
     public $orderMetas;
     public $addOnMetas;
+    public $sendToAdmin;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($order, $orderMetas, $addOnMetas)
+    public function __construct($order, $orderMetas, $addOnMetas, $sendToAdmin = true)
     {
         $this->order = $order;
         $this->orderMetas = $orderMetas;
         $this->addOnMetas = $addOnMetas;
+        $this->sendToAdmin = $sendToAdmin;
     }
 
     /**
@@ -52,12 +54,14 @@ class SendOrderSuccessMail implements ShouldQueue
             $htmlContent
         );
 
-        // Send notification email to admin
-        Helper::sendBrevoEmail(
-            'ecommerce@intrixgroup.com',
-            'Admin',
-            'New Order Received - ' . $this->order->reference,
-            $htmlContent
-        );
+        // Send notification email to admin (only if specified)
+        if ($this->sendToAdmin) {
+            Helper::sendBrevoEmail(
+                'ecommerce@intrixgroup.com',
+                'Admin',
+                'New Order Received - ' . $this->order->reference,
+                $htmlContent
+            );
+        }
     }
 }

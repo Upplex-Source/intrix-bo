@@ -2565,8 +2565,8 @@ class OrderService
             ];
         });
 
-        // Dispatch the job
-        \App\Jobs\SendOrderSuccessMail::dispatch($order, $orderMetas, $addOnMetas);
+        // Dispatch the job (without sending to admin)
+        \App\Jobs\SendOrderSuccessMail::dispatch($order, $orderMetas, $addOnMetas, false);
 
         return response()->json( [
             'message' => 'Receipt email has been queued for sending',
