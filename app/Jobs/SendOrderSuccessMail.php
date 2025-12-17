@@ -44,11 +44,19 @@ class SendOrderSuccessMail implements ShouldQueue
             'addOnMetas' => $this->addOnMetas,
         ])->render();
 
-        // Send email using Brevo
+        // Send confirmation email to customer
         Helper::sendBrevoEmail(
             $this->order->email,
             $this->order->fullname ?? $this->order->company_name,
             'Order Confirmation - ' . $this->order->reference,
+            $htmlContent
+        );
+
+        // Send notification email to admin
+        Helper::sendBrevoEmail(
+            'ecommerce@intrixgroup.com',
+            'Admin',
+            'New Order Received - ' . $this->order->reference,
             $htmlContent
         );
     }
