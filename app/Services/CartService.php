@@ -1088,7 +1088,6 @@ class CartService {
         ] );
 
         $validator->validate();
-        $user = auth()->user();
         $query = Cart::with(['cartMetas','addons', 'freeGift']);
     
         if ($request->has('id')) {
@@ -1230,7 +1229,6 @@ class CartService {
         ] );
 
         $validator->validate();
-        $user = auth()->user();
         $query = Cart::with(['cartMetas','addons', 'freeGift']);
     
         if ($request->has('id')) {
