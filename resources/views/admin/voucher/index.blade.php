@@ -205,14 +205,28 @@ var statusMapper = @json( $data['status'] ),
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "start_date" ) }}' ),
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
-                    return data.split(' ')[0]
+
+                    if ( !data ) {
+                        return '-';
+                    }
+
+                    return typeof data === 'string'
+                        ? data.split( ' ' )[0]
+                        : '-';
                 },
             },
             {
                 targets: parseInt( '{{ Helper::columnIndex( $columns, "expired_date" ) }}' ),
                 className: 'text-center',
                 render: function( data, type, row, meta ) {
-                    return data.split(' ')[0]
+
+                    if ( !data ) {
+                        return '-';
+                    }
+
+                    return typeof data === 'string'
+                        ? data.split( ' ' )[0]
+                        : '-';
                 },
             },
             {
