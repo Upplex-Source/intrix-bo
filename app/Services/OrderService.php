@@ -1966,7 +1966,7 @@ class OrderService
     
         // Fetch product and variant details
         $product = Product::where('code', $request->product_code)->first();
-        $productVariant = ProductVariant::where('color', $request->color)
+        $productVariant = ProductVariant::where('color', $request->color ?? "1")
             ->where('product_id', $product->id)
             ->first();
     
