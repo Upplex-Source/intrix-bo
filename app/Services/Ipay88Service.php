@@ -30,6 +30,8 @@ use App\Models\{
     UserNotification,
     UserNotificationUser,
     UserNotificationSeen,
+    VoucherUsage,
+    Voucher,
 };
 
 use App\Jobs\{
@@ -212,6 +214,18 @@ class Ipay88Service {
             if( $returnStatus != 1 ){
                 $order->payment_attempt += 1;
                 $orderTransaction->status = 20;
+
+                if( $order->voucher ){
+                    $voucher = $order->voucher;
+                    $voucher->usable_amount += 1;
+                    $voucher->save();
+
+                    $voucherUsage = VoucherUsage::where( 'order_id', $order->id )->first();
+                    if ( $voucherUsage ) {
+                        $voucherUsage->status = 20;
+                        $voucherUsage->save();
+                    }
+                }
 
                 return redirect()->away( config( 'services.frontend.url' ) . 'order/' . $order->reference . '/failed' . '?' . http_build_query([
                     'order_id'     => null,
