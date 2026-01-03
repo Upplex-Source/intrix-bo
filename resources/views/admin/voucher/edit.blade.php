@@ -193,20 +193,21 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-
+                
                 <div class="mb-3 row">
-                    <label for="{{ $voucher_edit}}_claim_per_user" class="col-sm-5 col-form-label">{{ __( 'voucher.claim_per_user' ) }}</label>
+                    <label for="{{ $voucher_edit}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $voucher_edit}}_claim_per_user">
+                        <input type="number" class="form-control" id="{{ $voucher_edit}}_usable_amount">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
                 
                 @if( 1 == 2 )
+
                 <div class="mb-3 row">
-                    <label for="{{ $voucher_edit}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
+                    <label for="{{ $voucher_edit}}_claim_per_user" class="col-sm-5 col-form-label">{{ __( 'voucher.claim_per_user' ) }}</label>
                     <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $voucher_edit}}_usable_amount">
+                        <input type="number" class="form-control" id="{{ $voucher_edit}}_claim_per_user">
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
@@ -328,7 +329,7 @@ window.cke_element = 'voucher_edit_description';
             formData.append( 'expired_date', $( fe + '_expired_date' ).val() );
             formData.append( 'usable_amount', $( fe + '_usable_amount' ).val() );
             // formData.append( 'validity_days', $( fe + '_validity_days' ).val() );
-            // formData.append( 'claim_per_user', $( fe + '_claim_per_user' ).val() );
+            formData.append( 'claim_per_user', $( fe + '_claim_per_user' ).val() );
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'adjustment_data', JSON.stringify(data) );
@@ -393,7 +394,7 @@ window.cke_element = 'voucher_edit_description';
                     $( fe + '_voucher_type' ).val( response.type );
                     $( fe + '_usable_amount' ).val( response.usable_amount );
                     // $( fe + '_validity_days' ).val( response.validity_days );
-                    // $( fe + '_claim_per_user' ).val( response.claim_per_user );
+                    $( fe + '_claim_per_user' ).val( response.claim_per_user );
                     endDate.setDate( response.expired_date );
                     startDate.setDate( response.start_date );
                     editor.setData( response.description );
