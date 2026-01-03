@@ -120,9 +120,9 @@ class VoucherService
                 'start_date' => $request->start_date,
                 'expired_date' => $request->expired_date,
                 'buy_x_get_y_adjustment' => $request->adjustment_data,
-                // 'usable_amount' => $request->usable_amount,
+                'usable_amount' => $request->usable_amount,
                 // 'validity_days' => $request->validity_days,
-                'claim_per_user' => $request->claim_per_user,
+                'claim_per_user' => $request->usable_amount,
                 'target_products' => $request->target_products,
             ]);
 
