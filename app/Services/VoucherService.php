@@ -259,9 +259,9 @@ class VoucherService
             $updateVoucher->points_required = 0;
             $updateVoucher->start_date = $request->start_date;
             $updateVoucher->expired_date = $request->expired_date;
-            // $updateVoucher->usable_amount = $request->usable_amount;
+            $updateVoucher->usable_amount = $request->usable_amount;
             // $updateVoucher->validity_days = $request->validity_days;
-            $updateVoucher->claim_per_user = $request->claim_per_user;
+            $updateVoucher->claim_per_user = $request->usable_amount;
             $updateVoucher->buy_x_get_y_adjustment = $request->adjustment_data;
             $updateVoucher->target_products = $request->target_products;
             

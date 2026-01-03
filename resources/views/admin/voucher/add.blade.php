@@ -192,7 +192,7 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                
+
                 <div class="mb-3 row">
                     <label for="{{ $voucher_create}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
                     <div class="col-sm-7">
@@ -324,7 +324,7 @@ window.cke_element = 'voucher_create_description';
             formData.append( 'points_required', $( fc + '_points_required' ).val() );
             formData.append( 'start_date', $( fc + '_start_date' ).val() );
             formData.append( 'expired_date', $( fc + '_expired_date' ).val() );
-            // formData.append( 'usable_amount', $( fc + '_usable_amount' ).val() );
+            formData.append( 'usable_amount', $( fc + '_usable_amount' ).val() );
             // formData.append( 'validity_days', $( fc + '_validity_days' ).val() );
             formData.append( 'claim_per_user', $( fc + '_claim_per_user' ).val() );
             formData.append( 'description', editor.getData() );
