@@ -37,6 +37,7 @@ class Voucher extends Model
         'total_claimable',
         'validity_days',
         'claim_per_user',
+        'target_products',
     ];
 
     public function getImagePathAttribute() {
@@ -52,7 +53,7 @@ class Voucher extends Model
         if (!$this->attributes['buy_x_get_y_adjustment']) {
             return null;
         }
-    
+
         $adjustment = json_decode($this->attributes['buy_x_get_y_adjustment'], true);
 
         $adjustment['discount_type'] = $this->discount_type_label;
@@ -60,20 +61,37 @@ class Voucher extends Model
         if (isset($adjustment['buy_products']) && is_array($adjustment['buy_products'])) {
 
             $products = Product::whereIn('id', $adjustment['buy_products'])->get(['id', 'title']);
-    
+
             $adjustment['buy_products_info'] = $products->toArray();
             $adjustment['buy_products_info'] = $products->toArray();
         }
-    
+
         if (isset($adjustment['get_product'])) {
             $getProduct = Product::find($adjustment['get_product'], ['id', 'title']);
-    
+
             if ($getProduct) {
                 $adjustment['get_product_info'] = $getProduct->toArray();
             }
         }
-    
+
         return $adjustment;
+    }
+
+    public function getTargetProductsInfoAttribute()
+    {
+        if (!isset($this->attributes['target_products']) || !$this->attributes['target_products']) {
+            return [];
+        }
+
+        $targetProductIds = json_decode($this->attributes['target_products'], true);
+
+        if (!is_array($targetProductIds) || empty($targetProductIds)) {
+            return [];
+        }
+
+        $products = Product::whereIn('id', $targetProductIds)->get(['id', 'title']);
+
+        return $products->toArray();
     }
 
     public function getDiscountTypeLabelAttribute()
@@ -127,6 +145,7 @@ class Voucher extends Model
         'total_claimable',
         'validity_days',
         'claim_per_user',
+        'target_products',
     ];
 
     protected static $logName = 'vouchers';

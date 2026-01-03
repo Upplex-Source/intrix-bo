@@ -72,8 +72,18 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                
-                
+
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_edit }}_target_products" class="col-sm-5 col-form-label">{{ __( 'voucher.target_products' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $voucher_edit }}_target_products" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'voucher.target_products' ) ] ) }}" multiple>
+                        </select>
+                        <small class="text-muted">{{ __( 'voucher.target_products_description' ) }}</small>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+
                 <section id="bxgy" class="rule-section hidden mb-3 row">
                     <div class="card">
                         <div class="card-body">
@@ -304,6 +314,8 @@ window.cke_element = 'voucher_edit_description';
                 message: '{{ __( 'template.loading' ) }}'
             } );
 
+            let targetProducts = $( fe + '_target_products' ).val();
+
             let formData = new FormData();
             formData.append( 'id', '{{ request( 'id' ) }}' );
             formData.append( 'title', $( fe + '_title' ).val() );
@@ -320,6 +332,7 @@ window.cke_element = 'voucher_edit_description';
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'adjustment_data', JSON.stringify(data) );
+            formData.append( 'target_products', JSON.stringify(targetProducts) );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -384,6 +397,10 @@ window.cke_element = 'voucher_edit_description';
                     endDate.setDate( response.expired_date );
                     startDate.setDate( response.start_date );
                     editor.setData( response.description );
+
+                    if( response.target_products_info && response.target_products_info.length > 0 ) {
+                        setTargetProducts( response );
+                    }
 
                     switch ( parseInt( response.discount_type ) ) {
                         case 3:
@@ -592,6 +609,46 @@ window.cke_element = 'voucher_edit_description';
             }
         } );
 
+        let targetProductsSelect = $( fe + '_target_products' ).select2( {
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.product.allProducts' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        title: params.term, // search term
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.products.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.title,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            }
+        } );
+
         function bxgyData( data ) {
 
             data['buy_products'] = [];
@@ -654,6 +711,15 @@ window.cke_element = 'voucher_edit_description';
 
             $( fe + '_cartd_buy_quantity' ).val( bxgyAdjustment.buy_quantity );
             $( fe + '_cartd_discount_quantity' ).val( bxgyAdjustment.discount_quantity );
+        }
+
+        function setTargetProducts( response ) {
+            let targetProducts = response.target_products_info;
+            targetProducts.map( function( v, i ) {
+                let option = new Option( v.title, v.id, true, true );
+                targetProductsSelect.append( option );
+            } );
+            targetProductsSelect.trigger( 'change' );
         }
 
     } );

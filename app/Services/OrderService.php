@@ -1262,10 +1262,31 @@ class OrderService
                     $voucher = Voucher::where( 'id', $userCart->voucher_id )->first();
                 }
 
+                // Validate target products for cart vouchers
+                if ( $voucher->target_products ) {
+                    $targetProductIds = json_decode( $voucher->target_products, true );
+
+                    if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                        $cartProductIds = $userCart->cartMetas->pluck( 'product_id' )->toArray();
+                        $hasTargetProduct = !empty( array_intersect( $targetProductIds, $cartProductIds ) );
+
+                        if ( !$hasTargetProduct ) {
+                            DB::rollback();
+                            return response()->json( [
+                                'message_key' => 'voucher_not_applicable_to_cart_products',
+                                'message' => __('voucher.voucher_not_applicable_to_cart_products'),
+                                'errors' => [
+                                    'voucher' => __('voucher.voucher_not_applicable_to_cart_products')
+                                ]
+                            ], 422 );
+                        }
+                    }
+                }
+
                 if ( $voucher->discount_type == 3 ) {
 
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-        
+
                     $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
 
                     if ( $x >= $adjustment->buy_quantity ) {
@@ -1742,10 +1763,31 @@ class OrderService
                     $voucher = Voucher::where( 'id', $userCart->voucher_id )->first();
                 }
 
+                // Validate target products for cart vouchers
+                if ( $voucher->target_products ) {
+                    $targetProductIds = json_decode( $voucher->target_products, true );
+
+                    if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                        $cartProductIds = $userCart->cartMetas->pluck( 'product_id' )->toArray();
+                        $hasTargetProduct = !empty( array_intersect( $targetProductIds, $cartProductIds ) );
+
+                        if ( !$hasTargetProduct ) {
+                            DB::rollback();
+                            return response()->json( [
+                                'message_key' => 'voucher_not_applicable_to_cart_products',
+                                'message' => __('voucher.voucher_not_applicable_to_cart_products'),
+                                'errors' => [
+                                    'voucher' => __('voucher.voucher_not_applicable_to_cart_products')
+                                ]
+                            ], 422 );
+                        }
+                    }
+                }
+
                 if ( $voucher->discount_type == 3 ) {
 
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-        
+
                     $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
 
                     if ( $x >= $adjustment->buy_quantity ) {
@@ -2017,7 +2059,24 @@ class OrderService
                     ]
                 ], 422);
             }
-    
+
+            // Validate target products
+            if ( $voucher->target_products ) {
+                $targetProductIds = json_decode( $voucher->target_products, true );
+
+                if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                    if ( !in_array( $product->id, $targetProductIds ) ) {
+                        return response()->json( [
+                            'message_key' => 'voucher_not_applicable_to_product',
+                            'message' => __('voucher.voucher_not_applicable_to_product'),
+                            'errors' => [
+                                'voucher' => [__('voucher.voucher_not_applicable_to_product')]
+                            ]
+                        ], 422 );
+                    }
+                }
+            }
+
             // Apply discount logic
             $adjustment = json_decode($voucher->buy_x_get_y_adjustment, true);
             if ($voucher->discount_type == 3) {

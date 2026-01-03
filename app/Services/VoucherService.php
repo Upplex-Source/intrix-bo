@@ -50,6 +50,7 @@ class VoucherService
             'validity_days' => [ 'nullable' ],
             'adjustment_data' => ['required'],
             'claim_per_user' => ['nullable'],
+            'target_products' => ['nullable'],
         ] );
 
         $attributeName = [
@@ -122,6 +123,7 @@ class VoucherService
                 // 'usable_amount' => $request->usable_amount,
                 // 'validity_days' => $request->validity_days,
                 'claim_per_user' => $request->claim_per_user,
+                'target_products' => $request->target_products,
             ]);
 
             $image = explode( ',', $request->image );
@@ -183,7 +185,8 @@ class VoucherService
             'validity_days' => [ 'nullable' ],
             'adjustment_data' => ['required'],
             'claim_per_user' => ['nullable'],
-            
+            'target_products' => ['nullable'],
+
         ] );
 
         $attributeName = [
@@ -246,7 +249,7 @@ class VoucherService
 
         try {
             $updateVoucher = Voucher::find( $request->id );
-    
+
             $updateVoucher->title = $request->title;
             $updateVoucher->discount_type = $request->discount_type;
             $updateVoucher->type = $request->voucher_type;
@@ -260,6 +263,7 @@ class VoucherService
             // $updateVoucher->validity_days = $request->validity_days;
             $updateVoucher->claim_per_user = $request->claim_per_user;
             $updateVoucher->buy_x_get_y_adjustment = $request->adjustment_data;
+            $updateVoucher->target_products = $request->target_products;
             
             $image = explode( ',', $request->image );
 
@@ -547,8 +551,8 @@ class VoucherService
 
         $voucher = Voucher::find( $request->id );
 
-        $voucher->append( ['encrypted_id','image_path', 'decoded_adjustment'] );
-        
+        $voucher->append( ['encrypted_id','image_path', 'decoded_adjustment', 'target_products_info'] );
+
         return response()->json( $voucher );
     }
 
@@ -884,6 +888,26 @@ class VoucherService
         // }
 
         $cart = Cart::where( 'session_key', $request->session_key )->where('status', 10)->first();
+
+        // Validate target products
+        if ( $voucher->target_products ) {
+            $targetProductIds = json_decode( $voucher->target_products, true );
+
+            if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                $cartProductIds = $cart->cartMetas->pluck( 'product_id' )->toArray();
+                $hasTargetProduct = !empty( array_intersect( $targetProductIds, $cartProductIds ) );
+
+                if ( !$hasTargetProduct ) {
+                    return response()->json( [
+                        'message_key' => 'voucher_not_applicable_to_cart_products',
+                        'message' => __('voucher.voucher_not_applicable_to_cart_products'),
+                        'errors' => [
+                            'voucher' => __('voucher.voucher_not_applicable_to_cart_products')
+                        ]
+                    ], 422 );
+                }
+            }
+        }
 
         $subtotal = $cart->subtotal;
         $discountAmount = 0;

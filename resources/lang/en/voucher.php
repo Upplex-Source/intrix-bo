@@ -28,6 +28,10 @@ return [
     'points_required' => 'Points Required',
     'min_spend' => 'Mininum Spend',
     'min_order' => 'Minimum Order',
+    'target_products' => 'Target Products',
+    'target_products_description' => 'Select Target Products (Optional)',
+    'voucher_not_applicable_to_cart_products' => 'This voucher is not applicable to the products in your cart',
+    'voucher_not_applicable_to_product' => 'This voucher is not applicable to this product',
     
     'percentage' => 'Percentage',
     'fixed_amount' => 'Fixed Amount',
