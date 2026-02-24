@@ -7,6 +7,2232 @@ servers:
   -
     url: 'http://localhost'
 paths:
+  /api/v1/contact-us:
+    get:
+      summary: '1. Contact Us Form Submission'
+      description: ''
+      parameters:
+        -
+          in: query
+          name: full_name
+          description: 'Fullname of requestor.'
+          example: Adam
+          required: true
+          schema:
+            type: string
+            description: 'Fullname of requestor.'
+            example: Adam
+        -
+          in: query
+          name: email
+          description: 'email of requestor.'
+          example: adameve@mail.com
+          required: true
+          schema:
+            type: string
+            description: 'email of requestor.'
+            example: adameve@mail.com
+        -
+          in: query
+          name: phone_number
+          description: 'phone number of requestor.'
+          example: '0123878123'
+          required: false
+          schema:
+            type: string
+            description: 'phone number of requestor.'
+            example: '0123878123'
+        -
+          in: query
+          name: location
+          description: 'location of requestor.'
+          example: Selangor
+          required: false
+          schema:
+            type: string
+            description: 'location of requestor.'
+            example: Selangor
+        -
+          in: query
+          name: model
+          description: 'Model selected by requestor. Example Intrix 5-In-1'
+          example: debitis
+          required: false
+          schema:
+            type: string
+            description: 'Model selected by requestor. Example Intrix 5-In-1'
+            example: debitis
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        500:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: "Failed to authenticate on SMTP server with username \"intrix.ecommerce@intrixgroup.com\" using 3 possible authenticators. Authenticator LOGIN returned Expected response code 235 but got code \"535\", with message \"535-5.7.8 Username and Password not accepted. For more information, go to\r\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\r\n\". Authenticator PLAIN returned Expected response code 235 but got code \"535\", with message \"535-5.7.8 Username and Password not accepted. For more information, go to\r\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\r\n\". Authenticator XOAUTH2 returned Expected response code 250 but got code \"535\", with message \"535-5.7.8 Username and Password not accepted. For more information, go to\r\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\r\n\"."
+                  exception: Swift_TransportException
+                  file: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Transport\Esmtp\AuthHandler.php'
+                  line: 191
+                  trace:
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Transport\EsmtpTransport.php'
+                      line: 371
+                      function: afterEhlo
+                      class: Swift_Transport_Esmtp_AuthHandler
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Transport\AbstractSmtpTransport.php'
+                      line: 148
+                      function: doHeloCommand
+                      class: Swift_Transport_EsmtpTransport
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Mailer.php'
+                      line: 65
+                      function: start
+                      class: Swift_Transport_AbstractSmtpTransport
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                      line: 521
+                      function: send
+                      class: Swift_Mailer
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                      line: 288
+                      function: sendSwiftMessage
+                      class: Illuminate\Mail\Mailer
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailable.php'
+                      line: 187
+                      function: send
+                      class: Illuminate\Mail\Mailer
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Support\Traits\Localizable.php'
+                      line: 19
+                      function: 'Illuminate\Mail\{closure}'
+                      class: Illuminate\Mail\Mailable
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailable.php'
+                      line: 188
+                      function: withLocale
+                      class: Illuminate\Mail\Mailable
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                      line: 304
+                      function: send
+                      class: Illuminate\Mail\Mailable
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                      line: 258
+                      function: sendMailable
+                      class: Illuminate\Mail\Mailer
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\MailManager.php'
+                      line: 550
+                      function: send
+                      class: Illuminate\Mail\Mailer
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php'
+                      line: 261
+                      function: __call
+                      class: Illuminate\Mail\MailManager
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\app\Services\OrderService.php'
+                      line: 2320
+                      function: __callStatic
+                      class: Illuminate\Support\Facades\Facade
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\app\Http\Controllers\Api\ContactController.php'
+                      line: 28
+                      function: contactUs
+                      class: App\Services\OrderService
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Controller.php'
+                      line: 54
+                      function: contactUs
+                      class: App\Http\Controllers\Api\ContactController
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php'
+                      line: 45
+                      function: callAction
+                      class: Illuminate\Routing\Controller
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Route.php'
+                      line: 262
+                      function: dispatch
+                      class: Illuminate\Routing\ControllerDispatcher
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Route.php'
+                      line: 205
+                      function: runController
+                      class: Illuminate\Routing\Route
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 721
+                      function: run
+                      class: Illuminate\Routing\Route
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 128
+                      function: 'Illuminate\Routing\{closure}'
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\app\Http\Middleware\APIVersion.php'
+                      line: 20
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: App\Http\Middleware\APIVersion
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php'
+                      line: 50
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Routing\Middleware\SubstituteBindings
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php'
+                      line: 127
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php'
+                      line: 103
+                      function: handleRequest
+                      class: Illuminate\Routing\Middleware\ThrottleRequests
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php'
+                      line: 55
+                      function: handleRequestUsingNamedLimiter
+                      class: Illuminate\Routing\Middleware\ThrottleRequests
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Routing\Middleware\ThrottleRequests
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 103
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 723
+                      function: then
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 698
+                      function: runRouteWithinStack
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 662
+                      function: runRoute
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                      line: 651
+                      function: dispatchToRoute
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                      line: 167
+                      function: dispatch
+                      class: Illuminate\Routing\Router
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 128
+                      function: 'Illuminate\Foundation\Http\{closure}'
+                      class: Illuminate\Foundation\Http\Kernel
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\barryvdh\laravel-debugbar\src\Middleware\InjectDebugbar.php'
+                      line: 59
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Barryvdh\Debugbar\Middleware\InjectDebugbar
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                      line: 21
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php'
+                      line: 31
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                      line: 21
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php'
+                      line: 40
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\TrimStrings
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php'
+                      line: 27
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\ValidatePostSize
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php'
+                      line: 86
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\fruitcake\laravel-cors\src\HandleCors.php'
+                      line: 52
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Fruitcake\Cors\HandleCors
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\fideloper\proxy\src\TrustProxies.php'
+                      line: 57
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 167
+                      function: handle
+                      class: Fideloper\Proxy\TrustProxies
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                      line: 103
+                      function: 'Illuminate\Pipeline\{closure}'
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                      line: 142
+                      function: then
+                      class: Illuminate\Pipeline\Pipeline
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                      line: 111
+                      function: sendRequestThroughRouter
+                      class: Illuminate\Foundation\Http\Kernel
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 299
+                      function: handle
+                      class: Illuminate\Foundation\Http\Kernel
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 287
+                      function: callLaravelOrLumenRoute
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 89
+                      function: makeApiCall
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 45
+                      function: makeResponseCall
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                      line: 35
+                      function: makeResponseCallIfConditionsPass
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                      line: 222
+                      function: __invoke
+                      class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                      line: 179
+                      function: iterateThroughStrategies
+                      class: Knuckles\Scribe\Extracting\Extractor
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                      line: 116
+                      function: fetchResponses
+                      class: Knuckles\Scribe\Extracting\Extractor
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                      line: 123
+                      function: processRoute
+                      class: Knuckles\Scribe\Extracting\Extractor
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                      line: 80
+                      function: extractEndpointsInfoFromLaravelApp
+                      class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                      line: 56
+                      function: extractEndpointsInfoAndWriteToDisk
+                      class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Commands\GenerateDocumentation.php'
+                      line: 55
+                      function: get
+                      class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                      line: 36
+                      function: handle
+                      class: Knuckles\Scribe\Commands\GenerateDocumentation
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\Util.php'
+                      line: 40
+                      function: 'Illuminate\Container\{closure}'
+                      class: Illuminate\Container\BoundMethod
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                      line: 93
+                      function: unwrapIfClosure
+                      class: Illuminate\Container\Util
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                      line: 37
+                      function: callBoundMethod
+                      class: Illuminate\Container\BoundMethod
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\Container.php'
+                      line: 653
+                      function: call
+                      class: Illuminate\Container\BoundMethod
+                      type: '::'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                      line: 136
+                      function: call
+                      class: Illuminate\Container\Container
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Command\Command.php'
+                      line: 298
+                      function: execute
+                      class: Illuminate\Console\Command
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                      line: 121
+                      function: run
+                      class: Symfony\Component\Console\Command\Command
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Application.php'
+                      line: 1040
+                      function: run
+                      class: Illuminate\Console\Command
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Application.php'
+                      line: 301
+                      function: doRunCommand
+                      class: Symfony\Component\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Application.php'
+                      line: 171
+                      function: doRun
+                      class: Symfony\Component\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Console\Application.php'
+                      line: 94
+                      function: run
+                      class: Symfony\Component\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php'
+                      line: 129
+                      function: run
+                      class: Illuminate\Console\Application
+                      type: '->'
+                    -
+                      file: 'C:\xampp\htdocs\intrix-backoffice\artisan'
+                      line: 37
+                      function: handle
+                      class: Illuminate\Foundation\Console\Kernel
+                      type: '->'
+                properties:
+                  message:
+                    type: string
+                    example: "Failed to authenticate on SMTP server with username \"intrix.ecommerce@intrixgroup.com\" using 3 possible authenticators. Authenticator LOGIN returned Expected response code 235 but got code \"535\", with message \"535-5.7.8 Username and Password not accepted. For more information, go to\r\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\r\n\". Authenticator PLAIN returned Expected response code 235 but got code \"535\", with message \"535-5.7.8 Username and Password not accepted. For more information, go to\r\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\r\n\". Authenticator XOAUTH2 returned Expected response code 250 but got code \"535\", with message \"535-5.7.8 Username and Password not accepted. For more information, go to\r\n535 5.7.8  https://support.google.com/mail/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\r\n\"."
+                  exception:
+                    type: string
+                    example: Swift_TransportException
+                  file:
+                    type: string
+                    example: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Transport\Esmtp\AuthHandler.php'
+                  line:
+                    type: integer
+                    example: 191
+                  trace:
+                    type: array
+                    example:
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Transport\EsmtpTransport.php'
+                        line: 371
+                        function: afterEhlo
+                        class: Swift_Transport_Esmtp_AuthHandler
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Transport\AbstractSmtpTransport.php'
+                        line: 148
+                        function: doHeloCommand
+                        class: Swift_Transport_EsmtpTransport
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\swiftmailer\swiftmailer\lib\classes\Swift\Mailer.php'
+                        line: 65
+                        function: start
+                        class: Swift_Transport_AbstractSmtpTransport
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                        line: 521
+                        function: send
+                        class: Swift_Mailer
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                        line: 288
+                        function: sendSwiftMessage
+                        class: Illuminate\Mail\Mailer
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailable.php'
+                        line: 187
+                        function: send
+                        class: Illuminate\Mail\Mailer
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Support\Traits\Localizable.php'
+                        line: 19
+                        function: 'Illuminate\Mail\{closure}'
+                        class: Illuminate\Mail\Mailable
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailable.php'
+                        line: 188
+                        function: withLocale
+                        class: Illuminate\Mail\Mailable
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                        line: 304
+                        function: send
+                        class: Illuminate\Mail\Mailable
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\Mailer.php'
+                        line: 258
+                        function: sendMailable
+                        class: Illuminate\Mail\Mailer
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Mail\MailManager.php'
+                        line: 550
+                        function: send
+                        class: Illuminate\Mail\Mailer
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Support\Facades\Facade.php'
+                        line: 261
+                        function: __call
+                        class: Illuminate\Mail\MailManager
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\app\Services\OrderService.php'
+                        line: 2320
+                        function: __callStatic
+                        class: Illuminate\Support\Facades\Facade
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\app\Http\Controllers\Api\ContactController.php'
+                        line: 28
+                        function: contactUs
+                        class: App\Services\OrderService
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Controller.php'
+                        line: 54
+                        function: contactUs
+                        class: App\Http\Controllers\Api\ContactController
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\ControllerDispatcher.php'
+                        line: 45
+                        function: callAction
+                        class: Illuminate\Routing\Controller
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Route.php'
+                        line: 262
+                        function: dispatch
+                        class: Illuminate\Routing\ControllerDispatcher
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Route.php'
+                        line: 205
+                        function: runController
+                        class: Illuminate\Routing\Route
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 721
+                        function: run
+                        class: Illuminate\Routing\Route
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 128
+                        function: 'Illuminate\Routing\{closure}'
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\app\Http\Middleware\APIVersion.php'
+                        line: 20
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: App\Http\Middleware\APIVersion
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\SubstituteBindings.php'
+                        line: 50
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Routing\Middleware\SubstituteBindings
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php'
+                        line: 127
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php'
+                        line: 103
+                        function: handleRequest
+                        class: Illuminate\Routing\Middleware\ThrottleRequests
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Middleware\ThrottleRequests.php'
+                        line: 55
+                        function: handleRequestUsingNamedLimiter
+                        class: Illuminate\Routing\Middleware\ThrottleRequests
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Routing\Middleware\ThrottleRequests
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 103
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 723
+                        function: then
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 698
+                        function: runRouteWithinStack
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 662
+                        function: runRoute
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Routing\Router.php'
+                        line: 651
+                        function: dispatchToRoute
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                        line: 167
+                        function: dispatch
+                        class: Illuminate\Routing\Router
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 128
+                        function: 'Illuminate\Foundation\Http\{closure}'
+                        class: Illuminate\Foundation\Http\Kernel
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\barryvdh\laravel-debugbar\src\Middleware\InjectDebugbar.php'
+                        line: 59
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Barryvdh\Debugbar\Middleware\InjectDebugbar
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                        line: 21
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php'
+                        line: 31
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php'
+                        line: 21
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php'
+                        line: 40
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\TransformsRequest
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\TrimStrings
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ValidatePostSize.php'
+                        line: 27
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\ValidatePostSize
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php'
+                        line: 86
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\fruitcake\laravel-cors\src\HandleCors.php'
+                        line: 52
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Fruitcake\Cors\HandleCors
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\fideloper\proxy\src\TrustProxies.php'
+                        line: 57
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 167
+                        function: handle
+                        class: Fideloper\Proxy\TrustProxies
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php'
+                        line: 103
+                        function: 'Illuminate\Pipeline\{closure}'
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                        line: 142
+                        function: then
+                        class: Illuminate\Pipeline\Pipeline
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php'
+                        line: 111
+                        function: sendRequestThroughRouter
+                        class: Illuminate\Foundation\Http\Kernel
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 299
+                        function: handle
+                        class: Illuminate\Foundation\Http\Kernel
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 287
+                        function: callLaravelOrLumenRoute
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 89
+                        function: makeApiCall
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 45
+                        function: makeResponseCall
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Strategies\Responses\ResponseCalls.php'
+                        line: 35
+                        function: makeResponseCallIfConditionsPass
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                        line: 222
+                        function: __invoke
+                        class: Knuckles\Scribe\Extracting\Strategies\Responses\ResponseCalls
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                        line: 179
+                        function: iterateThroughStrategies
+                        class: Knuckles\Scribe\Extracting\Extractor
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Extracting\Extractor.php'
+                        line: 116
+                        function: fetchResponses
+                        class: Knuckles\Scribe\Extracting\Extractor
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                        line: 123
+                        function: processRoute
+                        class: Knuckles\Scribe\Extracting\Extractor
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                        line: 80
+                        function: extractEndpointsInfoFromLaravelApp
+                        class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\GroupedEndpoints\GroupedEndpointsFromApp.php'
+                        line: 56
+                        function: extractEndpointsInfoAndWriteToDisk
+                        class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\knuckleswtf\scribe\src\Commands\GenerateDocumentation.php'
+                        line: 55
+                        function: get
+                        class: Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFromApp
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                        line: 36
+                        function: handle
+                        class: Knuckles\Scribe\Commands\GenerateDocumentation
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\Util.php'
+                        line: 40
+                        function: 'Illuminate\Container\{closure}'
+                        class: Illuminate\Container\BoundMethod
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                        line: 93
+                        function: unwrapIfClosure
+                        class: Illuminate\Container\Util
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\BoundMethod.php'
+                        line: 37
+                        function: callBoundMethod
+                        class: Illuminate\Container\BoundMethod
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Container\Container.php'
+                        line: 653
+                        function: call
+                        class: Illuminate\Container\BoundMethod
+                        type: '::'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                        line: 136
+                        function: call
+                        class: Illuminate\Container\Container
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Command\Command.php'
+                        line: 298
+                        function: execute
+                        class: Illuminate\Console\Command
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Console\Command.php'
+                        line: 121
+                        function: run
+                        class: Symfony\Component\Console\Command\Command
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Application.php'
+                        line: 1040
+                        function: run
+                        class: Illuminate\Console\Command
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Application.php'
+                        line: 301
+                        function: doRunCommand
+                        class: Symfony\Component\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\symfony\console\Application.php'
+                        line: 171
+                        function: doRun
+                        class: Symfony\Component\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Console\Application.php'
+                        line: 94
+                        function: run
+                        class: Symfony\Component\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\vendor\laravel\framework\src\Illuminate\Foundation\Console\Kernel.php'
+                        line: 129
+                        function: run
+                        class: Illuminate\Console\Application
+                        type: '->'
+                      -
+                        file: 'C:\xampp\htdocs\intrix-backoffice\artisan'
+                        line: 37
+                        function: handle
+                        class: Illuminate\Foundation\Console\Kernel
+                        type: '->'
+                    items:
+                      type: object
+      tags:
+        - 'Contact-us API'
+      security: []
+  /api/v1/add-ons:
+    get:
+      summary: '1. Get Add Ons'
+      description: '<aside class="notice">Get all Add on that is in BO</aside>'
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  add_ons:
+                    -
+                      id: 1
+                      product_id: null
+                      title: tesss
+                      code: tesss
+                      description: tesss
+                      color: null
+                      image: product-add-on/1/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png
+                      status: 10
+                      brochure: null
+                      sku: tesss
+                      specification: tesss
+                      features: tesss
+                      whats_included: tesss
+                      price: '12.00'
+                      discount_price: '0.00'
+                      created_at: '2025-03-17 16:29:32'
+                      updated_at: '2025-03-17 16:29:32'
+                      image_path: 'http://localhost/storage/product-add-on/1/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png'
+                      add_on_products:
+                        -
+                          id: 4
+                          code: LITE
+                          title: 'Intrix One Tap Lite'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '39.00'
+                          discount_price: '39.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            add_on_id: 1
+                            product_id: 4
+                        -
+                          id: 5
+                          code: TEST
+                          title: TEST
+                          image: null
+                          description: TEST
+                          price: '1.00'
+                          discount_price: '1.00'
+                          status: 10
+                          created_at: '2025-03-18 11:05:00'
+                          updated_at: '2025-03-18 11:05:00'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            add_on_id: 1
+                            product_id: 5
+                        -
+                          id: 3
+                          code: 2-IN-1
+                          title: 'Intrix One Tap 2 in 1'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '45.00'
+                          discount_price: '45.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            add_on_id: 1
+                            product_id: 3
+                        -
+                          id: 2
+                          code: 4-IN-1
+                          title: 'Intrix One Tap 4 in 1'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '52.00'
+                          discount_price: '52.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            add_on_id: 1
+                            product_id: 2
+                        -
+                          id: 1
+                          code: 5-IN-1
+                          title: 'Intrix One Tap 5 in 1'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '75.00'
+                          discount_price: '75.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            add_on_id: 1
+                            product_id: 1
+                  draw: null
+                  start: 0
+                  length: 10
+                  hasMore: false
+                  nextStart: null
+                  recordsFiltered: 1
+                  recordsTotal: 1
+                properties:
+                  add_ons:
+                    type: array
+                    example:
+                      -
+                        id: 1
+                        product_id: null
+                        title: tesss
+                        code: tesss
+                        description: tesss
+                        color: null
+                        image: product-add-on/1/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png
+                        status: 10
+                        brochure: null
+                        sku: tesss
+                        specification: tesss
+                        features: tesss
+                        whats_included: tesss
+                        price: '12.00'
+                        discount_price: '0.00'
+                        created_at: '2025-03-17 16:29:32'
+                        updated_at: '2025-03-17 16:29:32'
+                        image_path: 'http://localhost/storage/product-add-on/1/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png'
+                        add_on_products:
+                          -
+                            id: 4
+                            code: LITE
+                            title: 'Intrix One Tap Lite'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '39.00'
+                            discount_price: '39.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              add_on_id: 1
+                              product_id: 4
+                          -
+                            id: 5
+                            code: TEST
+                            title: TEST
+                            image: null
+                            description: TEST
+                            price: '1.00'
+                            discount_price: '1.00'
+                            status: 10
+                            created_at: '2025-03-18 11:05:00'
+                            updated_at: '2025-03-18 11:05:00'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              add_on_id: 1
+                              product_id: 5
+                          -
+                            id: 3
+                            code: 2-IN-1
+                            title: 'Intrix One Tap 2 in 1'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '45.00'
+                            discount_price: '45.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              add_on_id: 1
+                              product_id: 3
+                          -
+                            id: 2
+                            code: 4-IN-1
+                            title: 'Intrix One Tap 4 in 1'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '52.00'
+                            discount_price: '52.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              add_on_id: 1
+                              product_id: 2
+                          -
+                            id: 1
+                            code: 5-IN-1
+                            title: 'Intrix One Tap 5 in 1'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '75.00'
+                            discount_price: '75.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              add_on_id: 1
+                              product_id: 1
+                    items:
+                      type: object
+                  draw:
+                    type: string
+                    example: null
+                  start:
+                    type: integer
+                    example: 0
+                  length:
+                    type: integer
+                    example: 10
+                  hasMore:
+                    type: boolean
+                    example: false
+                  nextStart:
+                    type: string
+                    example: null
+                  recordsFiltered:
+                    type: integer
+                    example: 1
+                  recordsTotal:
+                    type: integer
+                    example: 1
+      tags:
+        - 'Product API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                length:
+                  type: integer
+                  description: 'The length of the table.'
+                  example: 10
+                start:
+                  type: integer
+                  description: 'The start of the record of the table.'
+                  example: 0
+                created_date:
+                  type: string
+                  description: 'The date of the filter.'
+                  example: '2024-09-25 to 2024-09-27'
+              required:
+                - length
+                - start
+  /api/v1/free-gifts:
+    get:
+      summary: '1. Get Free Gifts'
+      description: '<aside class="notice">Get all Add on that is in BO</aside>'
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  free_gifts:
+                    -
+                      id: 1
+                      title: 'tesst gift'
+                      description: '123123'
+                      color: null
+                      image: product-add-on/1/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png
+                      status: 10
+                      brochure: null
+                      sku: '12312'
+                      specification: '123123123'
+                      features: '12313'
+                      whats_included: '123'
+                      created_at: '2025-03-16 21:09:02'
+                      updated_at: '2025-03-18 11:38:39'
+                      price: '0.00'
+                      discount_price: '0.00'
+                      product_id: null
+                      code: gggg
+                      image_path: 'http://localhost/storage/product-add-on/1/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png'
+                      free_gift_products:
+                        -
+                          id: 1
+                          code: 5-IN-1
+                          title: 'Intrix One Tap 5 in 1'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '75.00'
+                          discount_price: '75.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            free_gift_id: 1
+                            product_id: 1
+                    -
+                      id: 2
+                      title: unassco
+                      description: null
+                      color: null
+                      image: null
+                      status: 10
+                      brochure: null
+                      sku: null
+                      specification: null
+                      features: null
+                      whats_included: null
+                      created_at: '2025-03-16 21:09:13'
+                      updated_at: '2025-03-17 16:31:52'
+                      price: '0.00'
+                      discount_price: '0.00'
+                      product_id: null
+                      code: unassco
+                      image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                      free_gift_products:
+                        -
+                          id: 5
+                          code: TEST
+                          title: TEST
+                          image: null
+                          description: TEST
+                          price: '1.00'
+                          discount_price: '1.00'
+                          status: 10
+                          created_at: '2025-03-18 11:05:00'
+                          updated_at: '2025-03-18 11:05:00'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            free_gift_id: 2
+                            product_id: 5
+                        -
+                          id: 4
+                          code: LITE
+                          title: 'Intrix One Tap Lite'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '39.00'
+                          discount_price: '39.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            free_gift_id: 2
+                            product_id: 4
+                        -
+                          id: 3
+                          code: 2-IN-1
+                          title: 'Intrix One Tap 2 in 1'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '45.00'
+                          discount_price: '45.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            free_gift_id: 2
+                            product_id: 3
+                        -
+                          id: 2
+                          code: 4-IN-1
+                          title: 'Intrix One Tap 4 in 1'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '52.00'
+                          discount_price: '52.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            free_gift_id: 2
+                            product_id: 2
+                        -
+                          id: 1
+                          code: 5-IN-1
+                          title: 'Intrix One Tap 5 in 1'
+                          image: null
+                          description: 'Intrix One Tap Lite'
+                          price: '75.00'
+                          discount_price: '75.00'
+                          status: 10
+                          created_at: '2025-02-08 13:22:04'
+                          updated_at: '2025-02-08 13:22:04'
+                          image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                          pivot:
+                            free_gift_id: 2
+                            product_id: 1
+                  draw: null
+                  start: 0
+                  length: 10
+                  hasMore: false
+                  nextStart: null
+                  recordsFiltered: 2
+                  recordsTotal: 2
+                properties:
+                  free_gifts:
+                    type: array
+                    example:
+                      -
+                        id: 1
+                        title: 'tesst gift'
+                        description: '123123'
+                        color: null
+                        image: product-add-on/1/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png
+                        status: 10
+                        brochure: null
+                        sku: '12312'
+                        specification: '123123123'
+                        features: '12313'
+                        whats_included: '123'
+                        created_at: '2025-03-16 21:09:02'
+                        updated_at: '2025-03-18 11:38:39'
+                        price: '0.00'
+                        discount_price: '0.00'
+                        product_id: null
+                        code: gggg
+                        image_path: 'http://localhost/storage/product-add-on/1/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png'
+                        free_gift_products:
+                          -
+                            id: 1
+                            code: 5-IN-1
+                            title: 'Intrix One Tap 5 in 1'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '75.00'
+                            discount_price: '75.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              free_gift_id: 1
+                              product_id: 1
+                      -
+                        id: 2
+                        title: unassco
+                        description: null
+                        color: null
+                        image: null
+                        status: 10
+                        brochure: null
+                        sku: null
+                        specification: null
+                        features: null
+                        whats_included: null
+                        created_at: '2025-03-16 21:09:13'
+                        updated_at: '2025-03-17 16:31:52'
+                        price: '0.00'
+                        discount_price: '0.00'
+                        product_id: null
+                        code: unassco
+                        image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                        free_gift_products:
+                          -
+                            id: 5
+                            code: TEST
+                            title: TEST
+                            image: null
+                            description: TEST
+                            price: '1.00'
+                            discount_price: '1.00'
+                            status: 10
+                            created_at: '2025-03-18 11:05:00'
+                            updated_at: '2025-03-18 11:05:00'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              free_gift_id: 2
+                              product_id: 5
+                          -
+                            id: 4
+                            code: LITE
+                            title: 'Intrix One Tap Lite'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '39.00'
+                            discount_price: '39.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              free_gift_id: 2
+                              product_id: 4
+                          -
+                            id: 3
+                            code: 2-IN-1
+                            title: 'Intrix One Tap 2 in 1'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '45.00'
+                            discount_price: '45.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              free_gift_id: 2
+                              product_id: 3
+                          -
+                            id: 2
+                            code: 4-IN-1
+                            title: 'Intrix One Tap 4 in 1'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '52.00'
+                            discount_price: '52.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              free_gift_id: 2
+                              product_id: 2
+                          -
+                            id: 1
+                            code: 5-IN-1
+                            title: 'Intrix One Tap 5 in 1'
+                            image: null
+                            description: 'Intrix One Tap Lite'
+                            price: '75.00'
+                            discount_price: '75.00'
+                            status: 10
+                            created_at: '2025-02-08 13:22:04'
+                            updated_at: '2025-02-08 13:22:04'
+                            image_path: 'http://localhost/admin/images/placeholder.png?v=1.07'
+                            pivot:
+                              free_gift_id: 2
+                              product_id: 1
+                    items:
+                      type: object
+                  draw:
+                    type: string
+                    example: null
+                  start:
+                    type: integer
+                    example: 0
+                  length:
+                    type: integer
+                    example: 10
+                  hasMore:
+                    type: boolean
+                    example: false
+                  nextStart:
+                    type: string
+                    example: null
+                  recordsFiltered:
+                    type: integer
+                    example: 2
+                  recordsTotal:
+                    type: integer
+                    example: 2
+      tags:
+        - 'Product API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                length:
+                  type: integer
+                  description: 'The length of the table.'
+                  example: 10
+                start:
+                  type: integer
+                  description: 'The start of the record of the table.'
+                  example: 0
+                created_date:
+                  type: string
+                  description: 'The date of the filter.'
+                  example: '2024-09-25 to 2024-09-27'
+              required:
+                - length
+                - start
+  /api/v1/where-to-find-us/countries:
+    get:
+      summary: '1. Get Countries'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                  message_key: get_countries_success
+                  countries:
+                    -
+                      id: 1
+                      name: malaysia
+                    -
+                      id: 2
+                      name: Austria
+                    -
+                      id: 3
+                      name: UK
+                    -
+                      id: 4
+                      name: 'Hong Kong'
+                properties:
+                  message:
+                    type: string
+                    example: ''
+                  message_key:
+                    type: string
+                    example: get_countries_success
+                  countries:
+                    type: array
+                    example:
+                      -
+                        id: 1
+                        name: malaysia
+                      -
+                        id: 2
+                        name: Austria
+                      -
+                        id: 3
+                        name: UK
+                      -
+                        id: 4
+                        name: 'Hong Kong'
+                    items:
+                      type: object
+      tags:
+        - 'WhereToFindUs API'
+      security: []
+  /api/v1/where-to-find-us/states:
+    get:
+      summary: '2. Get States'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                  message_key: get_states_success
+                  states:
+                    -
+                      id: 1
+                      country_id: 1
+                      name: '123123'
+                      sequence: 0
+                      postcode: null
+                      title: ''
+                      description: ''
+                    -
+                      id: 3
+                      country_id: 1
+                      name: '123123123'
+                      sequence: 0
+                      postcode: null
+                      title: ''
+                      description: ''
+                    -
+                      id: 6
+                      country_id: 1
+                      name: 'Kuala Lumpur'
+                      sequence: 0
+                      postcode: null
+                      title: ''
+                      description: ''
+                properties:
+                  message:
+                    type: string
+                    example: ''
+                  message_key:
+                    type: string
+                    example: get_states_success
+                  states:
+                    type: array
+                    example:
+                      -
+                        id: 1
+                        country_id: 1
+                        name: '123123'
+                        sequence: 0
+                        postcode: null
+                        title: ''
+                        description: ''
+                      -
+                        id: 3
+                        country_id: 1
+                        name: '123123123'
+                        sequence: 0
+                        postcode: null
+                        title: ''
+                        description: ''
+                      -
+                        id: 6
+                        country_id: 1
+                        name: 'Kuala Lumpur'
+                        sequence: 0
+                        postcode: null
+                        title: ''
+                        description: ''
+                    items:
+                      type: object
+      tags:
+        - 'WhereToFindUs API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+                  description: 'The resources'' country to be filtered ( id or name ).'
+                  example: Malaysia
+      security: []
+  /api/v1/where-to-find-us/branches:
+    get:
+      summary: '3. Get Branches'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                  message_key: get_branches_success
+                  states: []
+                properties:
+                  message:
+                    type: string
+                    example: ''
+                  message_key:
+                    type: string
+                    example: get_branches_success
+                  states:
+                    type: array
+                    example: []
+      tags:
+        - 'WhereToFindUs API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  type: string
+                  description: 'The state of the Branches to be filtered ( id or name ).'
+                  example: 'Kuala Lumpur'
+                title:
+                  type: string
+                  description: 'The title of the Branches to be filtered.'
+                  example: B
+      security: []
+  /api/v1/guides-resources/installation-guides:
+    get:
+      summary: '5. Get Installation Guide ( sorted )'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                  message_key: get_installation_guides_success
+                  states: []
+                properties:
+                  message:
+                    type: string
+                    example: ''
+                  message_key:
+                    type: string
+                    example: get_installation_guides_success
+                  states:
+                    type: array
+                    example: []
+      tags:
+        - 'WhereToFindUs API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+                  description: 'The resources'' country to be filtered ( id or name ).'
+                  example: Malaysia
+      security: []
+  /api/v1/guides-resources/product-brochures:
+    get:
+      summary: '4. Get Product Brochures ( sorted )'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                  message_key: get_product_brochures_success
+                  states:
+                    -
+                      id: 7
+                      country_id: 1
+                      sequence: 0
+                      file: file-managers/czloqR5FJHkXoLkG7Iu531NbGWFtK311wqH3P5Wk.pdf
+                      file_type: 1
+                      filePath: 'http://localhost/storage/file-managers/czloqR5FJHkXoLkG7Iu531NbGWFtK311wqH3P5Wk.pdf'
+                      title: 'integrationFAQ (1).pdf'
+                      description: ''
+                    -
+                      id: 10
+                      country_id: 1
+                      sequence: 1
+                      file: file-managers/siO1lF0DIB7kK80BehwDxkREQzrHtI83hgCjxfz4.pdf
+                      file_type: 1
+                      filePath: 'http://localhost/storage/file-managers/siO1lF0DIB7kK80BehwDxkREQzrHtI83hgCjxfz4.pdf'
+                      title: 'integrationFAQ (1).pdf'
+                      description: ''
+                    -
+                      id: 8
+                      country_id: 1
+                      sequence: 2
+                      file: file-managers/hhExFs5uPjVId1vAyX4fUV7bGDdZRIwCRHLpRcf0.pdf
+                      file_type: 1
+                      filePath: 'http://localhost/storage/file-managers/hhExFs5uPjVId1vAyX4fUV7bGDdZRIwCRHLpRcf0.pdf'
+                      title: 'integrationFAQ (1).pdf'
+                      description: ''
+                    -
+                      id: 11
+                      country_id: 1
+                      sequence: 3
+                      file: file-managers/hs0NfiEZii7TpPbVRa1ySz8xOklJoRTjju6o3TBh.pdf
+                      file_type: 1
+                      filePath: 'http://localhost/storage/file-managers/hs0NfiEZii7TpPbVRa1ySz8xOklJoRTjju6o3TBh.pdf'
+                      title: 'receipt (25).pdf'
+                      description: ''
+                    -
+                      id: 9
+                      country_id: 1
+                      sequence: 4
+                      file: file-managers/m5BKOexiY0vhmMgCGzAr0ufAo42BonuzotaEY1OB.pdf
+                      file_type: 1
+                      filePath: 'http://localhost/storage/file-managers/m5BKOexiY0vhmMgCGzAr0ufAo42BonuzotaEY1OB.pdf'
+                      title: 'integrationFAQ (1).pdf'
+                      description: ''
+                properties:
+                  message:
+                    type: string
+                    example: ''
+                  message_key:
+                    type: string
+                    example: get_product_brochures_success
+                  states:
+                    type: array
+                    example:
+                      -
+                        id: 7
+                        country_id: 1
+                        sequence: 0
+                        file: file-managers/czloqR5FJHkXoLkG7Iu531NbGWFtK311wqH3P5Wk.pdf
+                        file_type: 1
+                        filePath: 'http://localhost/storage/file-managers/czloqR5FJHkXoLkG7Iu531NbGWFtK311wqH3P5Wk.pdf'
+                        title: 'integrationFAQ (1).pdf'
+                        description: ''
+                      -
+                        id: 10
+                        country_id: 1
+                        sequence: 1
+                        file: file-managers/siO1lF0DIB7kK80BehwDxkREQzrHtI83hgCjxfz4.pdf
+                        file_type: 1
+                        filePath: 'http://localhost/storage/file-managers/siO1lF0DIB7kK80BehwDxkREQzrHtI83hgCjxfz4.pdf'
+                        title: 'integrationFAQ (1).pdf'
+                        description: ''
+                      -
+                        id: 8
+                        country_id: 1
+                        sequence: 2
+                        file: file-managers/hhExFs5uPjVId1vAyX4fUV7bGDdZRIwCRHLpRcf0.pdf
+                        file_type: 1
+                        filePath: 'http://localhost/storage/file-managers/hhExFs5uPjVId1vAyX4fUV7bGDdZRIwCRHLpRcf0.pdf'
+                        title: 'integrationFAQ (1).pdf'
+                        description: ''
+                      -
+                        id: 11
+                        country_id: 1
+                        sequence: 3
+                        file: file-managers/hs0NfiEZii7TpPbVRa1ySz8xOklJoRTjju6o3TBh.pdf
+                        file_type: 1
+                        filePath: 'http://localhost/storage/file-managers/hs0NfiEZii7TpPbVRa1ySz8xOklJoRTjju6o3TBh.pdf'
+                        title: 'receipt (25).pdf'
+                        description: ''
+                      -
+                        id: 9
+                        country_id: 1
+                        sequence: 4
+                        file: file-managers/m5BKOexiY0vhmMgCGzAr0ufAo42BonuzotaEY1OB.pdf
+                        file_type: 1
+                        filePath: 'http://localhost/storage/file-managers/m5BKOexiY0vhmMgCGzAr0ufAo42BonuzotaEY1OB.pdf'
+                        title: 'integrationFAQ (1).pdf'
+                        description: ''
+                    items:
+                      type: object
+      tags:
+        - 'WhereToFindUs API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+                  description: 'The resources'' country to be filtered ( id or name ).'
+                  example: Malaysia
+      security: []
+  /api/v1/guides-resources/videos:
+    get:
+      summary: '4. Get Videos ( sorted )'
+      description: ''
+      parameters:
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: ''
+                  message_key: get_videos_success
+                  states:
+                    -
+                      id: 16
+                      country_id: 1
+                      sequence: 0
+                      file: file-managers/ZV823NfOGaRaY2TD7tgPZyRKEJalkkLkDigo0HGu.mp4
+                      file_type: 3
+                      filePath: 'http://localhost/storage/file-managers/ZV823NfOGaRaY2TD7tgPZyRKEJalkkLkDigo0HGu.mp4'
+                      title: '179207 (720p).mp4'
+                      description: ''
+                    -
+                      id: 15
+                      country_id: 1
+                      sequence: 1
+                      file: file-managers/QrlRDNw7l6KVE9NHEEMqaS6a88tj2amiaKm6xNiY.mp4
+                      file_type: 3
+                      filePath: 'http://localhost/storage/file-managers/QrlRDNw7l6KVE9NHEEMqaS6a88tj2amiaKm6xNiY.mp4'
+                      title: m2-res_1080p.mp4
+                      description: ''
+                    -
+                      id: 18
+                      country_id: 1
+                      sequence: 2
+                      file: file-managers/wKC35CJCtaURNO2F9Z08qNrAUtUTh12S1o6aUYG0.mp4
+                      file_type: 3
+                      filePath: 'http://localhost/storage/file-managers/wKC35CJCtaURNO2F9Z08qNrAUtUTh12S1o6aUYG0.mp4'
+                      title: 1739866074.mp4
+                      description: ''
+                properties:
+                  message:
+                    type: string
+                    example: ''
+                  message_key:
+                    type: string
+                    example: get_videos_success
+                  states:
+                    type: array
+                    example:
+                      -
+                        id: 16
+                        country_id: 1
+                        sequence: 0
+                        file: file-managers/ZV823NfOGaRaY2TD7tgPZyRKEJalkkLkDigo0HGu.mp4
+                        file_type: 3
+                        filePath: 'http://localhost/storage/file-managers/ZV823NfOGaRaY2TD7tgPZyRKEJalkkLkDigo0HGu.mp4'
+                        title: '179207 (720p).mp4'
+                        description: ''
+                      -
+                        id: 15
+                        country_id: 1
+                        sequence: 1
+                        file: file-managers/QrlRDNw7l6KVE9NHEEMqaS6a88tj2amiaKm6xNiY.mp4
+                        file_type: 3
+                        filePath: 'http://localhost/storage/file-managers/QrlRDNw7l6KVE9NHEEMqaS6a88tj2amiaKm6xNiY.mp4'
+                        title: m2-res_1080p.mp4
+                        description: ''
+                      -
+                        id: 18
+                        country_id: 1
+                        sequence: 2
+                        file: file-managers/wKC35CJCtaURNO2F9Z08qNrAUtUTh12S1o6aUYG0.mp4
+                        file_type: 3
+                        filePath: 'http://localhost/storage/file-managers/wKC35CJCtaURNO2F9Z08qNrAUtUTh12S1o6aUYG0.mp4'
+                        title: 1739866074.mp4
+                        description: ''
+                    items:
+                      type: object
+      tags:
+        - 'WhereToFindUs API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                country:
+                  type: string
+                  description: 'The resources'' country to be filtered ( id or name ).'
+                  example: Malaysia
+      security: []
   /api/v1/blogs:
     get:
       summary: '1. Get all blogs'
@@ -2198,7 +4424,7 @@ paths:
                 session_key:
                   type: string
                   description: 'The session_key of the cart.  kn1i23onlas1'
-                  example: quo
+                  example: enim
                 id:
                   type: integer
                   description: 'The ID of the cart.'
@@ -2206,6 +4432,154 @@ paths:
                 cart_item:
                   type: integer
                   description: 'The ID of the cart item.'
+                  example: 1
+      security: []
+  /api/v1/carts/update-add-on:
+    post:
+      summary: '6. Update Cart Addon/FreeGift'
+      description: "<aside class=\"notice\">session_key or cart id can be used to update the cart</aside>\n\n<strong>type</strong></br>\n1: add on<br>\n2: free gift<br>\n\n<strong>action</strong></br>\nremove: remove<br>\nupdate: update<br>"
+      parameters:
+        -
+          in: query
+          name: session_key
+          description: 'The unique identifier for the cart. Used to add addon or free gift to the cart'
+          example: abcd-1234
+          required: true
+          schema:
+            type: string
+            description: 'The unique identifier for the cart. Used to add addon or free gift to the cart'
+            example: abcd-1234
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'Cart API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                add_on:
+                  type: string
+                  description: 'nullable The add_on code get via get add on api. Either `add_on` or `free_gift` must be provided.'
+                  example: ADD-ON
+                free_gift:
+                  type: string
+                  description: 'nullable The free_gift code get via get free gift api. Either `add_on` or `free_gift` must be provided.'
+                  example: FREE-GIFT
+                quantity:
+                  type: required
+                  description: 'integer The quantity of the addon/quantity.'
+                  example: '1, -1 to deduct'
+                type:
+                  type: required
+                  description: 'integer The type to be change.'
+                  example: '1'
+                action:
+                  type: nullable
+                  description: 'string The action to be performed.'
+                  example: remove
+      security: []
+  /api/v1/carts/update-shipment:
+    post:
+      summary: '7. Update Cart Shipment Details'
+      description: "<aside class=\"notice\">session_key or cart id can be used to update the cart shipment</aside>\n\n<strong>payment_plan</strong></br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>"
+      parameters:
+        -
+          in: query
+          name: session_key
+          description: 'The unique identifier for the cart. Used to update shipment details to the cart'
+          example: abcd-1234
+          required: true
+          schema:
+            type: string
+            description: 'The unique identifier for the cart. Used to update shipment details to the cart'
+            example: abcd-1234
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'Cart API'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullname:
+                  type: string
+                  description: 'nullable The fullname of the guest.'
+                  example: Johnny
+                company_name:
+                  type: string
+                  description: 'nullable The company_name of the guest.'
+                  example: 'Johnny holdings'
+                email:
+                  type: string
+                  description: 'nullable The email of the guest.'
+                  example: johnny@gmail.com
+                phone_number:
+                  type: string
+                  description: 'nullable The phone_number of the guest.'
+                  example: '1231231223'
+                address_1:
+                  type: string
+                  description: 'nullable The address_1 of the guest.'
+                  example: 'Lot 4, 1'
+                address_2:
+                  type: string
+                  description: 'nullable The address_2 of the guest.'
+                  example: 'Bandar Baru Bangi'
+                city:
+                  type: string
+                  description: 'nullable The city of the guest.'
+                  example: Kajang
+                state:
+                  type: string
+                  description: 'nullable The state of the guest.'
+                  example: Selangor
+                postcode:
+                  type: string
+                  description: 'nullable The postcode of the guest.'
+                  example: '43000'
+                country:
+                  type: string
+                  description: 'nullable The country of the guest.'
+                  example: Malaysia
+                remarks:
+                  type: string
+                  description: 'nullable The remarks for the order.'
+                  example: 'Be careful'
+                payment_plan:
+                  type: integer
+                  description: 'nullable The payment_plan integer for the order.'
                   example: 1
       security: []
   /api/v1/orders:
@@ -2331,7 +4705,7 @@ paths:
   /api/v1/orders/cart-checkout:
     post:
       summary: '1. checkout'
-      description: "<strong>payment_plan</strong></br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>\n\n<strong>color</strong></br>\n1: CHROME<br>\n2: MATTE BLACK<br>\n3: SATIN GOLD<br>\n4: GUNMETAL GREY<br>"
+      description: "<strong>payment_plan</strong></br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>"
       parameters:
         -
           in: header
@@ -2351,7 +4725,7 @@ paths:
       tags:
         - 'Order API'
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
@@ -2361,71 +4735,10 @@ paths:
                   type: string
                   description: 'The session_key of the cart.'
                   example: kn1i23onlas1
-                cart_item:
-                  type: integer
-                  description: 'The ID of the cart item.'
-                  example: 12
                 promo_code:
                   type: integer
                   description: 'The ID of the promotion/voucher to apply.'
                   example: 0
-                fullname:
-                  type: string
-                  description: 'The fullname of the guest.'
-                  example: Johnny
-                company_name:
-                  type: string
-                  description: 'nullable The company_name of the guest.'
-                  example: 'Johnny holdings'
-                email:
-                  type: string
-                  description: 'The email of the guest.'
-                  example: johnny@gmail.com
-                phone_number:
-                  type: string
-                  description: 'nullable The phone_number of the guest.'
-                  example: '1231231223'
-                address_1:
-                  type: string
-                  description: 'The address_1 of the guest.'
-                  example: 'Lot 4, 1'
-                address_2:
-                  type: string
-                  description: 'nullable The address_2 of the guest.'
-                  example: 'Bandar Baru Bangi'
-                city:
-                  type: string
-                  description: 'The city of the guest.'
-                  example: Kajang
-                state:
-                  type: string
-                  description: 'The state of the guest.'
-                  example: Selangor
-                postcode:
-                  type: string
-                  description: 'The postcode of the guest.'
-                  example: '43000'
-                country:
-                  type: string
-                  description: 'The country of the guest.'
-                  example: Malaysia
-                remarks:
-                  type: string
-                  description: 'nullable The remarks for the order.'
-                  example: 'Be careful'
-                payment_plan:
-                  type: integer
-                  description: 'nullable The payment_plan integer for the order.'
-                  example: 1
-              required:
-                - cart_item
-                - fullname
-                - email
-                - address_1
-                - city
-                - state
-                - postcode
-                - country
       security: []
   /api/v1/orders/direct-checkout:
     post:
@@ -2520,72 +4833,14 @@ paths:
                   type: integer
                   description: 'nullable The payment_plan integer for the order.'
                   example: 1
-              required:
-                - product_code
-      security: []
-  /api/v1/promo-codes/validate:
-    post:
-      summary: '3. validate voucher ( Apply Voucher )'
-      description: "<strong>payment_plan</strong></br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>\n\n<strong>color</strong></br>\n1: CHROME<br>\n2: MATTE BLACK<br>\n3: SATIN GOLD<br>\n4: GUNMETAL GREY<br>\n\n<strong>type</strong></br>\n1: BUY NOW<br>\n2: CART<br>"
-      parameters:
-        -
-          in: query
-          name: session_key
-          description: 'optional The unique identifier for the cart. Must be provided if type is 2'
-          example: abcd-1234
-          required: false
-          schema:
-            type: string
-            description: 'optional The unique identifier for the cart. Must be provided if type is 2'
-            example: abcd-1234
-        -
-          in: header
-          name: Content-Type
-          description: ''
-          example: application/json
-          schema:
-            type: string
-        -
-          in: header
-          name: Accept
-          description: ''
-          example: application/json
-          schema:
-            type: string
-      responses: {  }
-      tags:
-        - 'Order API'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                type:
-                  type: required
-                  description: 'integer To verify cart or buy now product .'
-                  example: '1'
-                product_code:
+                add_on:
                   type: string
-                  description: 'The product_code of the product.'
-                  example: 5-IN-1
-                color:
-                  type: required
-                  description: 'strong The color of the product.'
-                  example: CHROME
-                quantity:
-                  type: required
-                  description: 'integer The quantity of the product.'
-                  example: '1'
-                promo_code:
-                  type: integer
-                  description: 'The ID of the promotion/voucher to apply.'
-                  example: 0
-                payment_plan:
-                  type: integer
-                  description: 'nullable The payment_plan integer for the order.'
-                  example: 1
+                  description: 'nullable The add_on code get via add on api.'
+                  example: ADD-ON
+                free_gift:
+                  type: string
+                  description: 'nullable The free_gift code get via free gift api.'
+                  example: FREE-GIFT
               required:
                 - product_code
       security: []
@@ -2661,7 +4916,87 @@ paths:
                     example: []
       tags:
         - 'Promo Code API'
+  /api/v1/promo-codes/validate:
+    post:
+      summary: '3. validate voucher ( Apply Voucher )'
+      description: "<strong>payment_plan</strong></br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>\n\n<strong>color</strong></br>\n1: CHROME<br>\n2: MATTE BLACK<br>\n3: SATIN GOLD<br>\n4: GUNMETAL GREY<br>\n\n<strong>type</strong></br>\n1: BUY NOW<br>\n2: CART<br>"
+      parameters:
+        -
+          in: query
+          name: session_key
+          description: 'optional The unique identifier for the cart. Must be provided if type is 2'
+          example: abcd-1234
+          required: false
+          schema:
+            type: string
+            description: 'optional The unique identifier for the cart. Must be provided if type is 2'
+            example: abcd-1234
+        -
+          in: header
+          name: Content-Type
+          description: ''
+          example: application/json
+          schema:
+            type: string
+        -
+          in: header
+          name: Accept
+          description: ''
+          example: application/json
+          schema:
+            type: string
+      responses: {  }
+      tags:
+        - 'Promo Code API'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: integer
+                  description: 'To verify cart or buy now product, Set 2 to validate cart .'
+                  example: 1
+                promo_code:
+                  type: integer
+                  description: 'The ID of the promotion/voucher to apply.'
+                  example: 0
+                product_code:
+                  type: string
+                  description: 'The product_code of the product.'
+                  example: 5-IN-1
+                color:
+                  type: string
+                  description: 'The color of the product.'
+                  example: '1'
+                quantity:
+                  type: integer
+                  description: 'The quantity of the product.'
+                  example: 1
+                payment_plan:
+                  type: integer
+                  description: 'nullable The payment_plan integer for the order.'
+                  example: 1
+              required:
+                - type
+                - promo_code
+                - product_code
+                - color
+                - quantity
+                - payment_plan
+      security: []
 tags:
+  -
+    name: 'Contact-us API'
+    description: ''
+  -
+    name: 'Product API'
+    description: ''
+  -
+    name: 'WhereToFindUs API'
+    description: ''
   -
     name: 'Blog API'
     description: ''

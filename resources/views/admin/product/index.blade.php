@@ -1,7 +1,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">{{ __( 'template.menus' ) }}</h3>
+            <h3 class="nk-block-title page-title">{{ __( 'template.products' ) }}</h3>
         </div><!-- .nk-block-head-content -->
         @can( 'add products' )
         <div class="nk-block-head-content">
@@ -56,9 +56,20 @@ $columns = [
         'title' => __( 'product.code' ),
     ],
     [
+        'type' => 'input',
+        'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product.product_variant' ) ] ),
+        'id' => 'product_variant',
+        'title' => __( 'product.product_variant' ),
+    ],
+    [
         'type' => 'default',
-        'id' => 'price',
-        'title' => __( 'product.price' ),
+        'id' => 'upfront',
+        'title' => __( 'product.upfront' ),
+    ],
+    [
+        'type' => 'default',
+        'id' => 'outright',
+        'title' => __( 'product.outright' ),
     ],
     [
         'type' => 'select',
@@ -117,7 +128,9 @@ var statusMapper = @json( $data['status'] ),
             { data: 'image_path' },
             { data: 'title' },
             { data: 'code' },
-            { data: 'price' },
+            { data: 'active_product_variants' },
+            { data: 'active_product_variants' },
+            { data: 'active_product_variants' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -193,10 +206,31 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "price" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "upfront" ) }}' ),
                 width: '10%',
                 render: function( data, type, row, meta ) {
-                    return data ? data : '-' ;
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return row.price;
+                        }
+                        return data ? data[0].upfront : '-' ;
+                    }else{
+                        return row.price;
+                    }
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "outright" ) }}' ),
+                width: '10%',
+                render: function( data, type, row, meta ) {
+                    if (Array.isArray(data)) {
+                        if( data.length == 0 ){
+                            return row.price;
+                        }
+                        return data ? data[0].outright : '-' ;
+                    }else{
+                        return row.price;
+                    }
                 },
             },
             {
@@ -228,7 +262,7 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt('{{ Helper::columnIndex( $columns, "warehouse" ) }}'),
+                targets: parseInt('{{ Helper::columnIndex( $columns, "product_variant" ) }}'),
                 width: '10%',
                 render: function(data, type, row, meta) {
                     // Check if data is an array
@@ -240,9 +274,8 @@ var statusMapper = @json( $data['status'] ),
                         return data
                             .map(item => {
                                 // Check if the title and quantity exist
-                                const title = item?.title?.length > 0 ? item.title : '-';
-                                const quantity = item?.pivot.quantity != null ? item.pivot.quantity : '-';
-                                return `${title}: ${quantity}`;
+                                const title = item.title ? item.title : '-';
+                                return `${title}`;
                             })
                             .join('<br>'); // Join titles with line breaks
                     }

@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\{
     DB,
     Validator,
+    Mail,
 };
 
 use App\Models\{
@@ -29,10 +30,17 @@ use App\Models\{
     UserNotification,
     UserNotificationUser,
     UserNotificationSeen,
+    VoucherUsage,
+    Voucher,
 };
 
 use App\Jobs\{
-    GenerateInsuranceReceipt
+    GenerateInsuranceReceipt,
+    SendOrderSuccessMail
+};
+
+use App\Mail\{
+    OrderSuccessMail
 };
 
 use App\Services\{
@@ -203,21 +211,122 @@ class Ipay88Service {
                 $orderTransaction->status = 11;
             }
 
-            if( $returnStatus != 0 ){
+            if( $returnStatus != 1 ){
                 $order->payment_attempt += 1;
                 $orderTransaction->status = 20;
+
+                if( $order->voucher ){
+                    $voucher = $order->voucher;
+                    $voucher->usable_amount += 1;
+                    $voucher->save();
+
+                    $voucherUsage = VoucherUsage::where( 'order_id', $order->id )->first();
+                    if ( $voucherUsage ) {
+                        $voucherUsage->status = 20;
+                        $voucherUsage->save();
+                    }
+                }
+
+                return redirect()->away( config( 'services.frontend.url' ) . 'order/' . $order->reference . '/failed' . '?' . http_build_query([
+                    'order_id'     => null,
+                    'payment_url'  => null,
+                    'reference'    => null,
+                    'total_price'  => null,
+                    'message'      => 'Oops something when wrong, Please try ordering Again.',
+                ]) );
+
+                return response()->json( [
+                    'message' => 'Oops something when wrong, Please try ordering Again.',
+                    'message_key' => 'order_failed,',
+                    'data' => [
+                        'status' => $orderStatus
+                    ],
+                ] );
+
             }
             
             $order->payment_method = 2;
             $order->save();
             $orderTransaction->save();
+
+            // Prepare order data for email
+            $addOnMetas = $order->addOns->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
+                    'color' => null,
+                    'color_code' => null,
+                    'payment_plan' => $meta->payment_plan,
+                    'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+                ];
+            });
+           
+            if($order->freeGift){
+                $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+                ->append([ 'image_path' ]);
+    
+                $order->freeGift->subtotal = $order->freeGift->discount_price;
+    
+            }
+    
+            $orderMetas = $order->orderMetas->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
+                    'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                    'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
+                    'payment_plan' => $meta->payment_plan,
+                    'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                    'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                    'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+                ];
+            });
+
+            // Send order success email
+            if( $returnStatus == 0 ){
+                SendOrderSuccessMail::dispatch($order, $orderMetas, $addOnMetas);
+            }
+
+            return redirect()->away( config( 'services.frontend.url' ) . 'order/' . $order->reference . '/success' . '?' . http_build_query([
+                'order_id'     => $order->id,
+                'payment_url'  => $order->payment_url,
+                'reference'    => $order->reference,
+                'total_price'  => Helper::numberFormatV2($order->total_price, 2, true),
+                'message'      => 'Order created successfully. Please proceed with the payment.',
+            ]) );
+            
+            return response()->json( [
+                'message' => '',
+                'message_key' => 'create_order_success',
+                'payment_url' => $order->payment_url,
+                'reference' => $order->reference,
+                'order_id' => $order->id,
+                'status' => $order->order_status_label,
+                'add_on_metas' => $addOnMetas,
+                'free_gift' => $order->freeGift,
+                'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
+                'order_metas' => $orderMetas,
+                'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+                'subtotal' => Helper::numberFormatV2($order->subtotal, 2,false, true),
+                'discount' =>  Helper::numberFormatV2($order->discount, 2,false, true),
+                'tax' =>  Helper::numberFormatV2($order->tax, 2,false, true),
+                'tranction_date' => $order->created_at->format('Y-m-d'),
+                'payment_method' => 'Credit Card',
+                'shipment_method' => 'Free Shipping ( 3 - 7 days )',
+                'delivery_address' => $order->address_1 . $order->address_2 . $order->city . $order->postcode . $order->state,
+                'contact_name' => $order->fullname ? $order->fullname : $order->company_name,
+                'phone_number' => $order->phone_number,
+                'email' => $order->email,
+            ] );
         }
 
         return response()->json( [
-            'message' => '',
-            'message_key' => 'order_placed',
+            'message' => 'Order Not Found',
+            'message_key' => 'order_not_found',
             'data' => [
-                'status' => $orderStatus
+                'status' => false
             ],
         ] );
     }

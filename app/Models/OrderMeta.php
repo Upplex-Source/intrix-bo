@@ -28,7 +28,21 @@ class OrderMeta extends Model
         'quantity',
         'add_on_id',
         'free_gift_id',
+        'payment_plan',
     ];
+
+    protected $appends = ['payment_plan_label'];
+    
+    public function getPaymentPlanLabelAttribute()
+    {
+        $paymentPlan = [
+            1 => __('order.upfront'),
+            2 => __('order.monthly'),
+            3 => __('order.outright'),
+        ];
+
+        return $paymentPlan[$this->attributes['payment_plan']] ?? null;
+    }
 
     public function order() {
         return $this->belongsTo( Order::class, 'order_id' );
@@ -138,6 +152,7 @@ class OrderMeta extends Model
         'quantity',
         'add_on_id',
         'free_gift_id',
+        'payment_plan',
     ];
 
     protected static $logName = 'order_metas';

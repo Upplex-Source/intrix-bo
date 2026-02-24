@@ -79,8 +79,7 @@ class OrderController extends Controller
      * <aside class="notice">id and reference can be used to filter out the order</aside>
      * 
      * <strong>status</strong><br>
-     * 1: placed order / pending payment<br>
-     * 3: paid / unclaimed<br>
+     * 2: pending payment<br>
      * 10: completed / claimed<br>
      * 20: canceled<br>
      * 
@@ -106,7 +105,7 @@ class OrderController extends Controller
      * 
      * @group Order API
      * 
-     * @queryParam order_id integer The ID of the order. Example: 1
+     * @queryParam reference string The unique reference for the order. Example: abcd-1234
      */
     public function retryPayment( Request $request ) {
 

@@ -62,7 +62,7 @@ $columns = [
         'title' => __( 'product_add_on.title' ),
     ],
     [
-        'type' => 'input',
+        'type' => 'default',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'product_add_on.products' ) ] ),
         'id' => 'products',
         'title' => __( 'product_add_on.products' ),

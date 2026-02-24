@@ -50,6 +50,7 @@ class VoucherService
             'validity_days' => [ 'nullable' ],
             'adjustment_data' => ['required'],
             'claim_per_user' => ['nullable'],
+            'target_products' => ['nullable'],
         ] );
 
         $attributeName = [
@@ -119,9 +120,10 @@ class VoucherService
                 'start_date' => $request->start_date,
                 'expired_date' => $request->expired_date,
                 'buy_x_get_y_adjustment' => $request->adjustment_data,
-                // 'usable_amount' => $request->usable_amount,
+                'usable_amount' => $request->usable_amount,
                 // 'validity_days' => $request->validity_days,
-                'claim_per_user' => $request->claim_per_user,
+                'claim_per_user' => $request->usable_amount,
+                'target_products' => $request->target_products,
             ]);
 
             $image = explode( ',', $request->image );
@@ -183,7 +185,8 @@ class VoucherService
             'validity_days' => [ 'nullable' ],
             'adjustment_data' => ['required'],
             'claim_per_user' => ['nullable'],
-            
+            'target_products' => ['nullable'],
+
         ] );
 
         $attributeName = [
@@ -246,7 +249,7 @@ class VoucherService
 
         try {
             $updateVoucher = Voucher::find( $request->id );
-    
+
             $updateVoucher->title = $request->title;
             $updateVoucher->discount_type = $request->discount_type;
             $updateVoucher->type = $request->voucher_type;
@@ -256,10 +259,11 @@ class VoucherService
             $updateVoucher->points_required = 0;
             $updateVoucher->start_date = $request->start_date;
             $updateVoucher->expired_date = $request->expired_date;
-            // $updateVoucher->usable_amount = $request->usable_amount;
+            $updateVoucher->usable_amount = $request->usable_amount;
             // $updateVoucher->validity_days = $request->validity_days;
-            $updateVoucher->claim_per_user = $request->claim_per_user;
+            $updateVoucher->claim_per_user = $request->usable_amount;
             $updateVoucher->buy_x_get_y_adjustment = $request->adjustment_data;
+            $updateVoucher->target_products = $request->target_products;
             
             $image = explode( ',', $request->image );
 
@@ -326,7 +330,7 @@ class VoucherService
 
             $voucherCount = $voucher->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $vouchers = $voucher->skip( $offset )->take( $limit )->get();
@@ -383,7 +387,7 @@ class VoucherService
     
         $voucherCount = $voucher->count();
     
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
     
         // Paginate results
@@ -415,6 +419,75 @@ class VoucherService
     private static function filter( $request, $model ) {
 
         $filter = false;
+
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->created_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->start_date ) ) {
+            if ( str_contains( $request->start_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->start_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.start_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->start_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.start_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
+
+        if ( !empty( $request->expired_date ) ) {
+            if ( str_contains( $request->expired_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->expired_date );
+
+                $startDate = explode( '-', $dates[0] );
+                $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                
+                $endDate = explode( '-', $dates[1] );
+                $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.expired_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            } else {
+
+                $dates = explode( '-', $request->expired_date );
+
+                $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
+                $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
+
+                $model->whereBetween( 'vouchers.expired_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+            }
+            $filter = true;
+        }
 
         if ( !empty( $request->title ) ) {
             $model->where( 'vouchers.title', 'LIKE', '%' . $request->title . '%' );
@@ -453,6 +526,11 @@ class VoucherService
             $filter = true;
         }
 
+        if ( !empty( $request->promo_code ) ) {
+            $model->where( 'promo_code', 'LIKE', '%' . $request->promo_code . '%' );
+            $filter = true;
+        }
+
         if ( !empty( $request->vending_machine_id ) ) {
             $vendingMachineVouchers = VendingMachineStock::where( 'vending_machine_id', $request->vending_machine_id )->pluck( 'voucher_id' );
             $model->whereNotIn( 'id', $vendingMachineVouchers );
@@ -473,8 +551,8 @@ class VoucherService
 
         $voucher = Voucher::find( $request->id );
 
-        $voucher->append( ['encrypted_id','image_path', 'decoded_adjustment'] );
-        
+        $voucher->append( ['encrypted_id','image_path', 'decoded_adjustment', 'target_products_info'] );
+
         return response()->json( $voucher );
     }
 
@@ -585,7 +663,7 @@ class VoucherService
 
         $voucherCount = $voucher->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $vouchers = $voucher->skip( $offset )->take( $limit )->get();
@@ -811,6 +889,26 @@ class VoucherService
 
         $cart = Cart::where( 'session_key', $request->session_key )->where('status', 10)->first();
 
+        // Validate target products
+        if ( $voucher->target_products ) {
+            $targetProductIds = json_decode( $voucher->target_products, true );
+
+            if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                $cartProductIds = $cart->cartMetas->pluck( 'product_id' )->toArray();
+                $hasTargetProduct = !empty( array_intersect( $targetProductIds, $cartProductIds ) );
+
+                if ( !$hasTargetProduct ) {
+                    return response()->json( [
+                        'message_key' => 'voucher_not_applicable_to_cart_products',
+                        'message' => __('voucher.voucher_not_applicable_to_cart_products'),
+                        'errors' => [
+                            'voucher' => __('voucher.voucher_not_applicable_to_cart_products')
+                        ]
+                    ], 422 );
+                }
+            }
+        }
+
         $subtotal = $cart->subtotal;
         $discountAmount = 0;
         $finalPrice = 0;
@@ -876,7 +974,7 @@ class VoucherService
         $finalPrice = max(0, $subtotal - $discountAmount);
     
         return response()->json( [
-            'message' => 'voucher.voucher_validated',
+            'message' => __( 'voucher.voucher_validated' ),
             'subtotal' => number_format($subtotal, 2),
             'discount' => number_format($discountAmount, 2),
             'final_price' => number_format($finalPrice, 2),

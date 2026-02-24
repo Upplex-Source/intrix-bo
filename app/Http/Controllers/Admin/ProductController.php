@@ -124,4 +124,11 @@ class ProductController extends Controller
         return ProductService::removeProductGalleryImage( $request );
     }
 
+    public function removeProductVariantGalleryImage( Request $request ) {
+
+        return ProductService::removeProductVariantGalleryImage( $request );
+    }
+
+    
+
 }

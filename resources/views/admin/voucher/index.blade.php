@@ -38,11 +38,11 @@ $columns = [
         'id' => 'created_date',
         'title' => __( 'datatables.created_date' ),
     ],
-    [
-        'type' => 'default',
-        'id' => 'image',
-        'title' => __( 'voucher.image' ),
-    ],
+    // [
+    //     'type' => 'default',
+    //     'id' => 'image',
+    //     'title' => __( 'voucher.image' ),
+    // ],
     [
         'type' => 'input',
         'placeholder' =>  __( 'datatables.search_x', [ 'title' => __( 'voucher.title' ) ] ),
@@ -56,10 +56,16 @@ $columns = [
         'title' => __( 'voucher.promo_code' ),
     ],
     [
-        'type' => 'select',
-        'options' => $data['voucher_type'],
-        'id' => 'voucher_type',
-        'title' => __( 'voucher.voucher_type' ),
+        'type' => 'input',       
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'voucher.start_date' ) ] ),
+        'id' => 'start_date',
+        'title' => __( 'voucher.start_date' ),
+    ],
+    [
+        'type' => 'input',       
+        'placeholder' => __( 'datatables.search_x', [ 'title' => __( 'voucher.expired_date' ) ] ),
+        'id' => 'expired_date',
+        'title' => __( 'voucher.expired_date' ),
     ],
     [
         'type' => 'select',
@@ -116,10 +122,11 @@ var statusMapper = @json( $data['status'] ),
             { data: null },
             { data: null },
             { data: 'created_at' },
-            { data: 'image_path' },
+            // { data: 'image_path' },
             { data: 'title' },
             { data: 'promo_code' },
-            { data: 'type' },
+            { data: 'start_date' },
+            { data: 'expired_date' },
             { data: 'status' },
             { data: 'encrypted_id' },
         ],
@@ -195,9 +202,31 @@ var statusMapper = @json( $data['status'] ),
                 },
             },
             {
-                targets: parseInt( '{{ Helper::columnIndex( $columns, "voucher_type" ) }}' ),
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "start_date" ) }}' ),
+                className: 'text-center',
                 render: function( data, type, row, meta ) {
-                    return typeMapper[data];
+
+                    if ( !data ) {
+                        return '-';
+                    }
+
+                    return typeof data === 'string'
+                        ? data.split( ' ' )[0]
+                        : '-';
+                },
+            },
+            {
+                targets: parseInt( '{{ Helper::columnIndex( $columns, "expired_date" ) }}' ),
+                className: 'text-center',
+                render: function( data, type, row, meta ) {
+
+                    if ( !data ) {
+                        return '-';
+                    }
+
+                    return typeof data === 'string'
+                        ? data.split( ' ' )[0]
+                        : '-';
                 },
             },
             {
@@ -252,6 +281,24 @@ var statusMapper = @json( $data['status'] ),
     document.addEventListener( 'DOMContentLoaded', function() {
 
         $( '#created_date' ).flatpickr( {
+            mode: 'range',
+            disableMobile: true,
+            onClose: function( selected, dateStr, instance ) {
+                window[$( instance.element ).data('id')] = $( instance.element ).val();
+                dt_table.draw();
+            }
+        } );
+
+        $( '#start_date' ).flatpickr( {
+            mode: 'range',
+            disableMobile: true,
+            onClose: function( selected, dateStr, instance ) {
+                window[$( instance.element ).data('id')] = $( instance.element ).val();
+                dt_table.draw();
+            }
+        } );
+
+        $( '#expired_date' ).flatpickr( {
             mode: 'range',
             disableMobile: true,
             onClose: function( selected, dateStr, instance ) {

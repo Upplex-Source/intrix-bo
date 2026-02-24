@@ -185,5 +185,14 @@ class OrderController extends Controller
         return OrderService::showPaymentPage( $request );
     }
 
+    public function sendReceipt(Request $request)
+    {
+        return OrderService::sendReceipt( $request );
+    }
+
+    public function previewReceipt(Request $request)
+    {
+        return OrderService::previewReceipt( $request );
+    }
 
 }

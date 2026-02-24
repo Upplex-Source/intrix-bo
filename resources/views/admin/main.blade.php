@@ -30,6 +30,7 @@
                             @endif
                             <div class="nk-header-tools">
                                 <ul class="nk-quick-nav">
+                                    @if( 1 == 2 )
                                     <li class="dropdown language-dropdown d-none d-sm-block me-n1">
                                         <a href="#" class="dropdown-toggle nk-quick-nav-icon" data-bs-toggle="dropdown">
                                             <div class="quick-icon border border-light">
@@ -38,16 +39,16 @@
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-s1">
                                             <ul class="language-list">
-@foreach ( Config::get( 'languages' ) as $lang => $language )
-@if ( $lang != App::getLocale() )
-                                                <li>
-                                                    <a href="{{ route( 'admin.switchLanguage', [ 'lang' => $lang ] ) }}" class="language-item">
-                                                        <img src="{{ asset( 'admin/images/flags/' . $lang . '.svg' ) }}" alt="" class="language-flag">
-                                                        <span class="language-name">{{ $language }}</span>
-                                                    </a>
-                                                </li>
-@endif
-@endforeach
+                                            @foreach ( Config::get( 'languages' ) as $lang => $language )
+                                            @if ( $lang != App::getLocale() )
+                                                                                            <li>
+                                                                                                <a href="{{ route( 'admin.switchLanguage', [ 'lang' => $lang ] ) }}" class="language-item">
+                                                                                                    <img src="{{ asset( 'admin/images/flags/' . $lang . '.svg' ) }}" alt="" class="language-flag">
+                                                                                                    <span class="language-name">{{ $language }}</span>
+                                                                                                </a>
+                                                                                            </li>
+                                            @endif
+                                            @endforeach
                                             </ul>
                                         </div>
                                     </li><!-- .dropdown -->
@@ -126,6 +127,7 @@
                                             </div><!-- .nk-dropdown-body -->
                                         </div>
                                     </li>
+                                    @endif
                                     <li class="dropdown user-dropdown">
                                         <a href="#" class="dropdown-toggle me-n1" data-bs-toggle="dropdown">
                                             <div class="user-toggle">

@@ -10,11 +10,579 @@
     ],
     "info": {
         "name": "Laravel",
-        "_postman_id": "cfd76bf1-fda8-4b1a-88c9-0ce1bcaf3c07",
+        "_postman_id": "f55e1e38-07de-465f-bfc8-9e62063d52c2",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
     "item": [
+        {
+            "name": "Contact-us API",
+            "description": "",
+            "item": [
+                {
+                    "name": "1. Contact Us Form Submission",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/contact-us",
+                            "query": [
+                                {
+                                    "key": "full_name",
+                                    "value": "Adam",
+                                    "description": "Fullname of requestor.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "adameve%40mail.com",
+                                    "description": "email of requestor.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "phone_number",
+                                    "value": "0123878123",
+                                    "description": "phone number of requestor.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "location",
+                                    "value": "Selangor",
+                                    "description": "location of requestor.",
+                                    "disabled": false
+                                },
+                                {
+                                    "key": "model",
+                                    "value": "debitis",
+                                    "description": "Model selected by requestor. Example Intrix 5-In-1",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/contact-us?full_name=Adam&email=adameve%40mail.com&phone_number=0123878123&location=Selangor&model=debitis"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "90"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 500,
+                            "body": "{\n    \"message\": \"Failed to authenticate on SMTP server with username \\\"intrix.ecommerce@intrixgroup.com\\\" using 3 possible authenticators. Authenticator LOGIN returned Expected response code 235 but got code \\\"535\\\", with message \\\"535-5.7.8 Username and Password not accepted. For more information, go to\\r\\n535 5.7.8  https:\/\/support.google.com\/mail\/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\\r\\n\\\". Authenticator PLAIN returned Expected response code 235 but got code \\\"535\\\", with message \\\"535-5.7.8 Username and Password not accepted. For more information, go to\\r\\n535 5.7.8  https:\/\/support.google.com\/mail\/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\\r\\n\\\". Authenticator XOAUTH2 returned Expected response code 250 but got code \\\"535\\\", with message \\\"535-5.7.8 Username and Password not accepted. For more information, go to\\r\\n535 5.7.8  https:\/\/support.google.com\/mail\/?p=BadCredentials 98e67ed59e1d1-305827d71b8sm9116600a91.8 - gsmtp\\r\\n\\\".\",\n    \"exception\": \"Swift_TransportException\",\n    \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\swiftmailer\\\\swiftmailer\\\\lib\\\\classes\\\\Swift\\\\Transport\\\\Esmtp\\\\AuthHandler.php\",\n    \"line\": 191,\n    \"trace\": [\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\swiftmailer\\\\swiftmailer\\\\lib\\\\classes\\\\Swift\\\\Transport\\\\EsmtpTransport.php\",\n            \"line\": 371,\n            \"function\": \"afterEhlo\",\n            \"class\": \"Swift_Transport_Esmtp_AuthHandler\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\swiftmailer\\\\swiftmailer\\\\lib\\\\classes\\\\Swift\\\\Transport\\\\AbstractSmtpTransport.php\",\n            \"line\": 148,\n            \"function\": \"doHeloCommand\",\n            \"class\": \"Swift_Transport_EsmtpTransport\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\swiftmailer\\\\swiftmailer\\\\lib\\\\classes\\\\Swift\\\\Mailer.php\",\n            \"line\": 65,\n            \"function\": \"start\",\n            \"class\": \"Swift_Transport_AbstractSmtpTransport\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Mail\\\\Mailer.php\",\n            \"line\": 521,\n            \"function\": \"send\",\n            \"class\": \"Swift_Mailer\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Mail\\\\Mailer.php\",\n            \"line\": 288,\n            \"function\": \"sendSwiftMessage\",\n            \"class\": \"Illuminate\\\\Mail\\\\Mailer\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Mail\\\\Mailable.php\",\n            \"line\": 187,\n            \"function\": \"send\",\n            \"class\": \"Illuminate\\\\Mail\\\\Mailer\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Support\\\\Traits\\\\Localizable.php\",\n            \"line\": 19,\n            \"function\": \"Illuminate\\\\Mail\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Mail\\\\Mailable\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Mail\\\\Mailable.php\",\n            \"line\": 188,\n            \"function\": \"withLocale\",\n            \"class\": \"Illuminate\\\\Mail\\\\Mailable\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Mail\\\\Mailer.php\",\n            \"line\": 304,\n            \"function\": \"send\",\n            \"class\": \"Illuminate\\\\Mail\\\\Mailable\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Mail\\\\Mailer.php\",\n            \"line\": 258,\n            \"function\": \"sendMailable\",\n            \"class\": \"Illuminate\\\\Mail\\\\Mailer\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Mail\\\\MailManager.php\",\n            \"line\": 550,\n            \"function\": \"send\",\n            \"class\": \"Illuminate\\\\Mail\\\\Mailer\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Support\\\\Facades\\\\Facade.php\",\n            \"line\": 261,\n            \"function\": \"__call\",\n            \"class\": \"Illuminate\\\\Mail\\\\MailManager\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\app\\\\Services\\\\OrderService.php\",\n            \"line\": 2320,\n            \"function\": \"__callStatic\",\n            \"class\": \"Illuminate\\\\Support\\\\Facades\\\\Facade\",\n            \"type\": \"::\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\app\\\\Http\\\\Controllers\\\\Api\\\\ContactController.php\",\n            \"line\": 28,\n            \"function\": \"contactUs\",\n            \"class\": \"App\\\\Services\\\\OrderService\",\n            \"type\": \"::\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Controller.php\",\n            \"line\": 54,\n            \"function\": \"contactUs\",\n            \"class\": \"App\\\\Http\\\\Controllers\\\\Api\\\\ContactController\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\ControllerDispatcher.php\",\n            \"line\": 45,\n            \"function\": \"callAction\",\n            \"class\": \"Illuminate\\\\Routing\\\\Controller\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Route.php\",\n            \"line\": 262,\n            \"function\": \"dispatch\",\n            \"class\": \"Illuminate\\\\Routing\\\\ControllerDispatcher\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Route.php\",\n            \"line\": 205,\n            \"function\": \"runController\",\n            \"class\": \"Illuminate\\\\Routing\\\\Route\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 721,\n            \"function\": \"run\",\n            \"class\": \"Illuminate\\\\Routing\\\\Route\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 128,\n            \"function\": \"Illuminate\\\\Routing\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\app\\\\Http\\\\Middleware\\\\APIVersion.php\",\n            \"line\": 20,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"App\\\\Http\\\\Middleware\\\\APIVersion\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Middleware\\\\SubstituteBindings.php\",\n            \"line\": 50,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Routing\\\\Middleware\\\\SubstituteBindings\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Middleware\\\\ThrottleRequests.php\",\n            \"line\": 127,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Middleware\\\\ThrottleRequests.php\",\n            \"line\": 103,\n            \"function\": \"handleRequest\",\n            \"class\": \"Illuminate\\\\Routing\\\\Middleware\\\\ThrottleRequests\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Middleware\\\\ThrottleRequests.php\",\n            \"line\": 55,\n            \"function\": \"handleRequestUsingNamedLimiter\",\n            \"class\": \"Illuminate\\\\Routing\\\\Middleware\\\\ThrottleRequests\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Routing\\\\Middleware\\\\ThrottleRequests\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 103,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 723,\n            \"function\": \"then\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 698,\n            \"function\": \"runRouteWithinStack\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 662,\n            \"function\": \"runRoute\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Routing\\\\Router.php\",\n            \"line\": 651,\n            \"function\": \"dispatchToRoute\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Kernel.php\",\n            \"line\": 167,\n            \"function\": \"dispatch\",\n            \"class\": \"Illuminate\\\\Routing\\\\Router\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 128,\n            \"function\": \"Illuminate\\\\Foundation\\\\Http\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Kernel\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\barryvdh\\\\laravel-debugbar\\\\src\\\\Middleware\\\\InjectDebugbar.php\",\n            \"line\": 59,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Barryvdh\\\\Debugbar\\\\Middleware\\\\InjectDebugbar\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest.php\",\n            \"line\": 21,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\ConvertEmptyStringsToNull.php\",\n            \"line\": 31,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\ConvertEmptyStringsToNull\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest.php\",\n            \"line\": 21,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TrimStrings.php\",\n            \"line\": 40,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TransformsRequest\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\TrimStrings\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\ValidatePostSize.php\",\n            \"line\": 27,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\ValidatePostSize\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\PreventRequestsDuringMaintenance.php\",\n            \"line\": 86,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Middleware\\\\PreventRequestsDuringMaintenance\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\fruitcake\\\\laravel-cors\\\\src\\\\HandleCors.php\",\n            \"line\": 52,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Fruitcake\\\\Cors\\\\HandleCors\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\fideloper\\\\proxy\\\\src\\\\TrustProxies.php\",\n            \"line\": 57,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 167,\n            \"function\": \"handle\",\n            \"class\": \"Fideloper\\\\Proxy\\\\TrustProxies\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Pipeline\\\\Pipeline.php\",\n            \"line\": 103,\n            \"function\": \"Illuminate\\\\Pipeline\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Kernel.php\",\n            \"line\": 142,\n            \"function\": \"then\",\n            \"class\": \"Illuminate\\\\Pipeline\\\\Pipeline\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Http\\\\Kernel.php\",\n            \"line\": 111,\n            \"function\": \"sendRequestThroughRouter\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Kernel\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls.php\",\n            \"line\": 299,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Http\\\\Kernel\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls.php\",\n            \"line\": 287,\n            \"function\": \"callLaravelOrLumenRoute\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls.php\",\n            \"line\": 89,\n            \"function\": \"makeApiCall\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls.php\",\n            \"line\": 45,\n            \"function\": \"makeResponseCall\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls.php\",\n            \"line\": 35,\n            \"function\": \"makeResponseCallIfConditionsPass\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Extractor.php\",\n            \"line\": 222,\n            \"function\": \"__invoke\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Strategies\\\\Responses\\\\ResponseCalls\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Extractor.php\",\n            \"line\": 179,\n            \"function\": \"iterateThroughStrategies\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Extractor\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Extracting\\\\Extractor.php\",\n            \"line\": 116,\n            \"function\": \"fetchResponses\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Extractor\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\GroupedEndpoints\\\\GroupedEndpointsFromApp.php\",\n            \"line\": 123,\n            \"function\": \"processRoute\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Extracting\\\\Extractor\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\GroupedEndpoints\\\\GroupedEndpointsFromApp.php\",\n            \"line\": 80,\n            \"function\": \"extractEndpointsInfoFromLaravelApp\",\n            \"class\": \"Knuckles\\\\Scribe\\\\GroupedEndpoints\\\\GroupedEndpointsFromApp\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\GroupedEndpoints\\\\GroupedEndpointsFromApp.php\",\n            \"line\": 56,\n            \"function\": \"extractEndpointsInfoAndWriteToDisk\",\n            \"class\": \"Knuckles\\\\Scribe\\\\GroupedEndpoints\\\\GroupedEndpointsFromApp\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\knuckleswtf\\\\scribe\\\\src\\\\Commands\\\\GenerateDocumentation.php\",\n            \"line\": 55,\n            \"function\": \"get\",\n            \"class\": \"Knuckles\\\\Scribe\\\\GroupedEndpoints\\\\GroupedEndpointsFromApp\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Container\\\\BoundMethod.php\",\n            \"line\": 36,\n            \"function\": \"handle\",\n            \"class\": \"Knuckles\\\\Scribe\\\\Commands\\\\GenerateDocumentation\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Container\\\\Util.php\",\n            \"line\": 40,\n            \"function\": \"Illuminate\\\\Container\\\\{closure}\",\n            \"class\": \"Illuminate\\\\Container\\\\BoundMethod\",\n            \"type\": \"::\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Container\\\\BoundMethod.php\",\n            \"line\": 93,\n            \"function\": \"unwrapIfClosure\",\n            \"class\": \"Illuminate\\\\Container\\\\Util\",\n            \"type\": \"::\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Container\\\\BoundMethod.php\",\n            \"line\": 37,\n            \"function\": \"callBoundMethod\",\n            \"class\": \"Illuminate\\\\Container\\\\BoundMethod\",\n            \"type\": \"::\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Container\\\\Container.php\",\n            \"line\": 653,\n            \"function\": \"call\",\n            \"class\": \"Illuminate\\\\Container\\\\BoundMethod\",\n            \"type\": \"::\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Console\\\\Command.php\",\n            \"line\": 136,\n            \"function\": \"call\",\n            \"class\": \"Illuminate\\\\Container\\\\Container\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\symfony\\\\console\\\\Command\\\\Command.php\",\n            \"line\": 298,\n            \"function\": \"execute\",\n            \"class\": \"Illuminate\\\\Console\\\\Command\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Console\\\\Command.php\",\n            \"line\": 121,\n            \"function\": \"run\",\n            \"class\": \"Symfony\\\\Component\\\\Console\\\\Command\\\\Command\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\symfony\\\\console\\\\Application.php\",\n            \"line\": 1040,\n            \"function\": \"run\",\n            \"class\": \"Illuminate\\\\Console\\\\Command\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\symfony\\\\console\\\\Application.php\",\n            \"line\": 301,\n            \"function\": \"doRunCommand\",\n            \"class\": \"Symfony\\\\Component\\\\Console\\\\Application\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\symfony\\\\console\\\\Application.php\",\n            \"line\": 171,\n            \"function\": \"doRun\",\n            \"class\": \"Symfony\\\\Component\\\\Console\\\\Application\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Console\\\\Application.php\",\n            \"line\": 94,\n            \"function\": \"run\",\n            \"class\": \"Symfony\\\\Component\\\\Console\\\\Application\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Console\\\\Kernel.php\",\n            \"line\": 129,\n            \"function\": \"run\",\n            \"class\": \"Illuminate\\\\Console\\\\Application\",\n            \"type\": \"->\"\n        },\n        {\n            \"file\": \"C:\\\\xampp\\\\htdocs\\\\intrix-backoffice\\\\artisan\",\n            \"line\": 37,\n            \"function\": \"handle\",\n            \"class\": \"Illuminate\\\\Foundation\\\\Console\\\\Kernel\",\n            \"type\": \"->\"\n        }\n    ]\n}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Product API",
+            "description": "",
+            "item": [
+                {
+                    "name": "1. Get Add Ons",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/add-ons",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/add-ons"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"length\":10,\"start\":0,\"created_date\":\"2024-09-25 to 2024-09-27\"}"
+                        },
+                        "description": "<aside class=\"notice\">Get all Add on that is in BO<\/aside>"
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "92"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"add_ons\":[{\"id\":1,\"product_id\":null,\"title\":\"tesss\",\"code\":\"tesss\",\"description\":\"tesss\",\"color\":null,\"image\":\"product-add-on\\\/1\\\/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png\",\"status\":10,\"brochure\":null,\"sku\":\"tesss\",\"specification\":\"tesss\",\"features\":\"tesss\",\"whats_included\":\"tesss\",\"price\":\"12.00\",\"discount_price\":\"0.00\",\"created_at\":\"2025-03-17 16:29:32\",\"updated_at\":\"2025-03-17 16:29:32\",\"image_path\":\"http:\\\/\\\/localhost\\\/storage\\\/product-add-on\\\/1\\\/g0sRh6zFCLiFIWmOp8HTb1CmdtefBhPLlKdYEbpF.png\",\"add_on_products\":[{\"id\":4,\"code\":\"LITE\",\"title\":\"Intrix One Tap Lite\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"39.00\",\"discount_price\":\"39.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"add_on_id\":1,\"product_id\":4}},{\"id\":5,\"code\":\"TEST\",\"title\":\"TEST\",\"image\":null,\"description\":\"TEST\",\"price\":\"1.00\",\"discount_price\":\"1.00\",\"status\":10,\"created_at\":\"2025-03-18 11:05:00\",\"updated_at\":\"2025-03-18 11:05:00\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"add_on_id\":1,\"product_id\":5}},{\"id\":3,\"code\":\"2-IN-1\",\"title\":\"Intrix One Tap 2 in 1\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"45.00\",\"discount_price\":\"45.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"add_on_id\":1,\"product_id\":3}},{\"id\":2,\"code\":\"4-IN-1\",\"title\":\"Intrix One Tap 4 in 1\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"52.00\",\"discount_price\":\"52.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"add_on_id\":1,\"product_id\":2}},{\"id\":1,\"code\":\"5-IN-1\",\"title\":\"Intrix One Tap 5 in 1\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"75.00\",\"discount_price\":\"75.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"add_on_id\":1,\"product_id\":1}}]}],\"draw\":null,\"start\":0,\"length\":10,\"hasMore\":false,\"nextStart\":null,\"recordsFiltered\":1,\"recordsTotal\":1}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "1. Get Free Gifts",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/free-gifts",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/free-gifts"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"length\":10,\"start\":0,\"created_date\":\"2024-09-25 to 2024-09-27\"}"
+                        },
+                        "description": "<aside class=\"notice\">Get all Add on that is in BO<\/aside>"
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "91"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"free_gifts\":[{\"id\":1,\"title\":\"tesst gift\",\"description\":\"123123\",\"color\":null,\"image\":\"product-add-on\\\/1\\\/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png\",\"status\":10,\"brochure\":null,\"sku\":\"12312\",\"specification\":\"123123123\",\"features\":\"12313\",\"whats_included\":\"123\",\"created_at\":\"2025-03-16 21:09:02\",\"updated_at\":\"2025-03-18 11:38:39\",\"price\":\"0.00\",\"discount_price\":\"0.00\",\"product_id\":null,\"code\":\"gggg\",\"image_path\":\"http:\\\/\\\/localhost\\\/storage\\\/product-add-on\\\/1\\\/QnMYIcQbeA0la7tMmDyWfXhnLYL0oH1Q4sDbURpA.png\",\"free_gift_products\":[{\"id\":1,\"code\":\"5-IN-1\",\"title\":\"Intrix One Tap 5 in 1\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"75.00\",\"discount_price\":\"75.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"free_gift_id\":1,\"product_id\":1}}]},{\"id\":2,\"title\":\"unassco\",\"description\":null,\"color\":null,\"image\":null,\"status\":10,\"brochure\":null,\"sku\":null,\"specification\":null,\"features\":null,\"whats_included\":null,\"created_at\":\"2025-03-16 21:09:13\",\"updated_at\":\"2025-03-17 16:31:52\",\"price\":\"0.00\",\"discount_price\":\"0.00\",\"product_id\":null,\"code\":\"unassco\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"free_gift_products\":[{\"id\":5,\"code\":\"TEST\",\"title\":\"TEST\",\"image\":null,\"description\":\"TEST\",\"price\":\"1.00\",\"discount_price\":\"1.00\",\"status\":10,\"created_at\":\"2025-03-18 11:05:00\",\"updated_at\":\"2025-03-18 11:05:00\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"free_gift_id\":2,\"product_id\":5}},{\"id\":4,\"code\":\"LITE\",\"title\":\"Intrix One Tap Lite\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"39.00\",\"discount_price\":\"39.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"free_gift_id\":2,\"product_id\":4}},{\"id\":3,\"code\":\"2-IN-1\",\"title\":\"Intrix One Tap 2 in 1\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"45.00\",\"discount_price\":\"45.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"free_gift_id\":2,\"product_id\":3}},{\"id\":2,\"code\":\"4-IN-1\",\"title\":\"Intrix One Tap 4 in 1\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"52.00\",\"discount_price\":\"52.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"free_gift_id\":2,\"product_id\":2}},{\"id\":1,\"code\":\"5-IN-1\",\"title\":\"Intrix One Tap 5 in 1\",\"image\":null,\"description\":\"Intrix One Tap Lite\",\"price\":\"75.00\",\"discount_price\":\"75.00\",\"status\":10,\"created_at\":\"2025-02-08 13:22:04\",\"updated_at\":\"2025-02-08 13:22:04\",\"image_path\":\"http:\\\/\\\/localhost\\\/admin\\\/images\\\/placeholder.png?v=1.07\",\"pivot\":{\"free_gift_id\":2,\"product_id\":1}}]}],\"draw\":null,\"start\":0,\"length\":10,\"hasMore\":false,\"nextStart\":null,\"recordsFiltered\":2,\"recordsTotal\":2}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "WhereToFindUs API",
+            "description": "",
+            "item": [
+                {
+                    "name": "1. Get Countries",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/where-to-find-us\/countries",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/where-to-find-us\/countries"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "89"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"message\":\"\",\"message_key\":\"get_countries_success\",\"countries\":[{\"id\":1,\"name\":\"malaysia\"},{\"id\":2,\"name\":\"Austria\"},{\"id\":3,\"name\":\"UK\"},{\"id\":4,\"name\":\"Hong Kong\"}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "2. Get States",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/where-to-find-us\/states",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/where-to-find-us\/states"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"country\":\"Malaysia\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "88"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"message\":\"\",\"message_key\":\"get_states_success\",\"states\":[{\"id\":1,\"country_id\":1,\"name\":\"123123\",\"sequence\":0,\"postcode\":null,\"title\":\"\",\"description\":\"\"},{\"id\":3,\"country_id\":1,\"name\":\"123123123\",\"sequence\":0,\"postcode\":null,\"title\":\"\",\"description\":\"\"},{\"id\":6,\"country_id\":1,\"name\":\"Kuala Lumpur\",\"sequence\":0,\"postcode\":null,\"title\":\"\",\"description\":\"\"}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "3. Get Branches",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/where-to-find-us\/branches",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/where-to-find-us\/branches"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"state\":\"Kuala Lumpur\",\"title\":\"B\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "87"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"message\":\"\",\"message_key\":\"get_branches_success\",\"states\":[]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "5. Get Installation Guide ( sorted )",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/guides-resources\/installation-guides",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/guides-resources\/installation-guides"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"country\":\"Malaysia\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "86"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"message\":\"\",\"message_key\":\"get_installation_guides_success\",\"states\":[]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "4. Get Product Brochures ( sorted )",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/guides-resources\/product-brochures",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/guides-resources\/product-brochures"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"country\":\"Malaysia\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "85"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"message\":\"\",\"message_key\":\"get_product_brochures_success\",\"states\":[{\"id\":7,\"country_id\":1,\"sequence\":0,\"file\":\"file-managers\\\/czloqR5FJHkXoLkG7Iu531NbGWFtK311wqH3P5Wk.pdf\",\"file_type\":1,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/czloqR5FJHkXoLkG7Iu531NbGWFtK311wqH3P5Wk.pdf\",\"title\":\"integrationFAQ (1).pdf\",\"description\":\"\"},{\"id\":10,\"country_id\":1,\"sequence\":1,\"file\":\"file-managers\\\/siO1lF0DIB7kK80BehwDxkREQzrHtI83hgCjxfz4.pdf\",\"file_type\":1,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/siO1lF0DIB7kK80BehwDxkREQzrHtI83hgCjxfz4.pdf\",\"title\":\"integrationFAQ (1).pdf\",\"description\":\"\"},{\"id\":8,\"country_id\":1,\"sequence\":2,\"file\":\"file-managers\\\/hhExFs5uPjVId1vAyX4fUV7bGDdZRIwCRHLpRcf0.pdf\",\"file_type\":1,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/hhExFs5uPjVId1vAyX4fUV7bGDdZRIwCRHLpRcf0.pdf\",\"title\":\"integrationFAQ (1).pdf\",\"description\":\"\"},{\"id\":11,\"country_id\":1,\"sequence\":3,\"file\":\"file-managers\\\/hs0NfiEZii7TpPbVRa1ySz8xOklJoRTjju6o3TBh.pdf\",\"file_type\":1,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/hs0NfiEZii7TpPbVRa1ySz8xOklJoRTjju6o3TBh.pdf\",\"title\":\"receipt (25).pdf\",\"description\":\"\"},{\"id\":9,\"country_id\":1,\"sequence\":4,\"file\":\"file-managers\\\/m5BKOexiY0vhmMgCGzAr0ufAo42BonuzotaEY1OB.pdf\",\"file_type\":1,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/m5BKOexiY0vhmMgCGzAr0ufAo42BonuzotaEY1OB.pdf\",\"title\":\"integrationFAQ (1).pdf\",\"description\":\"\"}]}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "4. Get Videos ( sorted )",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/guides-resources\/videos",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/v1\/guides-resources\/videos"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"country\":\"Malaysia\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "x-ratelimit-limit",
+                                    "value": "100"
+                                },
+                                {
+                                    "key": "x-ratelimit-remaining",
+                                    "value": "84"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 200,
+                            "body": "{\"message\":\"\",\"message_key\":\"get_videos_success\",\"states\":[{\"id\":16,\"country_id\":1,\"sequence\":0,\"file\":\"file-managers\\\/ZV823NfOGaRaY2TD7tgPZyRKEJalkkLkDigo0HGu.mp4\",\"file_type\":3,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/ZV823NfOGaRaY2TD7tgPZyRKEJalkkLkDigo0HGu.mp4\",\"title\":\"179207 (720p).mp4\",\"description\":\"\"},{\"id\":15,\"country_id\":1,\"sequence\":1,\"file\":\"file-managers\\\/QrlRDNw7l6KVE9NHEEMqaS6a88tj2amiaKm6xNiY.mp4\",\"file_type\":3,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/QrlRDNw7l6KVE9NHEEMqaS6a88tj2amiaKm6xNiY.mp4\",\"title\":\"m2-res_1080p.mp4\",\"description\":\"\"},{\"id\":18,\"country_id\":1,\"sequence\":2,\"file\":\"file-managers\\\/wKC35CJCtaURNO2F9Z08qNrAUtUTh12S1o6aUYG0.mp4\",\"file_type\":3,\"filePath\":\"http:\\\/\\\/localhost\\\/storage\\\/file-managers\\\/wKC35CJCtaURNO2F9Z08qNrAUtUTh12S1o6aUYG0.mp4\",\"title\":\"1739866074.mp4\",\"description\":\"\"}]}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
         {
             "name": "Blog API",
             "description": "",
@@ -462,9 +1030,85 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"session_key\":\"quo\",\"id\":1,\"cart_item\":1}"
+                            "raw": "{\"session_key\":\"enim\",\"id\":1,\"cart_item\":1}"
                         },
                         "description": "<aside class=\"notice\">session_key or cart id can be used to delete the cart<\/aside>",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "6. Update Cart Addon\/FreeGift",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/carts\/update-add-on",
+                            "query": [
+                                {
+                                    "key": "session_key",
+                                    "value": "abcd-1234",
+                                    "description": "The unique identifier for the cart. Used to add addon or free gift to the cart",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/carts\/update-add-on?session_key=abcd-1234"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"add_on\":\"ADD-ON\",\"free_gift\":\"FREE-GIFT\",\"quantity\":\"1, -1 to deduct\",\"type\":\"1\",\"action\":\"remove\"}"
+                        },
+                        "description": "<aside class=\"notice\">session_key or cart id can be used to update the cart<\/aside>\n\n<strong>type<\/strong><\/br>\n1: add on<br>\n2: free gift<br>\n\n<strong>action<\/strong><\/br>\nremove: remove<br>\nupdate: update<br>",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "7. Update Cart Shipment Details",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/carts\/update-shipment",
+                            "query": [
+                                {
+                                    "key": "session_key",
+                                    "value": "abcd-1234",
+                                    "description": "The unique identifier for the cart. Used to update shipment details to the cart",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/carts\/update-shipment?session_key=abcd-1234"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"fullname\":\"Johnny\",\"company_name\":\"Johnny holdings\",\"email\":\"johnny@gmail.com\",\"phone_number\":\"1231231223\",\"address_1\":\"Lot 4, 1\",\"address_2\":\"Bandar Baru Bangi\",\"city\":\"Kajang\",\"state\":\"Selangor\",\"postcode\":\"43000\",\"country\":\"Malaysia\",\"remarks\":\"Be careful\",\"payment_plan\":1}"
+                        },
+                        "description": "<aside class=\"notice\">session_key or cart id can be used to update the cart shipment<\/aside>\n\n<strong>payment_plan<\/strong><\/br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>",
                         "auth": {
                             "type": "noauth"
                         }
@@ -615,9 +1259,9 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"session_key\":\"kn1i23onlas1\",\"cart_item\":12,\"promo_code\":0,\"fullname\":\"Johnny\",\"company_name\":\"Johnny holdings\",\"email\":\"johnny@gmail.com\",\"phone_number\":\"1231231223\",\"address_1\":\"Lot 4, 1\",\"address_2\":\"Bandar Baru Bangi\",\"city\":\"Kajang\",\"state\":\"Selangor\",\"postcode\":\"43000\",\"country\":\"Malaysia\",\"remarks\":\"Be careful\",\"payment_plan\":1}"
+                            "raw": "{\"session_key\":\"kn1i23onlas1\",\"promo_code\":0}"
                         },
-                        "description": "<strong>payment_plan<\/strong><\/br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>\n\n<strong>color<\/strong><\/br>\n1: CHROME<br>\n2: MATTE BLACK<br>\n3: SATIN GOLD<br>\n4: GUNMETAL GREY<br>",
+                        "description": "<strong>payment_plan<\/strong><\/br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>",
                         "auth": {
                             "type": "noauth"
                         }
@@ -646,47 +1290,9 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"product_code\":\"5-IN-1\",\"color\":\"CHROME\",\"quantity\":\"1\",\"promo_code\":0,\"fullname\":\"Johnny\",\"company_name\":\"Johnny holdings\",\"email\":\"johnny@gmail.com\",\"phone_number\":\"1231231223\",\"address_1\":\"Lot 4, 1\",\"address_2\":\"Bandar Baru Bangi\",\"city\":\"Kajang\",\"state\":\"Selangor\",\"postcode\":\"43000\",\"country\":\"Malaysia\",\"remarks\":\"Be careful\",\"payment_plan\":1}"
+                            "raw": "{\"product_code\":\"5-IN-1\",\"color\":\"CHROME\",\"quantity\":\"1\",\"promo_code\":0,\"fullname\":\"Johnny\",\"company_name\":\"Johnny holdings\",\"email\":\"johnny@gmail.com\",\"phone_number\":\"1231231223\",\"address_1\":\"Lot 4, 1\",\"address_2\":\"Bandar Baru Bangi\",\"city\":\"Kajang\",\"state\":\"Selangor\",\"postcode\":\"43000\",\"country\":\"Malaysia\",\"remarks\":\"Be careful\",\"payment_plan\":1,\"add_on\":\"ADD-ON\",\"free_gift\":\"FREE-GIFT\"}"
                         },
                         "description": "<strong>payment_plan<\/strong><\/br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>\n\n<strong>color<\/strong><\/br>\n1: CHROME<br>\n2: MATTE BLACK<br>\n3: SATIN GOLD<br>\n4: GUNMETAL GREY<br>",
-                        "auth": {
-                            "type": "noauth"
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "3. validate voucher ( Apply Voucher )",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/v1\/promo-codes\/validate",
-                            "query": [
-                                {
-                                    "key": "session_key",
-                                    "value": "abcd-1234",
-                                    "description": "optional The unique identifier for the cart. Must be provided if type is 2",
-                                    "disabled": false
-                                }
-                            ],
-                            "raw": "{{baseUrl}}\/api\/v1\/promo-codes\/validate?session_key=abcd-1234"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"type\":\"1\",\"product_code\":\"5-IN-1\",\"color\":\"CHROME\",\"quantity\":\"1\",\"promo_code\":0,\"payment_plan\":1}"
-                        },
-                        "description": "<strong>payment_plan<\/strong><\/br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>\n\n<strong>color<\/strong><\/br>\n1: CHROME<br>\n2: MATTE BLACK<br>\n3: SATIN GOLD<br>\n4: GUNMETAL GREY<br>\n\n<strong>type<\/strong><\/br>\n1: BUY NOW<br>\n2: CART<br>",
                         "auth": {
                             "type": "noauth"
                         }
@@ -770,6 +1376,44 @@
                             "name": ""
                         }
                     ]
+                },
+                {
+                    "name": "3. validate voucher ( Apply Voucher )",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/v1\/promo-codes\/validate",
+                            "query": [
+                                {
+                                    "key": "session_key",
+                                    "value": "abcd-1234",
+                                    "description": "optional The unique identifier for the cart. Must be provided if type is 2",
+                                    "disabled": false
+                                }
+                            ],
+                            "raw": "{{baseUrl}}\/api\/v1\/promo-codes\/validate?session_key=abcd-1234"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"type\":1,\"promo_code\":0,\"product_code\":\"5-IN-1\",\"color\":\"1\",\"quantity\":1,\"payment_plan\":1}"
+                        },
+                        "description": "<strong>payment_plan<\/strong><\/br>\n1: upfront<br>\n2: monthly<br>\n3: outright<br>\n\n<strong>color<\/strong><\/br>\n1: CHROME<br>\n2: MATTE BLACK<br>\n3: SATIN GOLD<br>\n4: GUNMETAL GREY<br>\n\n<strong>type<\/strong><\/br>\n1: BUY NOW<br>\n2: CART<br>",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": []
                 }
             ]
         }

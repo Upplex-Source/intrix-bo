@@ -1,3 +1,24 @@
+<style>
+
+    /* Optional: center the image inside the preview */
+    .dropzone .dz-preview .dz-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100px;  /* or your desired size */
+        height: 100px;
+        margin: auto;
+        overflow: hidden;
+    }
+    
+    .dropzone .dz-preview .dz-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    </style>
+    
+
 <?php
 $administrator_create = 'administrator_create';
 ?>
@@ -58,10 +79,7 @@ $administrator_create = 'administrator_create';
                     <label for="{{ $administrator_create }}_role" class="col-sm-5 col-form-label">{{ __( 'administrator.role' ) }}</label>
                     <div class="col-sm-7">
                         <select class="form-select" id="{{ $administrator_create }}_role">
-                            <option value="">{{ __( 'datatables.select_x', [ 'title' => __( 'administrator.role' ) ] ) }}</option>
-                            @foreach( $data['roles'] as $role )
-                            <option value="{{ $role['value'] }}">{{ $role['title'] }}</option>
-                            @endforeach
+                            <option value="1" selected>{{ __( 'role.super_admin' ) }}</option>
                         </select>
                         <div class="invalid-feedback"></div>
                     </div>

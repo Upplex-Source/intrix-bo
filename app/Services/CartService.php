@@ -60,7 +60,7 @@ class CartService {
         $query = Cart::with(['cartMetas', 'addons', 'freeGift' => function ($query) {
                 $query->orderBy('created_at', 'DESC');
             }, 'voucher'])
-            ->where('status', 10)
+            ->whereIn('status', [ 21, 10 ] )
             ->orderBy('created_at', 'DESC');
     
         // Apply filters if 'id' or 'session_key' is provided
@@ -105,6 +105,21 @@ class CartService {
     
             // Process each cart meta data
             $cartMetas = $cart->cartMetas->map(function ($meta) {
+
+                $productPrice = $meta->product->price;
+
+                switch ( $meta->payment_plan ) {
+                    case 1:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                        break;
+                    case 2:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                        break;
+                    case 3:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                        break;
+                }
+
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
@@ -112,8 +127,11 @@ class CartService {
                     'color' => $meta->productVariant ? $meta->productVariant->title : null,
                     'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                     'payment_plan' => $meta->payment_plan,
+                    'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
-                        ->setAttribute('image_path', $meta->product->image_path),
+                        ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                        ->setAttribute( 'image_path', $meta->product->image_path )
+                        ->setAttribute( 'price', $productPrice ),
                     'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 ];
             });
@@ -235,9 +253,14 @@ class CartService {
                     $productPrice = $productVariant ? $productVariant->monthly : $product->price;
                     break;
                 case 3:
-                    $productPrice = $productVariant ? $productVariant->outrigh : $product->pricet;
+                    $productPrice = $productVariant ? $productVariant->outright : $product->price;
                     break;
             }
+
+            $originalCartMeta = CartMeta::where('cart_id', $cart->id)
+            ->where( 'product_id', $product->id )
+            ->where( 'product_variant_id', $productVariant ? $productVariant->id : null )
+            ->first();
 
             $cartMeta = CartMeta::updateOrCreate(
                 [
@@ -253,16 +276,10 @@ class CartService {
                     'products' => NULL,
                     'payment_plan' => $request->payment_plan,
                     'additional_charges' => NULL,
-                    'total_price' => ($productPrice * $request->quantity), // Default for new entry
-                    'quantity' => $request->quantity, // Default for new entry
+                    'total_price' => ($productPrice * ( $originalCartMeta ? ( $originalCartMeta->quantity + $request->quantity ): $request->quantity ) ), // Default for new entry
+                    'quantity' => $originalCartMeta ? ( $originalCartMeta->quantity + $request->quantity ): $request->quantity, // Default for new entry
                 ]
             );
-            
-            // If the record already existed, manually increment quantity & total_price
-            if (!$cartMeta->wasRecentlyCreated) {
-                $cartMeta->increment('quantity', $request->quantity);
-                $cartMeta->increment('total_price', $productPrice * $request->quantity);
-            }
 
             $cart->load( ['cartMetas', 'addOns', 'freeGift'] );
 
@@ -322,6 +339,35 @@ class CartService {
                 $cart->voucher_id = $voucher->id;
             }
 
+            // auto add free gift
+            $productIds = array();
+
+            if( $cart && !empty( $cart->cartMetas ) ){
+                $productIds = $cart->cartMetas->pluck( 'product_id' )->toArray();
+            }
+
+            $freeGift = ProductFreeGift::with( [
+                'freeGiftProducts',
+            ] )->select( 'product_free_gifts.*' )
+            ->where( 'status', 10 )
+            ->when( !empty( $productIds ), function ( $query ) use ( $productIds ) {
+                $query->whereHas( 'freeGiftProducts', function ( $q ) use ( $productIds ) {
+                    $q->whereIn( 'product_id', $productIds );
+                });
+            })
+            ->orderBy( 'created_at', 'ASC' )
+            ->first();
+
+            if( $freeGift ){
+                if( $cart->freeGift ){
+                    $cart->total_price -= $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
+                    $cart->subtotal -= $cart->freeGift->discount_price ? $cart->freeGift->discount_price : 0;   
+                }
+                $cart->free_gift_id = $freeGift->id;
+                $cart->total_price += $freeGift->discount_price ? $freeGift->discount_price : 0;
+                $cart->subtotal += $freeGift->discount_price ? $freeGift->discount_price : 0;
+            }
+
             if( $cart->addOns ) {
                 $orderPrice += $cart->addOns->sum( 'total_price' );
                 $subtotal += $cart->addOns->sum( 'total_price' );   
@@ -349,8 +395,24 @@ class CartService {
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
             ], 500 );
         }
+        $cart->load( [ 'addOns', 'freeGift' ] );
 
         $cartMetas = $cart->cartMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -358,7 +420,11 @@ class CartService {
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
             ];
         });
@@ -539,9 +605,9 @@ class CartService {
                     ]);
                 }
             } else {
-                CartMeta::where('cart_id', $updateCart->id)->delete();
+                $cartMeta = CartMeta::where('cart_id', $updateCart->id)->where( 'product_id', $product->id )->where( 'product_variant_id', $productVariant ? $productVariant->id : null )->first();
         
-                $paymentPlan = $request->payment_plan;
+                $paymentPlan = $request->payment_plan ? $request->payment_plan : $cartMeta->payment_plan;
 
                 $productPrice = $product->price;
 
@@ -557,15 +623,26 @@ class CartService {
                         break;
                 }
 
-                $cartMeta = CartMeta::create([
-                    'cart_id'           => $updateCart->id,
-                    'product_id'        => $product->id,
-                    'product_variant_id'=> $productVariant ? $productVariant->id : null,
-                    'quantity'          => $request->quantity,
-                    'total_price'       => $productPrice * $request->quantity,
-                    'status'            => 10,
-                    'payment_plan'      => $request->payment_plan ,
-                ]);
+                if( $cartMeta ) {
+                    if( $cartMeta->quantity - $request->quantity <= 0 ) {
+                        $cartMeta->delete();
+                    }else {
+                        $cartMeta->quantity -= $request->quantity;
+                        $cartMeta->total_price = $productPrice * $cartMeta->quantity;
+                        $cartMeta->payment_plan = $paymentPlan;
+                        $cartMeta->save();
+                    }
+                } else {
+                    $cartMeta = CartMeta::create([
+                        'cart_id'           => $updateCart->id,
+                        'product_id'        => $product->id,
+                        'product_variant_id'=> $productVariant ? $productVariant->id : null,
+                        'quantity'          => $request->quantity,
+                        'total_price'       => $productPrice * $request->quantity,
+                        'status'            => 10,
+                        'payment_plan'      => $request->payment_plan ,
+                    ]);
+                }
             }
 
             $updateCart->load( ['cartMetas'] );
@@ -613,15 +690,34 @@ class CartService {
         DB::commit();
 
         $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+            
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
                 'quantity' => $meta->quantity,
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
@@ -899,6 +995,21 @@ class CartService {
         }
 
         $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -906,8 +1017,12 @@ class CartService {
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
@@ -973,7 +1088,6 @@ class CartService {
         ] );
 
         $validator->validate();
-        $user = auth()->user();
         $query = Cart::with(['cartMetas','addons', 'freeGift']);
     
         if ($request->has('id')) {
@@ -1028,6 +1142,21 @@ class CartService {
         }
 
         $cartMetas = $updateCart->cartMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+            
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -1035,8 +1164,12 @@ class CartService {
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ?$meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) :null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
@@ -1096,7 +1229,6 @@ class CartService {
         ] );
 
         $validator->validate();
-        $user = auth()->user();
         $query = Cart::with(['cartMetas','addons', 'freeGift']);
     
         if ($request->has('id')) {
@@ -1211,6 +1343,35 @@ class CartService {
 
             $orderPrice = $updateCart->cartMetas->sum(fn($meta) => $meta->product->price ?? 0);
 
+            // delete free gift
+            $productIds = array();
+
+            if( $updateCart && !empty( $updateCart->cartMetas ) ){
+                $productIds = $updateCart->cartMetas->pluck( 'product_id' )->toArray();
+            }
+
+            $freeGift = ProductFreeGift::with( [
+                'freeGiftProducts',
+            ] )->select( 'product_free_gifts.*' )
+            ->where( 'status', 10 )
+            ->when( !empty( $productIds ), function ( $query ) use ( $productIds ) {
+                $query->whereHas( 'freeGiftProducts', function ( $q ) use ( $productIds ) {
+                    $q->whereIn( 'product_id', $productIds );
+                });
+            })
+            ->orderBy( 'created_at', 'ASC' )
+            ->first();
+
+            if( !$freeGift || empty($productIds) ){
+                $deleteGift = ProductFreeGift::find( $updateCart->free_gift_id );
+                if( $deleteGift ){
+                    $updateCart->total_price += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
+                    $updateCart->subtotal += $deleteGift->discount_price ? $deleteGift->discount_price : 0;
+                }
+                $updateCart->free_gift_id = null;
+                $updateCart->save();
+            }
+
             $updateCart->total_price = Helper::numberFormatV2($orderPrice, 2);
             $taxSettings = Option::getTaxesSettings();
             $updateCart->tax = $taxSettings
@@ -1229,7 +1390,16 @@ class CartService {
                 'message' => $th->getMessage() . ' in line: ' . $th->getLine(),
             ], 500 );
         }
-        
+
+        $updateCart->load( ['freeGift', 'addOns', 'cartMetas'] );
+
+        if($updateCart->freeGift){
+            $updateCart->freeGift->setAttribute('image_path', $updateCart->freeGift->image_path);
+            $updateCart->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+            $updateCart->freeGift->subtotal = $updateCart->freeGift->discount_price;
+        }
+
         if( $updateCart->cartMetas ) {
             $cartMetas = $updateCart->cartMetas->map(function ($meta) {
                 return [
@@ -1239,14 +1409,20 @@ class CartService {
                     'color' => $meta->productVariant ? $meta->productVariant->title : null,
                     'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                     'payment_plan' => $meta->payment_plan,
+                    'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                        ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                        ->setAttribute( 'image_path', $meta->product->image_path )
+                        ->setAttribute( 'price', ( $meta->productVariant && $meta->productVariant->price ) ? $meta->productVariant->price : $meta->product->price ),
                     'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
                     'product_variant' => $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path),
                 ];
             });
         }
 
-        if( $updateCart->addOnMetas ) {
-            $addOnMetas = $updateCart->addOnMetas->map(function ($meta) {
+        $addOnMetas = array();
+
+        if( $updateCart->addOns ) {
+            $addOnMetas = $updateCart->addOns->map(function ($meta) {
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
@@ -1266,7 +1442,8 @@ class CartService {
             'cart_id' => $updateCart->id,
             'total_price' => $updateCart->total_price,
             'cart_metas' => $cartMetas,
-            'add_on_metas' => $addOnMetas
+            'add_on_metas' => $addOnMetas,
+            'free_gift' => $updateCart->freeGift,
         ] );
     }
 
@@ -1446,7 +1623,7 @@ class CartService {
         }
     
         return response()->json( [
-            'message' => 'voucher.voucher_validated',
+            'message' => __( 'voucher.voucher_validated' ),
         ] );
     }
 
@@ -1610,7 +1787,7 @@ class CartService {
         }
     
         return response()->json( [
-            'message' => 'voucher.voucher_validated',
+            'message' => __( 'voucher.voucher_validated' ),
         ] );
     }
 

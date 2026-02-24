@@ -266,7 +266,7 @@ class VendingMachineStockService
 
         $vendingmachineCount = $vendingmachine->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $vendingmachines = $vendingmachine->skip( $offset )->take( $limit )->get();

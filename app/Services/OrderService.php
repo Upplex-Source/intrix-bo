@@ -38,6 +38,8 @@ use App\Models\{
     OrderAddOn,
 };
 
+use App\Mail\ContactFormMail;
+
 use Helper;
 use IPay88\Request\RequestBuilder as IPay88RequestBuilder;
 
@@ -78,8 +80,7 @@ class OrderService
         $order = Order::with( [
             'user',
             'orderMetas',
-        ] )->select( 'orders.*' )
-        ->orderBy( 'created_at', 'DESC' );
+        ] )->select( 'orders.*' );
             
         $filterObject = self::filter( $request, $order );
         $order = $filterObject['model'];
@@ -101,7 +102,7 @@ class OrderService
                     $order->orderBy( 'orders.farm_id', $dir );
                     break;
                 case 5:
-                    $order->orderBy( 'orders.buyer_id', $dir );
+                    $order->orderBy( 'total_price', $dir );
                     break;
                 case 6:
                     $order->orderBy( 'orders.status', $dir );
@@ -113,7 +114,7 @@ class OrderService
 
             $orderCount = $order->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $orders = $order->skip( $offset )->take( $limit )->get();
@@ -145,9 +146,9 @@ class OrderService
 
         $filter = false;
 
-        if ( !empty( $request->order_date ) ) {
-            if ( str_contains( $request->order_date, 'to' ) ) {
-                $dates = explode( ' to ', $request->order_date );
+        if ( !empty( $request->created_date ) ) {
+            if ( str_contains( $request->created_date, 'to' ) ) {
+                $dates = explode( ' to ', $request->created_date );
 
                 $startDate = explode( '-', $dates[0] );
                 $start = Carbon::create( $startDate[0], $startDate[1], $startDate[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
@@ -155,15 +156,15 @@ class OrderService
                 $endDate = explode( '-', $dates[1] );
                 $end = Carbon::create( $endDate[0], $endDate[1], $endDate[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'orders.order_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'orders.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             } else {
 
-                $dates = explode( '-', $request->order_date );
+                $dates = explode( '-', $request->created_date );
 
                 $start = Carbon::create( $dates[0], $dates[1], $dates[2], 0, 0, 0, 'Asia/Kuala_Lumpur' );
                 $end = Carbon::create( $dates[0], $dates[1], $dates[2], 23, 59, 59, 'Asia/Kuala_Lumpur' );
 
-                $model->whereBetween( 'orders.order_date', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
+                $model->whereBetween( 'orders.created_at', [ date( 'Y-m-d H:i:s', $start->timestamp ), date( 'Y-m-d H:i:s', $end->timestamp ) ] );
             }
             $filter = true;
         }
@@ -201,11 +202,7 @@ class OrderService
         }
 
         if ( !empty( $request->user ) ) {
-            $model->where( function ( $query ) use ( $request ) {
-                $query->whereHas( 'user', function ( $q ) use ( $request ) {
-                    $q->where( 'phone_number', 'LIKE', '%' . $request->user . '%' );
-                });
-            });
+            $model->where( 'orders.fullname', 'LIKE', '%' . $request->user . '%' );
             $filter = true;
         }
 
@@ -227,27 +224,51 @@ class OrderService
         ] );
 
         $order = Order::with( [
-            'orderMetas','user', 'addOns', 'freeGift'
+            'orderMetas', 'user', 'addOns', 'freeGift', 'voucher'
         ] )->find( $request->id );
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
-                'subtotal' => $meta->total_price,
+                'payment_plan' => $meta->payment_plan_label,
+                'order_meta_price' => Helper::numberFormatV2($meta->total_price / $meta->quantity, 2, true, false),
+                'subtotal' => Helper::numberFormatV2($meta->total_price, 2, true, false),
                 'quantity' => $meta->quantity,
-                'product' => $meta->product->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
-                'product_variant' => $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->product->image_path) : null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
-        $addOnMetas = $order->addOns->map(function ($meta) {
-            return [
-                'id' => $meta->id,
-                'subtotal' => $meta->total_price,
-                'quantity' => $meta->quantity ? $meta->quantity : 0,
-                'add_on' => $meta->addOn->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->addOn->image_path),
-            ];
-        });
+        if( $order->addOns ) {
+            $addOnMetas = $order->addOns->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'order_meta_price' => Helper::numberFormatV2($meta->total_price / $meta->quantity, 2, true, false),
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity ? $meta->quantity : 0,
+                    'add_on' => $meta->addOn->makeHidden(['created_at', 'updated_at', 'status'])->setAttribute('image_path', $meta->addOn->image_path),
+                ];
+            });
+        }
 
         if( $order->freeGift ) {
             $order->freeGift->append( ['image_path'] );
@@ -256,6 +277,10 @@ class OrderService
         // Attach the cart metas to the cart object
         $order->orderMetas = $orderMetas;
         $order->addOnMetas = $addOnMetas;
+
+        $order->order_subtotal_formatted = Helper::numberFormatV2($order->subtotal, 2, true, false);
+        $order->order_discount_formatted = Helper::numberFormatV2($order->discount, 2, true, false);
+        $order->order_total_formatted = Helper::numberFormatV2($order->total_price, 2, true, false);
 
         return response()->json( $order );
     }
@@ -767,6 +792,15 @@ class OrderService
 
             $updateOrder = Order::find( $request->id );
             $updateOrder->status = $request->status;
+            $updateOrder->fullname = $request->fullname;
+            $updateOrder->email = $request->email;
+            $updateOrder->phone_number = $request->phone_number;
+            $updateOrder->address_1 = $request->address_1;
+            $updateOrder->address_2 = $request->address_2;
+            $updateOrder->city = $request->city;
+            $updateOrder->state = $request->state;
+            $updateOrder->postcode = $request->postcode;
+            $updateOrder->remarks = $request->remarks;
 
             $updateOrder->save();
             DB::commit();
@@ -828,7 +862,7 @@ class OrderService
         $validator = Validator::make($request->all(), [
             'id' => ['nullable', 'exists:orders,id'],
             'status' => ['nullable', 'in:1,2,3,10,20'],
-            'reference' => ['nullable', 'exists:orders,reference'],
+            'reference' => ['required', 'exists:orders,reference'],
             'per_page' => ['nullable', 'integer', 'min:1'], // Validate per_page input
         ]);
     
@@ -837,6 +871,7 @@ class OrderService
     
         // Get the current authenticated user
         $user = auth()->user();
+        $isOne = false;
     
         // Start by querying orders for the authenticated user
         $query = Order::with(['voucher'])
@@ -845,6 +880,7 @@ class OrderService
         // Apply filters
         if ($request->has('id')) {
             $query->where('id', $request->id);
+            $isOne = true;
         }
     
         if ($request->has('status')) {
@@ -853,11 +889,77 @@ class OrderService
     
         if ($request->has('reference')) {
             $query->where('reference', $request->reference);
+            $isOne = true;
         }
+
+        // if ( $isOne ) {
+        //     $order = $query->first();
+        
+        //     if ( ! $order ) {
+        //         return response()->json([
+        //             'message' => 'Order not found',
+        //             'message_key' => 'order_not_found',
+        //         ], 404);
+        //     }
+        
+        //     $order->append( ['order_status_label'] );
+        
+        //     $addOnMetas = $order->addOns->map(function ($meta) {
+        //         return [
+        //             'id' => $meta->id,
+        //             'subtotal' => $meta->total_price,
+        //             'quantity' => $meta->quantity,
+        //             'color' => null,
+        //             'color_code' => null,
+        //             'payment_plan' => $meta->payment_plan,
+        //             'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+        //         ];
+        //     });
+        
+        //     if($order->freeGift){
+        //         $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+        //         ->append([ 'image_path' ]);
     
-        if ($request->has('user_bundle')) {
-            $query->whereHas('userBundle');
-        }
+        //         $order->freeGift->subtotal = $order->freeGift->discount_price;
+        //     }
+
+        //     $orderMetas = $order->orderMetas->map(function ($meta) {
+        //         return [
+        //             'id' => $meta->id,
+        //             'subtotal' => $meta->total_price,
+        //             'quantity' => $meta->quantity,
+        //             'color' => $meta->productVariant ? $meta->productVariant->title : null,
+        //             'color_code' => $meta->productVariant ? intval($meta->productVariant->color) : null,
+        //             'payment_plan' => $meta->payment_plan,
+        //             'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+        //                 ->setAttribute('image_path', $meta->product->image_path),
+        //             'product_variant' => $meta->productVariant
+        //                 ? $meta->productVariant->makeHidden(['created_at', 'updated_at', 'status'])
+        //                     ->setAttribute('image_path', $meta->productVariant->image_path)
+        //                 : null,
+        //         ];
+        //     });
+
+        //     // $userOrder->order_metas = $orderMetas;
+        //     // $userOrder->orderMetas = null;
+        //     // unset($userOrder->orderMetas);
+        
+        //     return response()->json([
+        //         'message' => '',
+        //         'payment_url' => $order->payment_url ?? null,
+        //         'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
+        //         'session_key' => $order->session_key,
+        //         'order_id' => $order->id,
+        //         'add_on' => $order->addOn,
+        //         'status' => $order->order_status_label,
+        //         'free_gift' => $order->freeGift,
+        //         'total_price' => Helper::numberFormatV2($order->total_price, 2, true),
+        //         'order_metas' => $orderMetas,
+        //         'voucher' => $order->voucher
+        //             ? $order->voucher->makeHidden(['description', 'created_at', 'updated_at'])
+        //             : null,
+        //     ]);
+        // }        
     
         // Use paginate instead of get
         $perPage = $request->input('per_page', 10); // Default to 10 items per page
@@ -866,8 +968,33 @@ class OrderService
         // Modify each order and its related data
         $userOrders->getCollection()->transform(function ($order) {
             $order->append( ['order_status_label'] );
+
+            if($order->voucher){
+                $order->voucher->makeHidden( [ 'created_at', 'updated_at', 'type', 'status', 'min_spend', 'min_order', 'buy_x_get_y_adjustment', 'discount_amount' ] )
+                ->append(['decoded_adjustment', 'image_path','voucher_type','voucher_type_label']);
+            }
+
+            if($order->freeGift){
+                $order->freeGift->setAttribute('image_path', $order->freeGift->image_path);
+                $order->freeGift->subtotal = $order->freeGift->discount_price;
+            }
     
             $orderMetas = $order->orderMetas->map(function ($meta) {
+
+                $productPrice = $meta->product->price;
+
+                switch ( $meta->payment_plan ) {
+                    case 1:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                        break;
+                    case 2:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                        break;
+                    case 3:
+                        $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                        break;
+                }
+
                 return [
                     'id' => $meta->id,
                     'subtotal' => $meta->total_price,
@@ -876,22 +1003,48 @@ class OrderService
                     'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                     'payment_plan' => $meta->payment_plan,
                     'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
-                        ->setAttribute('image_path', $meta->product->image_path),
+                        ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                        ->setAttribute( 'image_path', $meta->product->image_path )
+                        ->setAttribute( 'price', $productPrice ),
                     'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                    'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
                 ];
             });
 
+            
+            $addOnMetas = $order->addOns->map(function ($meta) {
+                return [
+                    'id' => $meta->id,
+                    'subtotal' => $meta->total_price,
+                    'quantity' => $meta->quantity,
+                    'color' => null,
+                    'color_code' => null,
+                    'payment_plan' => $meta->payment_plan,
+                    'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+                ];
+            });
+    
+            // Attach the cart metas to the cart object
+            $order->addOnMetas = $addOnMetas;
             $order->orderMetas = $orderMetas;
+
+            if( !$order->tax ) {
+                $taxSettings = Option::getTaxesSettings();
+                $order->tax = Helper::numberFormatV2( ( $taxSettings ? (Helper::numberFormatV2(($taxSettings->option_value/100),2) * $cart->total_price) : 0 ), 2, true);
+            }
 
             return $order;
         });
 
         foreach( $userOrders as $userOrder ) {
             $userOrder->order_metas = $userOrder->orderMetas;
-            $userOrder->orderMetas = null;
+            $userOrder->add_on_metas = $userOrder->addOnMetas;
             unset($userOrder->orderMetas);
+            unset($userOrder->addOns);
+            $userOrder->orderMetas = $userOrder->order_metas;
+            $userOrder->addOnMetas = $userOrder->add_on_metas;
         }
-    
+
         // Return the paginated response
         return response()->json([
             'message' => '',
@@ -1075,7 +1228,7 @@ class OrderService
     
                 $orderPrice += $orderMeta->total_price;
     
-                $checkoutCart->status = 20;
+                $checkoutCart->status = 21;
                 $checkoutCart->save();
     
                 $order->subtotal = $orderPrice;
@@ -1094,7 +1247,7 @@ class OrderService
     
                 $orderPrice += $orderMeta->total_price;
     
-                $checkoutCart->status = 20;
+                $checkoutCart->status = 21;
                 $checkoutCart->save();
     
                 $order->subtotal = $orderPrice;
@@ -1109,10 +1262,31 @@ class OrderService
                     $voucher = Voucher::where( 'id', $userCart->voucher_id )->first();
                 }
 
+                // Validate target products for cart vouchers
+                if ( $voucher->target_products ) {
+                    $targetProductIds = json_decode( $voucher->target_products, true );
+
+                    if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                        $cartProductIds = $userCart->cartMetas->pluck( 'product_id' )->toArray();
+                        $hasTargetProduct = !empty( array_intersect( $targetProductIds, $cartProductIds ) );
+
+                        if ( !$hasTargetProduct ) {
+                            DB::rollback();
+                            return response()->json( [
+                                'message_key' => 'voucher_not_applicable_to_cart_products',
+                                'message' => __('voucher.voucher_not_applicable_to_cart_products'),
+                                'errors' => [
+                                    'voucher' => __('voucher.voucher_not_applicable_to_cart_products')
+                                ]
+                            ], 422 );
+                        }
+                    }
+                }
+
                 if ( $voucher->discount_type == 3 ) {
 
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-        
+
                     $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
 
                     if ( $x >= $adjustment->buy_quantity ) {
@@ -1172,29 +1346,31 @@ class OrderService
             $order->total_price += Helper::numberFormatV2($order->tax,2,false,true);
 
             if (!$userCart->cartMetas->contains('status', 10)) {
-                $userCart->status = 20;
+                $userCart->status = 21;
                 $userCart->save();
             }
-            
+            $userCart->order_id = $order->id;
             $userCart->save();
 
             $hasTestProduct = $userCart->cartMetas->contains(function ($cartMeta) {
                 return $cartMeta->product && $cartMeta->product->code === 'TEST';
             });
 
-            if( $hasTestProduct ) {
+            $paymentUrl = '';
+
+            // if( $hasTestProduct ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
     
                 $request = new \IPay88\Payment\Request( $merchantKey );
-                $order_amount = number_format(1, 2, '.', '');
+                $order_amount = number_format($order->total_price, 2, '.', ',' );
                 $data = array(
                     'merchantCode' => $request->setMerchantCode( $merchantCode ),
                     'paymentId' =>  '',
                     'refNo' => $request->setRefNo( $order->reference ),
                     'amount' => $order_amount,
                     'currency' => $request->setCurrency( 'MYR' ),
-                    'prodDesc' => $request->setProdDesc( 'Testing' ),
+                    'prodDesc' => $request->setProdDesc( $order->orderMetas->first()->product->title ),
                     'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
                     'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
                     'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
@@ -1232,11 +1408,12 @@ class OrderService
     
                 DB::commit();
 
-                return response()->json([
-                    'status' => 'success',
-                    'payment_url' => $paymentUrl
-                ]);
-            }
+                // return response()->json([
+                //     'message' => '',
+                //     'message_key' => 'create_order_success',
+                //     'payment_url' => $paymentUrl
+                // ]);
+            // }
 
             $order->save();
 
@@ -1272,6 +1449,21 @@ class OrderService
         }
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
@@ -1279,8 +1471,12 @@ class OrderService
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
@@ -1289,6 +1485,7 @@ class OrderService
             'message_key' => 'create_order_success',
             'payment_url' => $order->payment_url,
             'reference' => $order->reference,
+            'sesion_key' => $userCart->session_key,
             'order_id' => $order->id,
             'add_on_metas' => $addOnMetas,
             'free_gift' => $order->freeGift,
@@ -1325,16 +1522,16 @@ class OrderService
             'fullname' => ['required'],
             'company_name' => ['nullable'],
             'email' => ['required'],
-            'phone_number' => ['required'],
+            'phone_number' => ['nullable'],
             'address_1' => ['required'],
             'address_2' => ['nullable'],
-            'city' => ['required'],
-            'state' => ['required'],
-            'postcode' => ['required'],
-            'country' => ['required'],
+            'city' => ['nullable'],
+            'state' => ['nullable'],
+            'postcode' => ['nullable'],
+            'country' => ['nullable'],
             'remarks' => ['nullable'],
             'product_code' => [ 'required', 'exists:products,code'  ],
-            'color' => [ 'required', 'exists:product_variants,color'  ],
+            'color' => [ 'nullable', 'exists:product_variants,color'  ],
             'payment_plan' => [ 'nullable', 'in:1,2,3'  ],
             'quantity' => [ 'numeric', 'min:1'  ],
             'add_on' => [
@@ -1398,7 +1595,7 @@ class OrderService
         // create a tmp cart
         $voucher = Voucher::where( 'promo_code', $request->promo_code )->where( 'status', 10 )->first();
         $product = Product::where( 'code', $request->product_code )->first();
-        $productVariant = ProductVariant::where( 'color', $request->color )->where( 'product_id', $product->id )->first();
+        $productVariant = ProductVariant::where( 'color', $request->color ?? 1 )->where( 'product_id', $product->id )->first();
 
         $userCart = Cart::updateOrCreate(
             ['session_key' => $request->session_key], // Find cart by session_key
@@ -1490,6 +1687,14 @@ class OrderService
                 'company_name' => $request->company_name,
             ] );
 
+            if( $request->free_gift ){
+                $freeGift = ProductFreeGift::where('code', $request->free_gift)->first();
+            }
+
+            if( $request->add_on ){
+                $addOn = ProductAddOn::where('code', $request->add_on)->first();
+            }
+
             $order = Order::create( [
                 'user_id' => null,
                 'product_id' => null,
@@ -1518,8 +1723,8 @@ class OrderService
                 'last_visit' => now(), // Store current timestamp
                 'country' => $request->country,
                 'company_name' => $request->company_name,
-                'add_on_id' => $request->add_on_id,
-                'free_gift_id' => $request->free_gift_id,
+                'add_on_id' => $request->add_on ? $addOn->id : null,
+                'free_gift_id' => $request->free_gift ? $freeGift->id : null,
             ] );
 
             if( $request->add_on ) {
@@ -1538,13 +1743,13 @@ class OrderService
                 'order_id' => $order->id,
                 'product_id' => $checkoutCart->product->id,
                 'product_variant_id' => $checkoutCart->productVariant ? $checkoutCart->productVariant->id : null,
-                'total_price' =>  $checkoutCart->quantity * $checkoutCart->product->price,
+                'total_price' =>  $checkoutCart->total_price,
                 'quantity' => $checkoutCart->quantity,
             ] );
 
             $orderPrice += $orderMeta->total_price;
 
-            $checkoutCart->status = 20;
+            $checkoutCart->status = 21;
             $checkoutCart->save();
 
             $order->subtotal = $orderPrice;
@@ -1558,10 +1763,31 @@ class OrderService
                     $voucher = Voucher::where( 'id', $userCart->voucher_id )->first();
                 }
 
+                // Validate target products for cart vouchers
+                if ( $voucher->target_products ) {
+                    $targetProductIds = json_decode( $voucher->target_products, true );
+
+                    if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                        $cartProductIds = $userCart->cartMetas->pluck( 'product_id' )->toArray();
+                        $hasTargetProduct = !empty( array_intersect( $targetProductIds, $cartProductIds ) );
+
+                        if ( !$hasTargetProduct ) {
+                            DB::rollback();
+                            return response()->json( [
+                                'message_key' => 'voucher_not_applicable_to_cart_products',
+                                'message' => __('voucher.voucher_not_applicable_to_cart_products'),
+                                'errors' => [
+                                    'voucher' => __('voucher.voucher_not_applicable_to_cart_products')
+                                ]
+                            ], 422 );
+                        }
+                    }
+                }
+
                 if ( $voucher->discount_type == 3 ) {
 
                     $adjustment = json_decode( $voucher->buy_x_get_y_adjustment );
-        
+
                     $x = $userCart->cartMetas->whereIn( 'product_id', $adjustment->buy_products )->count();
 
                     if ( $x >= $adjustment->buy_quantity ) {
@@ -1621,25 +1847,27 @@ class OrderService
             $order->total_price += Helper::numberFormatV2($order->tax,2,false,true);
 
             if (!$userCart->cartMetas->contains('status', 10)) {
-                $userCart->status = 20;
+                $userCart->status = 21;
                 $userCart->save();
             }
-            
-            $userCart->save();
 
-            if( $request->product_code == 'TEST' ) {
+            $userCart->order_id = $order->id;
+            $userCart->save();
+            $paymentUrl = '';
+
+            // if( $request->product_code == 'TEST' ) {
                 $merchantKey = config('services.ipay88.merchant_key');
                 $merchantCode = config('services.ipay88.merchant_code');
     
                 $request = new \IPay88\Payment\Request( $merchantKey );
-                $order_amount = number_format(1, 2, '.', '');
+                $order_amount = number_format($order->total_price, 2, '.', ',' );
                 $data = array(
                     'merchantCode' => $request->setMerchantCode( $merchantCode ),
                     'paymentId' =>  '',
                     'refNo' => $request->setRefNo( $order->reference ),
                     'amount' => $order_amount,
                     'currency' => $request->setCurrency( 'MYR' ),
-                    'prodDesc' => $request->setProdDesc( 'Testing' ),
+                    'prodDesc' => $request->setProdDesc( $order->orderMetas->first()->product->title ),
                     'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
                     'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
                     'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
@@ -1677,11 +1905,11 @@ class OrderService
     
                 DB::commit();
 
-                return response()->json([
-                    'status' => 'success',
-                    'payment_url' => $paymentUrl
-                ]);
-            }
+                // return response()->json([
+                //     'status' => 'success',
+                //     'payment_url' => $paymentUrl
+                // ]);
+            // }
 
             $order->save();
 
@@ -1709,21 +1937,40 @@ class OrderService
         }
 
         $orderMetas = $order->orderMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $meta->product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $meta->product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $meta->product->price;
+                    break;
+            }
+
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
                 'quantity' => $meta->quantity,
                 'color' => $meta->productVariant ? $meta->productVariant->title : null,
                 'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
                 'payment_plan' => $meta->payment_plan,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
         return response()->json( [
             'message' => '',
+            'payment_url' => $paymentUrl,
             'message_key' => $order->userBundle ? 'bundle redeemed success' : 'create_order_success',
-            'payment_url' => $order->payment_url,
             'sesion_key' => $order->session_key,
             'order_id' => $order->id,
             'add_on' => $order->addOn,
@@ -1753,7 +2000,7 @@ class OrderService
             ],
             'quantity' => ['numeric', 'min:1'],
             'product_code' => ['required', 'exists:products,code'],
-            'color' => ['required', 'exists:product_variants,color'],
+            'color' => ['nullable', 'exists:product_variants,color'],
             'payment_plan' => ['nullable', 'in:1,2,3'],
         ]);
     
@@ -1761,7 +2008,7 @@ class OrderService
     
         // Fetch product and variant details
         $product = Product::where('code', $request->product_code)->first();
-        $productVariant = ProductVariant::where('color', $request->color)
+        $productVariant = ProductVariant::where('color', $request->color ?? "1")
             ->where('product_id', $product->id)
             ->first();
     
@@ -1812,7 +2059,24 @@ class OrderService
                     ]
                 ], 422);
             }
-    
+
+            // Validate target products
+            if ( $voucher->target_products ) {
+                $targetProductIds = json_decode( $voucher->target_products, true );
+
+                if ( is_array( $targetProductIds ) && !empty( $targetProductIds ) ) {
+                    if ( !in_array( $product->id, $targetProductIds ) ) {
+                        return response()->json( [
+                            'message_key' => 'voucher_not_applicable_to_product',
+                            'message' => __('voucher.voucher_not_applicable_to_product'),
+                            'errors' => [
+                                'voucher' => [__('voucher.voucher_not_applicable_to_product')]
+                            ]
+                        ], 422 );
+                    }
+                }
+            }
+
             // Apply discount logic
             $adjustment = json_decode($voucher->buy_x_get_y_adjustment, true);
             if ($voucher->discount_type == 3) {
@@ -2102,21 +2366,20 @@ class OrderService
         }
     
         return response()->json( [
-            'message' => 'voucher.voucher_validated',
+            'message' => __( 'voucher.voucher_validated' ),
         ] );
     }
 
     public static function retryPayment( $request ) {
 
         $validator = Validator::make($request->all(), [
-            'order_id' => ['required', 'exists:orders,id'],
+            'reference' => ['required', 'exists:orders,reference'],
         ]);
         
         $validator->validate();
 
-        $order = Order::where('id', $request->order_id)
-            ->where('status', '!=', 3)
-            ->where('user_id', auth()->user()->id )
+        $order = Order::where('reference', $request->reference)
+            ->where('status', '!=', 10)
             ->first();
 
         if (!$order) {
@@ -2131,38 +2394,37 @@ class OrderService
 
         DB::beginTransaction();
         try {
-                
-            $data = [
-                'TransactionType' => 'SALE',
-                'PymtMethod' => 'ANY',
-                'ServiceID' => config('services.eghl.merchant_id'),
-                'PaymentID' => $order->reference . '-' . $order->payment_attempt,
-                'OrderNumber' => $order->reference,
-                'PaymentDesc' => $order->reference,
-                'MerchantName' => 'Yobe Froyo',
-                'MerchantReturnURL' => config('services.eghl.staging_callabck_url'),
-                'MerchantApprovalURL' => config('services.eghl.staging_success_url'),
-                'MerchantUnApprovalURL' => config('services.eghl.staging_failed_url'),
-                'Amount' => Helper::numberFormatV2($order->total_price, 2),
-                'CurrencyCode' => 'MYR',
-                'CustIP' => request()->ip(),
-                'CustName' => $order->user->username ?? 'Yobe Guest',
-                'HashValue' => '',
-                'CustEmail' => $order->user->email ?? 'yobeguest@gmail.com',
-                'CustPhone' => $order->user->phone_number,
-                'MerchantTermsURL' => null,
-                'LanguageCode' => 'en',
-                'PageTimeout' => '780',
-            ];
 
-            $data['HashValue'] = Helper::generatePaymentHash($data);
-            $url2 = config('services.eghl.test_url') . '?' . http_build_query($data);
-            
+            $merchantKey = config('services.ipay88.merchant_key');
+            $merchantCode = config('services.ipay88.merchant_code');
+
+            $request = new \IPay88\Payment\Request( $merchantKey );
+            $order_amount = number_format($order->total_price, 2, '.', ',' );
+            $newReference = $order->reference . '-' . $order->payment_attempt;
+            $data = array(
+                'merchantCode' => $request->setMerchantCode( $merchantCode ),
+                'paymentId' =>  '',
+                'refNo' => $request->setRefNo( $newReference ),
+                'amount' => $order_amount,
+                'currency' => $request->setCurrency( 'MYR' ),
+                'prodDesc' => $request->setProdDesc( $order->orderMetas->first()->product->title ),
+                'userName' => $request->setUserName( $order->fullname ? $order->fullname : 'intrix_guest' ),
+                'userEmail' => $request->setUserEmail( $order->email ? $order->email : 'intrixguest@mail.com' ),
+                'userContact' => $request->setUserContact( $order->phone_number ? $order->phone_number : '123123123' ),
+                'remark' => $request->setRemark( 'test' ),
+                'lang' => $request->setLang( 'UTF-8' ),
+                'signature' => hash('sha256', $merchantKey.$merchantCode.$order->reference.strtr( $order_amount, array( '.' => '', ',' => '' ) ).'MYR' ),
+                'responseUrl'   => $request->setResponseUrl(config('services.ipay88.staging_callback_url')),
+                'backendUrl'    => $request->setBackendUrl(config('services.ipay88.staging_callback_url')),
+            );
+
+            $paymentUrl = route('payment.show', ['payment_data' => $data]);
+
             $orderTransaction = OrderTransaction::create( [
                 'order_id' => $order->id,
                 'checkout_id' => null,
                 'checkout_url' => null,
-                'payment_url' => $url2,
+                'payment_url' => $paymentUrl,
                 'transaction_id' => null,
                 'layout_version' => 'v1',
                 'redirect_url' => null,
@@ -2176,10 +2438,11 @@ class OrderService
                 'status' => 10,
             ] );
 
-            $order->payment_url = $url2;
+            $order->payment_url = $paymentUrl;
             $order->order_transaction_id = $orderTransaction->id;
+            $order->status = 2;
+            $order->reference = $newReference;
             $order->save();
-
             DB::commit();
 
         } catch ( \Throwable $th ) {
@@ -2191,42 +2454,231 @@ class OrderService
             ], 500 );
         }
 
-        $orderMetas = $order->orderMetas->map(function ($meta) {
+      $addOnMetas = $order->addOns->map(function ($meta) {
             return [
                 'id' => $meta->id,
                 'subtotal' => $meta->total_price,
-                'product' => $meta->product->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->product->image_path),
-                'froyo' => $meta->froyos_metas,
-                'syrup' => $meta->syrups_metas,
-                'topping' => $meta->toppings_metas,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+       
+        if($order->freeGift){
+            $order->freeGift->makeHidden( [ 'created_at', 'updated_at' ] )
+            ->append([ 'image_path' ]);
+
+            $order->freeGift->subtotal = $order->freeGift->discount_price;
+
+        }
+
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+
+            $productPrice = $meta->product->price;
+
+            switch ( $meta->payment_plan ) {
+                case 1:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->upfront : $product->price;
+                    break;
+                case 2:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->monthly : $product->price;
+                    break;
+                case 3:
+                    $productPrice = $meta->productVariant ? $meta->productVariant->outright : $product->price;
+                    break;
+            }
+            
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
+                'payment_plan' => $meta->payment_plan,
+                'product' => $meta->product?->makeHidden(['created_at', 'updated_at', 'status'])
+                ->setAttribute('image', ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image : $meta->product->image)
+                ->setAttribute( 'image_path', $meta->product->image_path )
+                ->setAttribute( 'price', $productPrice ),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
             ];
         });
 
         return response()->json( [
             'message' => '',
-            'message_key' => 'retry_payment_inititate',
+            'message_key' => 'create_order_success',
             'payment_url' => $order->payment_url,
-            'sesion_key' => $order->session_key,
+            'reference' => $order->reference,
+            'sesion_key' => null,
             'order_id' => $order->id,
-            'vending_machine' => $order->vendingMachine->makeHidden( ['created_at','updated_at'.'status'] )->setAttribute('operational_hour', $order->vendingMachine->operational_hour),
-            'total' => Helper::numberFormatV2($order->total_price , 2 ,true),
-            'order_metas' => $orderMetas
+            'add_on_metas' => $addOnMetas,
+            'free_gift' => $order->freeGift,
+            'total_price' => Helper::numberFormatV2($order->total_price , 2 ,true),
+            'order_metas' => $orderMetas,
+            'voucher' => $order->voucher ? $order->voucher->makeHidden( ['description', 'created_at', 'updated_at' ] ) : null,
+            'subtotal' => Helper::numberFormatV2($order->subtotal, 2,false, true),
+            'discount' =>  Helper::numberFormatV2($order->discount, 2,false, true),
+            'tax' =>  Helper::numberFormatV2($order->tax, 2,false, true),
+            'tranction_date' => $order->created_at->format('Y-m-d'),
+            'payment_method' => 'Credit Card',
+            'shipment_method' => 'Free Shipping ( 3 - 7 days )',
+            'delivery_address' => $order->address_1 . $order->address_2 . $order->city . $order->postcode . $order->state,
+            'contact_name' => $order->fullname ? $order->fullname : $order->company_name,
+            'phone_number' => $order->phone_number,
+            'email' => $order->email,
         ] );
     }
 
     public static function showPaymentPage( $request ) {
 
-        $validator = Validator::make($request->all(), [
-            'payment_data.refNo' => [
-                'required',
-                Rule::exists('orders', 'reference')->whereIn('status', [ 1,2,3 ] ),
-            ],
-        ]);
-        
-        $validator->validate();
-
         $data = $request->all();
 
-        return view('admin.order.payment_redirect', compact('data'));
+        $rawRefNo = data_get( $data, 'payment_data.refNo' );
+    
+        // Remove last -digit(s) using regex
+        $refNo = preg_replace( '/-\d+$/', '', $rawRefNo );    
+    
+        $exists = DB::table( 'orders' )
+        ->where( function ( $query ) use ( $refNo, $rawRefNo ) {
+            $query->where( 'reference', $refNo )
+                  ->orWhere( 'reference', $rawRefNo );
+        })
+        ->whereIn( 'status', [ 1, 2, 3 ] )
+        ->exists();
+    
+        if ( ! $exists ) {
+            return back()->withErrors([ 'payment_data.refNo' => 'Invalid or non-existing reference.' ]);
+        }
+    
+        // If it passed
+        return view( 'admin.order.payment_redirect', compact( 'data' ) );
+    }
+
+    public static function contactUs( $request )
+    {
+        $validated = $request->validate( [
+            'full_name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone_number' => 'nullable|string',
+            'location' => 'nullable|string',
+            'model' => 'nullable|string',
+        ] );
+
+        ContactFormMail::dispatch( $validated );
+
+        // return back()->with( 'success', 'Your message has been sent!' );
+        return response()->json( [
+            'message' => 'Your message has been sent!',
+            'message_key' => 'message_sent,',
+            'data' => [
+                'status' => true
+            ],
+        ] );
+
+    }
+
+    public static function sendReceipt( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $order = Order::with( [
+            'orderMetas', 'addOns', 'freeGift'
+        ] )->find( $request->id );
+
+        if( !$order ) {
+            return response()->json( [
+                'message' => 'Order not found',
+                'message_key' => 'order_not_found',
+            ], 404 );
+        }
+
+        // Prepare add-on metas
+        $addOnMetas = $order->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+
+        // Prepare order metas
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
+                'payment_plan' => $meta->payment_plan,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+            ];
+        });
+
+        // Dispatch the job (without sending to admin)
+        \App\Jobs\SendOrderSuccessMail::dispatch($order, $orderMetas, $addOnMetas, false);
+
+        return response()->json( [
+            'message' => 'Receipt email has been queued for sending',
+            'message_key' => 'receipt_queued',
+        ] );
+    }
+
+    public static function previewReceipt( $request ) {
+
+        $request->merge( [
+            'id' => Helper::decode( $request->id ),
+        ] );
+
+        $order = Order::with( [
+            'orderMetas', 'addOns', 'freeGift'
+        ] )->find( $request->id );
+
+        if( !$order ) {
+            return response()->json( [
+                'message' => 'Order not found',
+                'message_key' => 'order_not_found',
+            ], 404 );
+        }
+
+        // Prepare add-on metas
+        $addOnMetas = $order->addOns->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => null,
+                'color_code' => null,
+                'payment_plan' => $meta->payment_plan,
+                'add_on' => $meta->addOn->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->addOn->image_path),
+            ];
+        });
+
+        // Prepare order metas
+        $orderMetas = $order->orderMetas->map(function ($meta) {
+            return [
+                'id' => $meta->id,
+                'subtotal' => $meta->total_price,
+                'quantity' => $meta->quantity,
+                'color' => $meta->productVariant ? $meta->productVariant->title : null,
+                'color_code' => $meta->productVariant ? intval( $meta->productVariant->color ): null,
+                'payment_plan' => $meta->payment_plan,
+                'product' => $meta->product->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->product->image_path),
+                'product_variant' => $meta->productVariant ? $meta->productVariant->makeHidden( ['created_at','updated_at','status'] )->setAttribute('image_path', $meta->productVariant->image_path) : null,
+                'product_image' => ( $meta->productVariant && $meta->productVariant->image ) ? $meta->productVariant->image_path : $meta->product->image_path,
+            ];
+        });
+
+        // Return the email view
+        return view('admin.mail.order-success', compact('order', 'orderMetas', 'addOnMetas'));
     }
 }

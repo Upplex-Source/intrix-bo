@@ -20,6 +20,7 @@ class Cart extends Model
 
     protected $fillable = [
         'product_id',
+        'order_id',
         'product_variant_id',
         'user_id',
         'total_price',
@@ -61,6 +62,10 @@ class Cart extends Model
         'product_bundle_id',
         'outlet_id',
     ];
+
+    public function order() {
+        return $this->belongsTo( Order::class, 'order_id' );
+    }
 
     public function addOns() {
         return $this->hasMany( CartAddOn::class, 'cart_id' );
@@ -124,6 +129,7 @@ class Cart extends Model
 
     protected static $logAttributes = [
         'product_id',
+        'order_id',
         'product_variant_id',
         'user_id',
         'total_price',

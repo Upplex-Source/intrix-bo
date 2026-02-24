@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\{
     ProductBundleController,
     BlogController,
     ProductController,
+    ContactController,
+    GuideController,
 };
 
 use Illuminate\Support\Facades\Route;
@@ -36,6 +38,14 @@ if( 1 == 2 ){
         Route::post('/', [MailContentController::class, 'createEnquiryMail']);
     } );
 }
+
+Route::get('/cors-test', function() {
+    return response()->json(['message' => 'CORS is working']);
+});
+
+Route::options('/{any}', function() {
+    return response('', 200);
+})->where('any', '.*');
 
 Route::prefix( 'carts' )->group( function() {
     Route::post( 'add', [ CartController::class, 'addToCart' ] );
@@ -79,11 +89,26 @@ Route::prefix( 'free-gifts' )->group( function() {
     Route::any( '/', [ ProductController::class, 'getFreeGifts' ] );
 } );
 
-if( 1 == 2 ){
+Route::prefix( 'contact-us' )->group( function() {
+    Route::any( '/', [ ContactController::class, 'contactUs' ] );
+} );
+
+Route::prefix( 'where-to-find-us' )->group( function() {
+    Route::any( 'countries', [ GuideController::class, 'getCountries' ] );
+    Route::any( 'states', [ GuideController::class, 'getStates' ] );
+    Route::any( 'branches', [ GuideController::class, 'getBranches' ] );
+} );
+
+Route::prefix( 'guides-resources' )->group( function() {
+    Route::any( '/', [ GuideController::class, 'getGuideAndResources' ] );
+    Route::any( 'product-brochures', [ GuideController::class, 'getProductBrochures' ] );
+    Route::any( 'installation-guides', [ GuideController::class, 'getInstallationGuides' ] );
+    Route::any( 'videos', [ GuideController::class, 'getVideos' ] );
+} );
+
 Route::prefix( 'products' )->group( function() {
     Route::any( '/', [ ProductController::class, 'getProducts' ] );
 } );
-}
 
 if( 1 == 2 ){
     Route::post( 'otp', [ UserController::class, 'requestOtp' ] );

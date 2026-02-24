@@ -90,7 +90,7 @@ $product_free_gift_edit = 'product_free_gift_edit';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_free_gift_edit }}_discount_price" class="col-sm-5 form-label">{{ __( 'product_free_gift.discount_price' ) }}</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $product_free_gift_edit }}_discount_price">
@@ -98,7 +98,7 @@ $product_free_gift_edit = 'product_free_gift_edit';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_free_gift_edit }}_specification" class="col-sm-5 form-label">{{ __( 'product_free_gift.specification' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" name="{{ $product_free_gift_edit }}_specification" id="{{ $product_free_gift_edit }}_specification" rows="5"></textarea>
@@ -106,7 +106,7 @@ $product_free_gift_edit = 'product_free_gift_edit';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_free_gift_edit }}_features" class="col-sm-5 form-label">{{ __( 'product_free_gift.features' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" name="{{ $product_free_gift_edit }}_features" id="{{ $product_free_gift_edit }}_features" rows="5"></textarea>
@@ -114,7 +114,7 @@ $product_free_gift_edit = 'product_free_gift_edit';
                     </div>
                 </div>
 
-                <div class="mb-3 row">
+                <div class="mb-3 row d-none">
                     <label for="{{ $product_free_gift_edit }}_whats_included" class="col-sm-5 form-label">{{ __( 'product_free_gift.whats_included' ) }}</label>
                     <div class="col-sm-7">
                         <textarea class="form-control" name="{{ $product_free_gift_edit }}_whats_included" id="{{ $product_free_gift_edit }}_whats_included" rows="5"></textarea>

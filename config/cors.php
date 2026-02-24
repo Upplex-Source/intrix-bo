@@ -19,7 +19,15 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        'https://intrixlifestyle.com',
+        'https://www.intrixlifestyle.com',
+        'https://backoffice.intrixlifestyle.com',
+        'https://intrix.upplex.com.my',
+        'http://localhost:3000',
+        'http://localhost:8000',
+        'http://localhost:8080',
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +37,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];

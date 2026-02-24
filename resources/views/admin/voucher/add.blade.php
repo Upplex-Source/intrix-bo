@@ -72,7 +72,17 @@ $voucherTypes = $data['voucher_type'];
                         <div class="invalid-feedback"></div>
                     </div>
                 </div>
-                
+
+                <div class="mb-3 row">
+                    <label for="{{ $voucher_create }}_target_products" class="col-sm-5 col-form-label">{{ __( 'voucher.target_products' ) }}</label>
+                    <div class="col-sm-7">
+                        <select class="form-select" id="{{ $voucher_create }}_target_products" data-placeholder="{{ __( 'datatables.select_x', [ 'title' => __( 'voucher.target_products' ) ] ) }}" multiple>
+                        </select>
+                        <small class="text-muted">{{ __( 'voucher.target_products_description' ) }}</small>
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
                 <section id="bxgy" class="rule-section hidden mb-3 row">
                     <div class="card">
                         <div class="card-body">
@@ -184,6 +194,15 @@ $voucherTypes = $data['voucher_type'];
                 </div>
 
                 <div class="mb-3 row">
+                    <label for="{{ $voucher_create}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
+                    <div class="col-sm-7">
+                        <input type="number" class="form-control" id="{{ $voucher_create}}_usable_amount">
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </div>
+
+                @if( 1 == 2 )
+                <div class="mb-3 row">
                     <label for="{{ $voucher_create}}_claim_per_user" class="col-sm-5 col-form-label">{{ __( 'voucher.claim_per_user' ) }}</label>
                     <div class="col-sm-7">
                         <input type="number" class="form-control" id="{{ $voucher_create}}_claim_per_user">
@@ -191,14 +210,6 @@ $voucherTypes = $data['voucher_type'];
                     </div>
                 </div>
                 
-                @if( 1 == 2 )
-                <div class="mb-3 row">
-                    <label for="{{ $voucher_create}}_usable_amount" class="col-sm-5 col-form-label">{{ __( 'voucher.usable_amount' ) }}</label>
-                    <div class="col-sm-7">
-                        <input type="number" class="form-control" id="{{ $voucher_create}}_usable_amount">
-                        <div class="invalid-feedback"></div>
-                    </div>
-                </div>
                 
                 <div class="mb-3 row">
                     <label for="{{ $voucher_create}}_validity_days" class="col-sm-5 col-form-label">{{ __( 'voucher.validity_days' ) }}</label>
@@ -302,6 +313,8 @@ window.cke_element = 'voucher_create_description';
                 message: '{{ __( 'template.loading' ) }}'
             } );
 
+            let targetProducts = $( fc + '_target_products' ).val();
+
             let formData = new FormData();
             formData.append( 'title', $( fc + '_title' ).val() );
             formData.append( 'promo_code', $( fc + '_promo_code' ).val() );
@@ -313,10 +326,11 @@ window.cke_element = 'voucher_create_description';
             formData.append( 'expired_date', $( fc + '_expired_date' ).val() );
             formData.append( 'usable_amount', $( fc + '_usable_amount' ).val() );
             // formData.append( 'validity_days', $( fc + '_validity_days' ).val() );
-            // formData.append( 'claim_per_user', $( fc + '_claim_per_user' ).val() );
+            formData.append( 'claim_per_user', $( fc + '_claim_per_user' ).val() );
             formData.append( 'description', editor.getData() );
             formData.append( 'image', fileID );
             formData.append( 'adjustment_data', JSON.stringify(data) );
+            formData.append( 'target_products', JSON.stringify(targetProducts) );
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {
@@ -445,6 +459,46 @@ window.cke_element = 'voucher_create_description';
             width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
             placeholder: $( this ).data( 'placeholder' ),
             closeOnSelect: true,
+            ajax: {
+                method: 'POST',
+                url: '{{ route( 'admin.product.allProducts' ) }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        title: params.term, // search term
+                        start: params.page ? params.page : 0,
+                        length: 10,
+                        _token: '{{ csrf_token() }}',
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    let processedResult = [];
+
+                    data.products.map( function( v, i ) {
+                        processedResult.push( {
+                            id: v.id,
+                            text: v.title,
+                        } );
+                    } );
+
+                    return {
+                        results: processedResult,
+                        pagination: {
+                            more: ( params.page * 10 ) < data.recordsFiltered
+                        }
+                    };
+                }
+            }
+        } );
+
+        $( fc + '_target_products' ).select2( {
+            theme: 'bootstrap-5',
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+            placeholder: $( this ).data( 'placeholder' ),
+            closeOnSelect: false,
             ajax: {
                 method: 'POST',
                 url: '{{ route( 'admin.product.allProducts' ) }}',

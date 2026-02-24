@@ -367,7 +367,7 @@ class PurchaseService
 
             $purchaseCount = $purchase->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $purchases = $purchase->skip( $offset )->take( $limit )->get();

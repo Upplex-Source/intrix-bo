@@ -31,6 +31,7 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @if( 1 == 2 )
                                 @can( 'view roles' )
                                 <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\RoleController' ? 'active current-page' : '' }}">
                                     <a href="{{ route( 'admin.module_parent.role.index' ) }}" class="nk-menu-link">
@@ -39,6 +40,7 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @endif
                                 @can( 'view audits' )
                                 <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\AuditController' ? 'active current-page' : '' }}">
                                     <a href="{{ route( 'admin.module_parent.audit.index' ) }}" class="nk-menu-link">
@@ -62,6 +64,7 @@
                                 @endcan
                                 @endif
 
+                                @if( 1 == 2 )
                                 @can( 'view blogs' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\BlogController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.blog.index' ) }}" class="nk-menu-link">
@@ -71,7 +74,6 @@
                                     </li>
                                 @endcan
 
-                                @if( 1 == 2 )
                                 @can( 'view Wallets' )
                                     <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\WalletController' ? 'active current-page' : '' }}">
                                         <a href="{{ route( 'admin.module_parent.wallet.index' ) }}" class="nk-menu-link">
@@ -162,17 +164,49 @@
                                 @endcan
 
                                 @can( 'view voucher_usages' )
-                                <li class="nk-menu-item has-sub {{ ($controller == 'App\Http\Controllers\Admin\UserVoucherController' || $controller == 'App\Http\Controllers\Admin\VoucherUsageController') ? 'active current-page' : '' }}">
+                                    <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VoucherUsageController' ? 'active current-page' : '' }}">
+                                        <a href="{{ route( 'admin.module_parent.voucher_usage.index' ) }}" class="nk-menu-link">
+                                            <span class="nk-menu-icon"><em class="icon ni ni-ticket-plus"></em></span>
+                                            <span class="nk-menu-text">{{ __( 'template.voucher_usages' ) }}</span>
+                                        </a>
+                                    </li>
+                                @endcan
+                                
+                                @can( 'view guides' )
+                                <li class="nk-menu-item has-sub {{ ( $controller == 'App\Http\Controllers\Admin\GuideCountryController' || $controller == 'App\Http\Controllers\Admin\GuideBranchController' ) ? 'active current-page' : '' }}">
                                     <a href="#" class="nk-menu-link nk-menu-toggle">
-                                        <span class="nk-menu-icon"><em class="icon ni ni-ticket-plus"></em></span>
-                                        <span class="nk-menu-text">{{ __( 'template.user_vouchers' ) }}</span>
+                                        <span class="nk-menu-icon"><em class="icon ni ni-globe"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.countries' ) }}</span>
                                     </a>
                                     <ul class="nk-menu-sub">
-                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\UserVoucherController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
-                                            <a href="{{ route( 'admin.module_parent.user_voucher.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.user_vouchers' ) }}</span></a>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideCountryController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.guide_country.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.countries' ) }}</span></a>
                                         </li>
-                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\VoucherUsageController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
-                                            <a href="{{ route( 'admin.module_parent.voucher_usage.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.voucher_usages' ) }}</span></a>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideBranchController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.guide_branch.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.branches' ) }}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                @endcan
+
+                                @can( 'view guides' )
+                                <li class="nk-menu-item has-sub {{ ( $controller == 'App\Http\Controllers\Admin\GuideController' ) ? 'active current-page' : '' }}">
+                                    <a href="#" class="nk-menu-link nk-menu-toggle">
+                                        <span class="nk-menu-icon"><em class="icon ni ni-file-text"></em></span>
+                                        <span class="nk-menu-text">{{ __( 'template.guides' ) }}</span>
+                                    </a>
+                                    <ul class="nk-menu-sub">
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'index', 'edit', 'add' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.module_parent.guide.index' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.guides' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'addProductBrochures' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.guide.addProductBrochures' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.product_brochures' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'addInstallationGuides' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.guide.addInstallationGuides' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.installation_guides' ) }}</span></a>
+                                        </li>
+                                        <li class="nk-menu-item {{ $controller == 'App\Http\Controllers\Admin\GuideController' && in_array( $action, [ 'addVideos' ] ) ? 'active current-page' : '' }}">
+                                            <a href="{{ route( 'admin.guide.addVideos' ) }}" class="nk-menu-link"><span class="nk-menu-text">{{ __( 'template.videos' ) }}</span></a>
                                         </li>
                                     </ul>
                                 </li>

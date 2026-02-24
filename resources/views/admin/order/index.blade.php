@@ -93,7 +93,17 @@ $columns = [
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <!-- Left Side: User & Address Details -->
+                    <!-- Order Details -->
+                    <div class="col-md-12">
+                        <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderDetails" aria-expanded="false" aria-controls="orderDetails" style="cursor: pointer;">
+                            <strong>Order Details</strong>
+                            <em class="icon ni ni-chevron-down"></em>
+                        </div>
+                        <div class="mt-2" id="orderDetails">
+                            <div class="selections mt-3"></div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <!-- User Information -->
                         <div class="mb-3">
@@ -106,65 +116,64 @@ $columns = [
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">User</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_fullname" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_fullname" >
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Email</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_email" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_email" >
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Phone Number</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_phone_number" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_phone_number" >
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Reference</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_reference" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_reference" >
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Address Details -->
                         <div class="mb-3">
-                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderAddress" aria-expanded="false" aria-controls="orderAddress" style="cursor: pointer;">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderadd" aria-expanded="false" aria-controls="orderadd" style="cursor: pointer;">
                                 <strong>Address Details</strong>
                                 <em class="icon ni ni-chevron-down"></em>
                             </div>
-                            <div class="collapse mt-2" id="orderAddress">
+                            <div class="collapse show mt-2" id="orderadd">
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Address 1</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_1" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_a1">
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Address 2</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_address_2" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_a2">
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">City</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_city" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_c">
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">State</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_state" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_s">
                                     </div>
                                 </div>
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Post Code</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_postcode" readonly>
+                                        <input type="text" class="form-control form-control-sm" autocomplete="new-password" id="{{ $order_view }}_p">
                                     </div>
                                 </div>
                             </div>
@@ -175,40 +184,40 @@ $columns = [
                     <div class="col-md-6">
                         <!-- Payment Details -->
                         <div class="mb-3">
-                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#paymentDetails" aria-expanded="false" aria-controls="paymentDetails" style="cursor: pointer;">
+                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#paymentDetails" aria-expanded="true" aria-controls="paymentDetails" style="cursor: pointer;">
                                 <strong>Payment Details</strong>
                                 <em class="icon ni ni-chevron-down"></em>
                             </div>
-                            <div class="collapse mt-2" id="paymentDetails">
+                            <div class="collapse show mt-2" id="paymentDetails">
 
                                 <div class="mb-2 row">
                                     <label class="col-sm-5 col-form-label">Payment Method</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_type" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_type" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Subtotal</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_subtotal" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_subtotal" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Tax</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_tax" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_tax" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Discount</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_discount" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_discount" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Total Price</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_total" readonly>
+                                        <input type="text" class="form-control-plaintext" autocomplete="new-password" id="{{ $order_view }}_total" readonly>
                                     </div>
                                 </div>
                                 <div class="mb-3 row">
@@ -224,20 +233,9 @@ $columns = [
                                 <div class="mb-3 row">
                                     <label class="col-sm-5 col-form-label">Remarks</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control-plaintext" id="{{ $order_view }}_remarks" readonly>
+                                        <textarea class="form-control form-control-sm" name="{{ $order_view }}_remarks" id="{{ $order_view }}_remarks" cols="30" rows="10"></textarea>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Order Details -->
-                        <div class="mb-3">
-                            <div class="border-bottom py-2" data-bs-toggle="collapse" data-bs-target="#orderDetails" aria-expanded="false" aria-controls="orderDetails" style="cursor: pointer;">
-                                <strong>Order Details</strong>
-                                <em class="icon ni ni-chevron-down"></em>
-                            </div>
-                            <div class="mt-2" id="orderDetails">
-                                <div class="selections mt-3"></div>
                             </div>
                         </div>
                     </div>
@@ -354,27 +352,31 @@ var statusMapper = @json( $data['status'] ),
                 render: function( data, type, row, meta ) {
 
                     @canany( [ 'edit orders', 'delete orders' ] )
-                    let edit = '', 
-                    status = '';
- 
+                    let edit = '',
+                    status = '',
+                    sendReceipt = '';
+
                     @can( 'edit orders' )
                     edit += '<li class="dt-view" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.view' ) }}</span></a></li>';
-                    edit += '<li class="dt-edit" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-edit"></em><span>{{ __( 'template.edit' ) }}</span></a></li>';
+                    if( row.status == 10 ){
+                        sendReceipt = '<li class="dt-preview-receipt" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-eye"></em><span>Preview Receipt</span></a></li>';
+                        sendReceipt += '<li class="dt-send-receipt" data-id="' + row['encrypted_id'] + '"><a href="#"><em class="icon ni ni-mail"></em><span>Send Receipt</span></a></li>';
+                    }
                     @endcan
 
                     @can( 'delete orders' )
-                    status = row['status'] == 10 ? 
-                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.order_canceled' ) }}</span></a></li>' : 
+                    status = row['status'] == 10 ?
+                    '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="20"><a href="#"><em class="icon ni ni-na"></em><span>{{ __( 'datatables.order_canceled' ) }}</span></a></li>' :
                     '<li class="dt-status" data-id="' + row['encrypted_id'] + '" data-status="10"><a href="#"><em class="icon ni ni-check-circle"></em><span>{{ __( 'datatables.order_placed' ) }}</span></a></li>';
                     @endcan
-                    
-                    let html = 
+
+                    let html =
                         `
                         <div class="dropdown">
                             <a class="dropdown-toggle btn btn-icon btn-trigger" href="#" type="button" data-bs-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                             <div class="dropdown-menu">
                                 <ul class="link-list-opt">
-                                    `+edit+`
+                                    `+edit+sendReceipt+`
                                 </ul>
                             </div>
                         </div>
@@ -427,6 +429,32 @@ var statusMapper = @json( $data['status'] ),
             } );
         } );
 
+        $( document ).on( 'click', '.dt-preview-receipt', function() {
+            let id = $( this ).data( 'id' );
+            let url = '{{ route( 'admin.order.previewReceipt' ) }}?id=' + id;
+            window.open(url, '_blank');
+        } );
+
+        $( document ).on( 'click', '.dt-send-receipt', function() {
+
+            $.ajax( {
+                url: '{{ route( 'admin.order.sendReceipt' ) }}',
+                type: 'POST',
+                data: {
+                    'id': $( this ).data( 'id' ),
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function( response ) {
+                    $( '#modal_success .caption-text' ).html( response.message );
+                    modalSuccess.toggle();
+                },
+                error: function( error ) {
+                    $( '#modal_danger .caption-text' ).html( error.responseJSON.message );
+                    modalDanger.toggle();
+                },
+            } );
+        } );
+
         $( document ).on( 'click', '.dt-view', function() {
 
             $( '#modal_order_view .form-control-plaintext' ).val( '-' );
@@ -445,10 +473,21 @@ var statusMapper = @json( $data['status'] ),
                 },
                 success: function( response ) {
 
+                    $('#modal_order_view .selections').empty();
+
+                    // OR for individual fields
+                    $('#{{ $order_view }}_a1').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_a2').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_c').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_s').attr('autocomplete', 'nope');
+                    $('#{{ $order_view }}_p').attr('autocomplete', 'nope');
+
                     $('#{{ $order_view }}_id').val(response.id);
                     $('#{{ $order_view }}_fullname').val(response.fullname ? response.fullname : response.company_name || '-');
-                    $('#{{ $order_view }}_email').val(response.email || '-');
-                    $('#{{ $order_view }}_phone_number').val(response.phone_number || '-');
+
+                    $('#{{ $order_view }}_email').val(response.email || '-').prop('defaultValue', response.email || '-');
+                    $('#{{ $order_view }}_phone_number').val(response.phone_number || '-').prop('defaultValue', response.phone_number || '-');
+
                     $('#{{ $order_view }}_status').val(response.status || '-');
                     $('#{{ $order_view }}_reference').val(response.reference || '-');
                     $('#{{ $order_view }}_type').val('Online Payment');
@@ -456,48 +495,114 @@ var statusMapper = @json( $data['status'] ),
                     $('#{{ $order_view }}_tax').val( 'RM ' + ( response.tax || '0.00' ) );
                     $('#{{ $order_view }}_discount').val( 'RM ' + ( response.discount || '0.00' ) );
                     $('#{{ $order_view }}_total').val( 'RM ' + ( response.total_price || '0.00' ) );
-                    $('#{{ $order_view }}_address_1').val(response.address_1 || '-');
-                    $('#{{ $order_view }}_address_2').val(response.address_2 || '-');
-                    $('#{{ $order_view }}_city').val(response.city || '-');
-                    $('#{{ $order_view }}_state').val(response.state || '-');
-                    $('#{{ $order_view }}_postcode').val(response.postcode || '-');
-                    $('#{{ $order_view }}_remarks').val(response.remarks || '-');
 
-                    $('#modal_order_view .selections').empty();
+
+                    const autofill = (selector, value) => {
+                        const $el = $(selector);
+                        $el.prop('readonly', true).val(value).prop('defaultValue', value);
+                        setTimeout(() => $el.prop('readonly', false), 50);
+                    };
+
+                    autofill('#{{ $order_view }}_a1', response.address_1 || '-');
+                    autofill('#{{ $order_view }}_a2', response.address_2 || '-');
+                    autofill('#{{ $order_view }}_c', response.city || '-');
+                    autofill('#{{ $order_view }}_s', response.state || '-');
+                    autofill('#{{ $order_view }}_p', response.postcode || '-');
+
+                    $('#{{ $order_view }}_remarks').val(response.remarks || '-');
 
                     const orderMetas = response.orderMetas || [];
                     orderMetas.forEach((meta) => {
-
                         $('#modal_order_view .selections').append(
-                            `<div>
-                                <h6>Product: ${meta.product.title} (${meta.product.code})</h6>
-                                <h6>Variant: ${meta.product_variant.title}</h6>
-                                <h6>Price: ${meta.product.price} ( x ${meta.quantity} unit)</h6>
-                            </div><hr>`
+                            `<div class="d-flex align-items-center justify-content-around border-bottom py-2">
+                                <img src="${meta.product.image_path}" alt="${meta.product.title}" width="100" height="100" class="me-3">
+                                <div>
+                                    <strong>${meta.product.title} (${meta.product.code})</strong><br>
+                                    <small>Color: ${meta.product_variant ? meta.product_variant.title : 'N/A'}</small><br>
+                                    <small>Payment Method: ${meta.payment_plan}</small><br>
+                                </div>
+                                <div >
+                                    <strong>${meta.quantity}</strong>
+                                </div>
+                                <div>
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.order_meta_price }</strong>
+                                </div>
+                                <div>
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.subtotal }</strong>
+                                </div>
+                            </div>`
                         );
                     });
 
                     const addOnMetas = response.addOnMetas || [];
                     addOnMetas.forEach((meta) => {
-
                         $('#modal_order_view .selections').append(
-                            `<div>
-                                <h6>Add On: ${meta.add_on.title} (${meta.add_on.code})</h6>
-                                <h6>Price: ${meta.add_on.discount_price} ( x ${meta.quantity} unit)</h6>
-                            </div><hr>`
+                            `<div class="d-flex align-items-center justify-content-around border-bottom py-2">
+                                <img src="${meta.add_on.image_path}" alt="${meta.add_on.title}" width="100" height="100" class="me-3">
+                                <div>
+                                    <strong class="mb-1">Add On: ${meta.add_on.title}</strong>
+                                </div>
+                                <div >
+                                    <strong>${meta.quantity}</strong>
+                                </div>
+                                <div>
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.order_meta_price }</strong>
+                                </div>
+                                <div >
+                                    <strong class="text-end">MYR</strong><br>
+                                    <strong>${ meta.subtotal }</strong>
+                                </div>
+                            </div>`
                         );
                     });
 
-                    const freeGift = response.freeGift;
-
-                    if( freeGift ) {
+                    const freeGift = response.free_gift;
+                    if (freeGift) {
                         $('#modal_order_view .selections').append(
-                            `<div>
-                                <h6>Add On: ${freeGift.title} (${freeGift.code})</h6>
-                                <h6>Price: ${freeGift.discount_price}</h6>
-                            </div><hr>`
+                            `<div class="d-flex align-items-center justify-content-start border-bottom py-2">
+                                <img src="${freeGift.image_path}" alt="${freeGift.title}" width="100" height="100" class="me-3">
+                                <div>
+                                    <strong class="mb-1">Free Gift: ${freeGift.title}</strong>
+                                </div>
+                            </div>`
                         );
                     }
+
+                    const voucher = response.voucher;
+                    if (voucher) {
+                        $('#modal_order_view .selections').append(
+                            `<div class="mt-3">
+                                <strong class="d-flex justify-content-between">
+                                    <span>Promo Code:</span>
+                                    <span>${response.voucher.promo_code}</span>
+                                </strong>
+                                <strong class="d-flex justify-content-between">
+                                    <span>Discount:</span>
+                                    <span>MYR ${response.order_discount_formatted}</span>
+                                </strong>
+                            </div>`
+                        );
+                    }
+
+                    $('#modal_order_view .selections').append(
+                        `<div class="mt-3">
+                            <strong class="d-flex justify-content-between">
+                                <span>Subtotal:</span>
+                                <span>MYR ${response.order_subtotal_formatted}</span>
+                            </strong>
+                            <strong class="d-flex justify-content-between">
+                                <span>Discount:</span>
+                                <span>MYR ${response.order_discount_formatted}</span>
+                            </strong>
+                            <strong class="d-flex justify-content-between">
+                                <span>Total:</span>
+                                <span>MYR ${response.order_total_formatted}</span>
+                            </strong>
+                        </div>`
+                    );
 
                     modalmt5Detail.show();
                     
@@ -510,11 +615,29 @@ var statusMapper = @json( $data['status'] ),
             } );
         } );
 
+        function setIfDifferent(selector, value) {
+            const $el = $(selector);
+            if ($el.val() !== value) {
+                $el.val(value);
+            }
+        }
+
         $( '#modal_order_view .btn-primary' ).on( 'click', function() {
 
             let formData = new FormData();
             formData.append( 'id', $( ov + '_id' ).val() );
             formData.append( 'status', $( ov + '_status' ).val() );
+            formData.append( 'fullname', $( ov + '_fullname' ).val() );
+            formData.append( 'email', $( ov + '_email' ).val() );
+            formData.append( 'phone_number', $( ov + '_phone_number' ).val() );
+
+            formData.append( 'address_1', $( ov + '_a1' ).val() );
+            formData.append( 'address_2', $( ov + '_a2' ).val() );
+            formData.append( 'city', $( ov + '_c' ).val() );
+            formData.append( 'state', $( ov + '_s' ).val() );
+            formData.append( 'postcode', $( ov + '_p' ).val() );
+            formData.append( 'remarks', $( ov + '_remarks' ).val() );
+
             formData.append( '_token', '{{ csrf_token() }}' );
 
             $.ajax( {

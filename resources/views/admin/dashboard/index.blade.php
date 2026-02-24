@@ -234,45 +234,49 @@ $columns = [
                     show: false
                 },
             },
-            yaxis: {
-                labels: {
-                    formatter: function(value) {
-                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
-                    }
+            ticks: {
+                callback: function(value) {
+                    return parseInt(value);
                 }
             },
+            yaxis: {
+                labels: {}
+            },
             tooltip: {
-                y: {
-                    formatter: function(value) {
-                        return value.toFixed(2); // Show exactly two decimals in the tooltip
-                    }
-                }
+                y: {}
             },
             xaxis: {
                 labels: {
                     formatter: function(value) {
-                        return value.toFixed(2).replace(/\.00$/, ''); // Show two decimals, remove ".00" if not needed
+                        return parseInt(value);
                     }
                 }
             }
         };
 
-        // Create separate options for chart3 and chart4 with no decimals
+        // Create chart options for chart1 and chart4
         let chart1Options = JSON.parse(JSON.stringify(totalOrderOption));
-        // chart1Options.yaxis.labels.formatter = function(value) {
-        //     return Math.floor(2); // No decimal places for chart3
-        // };
-        // chart1Options.tooltip.y.formatter = function(value) {
-        //     return Math.floor(2); // No decimal places for chart3 tooltip
-        // };
 
+        // Chart 1 – Two decimal places
+        chart1Options.yaxis.min = 0;
+        chart1Options.yaxis.tickAmount = 5;
+        chart1Options.yaxis.labels.formatter = function(value) {
+            return parseFloat(value).toFixed(2); // Two decimals
+        };
+        chart1Options.tooltip.y.formatter = function(value) {
+            return parseFloat(value).toFixed(2); // Two decimals
+        };
+
+        // Chart 4 – No decimal places
         let chart4Options = JSON.parse(JSON.stringify(totalOrderOption));
-        // chart4Options.yaxis.labels.formatter = function(value) {
-        //     return Math.floor(value); // No decimal places for chart4
-        // };
-        // chart4Options.tooltip.y.formatter = function(value) {
-        //     return Math.floor(value); // No decimal places for chart4 tooltip
-        // };
+        chart4Options.yaxis.min = 0;
+        chart4Options.yaxis.tickAmount = 5;
+        chart4Options.yaxis.labels.formatter = function(value) {
+            return Math.floor(value); // No decimals
+        };
+        chart4Options.tooltip.y.formatter = function(value) {
+            return Math.floor(value); // No decimals
+        };
 
         // Assign options to charts
         let charts = [
@@ -280,20 +284,19 @@ $columns = [
             { id: 'chart4', name: '{{ __( "dashboard.orders" ) }}', options: chart4Options }  // No decimals
         ];
 
-        // Render all charts
+        // Initialize charts (only once)
         charts.forEach(chartConfig => {
             let chart = new ApexCharts(document.querySelector(`#${chartConfig.id}`), chartConfig.options);
+            chartConfig.instance = chart; // Store chart instance for later updates
             chart.render();
         });
-
 
         // Initialize all charts
         charts.forEach(chartConfig => {
             let chart = new ApexCharts(document.querySelector(`#${chartConfig.id}`), chartConfig.options);
-            chart.render();
             chartConfig.instance = chart; // Store chart instance for later updates
-
             loadChartData(chartConfig.id, 'day'); // Load initial data
+            chart.render();
         });
 
         function loadChartData(chartId, type) {
@@ -303,20 +306,63 @@ $columns = [
                 data: { type, chartId, _token: '{{ csrf_token() }}' },
                 success: function(response) {
                     const chartConfig = charts.find(chart => chart.id === chartId);
-                    console.log(response)
-                    if (chartConfig) {
+
+                    if ( chartConfig ) {
+                        let upperLimit = 0;
+                        let maxValue = 0;
+
+                        // Get the highest value from the data
+                        maxValue = Math.max( ...response.orderData );
+
+                        // For chart1, ensure the upper limit is the next multiple of 1000
+                        if ( chartConfig.id === "chart1" ) {
+                            upperLimit = Math.ceil( maxValue / 1000 ) * 1000;  // Round up to nearest 1000
+                            // Make sure the upper limit is at least 1000 more than maxValue
+                            if ( upperLimit <= maxValue ) upperLimit += 1000;
+                        } else {
+                            // For chart4, round up to nearest 10 and add buffer
+                            upperLimit = Math.ceil( maxValue / 10 ) * 10;
+                            // Make sure the upper limit is at least 10 more than maxValue
+                            if ( upperLimit <= maxValue ) upperLimit += 10;
+                        }
+
+                        // Force re-render and update series data
+                        chartConfig.instance.updateSeries([{
+                            name: chartConfig.name,
+                            data: response.orderData
+                        }]);
+
+                        // Dynamically set the upper limit on the chart options
                         chartConfig.instance.updateOptions({
+                            yaxis: {
+                                min: 0,
+                                max: upperLimit,  // Add this line to set the max value
+                                tickAmount: 5,    // Define number of ticks
+                                labels: {
+                                    formatter: chartConfig.id === "chart1"
+                                        ? function ( value ) { return parseFloat( value ).toFixed( 2 ); }  // Two decimals for chart1
+                                        : function ( value ) { return Math.floor( value ); }  // No decimals for chart4
+                                },
+                                forceNiceScale: false  // Add this to force exact min/max values
+                            },
+                            tooltip: {
+                                y: {
+                                    formatter: chartConfig.id === "chart1"
+                                        ? function ( value ) { return parseFloat( value ).toFixed( 2 ); }  // Two decimals for chart1
+                                        : function ( value ) { return Math.floor( value ); }  // No decimals for chart4
+                                }
+                            },
                             xaxis: {
                                 categories: response.xAxis
                             }
                         });
-                        chartConfig.instance.updateSeries([
-                            {
-                                name: chartConfig.name,
-                                data: response.orderData
-                            }
-                        ]);
+
+                        // Now set the max value
+
+                        // Ensure the chart is redrawn after options are updated
+                        chartConfig.instance.update();
                     }
+
                 }
             });
         }

@@ -59,7 +59,7 @@ class MaintenanceRecordService
 
         $serviceRecordCount = $serviceRecord->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $serviceRecords = $serviceRecord->skip( $offset )->take( $limit )->get();
@@ -441,7 +441,7 @@ class MaintenanceRecordService
 
         $tyreRecordCount = $tyreRecord->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $tyreRecords = $tyreRecord->skip( $offset )->take( $limit )->get();
@@ -832,7 +832,7 @@ class MaintenanceRecordService
 
         $partRecordCount = $partRecord->count();
 
-        $limit = $request->length;
+        $limit = $request->length == -1 ? 1000000 : $request->length;
         $offset = $request->start;
 
         $partRecords = $partRecord->skip( $offset )->take( $limit )->get();

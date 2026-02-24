@@ -14,7 +14,8 @@ return [
     */
 
     "product_id" => "Product",
-    "product" => "Product",
+    "product" => "Products",
+    "product_text" => 'Available for Product(s)',
     "products" => "Products",
     "title" => "Title",
     "code" => "Code",

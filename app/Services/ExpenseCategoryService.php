@@ -226,7 +226,7 @@ class ExpenseCategoryService
 
             $expense_categoryCount = $expense_category->count();
 
-            $limit = $request->length;
+            $limit = $request->length == -1 ? 1000000 : $request->length;
             $offset = $request->start;
 
             $expenses_categories = $expense_category->skip( $offset )->take( $limit )->get();

@@ -267,7 +267,7 @@ endpoints:
         name: session_key
         description: 'The session_key of the cart.  kn1i23onlas1'
         required: false
-        example: quo
+        example: enim
         type: string
         custom: []
       id:
@@ -280,6 +280,188 @@ endpoints:
       cart_item:
         name: cart_item
         description: 'The ID of the cart item.'
+        required: false
+        example: 1
+        type: integer
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/carts/update-add-on
+    metadata:
+      title: '6. Update Cart Addon/FreeGift'
+      description: |-
+        <aside class="notice">session_key or cart id can be used to update the cart</aside>
+
+        <strong>type</strong></br>
+        1: add on<br>
+        2: free gift<br>
+
+        <strong>action</strong></br>
+        remove: remove<br>
+        update: update<br>
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      session_key:
+        name: session_key
+        description: 'The unique identifier for the cart. Used to add addon or free gift to the cart'
+        required: true
+        example: abcd-1234
+        type: string
+        custom: []
+    bodyParameters:
+      add_on:
+        name: add_on
+        description: 'nullable The add_on code get via get add on api. Either `add_on` or `free_gift` must be provided.'
+        required: false
+        example: ADD-ON
+        type: string
+        custom: []
+      free_gift:
+        name: free_gift
+        description: 'nullable The free_gift code get via get free gift api. Either `add_on` or `free_gift` must be provided.'
+        required: false
+        example: FREE-GIFT
+        type: string
+        custom: []
+      quantity:
+        name: quantity
+        description: 'integer The quantity of the addon/quantity.'
+        required: false
+        example: '1, -1 to deduct'
+        type: required
+        custom: []
+      type:
+        name: type
+        description: 'integer The type to be change.'
+        required: false
+        example: '1'
+        type: required
+        custom: []
+      action:
+        name: action
+        description: 'string The action to be performed.'
+        required: false
+        example: remove
+        type: nullable
+        custom: []
+    responses: []
+    responseFields: []
+  -
+    httpMethods:
+      - POST
+    uri: api/v1/carts/update-shipment
+    metadata:
+      title: '7. Update Cart Shipment Details'
+      description: |-
+        <aside class="notice">session_key or cart id can be used to update the cart shipment</aside>
+
+        <strong>payment_plan</strong></br>
+        1: upfront<br>
+        2: monthly<br>
+        3: outright<br>
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    queryParameters:
+      session_key:
+        name: session_key
+        description: 'The unique identifier for the cart. Used to update shipment details to the cart'
+        required: true
+        example: abcd-1234
+        type: string
+        custom: []
+    bodyParameters:
+      fullname:
+        name: fullname
+        description: 'nullable The fullname of the guest.'
+        required: false
+        example: Johnny
+        type: string
+        custom: []
+      company_name:
+        name: company_name
+        description: 'nullable The company_name of the guest.'
+        required: false
+        example: 'Johnny holdings'
+        type: string
+        custom: []
+      email:
+        name: email
+        description: 'nullable The email of the guest.'
+        required: false
+        example: johnny@gmail.com
+        type: string
+        custom: []
+      phone_number:
+        name: phone_number
+        description: 'nullable The phone_number of the guest.'
+        required: false
+        example: '1231231223'
+        type: string
+        custom: []
+      address_1:
+        name: address_1
+        description: 'nullable The address_1 of the guest.'
+        required: false
+        example: 'Lot 4, 1'
+        type: string
+        custom: []
+      address_2:
+        name: address_2
+        description: 'nullable The address_2 of the guest.'
+        required: false
+        example: 'Bandar Baru Bangi'
+        type: string
+        custom: []
+      city:
+        name: city
+        description: 'nullable The city of the guest.'
+        required: false
+        example: Kajang
+        type: string
+        custom: []
+      state:
+        name: state
+        description: 'nullable The state of the guest.'
+        required: false
+        example: Selangor
+        type: string
+        custom: []
+      postcode:
+        name: postcode
+        description: 'nullable The postcode of the guest.'
+        required: false
+        example: '43000'
+        type: string
+        custom: []
+      country:
+        name: country
+        description: 'nullable The country of the guest.'
+        required: false
+        example: Malaysia
+        type: string
+        custom: []
+      remarks:
+        name: remarks
+        description: 'nullable The remarks for the order.'
+        required: false
+        example: 'Be careful'
+        type: string
+        custom: []
+      payment_plan:
+        name: payment_plan
+        description: 'nullable The payment_plan integer for the order.'
         required: false
         example: 1
         type: integer
